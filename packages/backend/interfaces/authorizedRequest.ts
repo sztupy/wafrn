@@ -6,7 +6,6 @@ export default interface AuthorizedRequest extends Request {
     email: string
     birthDate: string
     url: string
-    role: number,
-    mfaStep: number
+    role: number
   }
 }

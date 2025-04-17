@@ -9,7 +9,6 @@ import { PostsService } from './posts.service'
 import { firstValueFrom } from 'rxjs'
 import { EnvironmentService } from './environment.service'
 import { MessageService } from './message.service'
-import { TranslateService } from '@ngx-translate/core'
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +21,8 @@ export class LoginService {
     private utils: UtilsService,
     private jwt: JwtService,
     private postsService: PostsService,
-    private messagesService: MessageService,
-    private translate: TranslateService
-  ) { }
+    private messagesService: MessageService
+  ) {}
 
   checkUserLoggedIn(): boolean {
     return this.jwt.tokenValid()
@@ -38,31 +36,10 @@ export class LoginService {
         .toPromise()
       if (petition.success) {
         localStorage.setItem('authToken', petition.token)
-        if (petition.mfaRequired) {
-          console.log("MFA Route")
-          success = true;
-          this.router.navigate(['/login/mfa'])
-        } else {
-          await this.handleSuccessfulLogin()
-          success = true
-        }
-      }
-    } catch (exception) {
-      console.error(exception)
-    }
-    return success
-  }
-
-  async logInMfa(loginMfaForm: UntypedFormGroup): Promise<boolean> {
-    let success = false;
-    try {
-      const petition: any = await this.http
-        .post(`${EnvironmentService.environment.baseUrl}/login/mfa`, loginMfaForm.value)
-        .toPromise()
-      if (petition.success) {
-        localStorage.setItem('authToken', petition.token)
-        await this.handleSuccessfulLogin()
+        await this.postsService.loadFollowers()
+        this.loginEventEmitter.emit('logged in')
         success = true
+        this.router.navigate(['/dashboard'])
       }
     } catch (exception) {
       console.error(exception)
@@ -141,85 +118,6 @@ export class LoginService {
     }
 
     return res
-  }
-
-  async getUserMfaList() {
-    const response: any = await this.http
-      .get(`${EnvironmentService.environment.baseUrl}/user/mfa`)
-      .toPromise()
-    if (response?.success) {
-      return response.mfa;
-    }
-    this.translate.get('profile.security.mfa.errorMessageGeneric').subscribe((res: string) => {
-      this.messagesService.add({
-        severity: 'error',
-        summary: res
-      })
-    })
-    return false;
-  }
-
-  async deleteMfa(mfaId: string) {
-    const response: any = await this.http
-      .delete(`${EnvironmentService.environment.baseUrl}/user/mfa/${mfaId}`)
-      .toPromise()
-    if (response?.success) {
-      this.translate.get('profile.security.mfa.deleteSuccess').subscribe((res: string) => {
-        this.messagesService.add({
-          severity: 'success',
-          summary: res
-        })
-      })
-      return true;
-    } else {
-      this.translate.get('profile.security.mfa.errorMessageGeneric').subscribe((res: string) => {
-        this.messagesService.add({
-          severity: 'error',
-          summary: res
-        })
-      })
-    }
-    return false;
-  }
-
-  async createNewMfa(mfaForm: UntypedFormGroup): Promise<any> {
-    const response: any = await this.http
-      .post(`${EnvironmentService.environment.baseUrl}/user/mfa`, mfaForm.value)
-      .toPromise()
-    if (response?.success && response?.mfa?.id) {
-      return response.mfa;
-    } else {
-      this.translate.get('profile.security.mfa.errorMessageGeneric').subscribe((res: string) => {
-        this.messagesService.add({
-          severity: 'error',
-          summary: res
-        })
-      })
-    }
-    return false;
-  }
-
-  async verifyMfa(mfaId: string, mfaVerifyForm: UntypedFormGroup) {
-    const response: any = await this.http
-      .post(`${EnvironmentService.environment.baseUrl}/user/mfa/${mfaId}/verify`, mfaVerifyForm.value)
-      .toPromise()
-    if (response?.success) {
-      this.translate.get('profile.security.mfa.verifySuccess').subscribe((res: string) => {
-        this.messagesService.add({
-          severity: 'success',
-          summary: res
-        })
-      })
-      return true;
-    } else {
-      this.translate.get('profile.security.mfa.verifyFailed').subscribe((res: string) => {
-        this.messagesService.add({
-          severity: 'error',
-          summary: res
-        })
-      })
-    }
-    return false;
   }
 
   async updateProfile(updateProfileForm: any, img: File | undefined, headerImg: File | undefined): Promise<boolean> {
@@ -313,12 +211,6 @@ export class LoginService {
       })
     }
     return
-  }
-
-  async handleSuccessfulLogin() {
-    await this.postsService.loadFollowers()
-    this.loginEventEmitter.emit('logged in')
-    this.router.navigate(['/dashboard'])
   }
 
   getLoggedUserUUID(): string {
