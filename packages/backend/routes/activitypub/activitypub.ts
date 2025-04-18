@@ -115,6 +115,7 @@ function activityPubRoutes(app: Application) {
               url: `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}`,
               manuallyApprovesFollowers: user.manuallyAcceptsFollows,
               discoverable: true,
+              alsoKnownAs: ["https://mastodon.scot/users/sztupy"],
               published: user.createdAt,
               tag: emojis.map((emoji: any) => emojiToAPTag(emoji)),
               endpoints: {
@@ -122,21 +123,21 @@ function activityPubRoutes(app: Application) {
               },
               ...(user.avatar
                 ? {
-                    icon: {
-                      type: 'Image',
-                      mediaType: 'image/webp',
-                      url: environment.mediaUrl + user.avatar
-                    }
+                  icon: {
+                    type: 'Image',
+                    mediaType: 'image/webp',
+                    url: environment.mediaUrl + user.avatar
                   }
+                }
                 : undefined),
               ...(user.headerImage
                 ? {
-                    image: {
-                      type: 'Image',
-                      mediaType: 'image/webp',
-                      url: environment.mediaUrl + user.headerImage
-                    }
+                  image: {
+                    type: 'Image',
+                    mediaType: 'image/webp',
+                    url: environment.mediaUrl + user.headerImage
                   }
+                }
                 : undefined),
               publicKey: {
                 id: `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}#main-key`,
@@ -191,14 +192,12 @@ function activityPubRoutes(app: Application) {
               orderedItems: itemsToSend
             }
             if (page > 1) {
-              response['prev'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/following?page=${
-                page - 1
-              }`
+              response['prev'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/following?page=${page - 1
+                }`
             }
             if (followedUsers.length > pageSize * page) {
-              response['next'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/following?page=${
-                page + 1
-              }`
+              response['next'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/following?page=${page + 1
+                }`
             }
           } else {
             response = {
@@ -249,22 +248,19 @@ function activityPubRoutes(app: Application) {
             const itemsToSend = followers.slice((page - 1) * pageSize, page * pageSize)
             response = {
               '@context': 'https://www.w3.org/ns/activitystreams',
-              id: `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/followers?page=${
-                req.query.page
-              }`,
+              id: `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/followers?page=${req.query.page
+                }`,
               type: 'OrderedCollectionPage',
               orderedItems: itemsToSend,
               totalItems: followersNumber
             }
             if (page > 1) {
-              response['prev'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/followers?page=${
-                page - 1
-              }`
+              response['prev'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/followers?page=${page - 1
+                }`
             }
             if (followers.length > pageSize * page) {
-              response['next'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/followers?page=${
-                page + 1
-              }`
+              response['next'] = `${environment.frontendUrl}/fediverse/blog/${user.url.toLowerCase()}/followers?page=${page + 1
+                }`
             }
           } else {
             response = {
