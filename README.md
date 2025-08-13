@@ -1,11 +1,11 @@
 <!-- markdownlint-disable first-line-h1 -->
 <div align="center">
 
-<a href="https://github.com/gabboman/wafrn">
+<a href="https://codeberg.org/wafrn/wafrn">
   <img src="https://app.wafrn.net/assets/logo.png" alt="Wafrn logo" width="350"/>
 </a>
 
-**[Wafrn](https://github.com/gabboman/wafrn) &ndash; The social media that respects you.**
+**[Wafrn](https://codeberg.org/wafrn/wafrn) &ndash; The social media that respects you.**
 
 ---
 
@@ -19,10 +19,10 @@ The "main" wafrn app is located at [app.wafrn.net](https://app.wafrn.net).
 
 ## Documentation
 
-* [Development documentation](./docs/development.md)
-* [Deployment documentation](./docs/deployment.md)
-* [Wafrn Management](./docs/management.md)
-* [Importing external backups](./docs/import.md)
+- [Development documentation](./docs/development.md)
+- [Deployment documentation](./docs/deployment.md)
+- [Wafrn Management](./docs/management.md)
+- [Importing external backups](./docs/import.md)
 
 If you need support you can also always find the latest Discord invite [on our website](https://wafrn.net)
 

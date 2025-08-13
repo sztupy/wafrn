@@ -1,6 +1,6 @@
 {
   "name": "wafrn",
-  "version": "2025.08.1",
+  "version": "2025.08.2-develop",
   "description": "wafrn",
   "main": "index.ts",
   "scripts": {
@@ -22,14 +22,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gabboman/wafrn.git"
+    "url": "git+https://codeberg.org/wafrn/wafrn.git"
   },
   "author": "Gabriel Amador García",
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/gabboman/wafrn/issues"
+    "url": "https://codeberg.org/wafrn/wafrn/issues"
   },
-  "homepage": "https://github.com/gabboman/wafrn#readme",
+  "homepage": "https://codeberg.org/wafrn/wafrn#readme",
   "workspaces": [
     "packages/frontend",
     "packages/backend"
