@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: root
+      PGUSER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: wafrn
     volumes:
