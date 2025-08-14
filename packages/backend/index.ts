@@ -49,6 +49,8 @@ import expressWs from 'express-ws'
 import websocketRoutes from './routes/websocket.js'
 import followHashtagRoutes from './routes/followHashtags.js'
 import { completeEnvironment } from './utils/backendOptions.js'
+import cron from 'node-cron'
+import { nukeBannedUsers } from './utils/maintenanceTasks/nukeBannedUsers.js'
 
 function errorHandler(err: Error, req: Request, res: Response, next: Function) {
   console.error(err.stack)
@@ -160,4 +162,11 @@ server.listen(PORT, completeEnvironment.listenIp, () => {
       await worker.pause()
     })
   }
+})
+
+// CRON TASKS
+cron.schedule('0 2 * * *', () => {
+  nukeBannedUsers().then(() => {
+    logger.info(`NukeBannedUsers Done`)
+  })
 })
