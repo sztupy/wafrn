@@ -122,30 +122,30 @@
           <fa-icon class="mr-2" [icon]="editedIcon"></fa-icon>Edit woot
         </span>
       </button>
-      @if (!postSilenced) {
-        <button (click)="silencePost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence interactions
-          </span>
-        </button>
-      }
-      @if (!postSilenced) {
-        <button (click)="silencePost(true)" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence notifications and replies
-          </span>
-        </button>
-      }
-      @if (postSilenced) {
-        <button (click)="unsilencePost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon class="mr-2" [icon]="unsilenceIcon"></fa-icon>Reactivate notifications
-          </span>
-        </button>
-      }
       <button (click)="deletePost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon class="mr-2" [icon]="deleteIcon"></fa-icon>Delete woot
+        </span>
+      </button>
+    }
+    @if (!postSilenced) {
+      <button (click)="silencePost()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence interactions
+        </span>
+      </button>
+    }
+    @if (!postSilenced) {
+      <button (click)="silencePost(true)" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence notifications and replies
+        </span>
+      </button>
+    }
+    @if (postSilenced) {
+      <button (click)="unsilencePost()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="unsilenceIcon"></fa-icon>Reactivate notifications
         </span>
       </button>
     }
