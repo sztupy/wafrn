@@ -162,7 +162,7 @@ echo "Installing the repository"
 echo "-------------------------"
 
 cd $HOME
-git clone https://codeberg.org/wafrn/wafrn
+git clone https://codeberg.org/wafrn/wafrn.git
 cd wafrn
 
 echo
