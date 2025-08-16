@@ -1,11 +1,11 @@
 <!-- markdownlint-disable first-line-h1 -->
 <div align="center">
 
-<a href="https://github.com/gabboman/wafrn">
+<a href="https://codeberg.org/wafrn/wafrn">
   <img src="https://app.wafrn.net/assets/logo.png" alt="Wafrn logo" width="350"/>
 </a>
 
-**[Wafrn](https://github.com/gabboman/wafrn) &ndash; The social media that respects you.**
+**[Wafrn](https://codeberg.org/wafrn/wafrn) &ndash; The social media that respects you.**
 
 ---
 
