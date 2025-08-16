@@ -521,7 +521,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         icon: faCode,
         title: this.translateService.instant('menu.source'),
         visible: true,
-        url: 'https://github.com/gabboman/wafrn',
+        url: 'https://codeberg.org/wafrn/wafrn',
         command: () => {
           this.hideMenu()
         }
