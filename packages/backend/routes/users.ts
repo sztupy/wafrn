@@ -1387,33 +1387,54 @@ function userRoutes(app: Application) {
 
   app.post('/api/user/selfDeactivate', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     // frontend will warn user. User will recive email.
-    let success = false
     const userId = req.jwtData?.userId as string
     const user = (await User.findByPk(userId)) as User
     const password = req.body.password
-    if (req.body.password && (await bcrypt.compare(req.body.password, user.password))) {
-      user.selfDeleted = true
-      user.activated = false
-      user.updatedAt = new Date()
-      user.banned = true
-      await user.save()
-      await sendActivationEmail(
-        user.email as string,
-        '',
-        `We have marked your ${completeEnvironment.instanceUrl} for deletion`,
-        `
-            <h1>We are sad to see you go</h1>
-            <p>
-             We have recived your request to delete your account. It will still ve visible for a few moments. In 30 days or less we will complete the destruction process and at that point there will be no going back</p>
-             <p>This is a slow process on our side and thats why its not done imediately</p>
-             <p>We will send to every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW". This task takes time and slows down the server. We run this task weekly more or less. But just in case, "30 days"</p>.
-            `
-      )
+    if (!password) {
+      return res.status(400).send({
+        success: false,
+        message: '"password" is required in body'
+      })
+    }
+    const passwordMatches = await bcrypt.compare(password, user.password)
+    if (!passwordMatches) {
+      return res.status(400).send({
+        success: false,
+        // TODO: should we send a message to the user here or not?
+      })
     }
 
-    res.send({
-      success: success
-    })
+    user.selfDeleted = true
+    user.activated = false
+    user.updatedAt = new Date()
+    user.banned = true
+    await user.save()
+    await sendActivationEmail(
+      user.email as string,
+      '',
+      `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
+      `
+        <h1>We are sad to see you go</h1>
+        <p>
+          We have recived your request to delete your account. 
+          It will still ve visible for a few moments. 
+          In 24 hours or less we will complete the destruction process and at that point there will be no going back
+        </p>
+        <p>
+          This is a slow process on our side and thats why its not done imediately.
+        </p>
+        <p>
+          The deletion task is run every day at night (02:00 UTC). 
+          It is slow because we have to send every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW" message. 
+          And we send those one by one so this task takes time and slows down the server. 
+        </p>
+        <p>
+          If within 2 days your account is not deleted, please contact your server admin.
+        </p>
+      `
+    )
+
+    res.send({ success: true })
   })
 
   // TODO still not finished
