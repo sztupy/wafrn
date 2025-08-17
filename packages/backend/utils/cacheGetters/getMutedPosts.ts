@@ -5,7 +5,7 @@ import { logger } from '../logger.js'
 
 async function getMutedPosts(userId: string, superMute = false): Promise<Array<string>> {
   let res: string[] = []
-  const cacheResult = undefined //await redisCache.get((superMute ? 'superMutedPosts:' : 'mutedPosts:') + userId)
+  const cacheResult = await redisCache.get((superMute ? 'superMutedPosts:' : 'mutedPosts:') + userId)
   if (cacheResult) {
     res = JSON.parse(cacheResult)
   } else {
