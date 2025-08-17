@@ -96,22 +96,15 @@ Ok so you definetively need to do some backend stuff! As long as you do not need
 
 1. Clone the repo
 2. Install docker and node 24
-3. Do this command on the root of the project
-   ```npm install````
-4. Copy the docker compose for local development
-   ```cp docker-compose.localBackendDebuggerDev.yml docker-compose.yml````
-5. Copy the development environment file for backend
-   `cp packages/backend/environment.dev.ts packages/backend/environment.ts`
-6. Start the services required for wafrn to work: redis, postgres, and a db admin tool on https://localhost:8080 (type postgres, user and pass: root, db: wafrn)
-   `docker compose up -d`
+3. Do this command on the root of the project `npm install`
+4. Copy the docker compose for local development `cp docker-compose.localBackendDebuggerDev.yml docker-compose.yml`
+5. Copy the development environment file for backend `cp packages/backend/environment.dev.ts packages/backend/environment.ts`
+6. Start the services required for wafrn to work: redis, postgres, and a db admin tool on https://localhost:8080 (type postgres, user and pass: root, db: wafrn) `docker compose up -d`
 7. Check that you can connect to the database in your browser in https://localhost:8080 . If you have problem here, contact the dev team
 8. Edit the environment file. Replace adminEmail and adminUser with youur desired email, user and password
-9. Do this command to initialize the database
-   `cd packages/backend && npm run db:migrate`
-10. On the root directory, do this command to start the backend server:
-    `npm run backend:develop`
-11. Do this command to start the frontend
-    `npm run frontend:develop:prod`
+9. Do this command to initialize the database `cd packages/backend && npm run db:migrate`
+10. On the root directory, do this command to start the backend server: `npm run backend:develop`
+11. Do this command to start the frontend `npm run frontend:develop:prod`
 12. Enjoy!
 
 ### Fullstack development with fedi and bluesky access and debugger access
