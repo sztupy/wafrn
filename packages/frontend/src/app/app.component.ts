@@ -8,6 +8,7 @@ import { SwPush } from '@angular/service-worker'
 import { WebsocketService } from './services/websocket.service'
 import { NavigationError, Router } from '@angular/router'
 import { filter, map } from 'rxjs'
+import { MessageService } from './services/message.service'
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,8 @@ export class AppComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private translate: TranslateService,
     private websocketService: WebsocketService,
-    private router: Router
+    private router: Router,
+    private messages: MessageService
   ) {
     this.translate.addLangs(['en', 'pl', 'es'])
     this.translate.setDefaultLang('en')
@@ -64,7 +66,11 @@ export class AppComponent implements OnInit {
         registration.unregister();
       }
     });*/
-
+    const wafrnUpdated = localStorage.getItem('wafrnUpdated')
+    if (wafrnUpdated == 'true') {
+      localStorage.removeItem('wafrnUpdated')
+      this.messages.add({ severity: 'success', summary: 'Wafrn has been updated!' })
+    }
     if (this.swUpdate.isEnabled) {
       this.swUpdate.checkForUpdate().then((updateAvaiable) => {
         if (EnvironmentService.environment.disablePWA) {
@@ -87,6 +93,7 @@ export class AppComponent implements OnInit {
         }
         // we are no longer asking nicely
         if (updateAvaiable) {
+          localStorage.setItem('wafrnUpdated', 'true')
           window.location.reload()
         }
       })
