@@ -314,6 +314,9 @@ export class LoginService {
         this.http.post(`${EnvironmentService.environment.baseUrl}/editOptions`, { options: options })
       )
       if (petition.success) {
+        for await (const option of options) {
+          localStorage.setItem(option.name.split('wafrn.')[1], option.value)
+        }
         success = true
         await this.postsService.loadFollowers()
       }
