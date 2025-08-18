@@ -131,6 +131,9 @@ async function getAtprotoUser(
       activated: true
     }
     userFound = userFound ? userFound : await internalGetDBUser(newData.bskyDid, newData.url)
+    if (userFound?.email) {
+      return (await User.findByPk(userFound.id)) as User
+    }
     if (userFound && !userFound.email) {
       // we check just in case that user with url does not exist:
       const oldUser = await User.findOne({
@@ -160,7 +163,7 @@ async function getAtprotoUser(
 }
 
 async function internalGetDBUser(did: string, url: string) {
-  const foundUsers = await User.findAll({
+  const foundUsers = await User.scope('full').findAll({
     where: {
       [Op.or]: [
         {
