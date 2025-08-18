@@ -76,6 +76,7 @@ async function getAtprotoUser(
     handle == 'handle.invalid'
       ? undefined
       : await User.findOne({
+          attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId'],
           where: {
             [Op.or]: [
               {
