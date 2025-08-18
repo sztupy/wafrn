@@ -21,7 +21,7 @@ const sendPostQueue = new Queue('sendPostToInboxes', {
   }
 })
 async function federatePostHasBeenEdited(postToEdit: any) {
-  const user = await User.findByPk(postToEdit.userId)
+  const user = await User.scope('full').findByPk(postToEdit.userId)
   if (!user) return
 
   await redisCache.del('postAndUser:' + postToEdit.id)

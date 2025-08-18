@@ -63,7 +63,7 @@ async function prepareSendRemotePostWorker(job: Job) {
     return
   }
 
-  const localUser = await User.findByPk(post.userId)
+  const localUser = await User.scope('full').findByPk(post.userId)
   if (post.privacy === Privacy.Public && localUser?.enableBsky && completeEnvironment.enableBsky) {
     await sendPostBskyQueue.add('sendPostBsky', job.data)
   }

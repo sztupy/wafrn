@@ -34,7 +34,7 @@ async function nukeBannedUsers() {
       removeOnFail: true
     }
   })
-  const users = await User.findAll({
+  const users = await User.scope('full').findAll({
     where: {
       banned: true,
       id: {

@@ -121,7 +121,7 @@ function userRoutes(app: Application) {
             res.status(403).send({ success: false, error: true, message: 'Invalid age' })
             return
           }
-          const emailExists = await User.findOne({
+          const emailExists = await User.scope('full').findOne({
             where: {
               [Op.or]: [
                 { email: req.body.email.toLowerCase() },
@@ -254,7 +254,7 @@ function userRoutes(app: Application) {
       let success = false
       try {
         const posterId = req.jwtData?.userId as string
-        const user = await User.findOne({
+        const user = await User.scope('full').findOne({
           where: {
             id: posterId
           }
@@ -358,7 +358,7 @@ function userRoutes(app: Application) {
     try {
       if (req.body?.email && validateEmail(req.body.email)) {
         const email = req.body.email.toLowerCase()
-        const user = await User.findOne({ where: { email } })
+        const user = await User.scope('full').findOne({ where: { email } })
         if (user) {
           user.activationCode = resetCode
           user.requestedPasswordReset = new Date()
@@ -400,7 +400,7 @@ function userRoutes(app: Application) {
   app.post('/api/activateUser', async (req, res) => {
     let success = false
     if (req.body?.email && validateEmail(req.body.email) && req.body.code) {
-      const user = await User.findOne({
+      const user = await User.scope('full').findOne({
         where: {
           email: req.body.email.toLowerCase(),
           activationCode: req.body.code
@@ -453,7 +453,7 @@ function userRoutes(app: Application) {
       if (req.body?.email && req.body.code && req.body.password && validateEmail(req.body.email)) {
         const resetPasswordDeadline = new Date()
         resetPasswordDeadline.setTime(resetPasswordDeadline.getTime() + 3600 * 2 * 1000)
-        const user = await User.findOne({
+        const user = await User.scope('full').findOne({
           where: {
             email: req.body.email.toLowerCase(),
             activationCode: req.body.code,
@@ -495,7 +495,7 @@ function userRoutes(app: Application) {
     let success = false
     try {
       if (req.body?.email && req.body.password) {
-        const userWithEmail = await User.findOne({
+        const userWithEmail = await User.scope('full').findOne({
           where: {
             email: req.body.email.toLowerCase().trim(),
             banned: {
@@ -574,7 +574,7 @@ function userRoutes(app: Application) {
     let success = false
     try {
       if (req.body?.token && req.jwtData?.mfaStep == 1 && req.jwtData?.email) {
-        const userWithEmail = await User.findOne({
+        const userWithEmail = await User.scope('full').findOne({
           where: {
             email: req.jwtData?.email,
             banned: {
@@ -1009,7 +1009,7 @@ function userRoutes(app: Application) {
 
     let user: User | null = null
     try {
-      user = await User.findByPk(userId)
+      user = await User.scope('full').findByPk(userId)
     } catch (error) {
       logger.error({
         message: `Error finding current user`,
@@ -1273,7 +1273,7 @@ function userRoutes(app: Application) {
       return res.sendStatus(429)
     }
     const url = req.params?.url as string
-    const userRecivingAsk = await User.findOne({
+    const userRecivingAsk = await User.scope('full').findOne({
       where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), url.toLowerCase())
     })
     if (!userRecivingAsk) {
@@ -1388,7 +1388,7 @@ function userRoutes(app: Application) {
   app.post('/api/user/selfDeactivate', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     // frontend will warn user. User will recive email.
     const userId = req.jwtData?.userId as string
-    const user = (await User.findByPk(userId)) as User
+    const user = (await User.scope('full').findByPk(userId)) as User
     const password = req.body.password
     if (!password) {
       return res.status(400).send({
@@ -1399,7 +1399,7 @@ function userRoutes(app: Application) {
     const passwordMatches = await bcrypt.compare(password, user.password)
     if (!passwordMatches) {
       return res.status(400).send({
-        success: false,
+        success: false
         // TODO: should we send a message to the user here or not?
       })
     }
@@ -1441,12 +1441,12 @@ function userRoutes(app: Application) {
   app.post('/api/user/migrateOut', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     let success = false
     const newUserRemoteId: string = req.body.target
-    const localUser = await User.findByPk(req.jwtData?.userId)
+    const localUser = await User.scope('full').findByPk(req.jwtData?.userId)
     let message = `User not yet found`
     if (newUserRemoteId && localUser) {
       message = `User found but new account doesnt seems to have an alias pointing towards you`
       try {
-        const localUser = (await User.findByPk(req.jwtData?.userId)) as User
+        const localUser = (await User.scope('full').findByPk(req.jwtData?.userId)) as User
         const petitionData = await getPetitionSigned(localUser, newUserRemoteId)
         if (petitionData && petitionData.alsoKnownAs) {
           const aliasList = isArray(petitionData.alsoKnownAs)

@@ -17,7 +17,7 @@ await User.destroy({
   }
 })
 
-const usersNotVerified = await User.findAll({
+const usersNotVerified = await User.scope('full').findAll({
   where: {
     activated: false,
     emailVerified: false,

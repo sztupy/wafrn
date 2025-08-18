@@ -5,7 +5,9 @@ import { removeUser } from './removeUser.js'
 import { User } from '../../models/index.js'
 import axios from 'axios'
 
-async function postPetitionSigned(message: object, user: any, target: string): Promise<any> {
+async function postPetitionSigned(message: object, userInput: User, target: string): Promise<any> {
+  const user = (await User.scope('full').findByPk(userInput.id)) as User
+
   let res
   if (user.url === completeEnvironment.deletedUser) {
     return {}
@@ -26,7 +28,7 @@ async function postPetitionSigned(message: object, user: any, target: string): P
     }\ndate: ${sendDate.toUTCString()}\nalgorithm: rsa-sha256\ndigest: SHA-256=${digest}`
     signer.update(stringToSign)
     signer.end()
-    const signature = signer.sign(user.privateKey).toString('base64')
+    const signature = signer.sign(user.privateKey as string).toString('base64')
     const header = `keyId="${
       completeEnvironment.frontendUrl
     }/fediverse/blog/${user.url.toLocaleLowerCase()}#main-key",algorithm="rsa-sha256",headers="(request-target) host date algorithm digest",signature="${signature}"`

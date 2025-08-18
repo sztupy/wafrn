@@ -75,8 +75,7 @@ async function getAtprotoUser(
   let userFound =
     handle == 'handle.invalid'
       ? undefined
-      : await User.findOne({
-          attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
+      : await User.scope('full').findOne({
           where: {
             [Op.or]: [
               {
@@ -88,7 +87,7 @@ async function getAtprotoUser(
         })
   // sometimes we can get the dids and if its a local user we just return it and thats it
   if (userFound && userFound.email) {
-    return userFound
+    return (await User.findByPk(userFound.id)) as User
   }
   if (userFound) {
     avatarString = userFound.avatar

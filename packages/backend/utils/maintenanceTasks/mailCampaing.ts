@@ -8,7 +8,7 @@ import { getNotificationOptions } from '../../routes/notifications.js'
 import { completeEnvironment } from '../backendOptions.js'
 
 async function sendMail() {
-  const users = await User.findAll({
+  const users = await User.scope('full').findAll({
     where: {
       banned: { [Op.ne]: true },
       activated: true,

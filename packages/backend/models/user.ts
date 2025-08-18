@@ -85,7 +85,26 @@ export interface UserAttributes {
 @Table({
   tableName: 'users',
   modelName: 'users',
-  timestamps: true
+  timestamps: true,
+  scopes: {
+    full: {
+      //attributes: {}
+    }
+  },
+  defaultScope: {
+    attributes: {
+      exclude: [
+        'password',
+        'email',
+        'privateKey',
+        'lastLoginIp',
+        'registerIp',
+        'bskyAuthData',
+        'bskyAppPassword',
+        'birthDate'
+      ]
+    }
+  }
 })
 export class User extends Model<UserAttributes, UserAttributes> implements UserAttributes {
   @Column({

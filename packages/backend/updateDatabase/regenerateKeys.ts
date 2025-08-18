@@ -3,7 +3,7 @@ import { User, sequelize } from '../models/index.js'
 import { Op } from 'sequelize'
 import { generateKeyPairSync } from 'crypto'
 
-const usersToUpdate = await User.findAll({
+const usersToUpdate = await User.scope('full').findAll({
   where: {
     email: { [Op.ne]: null },
     privateKey: { [Op.eq]: null }
