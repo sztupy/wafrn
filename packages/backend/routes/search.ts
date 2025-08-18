@@ -46,7 +46,7 @@ export default function searchRoutes(app: Application) {
     let users: Promise<User[]> | User[] = []
     if (forceSearchUser != '') {
       const forceSearchUserObject = await User.findOne({
-        attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId'],
+        attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
         where: {
           url: {
             [Op.iLike]: forceSearchUser
@@ -146,7 +146,7 @@ export default function searchRoutes(app: Application) {
     let remoteMatch: Promise<User | null> | null = null
     let firstMatch = !page
       ? User.findOne({
-          attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId'],
+          attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
           where: {
             activated: true,
             banned: {
@@ -191,7 +191,7 @@ export default function searchRoutes(app: Application) {
                 [Op.iLike]: `%${searchTerm}%`
               }
             },
-            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId'],
+            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
             order: [['createdAt', 'DESC']],
             limit: completeEnvironment.postsPerPage,
             offset: page * completeEnvironment.postsPerPage
@@ -223,7 +223,7 @@ export default function searchRoutes(app: Application) {
                 }
               ]
             },
-            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId'],
+            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
             order: [['createdAt', 'DESC']],
             limit: completeEnvironment.postsPerPage,
             offset: remoteUsersPage * completeEnvironment.postsPerPage
