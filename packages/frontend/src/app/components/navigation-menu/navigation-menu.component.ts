@@ -740,8 +740,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     this.mobile = window.innerWidth <= 992 || this.horizontalMenuMode
   }
 
-  @HostListener('window:keydown.n')
-  @HostListener('window:keydown.p')
   async openEditor() {
     const nodeName = document.activeElement?.nodeName ? document.activeElement.nodeName : ''
     if (!['INPUT', 'TEXTAREA', 'DIV'].includes(nodeName) && this.jwtService.tokenValid()) {
