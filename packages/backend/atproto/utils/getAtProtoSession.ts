@@ -4,7 +4,8 @@ import { redisCache } from '../../utils/redis.js'
 import { completeEnvironment } from '../../utils/backendOptions.js'
 import { logger } from '../../utils/logger.js'
 
-async function getAtProtoSession(user?: User): Promise<AtpAgent> {
+async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
+  let user = userInput ? ((await User.scope('full').findByPk(userInput.id)) as User) : undefined
   const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
     ? completeEnvironment.bskyPds
     : 'https://' + completeEnvironment.bskyPds
