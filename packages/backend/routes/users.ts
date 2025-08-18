@@ -121,7 +121,7 @@ function userRoutes(app: Application) {
             res.status(403).send({ success: false, error: true, message: 'Invalid age' })
             return
           }
-          const emailExists = await User.findOne({
+          const emailExists = await User.scope('full').findOne({
             where: {
               [Op.or]: [
                 { email: req.body.email.toLowerCase() },
@@ -221,6 +221,7 @@ function userRoutes(app: Application) {
 
   app.post('/api/updateCSS', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     const posterId = req.jwtData?.userId
+    const cssContent = req.body.css ? req.body.css.trim() : undefined
     if (req.body.css) {
       try {
         await fs.writeFile(`uploads/themes/${posterId}.css`, req.body.css)
@@ -231,7 +232,14 @@ function userRoutes(app: Application) {
         res.send({ error: true })
       }
     } else {
-      res.sendStatus(500)
+      try {
+        await fs.unlink(`uploads/themes/${posterId}.css`)
+        res.send({ success: true })
+      } catch (error) {
+        logger.warn(error)
+        res.status(500)
+        res.send({ error: true })
+      }
     }
   })
 
@@ -246,7 +254,7 @@ function userRoutes(app: Application) {
       let success = false
       try {
         const posterId = req.jwtData?.userId as string
-        const user = await User.findOne({
+        const user = await User.scope('full').findOne({
           where: {
             id: posterId
           }
@@ -350,7 +358,7 @@ function userRoutes(app: Application) {
     try {
       if (req.body?.email && validateEmail(req.body.email)) {
         const email = req.body.email.toLowerCase()
-        const user = await User.findOne({ where: { email } })
+        const user = await User.scope('full').findOne({ where: { email } })
         if (user) {
           user.activationCode = resetCode
           user.requestedPasswordReset = new Date()
@@ -392,7 +400,7 @@ function userRoutes(app: Application) {
   app.post('/api/activateUser', async (req, res) => {
     let success = false
     if (req.body?.email && validateEmail(req.body.email) && req.body.code) {
-      const user = await User.findOne({
+      const user = await User.scope('full').findOne({
         where: {
           email: req.body.email.toLowerCase(),
           activationCode: req.body.code
@@ -445,7 +453,7 @@ function userRoutes(app: Application) {
       if (req.body?.email && req.body.code && req.body.password && validateEmail(req.body.email)) {
         const resetPasswordDeadline = new Date()
         resetPasswordDeadline.setTime(resetPasswordDeadline.getTime() + 3600 * 2 * 1000)
-        const user = await User.findOne({
+        const user = await User.scope('full').findOne({
           where: {
             email: req.body.email.toLowerCase(),
             activationCode: req.body.code,
@@ -487,7 +495,7 @@ function userRoutes(app: Application) {
     let success = false
     try {
       if (req.body?.email && req.body.password) {
-        const userWithEmail = await User.findOne({
+        const userWithEmail = await User.scope('full').findOne({
           where: {
             email: req.body.email.toLowerCase().trim(),
             banned: {
@@ -566,7 +574,7 @@ function userRoutes(app: Application) {
     let success = false
     try {
       if (req.body?.token && req.jwtData?.mfaStep == 1 && req.jwtData?.email) {
-        const userWithEmail = await User.findOne({
+        const userWithEmail = await User.scope('full').findOne({
           where: {
             email: req.jwtData?.email,
             banned: {
@@ -954,6 +962,23 @@ function userRoutes(app: Application) {
       res.sendStatus(401)
     } else {
       const user = (await userPromise) as User
+      const mutedQuotes = (
+        await Follows.findAll({
+          where: {
+            followerId: userId,
+            muteQuotes: true
+          }
+        })
+      ).map((elem) => elem.followedId)
+
+      const mutedRewoots = (
+        await Follows.findAll({
+          where: {
+            followerId: userId,
+            muteRewoots: true
+          }
+        })
+      ).map((elem) => elem.followedId)
       res.send({
         myFollowers: await myFollowers,
         followedUsers: await followedUsers,
@@ -964,7 +989,9 @@ function userRoutes(app: Application) {
         emojis: await localEmojis,
         mutedUsers: await mutedUsers,
         followedHashtags: await followedHashtags,
-        enableBluesky: user.enableBsky
+        enableBluesky: user.enableBsky,
+        mutedRewoots,
+        mutedQuotes
       })
     }
   })
@@ -982,7 +1009,7 @@ function userRoutes(app: Application) {
 
     let user: User | null = null
     try {
-      user = await User.findByPk(userId)
+      user = await User.scope('full').findByPk(userId)
     } catch (error) {
       logger.error({
         message: `Error finding current user`,
@@ -1246,7 +1273,7 @@ function userRoutes(app: Application) {
       return res.sendStatus(429)
     }
     const url = req.params?.url as string
-    const userRecivingAsk = await User.findOne({
+    const userRecivingAsk = await User.scope('full').findOne({
       where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), url.toLowerCase())
     })
     if (!userRecivingAsk) {
@@ -1360,45 +1387,66 @@ function userRoutes(app: Application) {
 
   app.post('/api/user/selfDeactivate', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     // frontend will warn user. User will recive email.
-    let success = false
     const userId = req.jwtData?.userId as string
-    const user = (await User.findByPk(userId)) as User
+    const user = (await User.scope('full').findByPk(userId)) as User
     const password = req.body.password
-    if (req.body.password && (await bcrypt.compare(req.body.password, user.password))) {
-      user.selfDeleted = true
-      user.activated = false
-      user.updatedAt = new Date()
-      user.banned = true
-      await user.save()
-      await sendActivationEmail(
-        user.email as string,
-        '',
-        `We have marked your ${completeEnvironment.instanceUrl} for deletion`,
-        `
-            <h1>We are sad to see you go</h1>
-            <p>
-             We have recived your request to delete your account. It will still ve visible for a few moments. In 30 days or less we will complete the destruction process and at that point there will be no going back</p>
-             <p>This is a slow process on our side and thats why its not done imediately</p>
-             <p>We will send to every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW". This task takes time and slows down the server. We run this task weekly more or less. But just in case, "30 days"</p>.
-            `
-      )
+    if (!password) {
+      return res.status(400).send({
+        success: false,
+        message: '"password" is required in body'
+      })
+    }
+    const passwordMatches = await bcrypt.compare(password, user.password)
+    if (!passwordMatches) {
+      return res.status(400).send({
+        success: false
+        // TODO: should we send a message to the user here or not?
+      })
     }
 
-    res.send({
-      success: success
-    })
+    user.selfDeleted = true
+    user.activated = false
+    user.updatedAt = new Date()
+    user.banned = true
+    await user.save()
+    await sendActivationEmail(
+      user.email as string,
+      '',
+      `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
+      `
+        <h1>We are sad to see you go</h1>
+        <p>
+          We have recived your request to delete your account. 
+          It will still ve visible for a few moments. 
+          In 24 hours or less we will complete the destruction process and at that point there will be no going back
+        </p>
+        <p>
+          This is a slow process on our side and thats why its not done imediately.
+        </p>
+        <p>
+          The deletion task is run every day at night (02:00 UTC). 
+          It is slow because we have to send every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW" message. 
+          And we send those one by one so this task takes time and slows down the server. 
+        </p>
+        <p>
+          If within 2 days your account is not deleted, please contact your server admin.
+        </p>
+      `
+    )
+
+    res.send({ success: true })
   })
 
   // TODO still not finished
   app.post('/api/user/migrateOut', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     let success = false
     const newUserRemoteId: string = req.body.target
-    const localUser = await User.findByPk(req.jwtData?.userId)
+    const localUser = await User.scope('full').findByPk(req.jwtData?.userId)
     let message = `User not yet found`
     if (newUserRemoteId && localUser) {
       message = `User found but new account doesnt seems to have an alias pointing towards you`
       try {
-        const localUser = (await User.findByPk(req.jwtData?.userId)) as User
+        const localUser = (await User.scope('full').findByPk(req.jwtData?.userId)) as User
         const petitionData = await getPetitionSigned(localUser, newUserRemoteId)
         if (petitionData && petitionData.alsoKnownAs) {
           const aliasList = isArray(petitionData.alsoKnownAs)
@@ -1495,8 +1543,9 @@ async function updateBlueskyProfile(agent: BskyAgent, user: User) {
       if (user.avatar) {
         let pngAvatar = await optimizeMedia('uploads' + user.avatar, {
           forceImageExtension: 'png',
-          maxSize: 256,
-          keep: true
+          maxSize: 512,
+          keep: true,
+          disableAnimation: true
         })
         const userAvatarFile = Buffer.from(await fs.readFile(pngAvatar))
         const avatarUpload = await agent.uploadBlob(userAvatarFile, { encoding: 'image/png' })

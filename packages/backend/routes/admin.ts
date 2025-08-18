@@ -152,7 +152,7 @@ export default function adminRoutes(app: Application) {
     // TODO make this in a better way. You, unsuspecting person, do this properly!
     const reportsWithoutPost = res.filter((elem) => !elem.post)
     const usersToFillIds = reportsWithoutPost.map((elem) => elem.reportedUserId).filter((elem) => !!elem)
-    const usersToFill = await User.findAll({
+    const usersToFill = await User.scope('full').findAll({
       attributes: ['url', 'avatar', 'id'],
       where: {
         id: {
@@ -196,7 +196,7 @@ export default function adminRoutes(app: Application) {
   })
 
   app.post('/api/admin/banUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
-    const userToBeBanned = await User.findByPk(req.body.id)
+    const userToBeBanned = await User.scope('full').findByPk(req.body.id)
     if (userToBeBanned && userToBeBanned.role != 10) {
       userToBeBanned.banned = true
       await userToBeBanned.save()
@@ -245,7 +245,7 @@ export default function adminRoutes(app: Application) {
   })
 
   async function getBannedUsers() {
-    return await User.findAll({
+    return await User.scope('full').findAll({
       where: {
         banned: true
       },
@@ -290,7 +290,7 @@ export default function adminRoutes(app: Application) {
       if (!completeEnvironment.disableRequireSendEmail) {
         whereConditions.emailVerified = true
       }
-      const notActiveUsers = await User.findAll({
+      const notActiveUsers = await User.scope('full').findAll({
         where: whereConditions,
         attributes: ['id', 'url', 'avatar', 'description', 'email', 'registerIp']
       })
@@ -300,7 +300,7 @@ export default function adminRoutes(app: Application) {
 
   app.post('/api/admin/activateUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     if (req.body.id) {
-      const userToActivate = await User.findByPk(req.body.id)
+      const userToActivate = await User.scope('full').findByPk(req.body.id)
       if (userToActivate && userToActivate.email) {
         userToActivate.activated = true
         const emailPromise = sendActivationEmail(
@@ -317,7 +317,7 @@ export default function adminRoutes(app: Application) {
 
   app.post('/api/admin/userUsedVPN', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     if (req.body.id) {
-      const userToDelete = await User.findByPk(req.body.id)
+      const userToDelete = await User.scope('full').findByPk(req.body.id)
       if (userToDelete && userToDelete.email) {
         const emailPromise = sendActivationEmail(
           userToDelete.email,
@@ -345,7 +345,7 @@ export default function adminRoutes(app: Application) {
     adminToken,
     async (req: AuthorizedRequest, res: Response) => {
       if (req.body.id) {
-        const userToActivate = await User.findByPk(req.body.id)
+        const userToActivate = await User.scope('full').findByPk(req.body.id)
         if (userToActivate && userToActivate.email) {
           userToActivate.activated = null // little hack, not adding another thing to the db. we set it to null and remove notification
           userToActivate.banned = null

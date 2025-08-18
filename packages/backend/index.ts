@@ -49,6 +49,8 @@ import expressWs from 'express-ws'
 import websocketRoutes from './routes/websocket.js'
 import followHashtagRoutes from './routes/followHashtags.js'
 import { completeEnvironment } from './utils/backendOptions.js'
+import cron from 'node-cron'
+import { nukeBannedUsers } from './utils/maintenanceTasks/nukeBannedUsers.js'
 
 function errorHandler(err: Error, req: Request, res: Response, next: Function) {
   console.error(err.stack)
@@ -82,7 +84,7 @@ app.get('/api/', (req, res) =>
     status: true,
     swagger: 'API docs at /apidocs',
     readme:
-      'welcome to the wafrn api, you better check https://codeberg.org/wafrn/wafrn-backend and https://codeberg.org/wafrn/wafrn to figure out where to poke :D. Also, check api/apidocs'
+      'welcome to the wafrn api, you better check https://codeberg.org/wafrn/wafrn to figure out where to poke :D. Also, check api/apidocs'
   })
 )
 
@@ -160,4 +162,11 @@ server.listen(PORT, completeEnvironment.listenIp, () => {
       await worker.pause()
     })
   }
+})
+
+// CRON TASKS
+cron.schedule('0 2 * * *', () => {
+  nukeBannedUsers().then(() => {
+    logger.info(`NukeBannedUsers Done`)
+  })
 })

@@ -46,6 +46,7 @@ export default function searchRoutes(app: Application) {
     let users: Promise<User[]> | User[] = []
     if (forceSearchUser != '') {
       const forceSearchUserObject = await User.findOne({
+        attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
         where: {
           url: {
             [Op.iLike]: forceSearchUser
@@ -107,7 +108,7 @@ export default function searchRoutes(app: Application) {
         }
       }
     } else {
-      users = searchUsers(searchTerm, posterId, page)
+      users = await searchUsers(searchTerm, posterId, page)
       postsIds = searchPosts(searchTerm, posterId, page, {
         userId: forceSearchUserId
       })
@@ -145,7 +146,7 @@ export default function searchRoutes(app: Application) {
     let remoteMatch: Promise<User | null> | null = null
     let firstMatch = !page
       ? User.findOne({
-          attributes: ['url', 'avatar', 'id', 'remoteId'],
+          attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
           where: {
             activated: true,
             banned: {
@@ -177,7 +178,7 @@ export default function searchRoutes(app: Application) {
     })
     let localUsers =
       localUsersCount >= page * completeEnvironment.postsPerPage
-        ? User.findAll({
+        ? await User.findAll({
             where: {
               activated: true,
               banned: {
@@ -190,7 +191,7 @@ export default function searchRoutes(app: Application) {
                 [Op.iLike]: `%${searchTerm}%`
               }
             },
-            attributes: ['url', 'avatar', 'id', 'remoteId'],
+            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
             order: [['createdAt', 'DESC']],
             limit: completeEnvironment.postsPerPage,
             offset: page * completeEnvironment.postsPerPage
@@ -222,14 +223,14 @@ export default function searchRoutes(app: Application) {
                 }
               ]
             },
-            attributes: ['url', 'avatar', 'id', 'remoteId', 'federatedHostId'],
+            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
             order: [['createdAt', 'DESC']],
             limit: completeEnvironment.postsPerPage,
             offset: remoteUsersPage * completeEnvironment.postsPerPage
           })
         : []
 
-    await Promise.all([firstMatch, localUsers, remoteUsers, remoteMatch])
+    const tmp = await Promise.all([firstMatch, localUsers, remoteUsers, remoteMatch])
     if (await remoteMatch) {
       firstMatch = remoteMatch
     }

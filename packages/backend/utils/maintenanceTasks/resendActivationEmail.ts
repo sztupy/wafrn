@@ -4,7 +4,20 @@ import { wait } from '../wait.js'
 import { completeEnvironment } from '../backendOptions.js'
 import sendActivationEmail from '../sendActivationEmail.js'
 
-const usersNotVerified = await User.findAll({
+// lets delete old users that are not activated
+
+await User.destroy({
+  where: {
+    activated: false,
+    emailVerified: false,
+    email: { [Op.ne]: null },
+    createdAt: {
+      [Op.lt]: new Date(new Date().setMonth(new Date().getMonth() - 2))
+    }
+  }
+})
+
+const usersNotVerified = await User.scope('full').findAll({
   where: {
     activated: false,
     emailVerified: false,
@@ -16,7 +29,7 @@ const usersNotVerified = await User.findAll({
 })
 
 console.log(`Not verified users: ${usersNotVerified.length}`)
-await wait(500)
+await wait(1500)
 for await (const user of usersNotVerified.filter((elem) => !!elem)) {
   console.log(`Sending email to user ${user.url} with email ${user.email}`)
   const mailHeader = `Helo ${user.url}, your email is still not verified!`

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2025-08-13
+
+We moved to codebergggggg baby.
+Also we updated the docker compose. So you need to copy it over docker-compose.yml
+
 ## 2025-06-19
 
 Update your docker compose file

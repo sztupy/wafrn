@@ -252,7 +252,8 @@ export class LoginService {
       notifyRewoots: 'wafrn.notifyRewoots',
       disableSounds: 'wafrn.disableSounds',
       replaceAIWithCocaine: 'wafrn.replaceAIWithCocaine',
-      replaceAIWord: 'wafrn.replaceAIWord'
+      replaceAIWord: 'wafrn.replaceAIWord',
+      hideQuotes: 'wafrn.hideQuotes'
     }
 
     try {
@@ -313,6 +314,9 @@ export class LoginService {
         this.http.post(`${EnvironmentService.environment.baseUrl}/editOptions`, { options: options })
       )
       if (petition.success) {
+        for await (const option of options) {
+          localStorage.setItem(option.name.split('wafrn.')[1], option.value)
+        }
         success = true
         await this.postsService.loadFollowers()
       }

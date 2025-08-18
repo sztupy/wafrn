@@ -75,7 +75,7 @@ async function getAtprotoUser(
   let userFound =
     handle == 'handle.invalid'
       ? undefined
-      : await User.findOne({
+      : await User.scope('full').findOne({
           where: {
             [Op.or]: [
               {
@@ -87,7 +87,7 @@ async function getAtprotoUser(
         })
   // sometimes we can get the dids and if its a local user we just return it and thats it
   if (userFound && userFound.email) {
-    return userFound
+    return (await User.findByPk(userFound.id)) as User
   }
   if (userFound) {
     avatarString = userFound.avatar
@@ -152,8 +152,6 @@ async function getAtprotoUser(
       try {
         userFound = await User.create(newData)
       } catch (error) {
-        // not the best solution but yeah that should work
-        await wait(1500)
         userFound = await internalGetDBUser(newData.bskyDid, newData.url)
       }
     }

@@ -6,9 +6,9 @@ import { User } from '../../models/index.js'
 import { removeUser } from './removeUser.js'
 import { Op } from 'sequelize'
 
-async function getPetitionSigned(user: any, target: string): Promise<any> {
+async function getPetitionSigned(userInput: User, target: string): Promise<any> {
   let res = undefined
-
+  const user = (await User.scope('full').findByPk(userInput.id)) as User
   try {
     const url = new URL(target)
     const privKey = user.privateKey
@@ -29,7 +29,7 @@ async function getPetitionSigned(user: any, target: string): Promise<any> {
     const signer = createSign('sha256')
     signer.update(stringToSign)
     signer.end()
-    const signature = signer.sign(user.privateKey).toString('base64')
+    const signature = signer.sign(user.privateKey as string).toString('base64')
     const header = `keyId="${
       completeEnvironment.frontendUrl
     }/fediverse/blog/${user.url.toLocaleLowerCase()}#main-key",algorithm="rsa-sha256",headers="(request-target) host date accept",signature="${signature}"`

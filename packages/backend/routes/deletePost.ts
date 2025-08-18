@@ -44,7 +44,7 @@ export default function deletePost(app: Application) {
     try {
       const id = req.query.id as string
       const posterId = req.jwtData?.userId
-      const user = await User.findByPk(posterId)
+      const user = await User.scope('full').findByPk(posterId)
       if (id && user) {
         let postToDelete = await Post.findOne({
           where: {
@@ -187,7 +187,7 @@ export default function deletePost(app: Application) {
     try {
       const id = req.query.id as string
       const posterId = req.jwtData?.userId
-      const user = await User.findByPk(posterId)
+      const user = await User.scope('full').findByPk(posterId)
       if (id && user) {
         let postsToDeleteUnfiltered = await Post.findAll({
           where: {

@@ -8,7 +8,7 @@ async function getAllLocalUserIds(): Promise<string[]> {
   if (cacheResult) {
     res = JSON.parse(cacheResult)
   } else {
-    const localUsers = await User.findAll({
+    const localUsers = await User.scope('full').findAll({
       attributes: ['id'],
       where: {
         email: {

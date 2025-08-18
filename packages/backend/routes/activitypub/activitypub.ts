@@ -14,7 +14,7 @@ import { completeEnvironment } from '../../utils/backendOptions.js'
 
 // we get the user from the memory cache. if does not exist we try to find it
 async function getLocalUserByUrl(url: string): Promise<any> {
-  return await User.findOne({
+  return await User.scope('full').findOne({
     where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), url.toLowerCase())
   })
 }
