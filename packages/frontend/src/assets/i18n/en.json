@@ -235,12 +235,13 @@
     "askFormLabel": "Question",
     "askButtonText": "Ask"
   },
-  "keyboard-shortcuts-dialog-content": {
+  "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",
     "scrollDown": "Scroll down",
     "scrollUp": "Scroll up",
     "openEditor": "Open editor",
-    "viewKeyboardShortcuts": "View keyboard shortcuts"
+    "viewKeyboardShortcuts": "View keyboard shortcuts",
+    "unbound": "unbound"
   },
   "post-fragment": {
     "replyingTo": "replying to: "

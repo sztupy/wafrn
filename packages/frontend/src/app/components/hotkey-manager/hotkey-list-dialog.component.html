@@ -1,19 +1,29 @@
-<h1 class="shortcut-list-title">{{ 'keyboard-shortcuts-dialog-content.keyboardShortcuts' | translate }}</h1>
+<h1 class="shortcut-list-title">{{ 'keyboard-shortcuts.keyboardShortcuts' | translate }}</h1>
 <dl class="shortcut-list">
-  <div>
-    <dt>{{ 'keyboard-shortcuts-dialog-content.scrollDown' | translate }}</dt>
-    <dd><kbd>j</kbd></dd>
-  </div>
-  <div>
-    <dt>{{ 'keyboard-shortcuts-dialog-content.scrollUp' | translate }}</dt>
-    <dd><kbd>k</kbd></dd>
-  </div>
-  <div>
-    <dt>{{ 'keyboard-shortcuts-dialog-content.openEditor' | translate }}</dt>
-    <dd><kbd>e</kbd></dd>
-  </div>
-  <div>
-    <dt>{{ 'keyboard-shortcuts-dialog-content.viewKeyboardShortcuts' | translate }}</dt>
-    <dd><kbd>?</kbd></dd>
-  </div>
+  @for (shortcut of defaultKeybinds | keyvalue: null; track $index) {
+    <div>
+      <dt>{{ 'keyboard-shortcuts.' + shortcut.key | translate }}</dt>
+      <dd>
+        <kbd>
+          <button
+            (click)="setKeybind(shortcut.key)"
+            class="set-keybind"
+            [class.changing]="changingKey === shortcut.key"
+            [class.overlapping]="isOverlapping(mapping[shortcut.key])"
+            mat-flat-button
+          >
+            {{ getKeybind(shortcut.key) }}
+          </button>
+        </kbd>
+        <button
+          (click)="resetKeybind(shortcut.key)"
+          class="mat-circle-button reset-keybind"
+          mat-button
+          [disabled]="shortcut.value === mapping[shortcut.key]"
+        >
+          <fa-icon [icon]="undoIcon" />
+        </button>
+      </dd>
+    </div>
+  }
 </dl>

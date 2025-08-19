@@ -25,14 +25,31 @@
   }
 }
 
+.set-keybind {
+  --mat-button-filled-container-height: 2rem;
+  --mat-button-filled-horizontal-padding: 0.5rem;
+
+  display: inline-block;
+  border-radius: 0.5rem;
+  margin-inline-start: 0;
+
+  &.changing {
+    --mat-button-filled-container-color: var(--mat-sys-outline);
+  }
+
+  &.overlapping {
+    --mat-button-filled-container-color: var(--mat-sys-error);
+  }
+}
+
+.reset-keybind {
+  --mat-button-text-container-height: 2rem;
+}
+
 dl {
   margin: 0;
 }
 
 dd {
-  display: inline-block;
-  background-color: var(--mat-sys-surface-dim);
-  border-radius: 0.25rem;
-  padding: 0.1em 0.25em;
   margin-inline-start: 0;
 }
