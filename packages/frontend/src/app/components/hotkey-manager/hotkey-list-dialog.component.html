@@ -27,3 +27,8 @@
     </div>
   }
 </dl>
+
+<h2 class="shortcut-section-title">{{ 'keyboard-shortcuts.additionalOptions' | translate }}</h2>
+<mat-checkbox [checked]="smoothScroll()" (click)="toggleSignal(smoothScroll)">{{
+  'keyboard-shortcuts.smoothScroll' | translate
+}}</mat-checkbox>

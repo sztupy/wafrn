@@ -1,6 +1,7 @@
 import { KeyValuePipe } from '@angular/common'
 import { Component, inject, signal, WritableSignal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
@@ -27,6 +28,7 @@ const defaultKeybinds: HotkeyConfig = {
 }
 
 let hotkeysEnabled = true
+let smoothScroll = signal(true)
 
 @Component({
   selector: 'app-hotkey-manager',
@@ -72,6 +74,9 @@ export class HotkeyManagerComponent {
     this.userMapping = joinedMapping
     this.shortcutList = signal(this.mapHotkeys(this.userMapping))
 
+    const cachedSmoothScroll = (localStorage.getItem('hotkeySmoothScroll') ?? 'true') === 'true'
+    smoothScroll.set(cachedSmoothScroll)
+
     this.keyboardService.keydownEvents.pipe(filter(() => hotkeysEnabled)).subscribe((key) => {
       this.keyboardService.handleKeydown(key, this.shortcutList())
     })
@@ -80,8 +85,10 @@ export class HotkeyManagerComponent {
   saveHotkeys() {
     // Setting localStorage here because of cache issues in login service
     localStorage.setItem('customHotKeyMapping', JSON.stringify(this.userMapping))
+    localStorage.setItem('hotkeySmoothScroll', smoothScroll().toString())
     this.loginService.updateUserOptions([
-      { name: 'wafrn.customHotKeyMapping', value: JSON.stringify(this.userMapping) }
+      { name: 'wafrn.customHotKeyMapping', value: JSON.stringify(this.userMapping) },
+      { name: 'wafrn.hotkeySmoothScroll', value: smoothScroll().toString() }
     ])
   }
 
@@ -130,6 +137,12 @@ export class HotkeyManagerComponent {
   }
 
   scroll(amount: number, key: string | undefined) {
+    // For motion sickness
+    if (!smoothScroll()) {
+      this.performScroll(amount)
+      return
+    }
+
     if (this.continueScrolling) return
     this.continueScrolling = true
 
@@ -208,7 +221,7 @@ interface DialogData {
 
 @Component({
   selector: 'app-hotkey-list-dialog',
-  imports: [MatButtonModule, FontAwesomeModule, TranslateModule, KeyValuePipe],
+  imports: [MatButtonModule, FontAwesomeModule, TranslateModule, KeyValuePipe, MatCheckboxModule],
   templateUrl: './hotkey-list-dialog.component.html',
   styleUrl: './hotkey-manager.component.scss'
 })
@@ -219,6 +232,7 @@ export class HotkeyListComponent {
 
   changingKey: string | null = null
   cancelSetKeybind = new Subject()
+  smoothScroll = smoothScroll
 
   undoIcon = faRotateLeft
 
@@ -274,5 +288,9 @@ export class HotkeyListComponent {
   resetKeybind(id: string) {
     this.mapping[id] = defaultKeybinds[id]
     this.cancelSetKeybind.next('')
+  }
+
+  toggleSignal(signal: WritableSignal<boolean>) {
+    signal.update((v) => !v)
   }
 }

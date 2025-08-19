@@ -243,7 +243,9 @@
     "scrollUpPage": "Scroll a page up",
     "openEditor": "Open editor",
     "viewKeyboardShortcuts": "View keyboard shortcuts",
-    "unbound": "unbound"
+    "unbound": "unbound",
+    "additionalOptions": "Additional Options",
+    "smoothScroll": "Smooth scroll"
   },
   "post-fragment": {
     "replyingTo": "replying to: "

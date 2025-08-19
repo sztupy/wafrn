@@ -17,6 +17,10 @@
   border-bottom: 3px solid var(--mat-sys-outline-variant);
 }
 
+.shortcut-section-title {
+  margin-top: 0.5rem;
+}
+
 .shortcut-list {
   & > div {
     display: flex;
