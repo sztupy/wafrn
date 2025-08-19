@@ -16,6 +16,7 @@ import { wait } from '../../utils/wait.js'
 import { UpdatedAt } from 'sequelize-typescript'
 import { completeEnvironment } from '../../utils/backendOptions.js'
 import { include } from 'underscore'
+import { MediaAttributes } from '../../models/media.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -238,7 +239,7 @@ async function processSinglePost(
       createdAt: new Date((post.record as any).createdAt),
       privacy: Privacy.Public,
       parentId: parentId,
-      content_warning: getPostLabels(post),
+      content_warning: getPostLabels(post).join(', '),
       ...getPostInteractionLevels(post, parentId)
     }
     if (!parentId) {
@@ -365,7 +366,8 @@ async function processSinglePost(
 }
 
 function getPostMedias(post: PostView) {
-  let res: any = []
+  let res: MediaAttributes[] = []
+  const labels = getPostLabels(post)
   const embed = (post.record as any).embed
   if (embed) {
     if (embed.external) {
@@ -432,7 +434,12 @@ function getPostMedias(post: PostView) {
       ])
     }
   }
-  return res
+  return res.map((m) => {
+    return {
+      ...m,
+      NSFW: labels.length > 0
+    }
+  })
 }
 
 function getQuotedPostUri(post: PostView): string | undefined {
@@ -449,12 +456,19 @@ function getQuotedPostUri(post: PostView): string | undefined {
 }
 
 // TODO improve this so we get better nsfw messages lol
-function getPostLabels(post: PostView): string {
-  let res = ''
-  if (post.labels && post.labels.length > 0) {
-    res = 'Post is labeled as NSFW:'
+function getPostLabels(post: PostView) {
+  let labels = new Set<string>()
+  if (post.labels) {
+    for (const label of post.labels) {
+      if (label.neg && labels.has(label.val)) {
+        labels.delete(label.val)
+      } else {
+        labels.add(label.val)
+      }
+    }
   }
-  return res
+  return Array.from(labels)
+  // return `Post is labeled as: ${Array.from(labels).join(', ')}`
 }
 
 async function getPostThreadSafe(options: any) {
