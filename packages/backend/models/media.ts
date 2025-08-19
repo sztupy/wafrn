@@ -24,7 +24,13 @@ export interface MediaAttributes {
 @Table({
   tableName: 'medias',
   modelName: 'medias',
-  timestamps: true
+  timestamps: true,
+  defaultScope: {
+    attributes: {
+      // this one did not require a security disclosure
+      exclude: ['ipUpload']
+    }
+  }
 })
 export class Media extends Model<MediaAttributes, MediaAttributes> implements MediaAttributes {
   @Column({
