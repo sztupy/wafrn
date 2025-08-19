@@ -15,11 +15,13 @@ import { LoginService } from 'src/app/services/login.service'
 type HotkeyConfig = Record<string, string | undefined>
 type ShortcutFunctionMap = Record<string, Function>
 
-type ScrollDirection = 'up' | 'down' | null
+type ScrollInput = 'up' | 'down' | 'upPage' | 'downPage' | null
 
 const defaultKeybinds: HotkeyConfig = {
   scrollDown: 'j',
   scrollUp: 'k',
+  scrollDownPage: 'd',
+  scrollUpPage: 'u',
   openEditor: 'e',
   viewKeyboardShortcuts: '?'
 }
@@ -33,20 +35,23 @@ let hotkeysEnabled = true
   styleUrl: './hotkey-manager.component.scss'
 })
 export class HotkeyManagerComponent {
-  scrollSize = 100 // Pixels
+  scrollSize = 100 // Pixels per scroll
+  scrollPageSize = 300 // Pixels per page scroll
   scrollRate = 120 // Milliseconds per pixel scroll and minimum scroll
 
   keyboardIcon = faKeyboard
 
   currentlyScrolling = false
   continueScrolling = false
-  lockedScrollingDirection: ScrollDirection = null
-  scrollDirection: ScrollDirection = null
+  lockedScrollingDirection: ScrollInput = null
+  scrollDirection: ScrollInput = null
 
   // Loaded and mapped from user profile
   shortcutListLookup: ShortcutFunctionMap = {
     scrollDown: () => this.scrollDown(),
     scrollUp: () => this.scrollUp(),
+    scrollDownPage: () => this.scrollDownPage(),
+    scrollUpPage: () => this.scrollUpPage(),
     openEditor: () => this.openEditor(),
     viewKeyboardShortcuts: () => this.openHotkeyListDialog(),
     no_op: () => {}
@@ -62,8 +67,9 @@ export class HotkeyManagerComponent {
     private loginService: LoginService
   ) {
     const cachedMap = localStorage.getItem('customHotKeyMapping')
-    const customMapping = cachedMap !== null ? JSON.parse(cachedMap) : null
-    this.userMapping = customMapping ?? defaultKeybinds
+    const customMapping = cachedMap !== null ? JSON.parse(cachedMap) : {}
+    const joinedMapping = Object.assign(customMapping, defaultKeybinds)
+    this.userMapping = joinedMapping
     this.shortcutList = signal(this.mapHotkeys(this.userMapping))
 
     this.keyboardService.keydownEvents.pipe(filter(() => hotkeysEnabled)).subscribe((key) => {
@@ -113,11 +119,23 @@ export class HotkeyManagerComponent {
     this.scroll(-this.scrollSize, this.userMapping['scrollUp'])
   }
 
+  scrollDownPage() {
+    this.scrollDirection = 'downPage'
+    this.scroll(this.scrollPageSize, this.userMapping['scrollDownPage'])
+  }
+
+  scrollUpPage() {
+    this.scrollDirection = 'upPage'
+    this.scroll(-this.scrollPageSize, this.userMapping['scrollUpPage'])
+  }
+
   scroll(amount: number, key: string | undefined) {
     if (this.continueScrolling) return
     this.continueScrolling = true
 
-    const otherKey = [this.userMapping['scrollUp'], this.userMapping['scrollDown']].filter((k) => k !== key)
+    const otherKey = ['scrollUp', 'scrollDown', 'scrollUpPage', 'scrollDownPage']
+      .map((key) => this.userMapping[key])
+      .filter((k) => k !== key)
 
     const cancelScroll = () => {
       this.continueScrolling = false
