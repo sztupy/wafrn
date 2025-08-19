@@ -36,7 +36,7 @@ First, point the domain to your Debian VPS. Once that is done, we download the i
 The installer will ask a few questions, then install docker and set up the application. It will be installed for the current logged in user.
 
 ```bash
-wget https://raw.githubusercontent.com/gabboman/wafrn/main/install/installer.sh
+wget https://codeberg.org/wafrn/wafrn/raw/branch/main/install/installer.sh
 bash installer.sh
 ```
 
