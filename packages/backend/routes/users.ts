@@ -1631,7 +1631,7 @@ async function createBskyAccount({
     ? completeEnvironment.bskyPdsUrl.replace('https://', '').replace('http://', '')
     : completeEnvironment.bskyPdsUrl
 
-  const sanitizedUrl = user.url.replaceAll('_', '-').replaceAll('.', '-')
+  const sanitizedUrl = user.url.replaceAll('_', '-').replaceAll('.', '-').substring(0, 17)
 
   // this try-catch block does not catch very much, it is only used to add the error to the logger.
   try {
