@@ -231,6 +231,11 @@ async function processSinglePost(
       postText = text
     }
     postText = postText.replaceAll('\n', '<br>')
+
+    const labels = getPostLabels(post)
+    const cw = labels.length > 0
+      ? `Post is labeled as: ${labels.join(', ')}`
+      : undefined
     const newData = {
       userId: postCreator.id,
       bskyCid: post.cid,
@@ -239,7 +244,7 @@ async function processSinglePost(
       createdAt: new Date((post.record as any).createdAt),
       privacy: Privacy.Public,
       parentId: parentId,
-      content_warning: getPostLabels(post).join(', '),
+      content_warning: cw,
       ...getPostInteractionLevels(post, parentId)
     }
     if (!parentId) {
@@ -468,7 +473,6 @@ function getPostLabels(post: PostView) {
     }
   }
   return Array.from(labels)
-  // return `Post is labeled as: ${Array.from(labels).join(', ')}`
 }
 
 async function getPostThreadSafe(options: any) {
