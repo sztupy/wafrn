@@ -31,7 +31,7 @@ async function sendMail() {
     const subject = `Wafrn: Potential security issue, now mitigated`
     const body = `
 
-    <h1>A potential security issue with Wafrn was discovered on August 18th 2025.</h1>
+    <h1>A potential security issue with Wafrn was discovered on the night of August 18th 2025.</h1>
     <p>We do not believe that this was utilized by bad actors, but for transparency, we are emailing all Wafrn users.</p>
     <p>The short version is this:</p>
     <p>We discovered that an API endpoint had insufficient access control, which may have lead to sensitive user information, such as emails and hashed passwords, leaking. The issue has been mitigated in a Wafrn update, and is no longer present on the main instance nor other instances. We don't have sufficient evidence to determine if this was used by bad actors, but we believe it to be unlikely.</p>
