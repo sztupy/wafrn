@@ -15,6 +15,8 @@ import { LoginService } from 'src/app/services/login.service'
 type HotkeyConfig = Record<string, string | undefined>
 type ShortcutFunctionMap = Record<string, Function>
 
+type ScrollDirection = 'up' | 'down' | null
+
 const defaultKeybinds: HotkeyConfig = {
   scrollDown: 'j',
   scrollUp: 'k',
@@ -31,9 +33,15 @@ let hotkeysEnabled = true
   styleUrl: './hotkey-manager.component.scss'
 })
 export class HotkeyManagerComponent {
-  scrollSize = 100
+  scrollSize = 100 // Pixels
+  scrollRate = 120 // Milliseconds per pixel scroll and minimum scroll
 
   keyboardIcon = faKeyboard
+
+  currentlyScrolling = false
+  continueScrolling = false
+  lockedScrollingDirection: ScrollDirection = null
+  scrollDirection: ScrollDirection = null
 
   // Loaded and mapped from user profile
   shortcutListLookup: ShortcutFunctionMap = {
@@ -56,7 +64,6 @@ export class HotkeyManagerComponent {
     const cachedMap = localStorage.getItem('customHotKeyMapping')
     const customMapping = cachedMap !== null ? JSON.parse(cachedMap) : null
     this.userMapping = customMapping ?? defaultKeybinds
-    console.log(this.userMapping)
     this.shortcutList = signal(this.mapHotkeys(this.userMapping))
 
     this.keyboardService.keydownEvents.pipe(filter(() => hotkeysEnabled)).subscribe((key) => {
@@ -97,11 +104,73 @@ export class HotkeyManagerComponent {
   }
 
   scrollDown() {
-    this.performScroll(this.scrollSize)
+    this.scrollDirection = 'down'
+    this.scroll(this.scrollSize, this.userMapping['scrollDown'])
   }
 
   scrollUp() {
-    this.performScroll(-this.scrollSize)
+    this.scrollDirection = 'up'
+    this.scroll(-this.scrollSize, this.userMapping['scrollUp'])
+  }
+
+  scroll(amount: number, key: string | undefined) {
+    if (this.continueScrolling) return
+    this.continueScrolling = true
+
+    const otherKey = [this.userMapping['scrollUp'], this.userMapping['scrollDown']].filter((k) => k !== key)
+
+    const cancelScroll = () => {
+      this.continueScrolling = false
+      terminate.next('')
+    }
+
+    const terminate = new Subject()
+
+    // Cancel on started key unpress
+    fromEvent(document, 'keyup')
+      .pipe(
+        takeUntil(terminate),
+        filter((e) => (<KeyboardEvent>e).key === key)
+      )
+      .subscribe(cancelScroll)
+    // Cancel on other scroll key pressed
+    fromEvent(document, 'keydown')
+      .pipe(
+        takeUntil(terminate),
+        filter((e) => otherKey.includes((<KeyboardEvent>e).key))
+      )
+      .subscribe(cancelScroll)
+
+    // Smooth scroll animation function
+    let totalElapsed = 0
+    let previousTimestamp: DOMHighResTimeStamp | null = null
+    let currentDirection = this.scrollDirection
+    const animate = (timestamp: DOMHighResTimeStamp) => {
+      if (previousTimestamp === null) {
+        previousTimestamp = timestamp
+      }
+      const elapsed = timestamp - previousTimestamp
+      totalElapsed += elapsed
+      previousTimestamp = timestamp
+      const delta = amount * (elapsed / this.scrollRate)
+
+      const incorrectDirection = currentDirection !== this.scrollDirection
+      const cancelScrolling = totalElapsed > this.scrollRate && !this.continueScrolling
+      if (incorrectDirection || cancelScrolling) {
+        this.currentlyScrolling = false
+        return
+      }
+
+      this.currentlyScrolling = true
+      this.performScroll(delta)
+
+      requestAnimationFrame(animate)
+    }
+
+    // Prevent multiple of the same scroll
+    if (this.currentlyScrolling && this.lockedScrollingDirection === currentDirection) return
+    requestAnimationFrame(animate)
+    this.lockedScrollingDirection = currentDirection
   }
 
   performScroll(amount: number) {
