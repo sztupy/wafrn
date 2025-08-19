@@ -10,6 +10,7 @@ import { filter, fromEvent, Subject, takeUntil } from 'rxjs'
 import { EditorService } from 'src/app/services/editor.service'
 import { CallbackDictionary, GlobalKeydownService } from 'src/app/services/global-keydown.service'
 import { JwtService } from 'src/app/services/jwt.service'
+import { LoginService } from 'src/app/services/login.service'
 
 type HotkeyConfig = Record<string, string | undefined>
 type ShortcutFunctionMap = Record<string, Function>
@@ -20,15 +21,6 @@ const defaultKeybinds: HotkeyConfig = {
   openEditor: 'e',
   viewKeyboardShortcuts: '?'
 }
-
-// const example_mapping: HotkeyConfig = {
-//   scrollDown: 'a',
-//   scrollUp: 'b'
-//   // openEditor: 'c',
-//   // viewKeyboardShortcuts: 'd'
-// }
-
-const example_mapping: HotkeyConfig = defaultKeybinds
 
 let hotkeysEnabled = true
 
@@ -58,9 +50,13 @@ export class HotkeyManagerComponent {
     private keyboardService: GlobalKeydownService,
     private editorService: EditorService,
     private jwtService: JwtService,
-    private dialogService: MatDialog
+    private dialogService: MatDialog,
+    private loginService: LoginService
   ) {
-    this.userMapping = example_mapping
+    const cachedMap = localStorage.getItem('customHotKeyMapping')
+    const customMapping = cachedMap !== null ? JSON.parse(cachedMap) : null
+    this.userMapping = customMapping ?? defaultKeybinds
+    console.log(this.userMapping)
     this.shortcutList = signal(this.mapHotkeys(this.userMapping))
 
     this.keyboardService.keydownEvents.pipe(filter(() => hotkeysEnabled)).subscribe((key) => {
@@ -68,8 +64,15 @@ export class HotkeyManagerComponent {
     })
   }
 
+  saveHotkeys() {
+    // Setting localStorage here because of cache issues in login service
+    localStorage.setItem('customHotKeyMapping', JSON.stringify(this.userMapping))
+    this.loginService.updateUserOptions([
+      { name: 'wafrn.customHotKeyMapping', value: JSON.stringify(this.userMapping) }
+    ])
+  }
+
   mapHotkeys(hotkeys: HotkeyConfig) {
-    console.log(hotkeys)
     return Object.fromEntries(
       Object.entries(hotkeys).map(([key, shortcutMapping]) => [
         shortcutMapping,
@@ -88,7 +91,8 @@ export class HotkeyManagerComponent {
       closePredicate: () => hotkeysEnabled
     })
     dialogRef.afterClosed().subscribe(() => {
-      this.shortcutList.set(this.mapHotkeys(example_mapping))
+      this.shortcutList.set(this.mapHotkeys(this.userMapping))
+      this.saveHotkeys()
     })
   }
 
