@@ -271,14 +271,16 @@ export class HotkeyListComponent {
       .subscribe((eventRaw) => {
         const e = <KeyboardEvent>eventRaw
         e.preventDefault()
+        e.stopImmediatePropagation()
         const keyIsModifier = modifierKeys.includes(e.key)
         if (keyIsModifier) return
 
-        const isLetter = e.code.slice(0, 3) === 'Key'
-        if (isLetter) {
-          this.mapping[id] = e.shiftKey ? e.key.toUpperCase() : e.key
-        } else {
+        console.log(e)
+        const unbind = e.code === 'Escape'
+        if (unbind) {
           this.mapping[id] = undefined
+        } else {
+          this.mapping[id] = e.shiftKey ? e.key.toUpperCase() : e.key
         }
 
         this.cancelSetKeybind.next('')
