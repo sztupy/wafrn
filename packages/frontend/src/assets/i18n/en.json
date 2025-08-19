@@ -235,6 +235,18 @@
     "askFormLabel": "Question",
     "askButtonText": "Ask"
   },
+  "keyboard-shortcuts": {
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "scrollDown": "Scroll down",
+    "scrollUp": "Scroll up",
+    "scrollDownPage": "Scroll a page down",
+    "scrollUpPage": "Scroll a page up",
+    "openEditor": "Open editor",
+    "viewKeyboardShortcuts": "View keyboard shortcuts",
+    "unbound": "unbound",
+    "additionalOptions": "Additional Options",
+    "smoothScroll": "Smooth scroll"
+  },
   "post-fragment": {
     "replyingTo": "replying to: "
   }

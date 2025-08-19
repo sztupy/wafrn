@@ -1,0 +1,34 @@
+<h1 class="shortcut-list-title">{{ 'keyboard-shortcuts.keyboardShortcuts' | translate }}</h1>
+<dl class="shortcut-list">
+  @for (shortcut of defaultKeybinds | keyvalue: null; track $index) {
+    <div>
+      <dt>{{ 'keyboard-shortcuts.' + shortcut.key | translate }}</dt>
+      <dd>
+        <kbd>
+          <button
+            (click)="setKeybind(shortcut.key)"
+            class="set-keybind"
+            [class.changing]="changingKey === shortcut.key"
+            [class.overlapping]="isOverlapping(mapping[shortcut.key])"
+            mat-flat-button
+          >
+            {{ getKeybind(shortcut.key) }}
+          </button>
+        </kbd>
+        <button
+          (click)="resetKeybind(shortcut.key)"
+          class="mat-circle-button reset-keybind"
+          mat-button
+          [disabled]="shortcut.value === mapping[shortcut.key]"
+        >
+          <fa-icon [icon]="undoIcon" />
+        </button>
+      </dd>
+    </div>
+  }
+</dl>
+
+<h2 class="shortcut-section-title">{{ 'keyboard-shortcuts.additionalOptions' | translate }}</h2>
+<mat-checkbox [checked]="smoothScroll()" (click)="toggleSignal(smoothScroll)">{{
+  'keyboard-shortcuts.smoothScroll' | translate
+}}</mat-checkbox>
