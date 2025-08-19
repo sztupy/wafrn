@@ -1,7 +1,14 @@
-.hotkey-help-icon {
+.hotkey-help-icon-default {
   position: fixed;
   z-index: 500;
   bottom: 1em;
+  right: 1em;
+}
+
+.hotkey-help-icon-up {
+  position: fixed;
+  z-index: 500;
+  bottom: 4.5em;
   right: 1em;
 }
 

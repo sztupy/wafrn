@@ -12,6 +12,7 @@ import { EditorService } from 'src/app/services/editor.service'
 import { CallbackDictionary, GlobalKeydownService } from 'src/app/services/global-keydown.service'
 import { JwtService } from 'src/app/services/jwt.service'
 import { LoginService } from 'src/app/services/login.service'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 type HotkeyConfig = Record<string, string | undefined>
 type ShortcutFunctionMap = Record<string, Function>
@@ -32,7 +33,7 @@ let smoothScroll = signal(true)
 
 @Component({
   selector: 'app-hotkey-manager',
-  imports: [MatButtonModule, FontAwesomeModule, MatTooltipModule],
+  imports: [MatButtonModule, FontAwesomeModule, MatTooltipModule, BrowserAnimationsModule],
   templateUrl: './hotkey-manager.component.html',
   styleUrl: './hotkey-manager.component.scss'
 })
@@ -47,6 +48,8 @@ export class HotkeyManagerComponent {
   continueScrolling = false
   lockedScrollingDirection: ScrollInput = null
   scrollDirection: ScrollInput = null
+  horizontalMenu = localStorage.getItem('horizontalMenu') == 'true'
+  topToolbar = localStorage.getItem('topToolbar') == 'true'
 
   // Loaded and mapped from user profile
   shortcutListLookup: ShortcutFunctionMap = {
