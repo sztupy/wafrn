@@ -59,16 +59,3 @@
     <br />
   </mat-drawer-content>
 </mat-drawer-container>
-
-<button
-  *ngIf="!mobile"
-  style="position: fixed; z-index: 500; bottom: 1em; right: 1em"
-  mat-fab
-  color="primary"
-  [hidden]="!mobile || !jwtService.tokenValid() || currentRoute === '/editor'"
-  type="button"
-  class="show-sidebar-menu-button create-post-button slideup"
-  (click)="this.hideMenu(); this.openEditor()"
->
-  <fa-icon [icon]="pencilIcon"></fa-icon>
-</button>
