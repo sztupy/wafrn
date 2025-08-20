@@ -191,8 +191,10 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const autoFocusElem = <HTMLElement | null>document.querySelector('[autofocus]')
-    autoFocusElem?.focus()
+    if (window.innerWidth > 992) {
+      const autoFocusElem = <HTMLElement | null>document.querySelector('[autofocus]')
+      autoFocusElem?.focus()
+    }
   }
 
   @HostListener('window:scroll')
