@@ -88,7 +88,15 @@ hr {
   syntax: '<number>';
 }
 
+.previous-page-button {
+  left: 1em;
+}
+
 .refresh-button {
+  right: 1em;
+}
+
+.floating-button {
   --vertical-offset: 1em;
   /* Evil specificity hack */
   :root & {
@@ -96,18 +104,13 @@ hr {
   }
   z-index: 500;
   top: var(--vertical-offset);
-  right: 1em;
 
   transition: top 200ms ease-out;
-
-  &.offset {
-    --vertical-offset: calc(64px + 1em);
-  }
 }
 
 /* Mobile mode breakpoint*/
 @media screen and (max-width: 992px) {
-  .refresh-button {
+  .floating-button {
     top: unset;
     bottom: calc(64px + 1em);
   }
@@ -115,7 +118,7 @@ hr {
 
 /* mat-toolbar breakpoint */
 @media screen and (max-width: 599px) {
-  .refresh-button {
+  .floating-button {
     bottom: calc(56px + 1em);
   }
 }

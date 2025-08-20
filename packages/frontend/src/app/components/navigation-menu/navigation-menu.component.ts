@@ -39,7 +39,8 @@ import {
   faPaintbrush,
   faBookmark,
   faSync,
-  faHashtag
+  faHashtag,
+  faArrowLeft
 } from '@fortawesome/free-solid-svg-icons'
 import { MenuItem } from 'src/app/interfaces/menu-item'
 import { MatDialog } from '@angular/material/dialog'
@@ -77,6 +78,9 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   pencilIcon = faPencil
   currentRoute = ''
   reloadIcon = faSync
+  backIcon = faArrowLeft
+
+  pwaPage: boolean
 
   horizontalMenuMode: Signal<boolean>
   offsetTopArea: Signal<boolean>
@@ -114,6 +118,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     this.scrollSubscription = this.dashboardService.scrollEventEmitter.subscribe(() => {
       this.updateNotifications('scroll')
     })
+
+    this.pwaPage = window.matchMedia('(display-mode: standalone)').matches
 
     this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
@@ -747,6 +753,10 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
   onCloseMenu() {
     this.menuVisible = false
+  }
+
+  historyBack() {
+    history.back()
   }
 
   refresh() {

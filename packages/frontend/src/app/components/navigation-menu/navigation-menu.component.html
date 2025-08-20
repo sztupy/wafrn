@@ -45,12 +45,24 @@
         </div>
       }
     </mat-toolbar>
+    @if (pwaPage) {
+      <button
+        (click)="historyBack()"
+        mat-mini-fab
+        color="default"
+        aria-label="Previous page"
+        class="floating-button previous-page-button"
+        [class.top-offset]="offsetTopArea()"
+      >
+        <fa-icon [icon]="backIcon" />
+      </button>
+    }
     <button
       (click)="refresh()"
       mat-mini-fab
       color="default"
       aria-label="Refresh"
-      class="refresh-button"
+      class="floating-button refresh-button"
       [class.offset]="offsetTopArea()"
     >
       <fa-icon [icon]="reloadIcon" />
