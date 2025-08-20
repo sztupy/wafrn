@@ -123,7 +123,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
     this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
-    this.offsetTopArea = computed(() => this.horizontalMenuMode() && topToolbarMode())
+    this.offsetTopArea = computed(() => (this.mobile || this.horizontalMenuMode()) && topToolbarMode())
 
     merge(fromEvent(window, 'resize'), toObservable(this.horizontalMenuMode), toObservable(topToolbarMode)).subscribe(
       () => this.syncMobileMode()
