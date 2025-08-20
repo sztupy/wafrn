@@ -172,6 +172,25 @@ export default function dashboardRoutes(app: Application) {
         include: [
           {
             model: PostTag,
+            where: {
+              [Op.and]: [
+                {
+                  createdAt: { [Op.lt]: getStartScrollParam(req) }
+                },
+                {
+                  createdAt: {
+                    /*
+                     * Ok this is a bit cheating but not that much
+                     * If you are geting in a page posts that are more than two months
+                     * something is very wrong
+                     * and in that case this dirty trick is the less of your problems
+                     * this also should make main wafrn not to have to check 4 million posts
+                     */
+                    [Op.gt]: getStartScrollParam(req).setTime(getStartScrollParam(req).getTime() - 60 * 24 * 3600)
+                  }
+                }
+              ]
+            },
             required: false
           },
           {
