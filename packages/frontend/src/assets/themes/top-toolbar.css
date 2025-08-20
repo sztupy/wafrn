@@ -9,6 +9,7 @@
 @media screen and (max-width: 992px) {
   .wafrn-content {
     padding-top: calc(64px + 1em);
+    padding-bottom: 0;
   }
 
   .wafrn-post-editor {
