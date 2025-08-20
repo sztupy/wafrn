@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, computed, OnDestroy, OnInit, Signal, ViewEncapsulation } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
-import { fromEvent, Subscription } from 'rxjs'
+import { fromEvent, merge, Subscription } from 'rxjs'
 import { Action } from 'src/app/interfaces/editor-launcher-data'
 import { DashboardService } from 'src/app/services/dashboard.service'
 import { EditorService } from 'src/app/services/editor.service'
@@ -125,8 +125,9 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
     this.offsetTopArea = computed(() => this.horizontalMenuMode() && topToolbarMode())
 
-    fromEvent(window, 'resize').subscribe(() => this.syncMobileMode())
-    toObservable(this.horizontalMenuMode).subscribe(() => this.syncMobileMode())
+    merge(fromEvent(window, 'resize'), toObservable(this.horizontalMenuMode), toObservable(topToolbarMode)).subscribe(
+      () => this.syncMobileMode()
+    )
   }
 
   ngOnInit(): void {
