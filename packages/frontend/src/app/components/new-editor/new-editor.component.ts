@@ -191,10 +191,16 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (window.innerWidth > 992) {
-      const autoFocusElem = <HTMLElement | null>document.querySelector('[autofocus]')
+    // Do not autofocus on touchscreens due to IOS bug
+    const deviceIsTouchscreen = window.matchMedia('(pointer: coarse)').matches
+    if (deviceIsTouchscreen) return
+
+    const autoFocusElem = <HTMLElement | null>document.querySelector('[autofocus]')
+
+    // Focus on the next frame (EVIL FIX)
+    requestAnimationFrame(() => {
       autoFocusElem?.focus()
-    }
+    })
   }
 
   @HostListener('window:scroll')
