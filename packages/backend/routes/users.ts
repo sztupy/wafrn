@@ -477,6 +477,18 @@ function userRoutes(app: Application) {
           // also update the bluesky password
           if (user.enableBsky && user.bskyDid) {
             await updateBskyPassword(user, req.body.password)
+            const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
+              ? completeEnvironment.bskyPds
+              : 'https://' + completeEnvironment.bskyPds
+
+            const agent = new AtpAgent({
+              service: serviceUrl
+            })
+            await agent.login({
+              identifier: user.bskyDid as string,
+              password: req.body.password
+            })
+            await createBskyPassword(user, agent)
           }
 
           success = true
