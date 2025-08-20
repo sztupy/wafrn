@@ -45,7 +45,7 @@
         </div>
       }
     </mat-toolbar>
-    @if (pwaPage) {
+    @if (mobile && pwaPage) {
       <button
         (click)="historyBack()"
         mat-mini-fab
@@ -67,7 +67,7 @@
     >
       <fa-icon [icon]="reloadIcon" />
     </button>
-    <main id="main-content" class="wafrn-content" [class.offset-for-toolbar]="offsetTopArea() && !this.mobile">
+    <main id="main-content" class="wafrn-content" [class.offset-for-toolbar]="offsetTopArea()">
       @if (maintenanceMode) {
         <div [innerHtml]="maintenanceMessage"></div>
       }

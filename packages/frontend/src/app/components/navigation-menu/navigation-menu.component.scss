@@ -116,4 +116,8 @@ hr {
   .floating-button {
     bottom: calc(56px + 1em);
   }
+
+  .offset-for-toolbar {
+    margin-top: 56px;
+  }
 }
