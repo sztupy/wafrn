@@ -80,6 +80,10 @@ hr {
   }
 }
 
+.offset-for-toolbar {
+  margin-top: 64px;
+}
+
 @property --vertical-offset {
   syntax: '<number>';
 }

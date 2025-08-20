@@ -51,11 +51,11 @@
       color="default"
       aria-label="Refresh"
       class="refresh-button"
-      [class.offset]="offsetRefreshButton()"
+      [class.offset]="offsetTopArea()"
     >
       <fa-icon [icon]="reloadIcon" />
     </button>
-    <main id="main-content" class="wafrn-content">
+    <main id="main-content" class="wafrn-content" [class.offset-for-toolbar]="offsetTopArea() && !this.mobile">
       @if (maintenanceMode) {
         <div [innerHtml]="maintenanceMessage"></div>
       }

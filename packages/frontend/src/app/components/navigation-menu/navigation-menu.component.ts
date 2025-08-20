@@ -79,7 +79,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   reloadIcon = faSync
 
   horizontalMenuMode: Signal<boolean>
-  offsetRefreshButton: Signal<boolean>
+  offsetTopArea: Signal<boolean>
 
   constructor(
     private editorService: EditorService,
@@ -117,7 +117,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
     this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
-    this.offsetRefreshButton = computed(() => this.horizontalMenuMode() && topToolbarMode())
+    this.offsetTopArea = computed(() => this.horizontalMenuMode() && topToolbarMode())
 
     fromEvent(window, 'resize').subscribe(() => this.syncMobileMode())
     toObservable(this.horizontalMenuMode).subscribe(() => this.syncMobileMode())
