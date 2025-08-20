@@ -79,3 +79,39 @@ hr {
     justify-content: normal;
   }
 }
+
+@property --vertical-offset {
+  syntax: '<number>';
+}
+
+.refresh-button {
+  --vertical-offset: 1em;
+  /* Evil specificity hack */
+  :root & {
+    position: fixed;
+  }
+  z-index: 500;
+  top: var(--vertical-offset);
+  right: 1em;
+
+  transition: top 200ms ease-out;
+
+  &.offset {
+    --vertical-offset: calc(64px + 1em);
+  }
+}
+
+/* Mobile mode breakpoint*/
+@media screen and (max-width: 992px) {
+  .refresh-button {
+    top: unset;
+    bottom: calc(64px + 1em);
+  }
+}
+
+/* mat-toolbar breakpoint */
+@media screen and (max-width: 599px) {
+  .refresh-button {
+    bottom: calc(56px + 1em);
+  }
+}
