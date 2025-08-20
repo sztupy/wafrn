@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core'
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, Signal, ViewEncapsulation } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
-import { Subscription } from 'rxjs'
+import { fromEvent, Subscription } from 'rxjs'
 import { Action } from 'src/app/interfaces/editor-launcher-data'
 import { AdminService } from 'src/app/services/admin.service'
 import { DashboardService } from 'src/app/services/dashboard.service'
@@ -8,6 +8,7 @@ import { EditorService } from 'src/app/services/editor.service'
 import { JwtService } from 'src/app/services/jwt.service'
 import { LoginService } from 'src/app/services/login.service'
 import { NotificationsService } from 'src/app/services/notifications.service'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 import {
   faQuestion,
@@ -51,6 +52,7 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { TranslateService } from '@ngx-translate/core'
 import { AudioService } from 'src/app/services/audio.service'
+import { ThemeService } from 'src/app/services/theme.service'
 
 @Component({
   selector: 'app-navigation-menu',
@@ -71,7 +73,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   followsAwaitingApproval = 0
   awaitingAsks = 0
   privateMessagesNotifications = ''
-  mobile = false
+  mobile = window.innerWidth <= 992
   logo = EnvironmentService.environment.logo
   defaultIcon = faQuestion
   navigationSubscription: Subscription
@@ -82,7 +84,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   currentRoute = ''
   reloadIcon = faSync
 
-  horizontalMenuMode = localStorage.getItem('horizontalMenu') === 'true'
+  horizontalMenuMode: Signal<boolean>
 
   constructor(
     private editorService: EditorService,
@@ -95,7 +97,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     private dialogService: MatDialog,
     private translateService: TranslateService,
-    private audioService: AudioService
+    private audioService: AudioService,
+    private themeService: ThemeService
   ) {
     this.loginSubscription = this.loginSubscription = this.loginService.loginEventEmitter.subscribe(() => {
       this.drawMenu()
@@ -118,11 +121,15 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     this.scrollSubscription = this.dashboardService.scrollEventEmitter.subscribe(() => {
       this.updateNotifications('scroll')
     })
+
+    this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
+
+    fromEvent(window, 'resize').subscribe(() => this.syncMobileMode())
+    toObservable(this.horizontalMenuMode).subscribe(() => this.syncMobileMode())
   }
 
   ngOnInit(): void {
     this.drawMenu()
-    this.onResize()
 
     // IMPORTANT: HIDE THE SPLASH SCREEN
     const splashElement = document.getElementById('splash')
@@ -706,8 +713,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       ]
     ]
-
-    this.horizontalMenuMode = localStorage.getItem('horizontalMenu') === 'true'
   }
 
   async updateNotifications(url: string) {
@@ -734,10 +739,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.horizontalMenuMode = localStorage.getItem('horizontalMenu') === 'true'
-    this.mobile = window.innerWidth <= 992 || this.horizontalMenuMode
+  syncMobileMode() {
+    this.mobile = window.innerWidth <= 992 || this.horizontalMenuMode()
   }
 
   async openEditor() {
