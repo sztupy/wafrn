@@ -2,8 +2,8 @@
   <mat-drawer
     style="position: fixed"
     class="side-menu"
-    [mode]="mobile ? 'over' : 'side'"
-    [opened]="menuVisible || !mobile"
+    [mode]="mobile() ? 'over' : 'side'"
+    [opened]="menuVisible || !mobile()"
     (closed)="hideMenu()"
   >
     <a [href]="'/'" class="block" (click)="hideMenu()">
@@ -34,7 +34,7 @@
     </div>
   </mat-drawer>
   <mat-drawer-content>
-    <mat-toolbar class="wafrn-toolbar" *ngIf="!!mobile">
+    <mat-toolbar class="wafrn-toolbar" *ngIf="mobile()">
       @for (section of menuItemsMobile; track $index) {
         <div>
           @for (link of section; track $index) {
@@ -45,30 +45,33 @@
         </div>
       }
     </mat-toolbar>
-    <button *ngIf="true" (click)="refresh()" mat-mini-fab color="default" aria-label="Refresh" class="refresh-button">
+    @if (mobile() && pwaPage) {
+      <button
+        (click)="historyBack()"
+        mat-mini-fab
+        color="default"
+        aria-label="Previous page"
+        class="floating-button previous-page-button"
+        [class.offset-for-toolbar]="offsetTopArea()"
+      >
+        <fa-icon [icon]="backIcon" />
+      </button>
+    }
+    <button
+      (click)="refresh()"
+      mat-mini-fab
+      color="default"
+      aria-label="Refresh"
+      class="floating-button refresh-button"
+      [class.offset-for-toolbar]="offsetTopArea()"
+    >
       <fa-icon [icon]="reloadIcon" />
     </button>
-    <main id="main-content" class="wafrn-content">
+    <main id="main-content" class="wafrn-content" [class.offset-for-toolbar]="offsetTopArea()">
       @if (maintenanceMode) {
         <div [innerHtml]="maintenanceMessage"></div>
       }
       <snappy-router> </snappy-router>
     </main>
-    <!-- Needed some space at the bottom I know is ugly but mb-2 gets ignored-->
-    <br />
-    <br />
   </mat-drawer-content>
 </mat-drawer-container>
-
-<button
-  *ngIf="!mobile"
-  style="position: fixed; z-index: 500; bottom: 1em; right: 1em"
-  mat-fab
-  color="primary"
-  [hidden]="!mobile || !jwtService.tokenValid() || currentRoute === '/editor'"
-  type="button"
-  class="show-sidebar-menu-button create-post-button slideup"
-  (click)="this.hideMenu(); this.openEditor()"
->
-  <fa-icon [icon]="pencilIcon"></fa-icon>
-</button>

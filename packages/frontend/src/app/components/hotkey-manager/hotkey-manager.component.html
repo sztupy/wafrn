@@ -1,11 +1,8 @@
 <button
   (click)="openHotkeyListDialog()"
   mat-button
-  class="mat-circle-button hotkey-help-icon"
-  [ngClass]="{
-    'hotkey-help-icon-default': !(horizontalMenu && !topToolbar),
-    'hotkey-help-icon-up ': horizontalMenu && !topToolbar
-  }"
+  class="mat-circle-button hotkey-help-icon, hotkey-help-icon"
+  [class.horizontal-menu-offset]="offsetDialogButton()"
   aria-label="keyboard shortcuts"
   matTooltip="Keyboard
   Shortcuts"

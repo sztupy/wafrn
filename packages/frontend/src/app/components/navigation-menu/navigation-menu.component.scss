@@ -2,7 +2,7 @@
 :root .side-menu {
   background-color: var(--mat-sys-surface-container-low);
   box-shadow: var(--mat-sys-level2);
-  z-index: 5
+  z-index: 5;
 }
 
 .mat-drawer-inner-container {
@@ -20,9 +20,26 @@
 .mat-drawer-content-checked-pattern-bg {
   background-color: var(--mat-sys-background) !important;
   opacity: 1 !important;
-  background-image: repeating-linear-gradient(45deg, var( --mat-sys-surface-bright) 25%, transparent 25%, transparent 75%, var( --mat-sys-surface-bright) 75%, var( --mat-sys-surface-bright)),
-    repeating-linear-gradient(45deg, var( --mat-sys-surface-bright) 25%, var(--mat-sys-background) 25%, var(--mat-sys-background) 75%, var( --mat-sys-surface-bright) 75%, var( --mat-sys-surface-bright)) !important;
-  background-position: 0 0, 80px 80px !important;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--mat-sys-surface-bright) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--mat-sys-surface-bright) 75%,
+      var(--mat-sys-surface-bright)
+    ),
+    repeating-linear-gradient(
+      45deg,
+      var(--mat-sys-surface-bright) 25%,
+      var(--mat-sys-background) 25%,
+      var(--mat-sys-background) 75%,
+      var(--mat-sys-surface-bright) 75%,
+      var(--mat-sys-surface-bright)
+    ) !important;
+  background-position:
+    0 0,
+    80px 80px !important;
   background-size: 160px 160px !important;
 }
 
@@ -60,5 +77,47 @@ hr {
 @media (min-width: 992px) {
   .drawer-footer {
     justify-content: normal;
+  }
+}
+
+.offset-for-toolbar {
+  margin-top: 64px;
+}
+
+.previous-page-button {
+  left: 1em;
+}
+
+.refresh-button {
+  right: 1em;
+}
+
+.floating-button {
+  /* Evil specificity hack */
+  :root & {
+    position: fixed;
+  }
+  z-index: 500;
+  top: 1em;
+
+  transition: margin-top 200ms ease-out;
+}
+
+/* Mobile mode breakpoint*/
+@media screen and (max-width: 992px) {
+  .floating-button {
+    top: unset;
+    bottom: calc(64px + 1em);
+  }
+}
+
+/* mat-toolbar breakpoint */
+@media screen and (max-width: 599px) {
+  .floating-button {
+    bottom: calc(56px + 1em);
+  }
+
+  .offset-for-toolbar {
+    margin-top: 56px;
   }
 }
