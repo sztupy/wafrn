@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common'
-import { Component, inject, signal, WritableSignal } from '@angular/core'
+import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
@@ -13,6 +13,7 @@ import { CallbackDictionary, GlobalKeydownService } from 'src/app/services/globa
 import { JwtService } from 'src/app/services/jwt.service'
 import { LoginService } from 'src/app/services/login.service'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { ThemeService } from 'src/app/services/theme.service'
 
 type HotkeyConfig = Record<string, string | undefined>
 type ShortcutFunctionMap = Record<string, Function>
@@ -48,8 +49,7 @@ export class HotkeyManagerComponent {
   continueScrolling = false
   lockedScrollingDirection: ScrollInput = null
   scrollDirection: ScrollInput = null
-  horizontalMenu = localStorage.getItem('horizontalMenu') == 'true'
-  topToolbar = localStorage.getItem('topToolbar') == 'true'
+  offsetDialogButton: Signal<boolean>
 
   // Loaded and mapped from user profile
   shortcutListLookup: ShortcutFunctionMap = {
@@ -69,7 +69,8 @@ export class HotkeyManagerComponent {
     private editorService: EditorService,
     private jwtService: JwtService,
     private dialogService: MatDialog,
-    private loginService: LoginService
+    private loginService: LoginService,
+    themeService: ThemeService
   ) {
     const cachedMap = localStorage.getItem('customHotKeyMapping')
     const customMapping = cachedMap !== null ? JSON.parse(cachedMap) : {}
@@ -83,6 +84,10 @@ export class HotkeyManagerComponent {
     this.keyboardService.keydownEvents.pipe(filter(() => hotkeysEnabled)).subscribe((key) => {
       this.keyboardService.handleKeydown(key, this.shortcutList())
     })
+
+    const horizontalMenu = themeService.additionalStyleModes.horizontalMenu
+    const topToolbar = themeService.additionalStyleModes.topToolbar
+    this.offsetDialogButton = computed(() => horizontalMenu() && !topToolbar())
   }
 
   saveHotkeys() {

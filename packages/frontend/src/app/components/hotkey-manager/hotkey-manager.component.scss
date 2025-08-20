@@ -1,15 +1,14 @@
-.hotkey-help-icon-default {
+.hotkey-help-icon {
   position: fixed;
   z-index: 500;
   bottom: 1em;
   right: 1em;
+
+  transition: bottom 200ms ease-out;
 }
 
-.hotkey-help-icon-up {
-  position: fixed;
-  z-index: 500;
+.horizontal-menu-offset {
   bottom: 4.5em;
-  right: 1em;
 }
 
 /* Mobile mode breakpoint*/
