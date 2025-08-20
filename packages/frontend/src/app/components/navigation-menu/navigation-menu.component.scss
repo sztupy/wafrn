@@ -84,10 +84,6 @@ hr {
   margin-top: 64px;
 }
 
-@property --vertical-offset {
-  syntax: '<number>';
-}
-
 .previous-page-button {
   left: 1em;
 }
@@ -97,15 +93,14 @@ hr {
 }
 
 .floating-button {
-  --vertical-offset: 1em;
   /* Evil specificity hack */
   :root & {
     position: fixed;
   }
   z-index: 500;
-  top: var(--vertical-offset);
+  top: 1em;
 
-  transition: top 200ms ease-out;
+  transition: margin-top 200ms ease-out;
 }
 
 /* Mobile mode breakpoint*/
