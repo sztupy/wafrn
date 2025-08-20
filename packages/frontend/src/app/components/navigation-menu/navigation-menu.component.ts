@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, Signal, ViewEncapsulat
 import { NavigationEnd, Router } from '@angular/router'
 import { fromEvent, Subscription } from 'rxjs'
 import { Action } from 'src/app/interfaces/editor-launcher-data'
-import { AdminService } from 'src/app/services/admin.service'
 import { DashboardService } from 'src/app/services/dashboard.service'
 import { EditorService } from 'src/app/services/editor.service'
 import { JwtService } from 'src/app/services/jwt.service'
@@ -37,19 +36,14 @@ import {
   faBellSlash,
   faIcons,
   faSkull,
-  faFileEdit,
   faPaintbrush,
-  IconDefinition,
   faBookmark,
-  faHome,
   faSync,
-  faHashtag,
-  faRefresh
+  faHashtag
 } from '@fortawesome/free-solid-svg-icons'
 import { MenuItem } from 'src/app/interfaces/menu-item'
 import { MatDialog } from '@angular/material/dialog'
 import { EnvironmentService } from 'src/app/services/environment.service'
-import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { TranslateService } from '@ngx-translate/core'
 import { AudioService } from 'src/app/services/audio.service'
 import { ThemeService } from 'src/app/services/theme.service'
@@ -93,12 +87,10 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private notificationsService: NotificationsService,
     private cdr: ChangeDetectorRef,
-    private adminService: AdminService,
     private dashboardService: DashboardService,
-    private dialogService: MatDialog,
     private translateService: TranslateService,
     private audioService: AudioService,
-    private themeService: ThemeService
+    themeService: ThemeService
   ) {
     this.loginSubscription = this.loginSubscription = this.loginService.loginEventEmitter.subscribe(() => {
       this.drawMenu()
