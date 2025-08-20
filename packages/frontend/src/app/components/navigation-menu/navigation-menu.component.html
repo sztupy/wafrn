@@ -52,7 +52,7 @@
         color="default"
         aria-label="Previous page"
         class="floating-button previous-page-button"
-        [class.top-offset]="offsetTopArea()"
+        [class.offset-for-toolbar]="offsetTopArea()"
       >
         <fa-icon [icon]="backIcon" />
       </button>
@@ -63,7 +63,7 @@
       color="default"
       aria-label="Refresh"
       class="floating-button refresh-button"
-      [class.offset]="offsetTopArea()"
+      [class.offset-for-toolbar]="offsetTopArea()"
     >
       <fa-icon [icon]="reloadIcon" />
     </button>
