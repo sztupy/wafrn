@@ -8,7 +8,7 @@
 /* Small-Screen media queries. */
 @media screen and (max-width: 992px) {
   .wafrn-content {
-    padding-top: calc(64px + 1em);
+    padding-top: calc(64px + 64px + 1em);
     padding-bottom: 0;
   }
 
@@ -16,7 +16,7 @@
     margin-top: 3rem;
   }
 
-  .refresh-button {
+  .floating-button {
     bottom: unset;
     top: calc(64px + 1em);
   }
@@ -25,6 +25,6 @@
 /* mat-toolbar breakpoint */
 @media screen and (max-width: 599px) {
   .wafrn-content {
-    padding-top: calc(56px + 1em);
+    padding-top: calc(64px + 56px + 1em);
   }
 }
