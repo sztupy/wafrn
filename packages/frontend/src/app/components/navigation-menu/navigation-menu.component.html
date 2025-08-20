@@ -2,8 +2,8 @@
   <mat-drawer
     style="position: fixed"
     class="side-menu"
-    [mode]="mobile ? 'over' : 'side'"
-    [opened]="menuVisible || !mobile"
+    [mode]="mobile() ? 'over' : 'side'"
+    [opened]="menuVisible || !mobile()"
     (closed)="hideMenu()"
   >
     <a [href]="'/'" class="block" (click)="hideMenu()">
@@ -34,7 +34,7 @@
     </div>
   </mat-drawer>
   <mat-drawer-content>
-    <mat-toolbar class="wafrn-toolbar" *ngIf="!!mobile">
+    <mat-toolbar class="wafrn-toolbar" *ngIf="mobile()">
       @for (section of menuItemsMobile; track $index) {
         <div>
           @for (link of section; track $index) {
@@ -45,7 +45,7 @@
         </div>
       }
     </mat-toolbar>
-    @if (mobile && pwaPage) {
+    @if (mobile() && pwaPage) {
       <button
         (click)="historyBack()"
         mat-mini-fab

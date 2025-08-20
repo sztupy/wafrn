@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, computed, OnDestroy, OnInit, Signal, ViewEncapsulation } from '@angular/core'
+import {
+  ChangeDetectorRef,
+  Component,
+  computed,
+  OnDestroy,
+  OnInit,
+  Signal,
+  signal,
+  ViewEncapsulation,
+  WritableSignal
+} from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
 import { fromEvent, merge, Subscription } from 'rxjs'
 import { Action } from 'src/app/interfaces/editor-launcher-data'
@@ -68,7 +78,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   followsAwaitingApproval = 0
   awaitingAsks = 0
   privateMessagesNotifications = ''
-  mobile = window.innerWidth <= 992
+  mobile: WritableSignal<boolean>
   logo = EnvironmentService.environment.logo
   defaultIcon = faQuestion
   navigationSubscription: Subscription
@@ -121,9 +131,10 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
     this.pwaPage = window.matchMedia('(display-mode: standalone)').matches
 
+    this.mobile = signal(window.innerWidth <= 992)
     this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
-    this.offsetTopArea = computed(() => (this.mobile || this.horizontalMenuMode()) && topToolbarMode())
+    this.offsetTopArea = computed(() => (this.mobile() || this.horizontalMenuMode()) && topToolbarMode())
 
     merge(fromEvent(window, 'resize'), toObservable(this.horizontalMenuMode), toObservable(topToolbarMode)).subscribe(
       () => this.syncMobileMode()
@@ -742,7 +753,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   }
 
   syncMobileMode() {
-    this.mobile = window.innerWidth <= 992 || this.horizontalMenuMode()
+    this.mobile.set(window.innerWidth <= 992 || this.horizontalMenuMode())
   }
 
   async openEditor() {
