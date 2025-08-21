@@ -101,7 +101,7 @@ export default function dashboardRoutes(app: Application) {
                   },
                   {
                     // limit the tags to 72 hours for test reasons. increase later. a scroll page (20 posts) should be at much 24 hours?
-                    createdAt: { [Op.lt]: new Date(getStartScrollParam(req).getTime() - 72 * 3600) }
+                    createdAt: { [Op.gt]: new Date(getStartScrollParam(req).getTime() - 72 * 3600) }
                   }
                 ]
               },
