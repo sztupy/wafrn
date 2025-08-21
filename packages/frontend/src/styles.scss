@@ -415,4 +415,11 @@ mat-tab-header {
   border-top: 1px solid var(--mat-sys-outline-variant);
   --mat-list-list-item-one-line-container-height: 52px;
   --mat-sys-hover-state-layer-opacity: 0;
+
+  // Notch fixes
+  --mat-toolbar-standard-height: calc(64px + env(safe-area-inset-bottom));
+  --mat-toolbar-mobile-height: calc(56px + env(safe-area-inset-bottom));
+  :root & {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
