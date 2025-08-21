@@ -4,6 +4,9 @@
   bottom: 1em;
   right: 1em;
 
+  // Notch fixes
+  margin-bottom: env(safe-area-inset-bottom);
+
   transition: bottom 200ms ease-out;
 }
 

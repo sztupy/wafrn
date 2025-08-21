@@ -3,6 +3,17 @@
   border-top: unset;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
   box-shadow: var(--mat-sys-level2);
+
+  /* Notch fixes */
+  --mat-toolbar-standard-height: calc(64px + env(safe-area-inset-top));
+  --mat-toolbar-mobile-height: calc(56px + env(safe-area-inset-top));
+  :root & {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+.floating-button {
+  margin-bottom: unset;
 }
 
 /* Small-Screen media queries. */
@@ -25,5 +36,8 @@
 @media screen and (max-width: 599px) {
   .wafrn-content {
     padding-top: calc(56px + 1em);
+  }
+  .offset-for-toolbar {
+    margin-top: calc(56px + env(safe-area-inset-top));
   }
 }
