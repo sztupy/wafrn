@@ -70,7 +70,7 @@
         "strategy": "performance",
         "maxSize": 850,
         "maxAge": "3d",
-        "timeout": "30s"
+        "timeout": "60s"
       }
     }
   ]
