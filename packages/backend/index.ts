@@ -51,6 +51,7 @@ import followHashtagRoutes from './routes/followHashtags.js'
 import { completeEnvironment } from './utils/backendOptions.js'
 import cron from 'node-cron'
 import { nukeBannedUsers } from './utils/maintenanceTasks/nukeBannedUsers.js'
+import { sequelize } from './models/sequelize.js'
 
 function errorHandler(err: Error, req: Request, res: Response, next: Function) {
   console.error(err.stack)
@@ -166,6 +167,10 @@ server.listen(PORT, completeEnvironment.listenIp, () => {
 
 // CRON TASKS
 cron.schedule('0 2 * * *', () => {
+  // maintenance tasks
+  sequelize.query('VACUUM ANALYZE').then(() => {
+    logger.info(`postgres vacuum analyze executed`)
+  })
   nukeBannedUsers().then(() => {
     logger.info(`NukeBannedUsers Done`)
   })
