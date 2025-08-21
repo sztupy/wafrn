@@ -128,7 +128,8 @@ export class RegisterComponent {
     '485.72 Hz',
     'Snake in a böx',
     "Rock 'n' Roll",
-    'I prefer double quotes over single quotes',
+    // prettier-ignore
+    "I prefer double quotes over single quotes",
     "Trademark Dress doesn't exist",
     'thanks for watching guys',
     'YOU ARE A TOOL.',
