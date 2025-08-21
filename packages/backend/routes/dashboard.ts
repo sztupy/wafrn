@@ -77,7 +77,7 @@ export default function dashboardRoutes(app: Application) {
             }
           ]
           const subscribedTags = await getFollowedHashtags(posterId)
-          if (subscribedTags && subscribedTags.length > 0) {
+          if (subscribedTags && subscribedTags.length > 0 && false) {
             // query: get posts with hashtag thing
             postsWithTags = PostTag.findAll({
               include: [
