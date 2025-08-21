@@ -95,23 +95,9 @@ export default function dashboardRoutes(app: Application) {
                     [Op.any]: subscribedTags
                   }
                 },
-                [Op.and]: [
-                  {
-                    createdAt: { [Op.lt]: getStartScrollParam(req) }
-                  },
-                  {
-                    createdAt: {
-                      /*
-                       * Ok this is a bit cheating but not that much
-                       * If you are geting in a page posts that are more than two months
-                       * something is very wrong. Check that first
-                       */
-                      [Op.gt]: getStartScrollParam(req).setTime(getStartScrollParam(req).getTime() - 60 * 24 * 3600)
-                    }
-                  }
-                ]
+                createdAt: { [Op.lt]: getStartScrollParam(req) }
               },
-              limit: 2 * POSTS_PER_PAGE,
+              limit: POSTS_PER_PAGE,
               order: [['createdAt', 'DESC']]
             })
           }
