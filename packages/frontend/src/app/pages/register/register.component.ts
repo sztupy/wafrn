@@ -135,6 +135,7 @@ export class RegisterComponent {
     'YOU ARE A TOOL.',
     'illc tryi to rerad mty pogst sbeofore postign then thx',
     'rubbies',
+    'Illegal gender',
     'chocolate manufacturing company',
     'My glasses lens popped out again :`(',
     'RetroGamesWeDontOwn_Online.ru',
