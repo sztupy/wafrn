@@ -100,6 +100,9 @@ hr {
   z-index: 500;
   top: 1em;
 
+  // Notch fixes
+  margin-bottom: env(safe-area-inset-bottom);
+
   transition: margin-top 200ms ease-out;
 }
 
