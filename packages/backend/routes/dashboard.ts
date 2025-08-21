@@ -34,6 +34,7 @@ export default function dashboardRoutes(app: Application) {
         return
       }
 
+      let postsWithTags: Promise<PostTag[]> | PostTag[] = []
       let whereObject: any = {
         privacy: Privacy.Public
       }
@@ -77,13 +78,41 @@ export default function dashboardRoutes(app: Application) {
           ]
           const subscribedTags = await getFollowedHashtags(posterId)
           if (subscribedTags && subscribedTags.length > 0) {
-            orConditions.push({
-              privacy: 0,
-              '$postTags.tagName$': {
-                [Op.iLike]: {
-                  [Op.any]: subscribedTags
+            // query: get posts with hashtag thing
+            postsWithTags = PostTag.findAll({
+              include: [
+                {
+                  model: Post,
+                  attributes: ['privacy', 'id', 'createdAt'],
+                  where: {
+                    privacy: 0
+                  }
                 }
-              }
+              ],
+              where: {
+                tagName: {
+                  [Op.iLike]: {
+                    [Op.any]: subscribedTags
+                  }
+                },
+                [Op.and]: [
+                  {
+                    createdAt: { [Op.lt]: getStartScrollParam(req) }
+                  },
+                  {
+                    createdAt: {
+                      /*
+                       * Ok this is a bit cheating but not that much
+                       * If you are geting in a page posts that are more than two months
+                       * something is very wrong. Check that first
+                       */
+                      [Op.gt]: getStartScrollParam(req).setTime(getStartScrollParam(req).getTime() - 60 * 24 * 3600)
+                    }
+                  }
+                ]
+              },
+              limit: 2 * POSTS_PER_PAGE,
+              order: [['createdAt', 'DESC']]
             })
           }
           whereObject = {
@@ -168,31 +197,8 @@ export default function dashboardRoutes(app: Application) {
         }
       }
       // we get the list of posts
-      const postIds = await Post.findAll({
+      let postIds: Post[] | Promise<Post[]> = Post.findAll({
         include: [
-          {
-            model: PostTag,
-            where: {
-              [Op.and]: [
-                {
-                  createdAt: { [Op.lt]: getStartScrollParam(req) }
-                },
-                {
-                  createdAt: {
-                    /*
-                     * Ok this is a bit cheating but not that much
-                     * If you are geting in a page posts that are more than two months
-                     * something is very wrong
-                     * and in that case this dirty trick is the less of your problems
-                     * this also should make main wafrn not to have to check 4 million posts
-                     */
-                    [Op.gt]: getStartScrollParam(req).setTime(getStartScrollParam(req).getTime() - 60 * 24 * 3600)
-                  }
-                }
-              ]
-            },
-            required: false
-          },
           {
             model: User,
             as: 'user',
@@ -218,12 +224,25 @@ export default function dashboardRoutes(app: Application) {
         }
       })
 
-      res.send(
-        await getUnjointedPosts(
-          postIds.map((elem: any) => elem.id),
-          posterId
-        )
-      )
+      await Promise.all([postsWithTags, postIds])
+      postIds = await postIds
+      postsWithTags = await postsWithTags
+      let onlyPostIds: string[] = postIds.map((elem) => elem.id)
+      if (postsWithTags.length > 0) {
+        let postIdsWithDates: Set<{ postId: string; date: Date }> = new Set()
+        for (let post of postIds) {
+          postIdsWithDates.add({ postId: post.id, date: post.createdAt })
+        }
+        for (let tagPost of postsWithTags) {
+          postIdsWithDates.add({ postId: tagPost.postId, date: tagPost.post.createdAt })
+        }
+        onlyPostIds = [...postsWithTags]
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .slice(0, POSTS_PER_PAGE)
+          .map((elem) => elem.postId)
+      }
+
+      res.send(await getUnjointedPosts(onlyPostIds, posterId))
     }
   )
 }
