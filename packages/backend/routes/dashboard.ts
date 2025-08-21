@@ -95,7 +95,15 @@ export default function dashboardRoutes(app: Application) {
                     [Op.any]: subscribedTags
                   }
                 },
-                createdAt: { [Op.lt]: getStartScrollParam(req) }
+                [Op.and]: [
+                  {
+                    createdAt: { [Op.lt]: getStartScrollParam(req) }
+                  },
+                  {
+                    // limit the tags to 72 hours for test reasons. increase later. a scroll page (20 posts) should be at much 24 hours?
+                    createdAt: { [Op.lt]: new Date(getStartScrollParam(req).getTime() - 72 * 3600) }
+                  }
+                ]
               },
               limit: POSTS_PER_PAGE,
               order: [['createdAt', 'DESC']]
