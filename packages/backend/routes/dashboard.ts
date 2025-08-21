@@ -77,7 +77,7 @@ export default function dashboardRoutes(app: Application) {
             }
           ]
           const subscribedTags = await getFollowedHashtags(posterId)
-          if (subscribedTags && subscribedTags.length > 0 && false) {
+          if (subscribedTags && subscribedTags.length > 0) {
             // query: get posts with hashtag thing
             postsWithTags = PostTag.findAll({
               include: [
@@ -222,8 +222,8 @@ export default function dashboardRoutes(app: Application) {
         for (let tagPost of postsWithTags) {
           postIdsWithDates.add({ postId: tagPost.postId, date: tagPost.post.createdAt })
         }
-        onlyPostIds = [...postsWithTags]
-          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        onlyPostIds = [...postIdsWithDates]
+          .sort((a, b) => b.date.getTime() - a.date.getTime())
           .slice(0, POSTS_PER_PAGE)
           .map((elem) => elem.postId)
       }
