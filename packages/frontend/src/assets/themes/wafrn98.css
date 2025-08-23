@@ -202,7 +202,7 @@ https://app.wafrn.net/blog/vv0ltz
     }
 
     /* .mat-mdc-checkbox .mat-internal-form-field {
-        color: black; 
+        color: black;
     } */
     /* SIDE MENU */
     .mat-drawer-inner-container {
@@ -223,6 +223,7 @@ https://app.wafrn.net/blog/vv0ltz
     /* LOGO */
     .instance-logo {
         content: url("https://cdn.wafrn.net/api/cache/?media=https%3A%2F%2Fmedia.wafrn.net%2F1744406752197_a2cbc3d0300270aa81ee9a6f2b5bfb94df612f5d_processed.webp");
+        height: 57px;
     }
 
     /* DASHBOARD TITLE */
