@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faKeyboard, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { TranslateModule, TranslateService, _ } from '@ngx-translate/core'
-import { filter, fromEvent, Subject, takeUntil } from 'rxjs'
+import { animationFrames, filter, fromEvent, map, merge, Subject, takeUntil, takeWhile } from 'rxjs'
 import { EditorService } from 'src/app/services/editor.service'
 import { CallbackDictionary, GlobalKeydownService } from 'src/app/services/global-keydown.service'
 import { JwtService } from 'src/app/services/jwt.service'
@@ -151,6 +151,7 @@ export class HotkeyManagerComponent {
       return
     }
 
+    // Ignore held-key retrigger
     if (this.continueScrolling) return
     this.continueScrolling = true
 
@@ -158,58 +159,61 @@ export class HotkeyManagerComponent {
       .map((key) => this.userMapping[key])
       .filter((k) => k !== key)
 
-    const cancelScroll = () => {
-      this.continueScrolling = false
-      terminate.next('')
-    }
-
     const terminate = new Subject()
 
-    // Cancel on started key unpress
-    fromEvent(document, 'keyup')
-      .pipe(
+    // Cancel on started key depress or other scroll key pressed
+    merge(
+      fromEvent(document, 'keyup').pipe(
         takeUntil(terminate),
         filter((e) => (<KeyboardEvent>e).key === key)
-      )
-      .subscribe(cancelScroll)
-    // Cancel on other scroll key pressed
-    fromEvent(document, 'keydown')
-      .pipe(
+      ),
+      fromEvent(document, 'keydown').pipe(
         takeUntil(terminate),
         filter((e) => otherKey.includes((<KeyboardEvent>e).key))
       )
-      .subscribe(cancelScroll)
+    ).subscribe(() => {
+      this.continueScrolling = false
+      terminate.next('')
+    })
 
-    // Smooth scroll animation function
-    let totalElapsed = 0
     let previousTimestamp: DOMHighResTimeStamp | null = null
-    let currentDirection = this.scrollDirection
-    const animate = (timestamp: DOMHighResTimeStamp) => {
-      if (previousTimestamp === null) {
-        previousTimestamp = timestamp
-      }
-      const elapsed = timestamp - previousTimestamp
-      totalElapsed += elapsed
-      previousTimestamp = timestamp
-      const delta = amount * (elapsed / this.scrollRate)
-
-      const incorrectDirection = currentDirection !== this.scrollDirection
-      const cancelScrolling = totalElapsed > this.scrollRate && !this.continueScrolling
-      if (incorrectDirection || cancelScrolling) {
-        this.currentlyScrolling = false
-        return
-      }
-
-      this.currentlyScrolling = true
-      this.performScroll(delta)
-
-      requestAnimationFrame(animate)
-    }
+    const currentDirection = this.scrollDirection
+    let cancel = false
+    const startTop = document.documentElement.scrollTop
 
     // Prevent multiple of the same scroll
     if (this.currentlyScrolling && this.lockedScrollingDirection === currentDirection) return
-    requestAnimationFrame(animate)
     this.lockedScrollingDirection = currentDirection
+
+    animationFrames()
+      .pipe(
+        map((val) => {
+          const deltaTime = val.elapsed - (previousTimestamp ?? val.elapsed)
+          previousTimestamp = val.elapsed
+          return Object.assign(val, { deltaTime })
+        }),
+        takeWhile(() => currentDirection === this.scrollDirection && !cancel)
+      )
+      .subscribe(({ elapsed, deltaTime }) => {
+        // Ensure exact minimum scroll distance
+        const cancelScrolling = elapsed > this.scrollRate && !this.continueScrolling
+        if (cancelScrolling) {
+          this.currentlyScrolling = false
+          cancel = true
+
+          const currentTop = document.documentElement.scrollTop
+          if (Math.abs(startTop - currentTop) < Math.abs(amount)) {
+            const distance = amount - (currentTop - startTop)
+            this.performScroll(distance)
+          }
+          return
+        }
+
+        this.currentlyScrolling = true
+
+        const distance = amount * (deltaTime / this.scrollRate)
+        this.performScroll(distance)
+      })
   }
 
   performScroll(amount: number) {
