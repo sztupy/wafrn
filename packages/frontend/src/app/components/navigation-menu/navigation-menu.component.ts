@@ -58,6 +58,7 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 import { TranslateService } from '@ngx-translate/core'
 import { AudioService } from 'src/app/services/audio.service'
 import { ThemeService } from 'src/app/services/theme.service'
+import packageJson from '../../../../package.json'
 
 @Component({
   selector: 'app-navigation-menu',
@@ -94,6 +95,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
   horizontalMenuMode: Signal<boolean>
   offsetTopArea: Signal<boolean>
+
+  frontendVersion = packageJson.version
 
   constructor(
     private editorService: EditorService,
