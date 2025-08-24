@@ -252,6 +252,7 @@ export class RegisterComponent {
     'Neofetch ASCII art',
     'Karen took it with the kids',
     'DELTARUNE spoilers',
+    'Spheal',
     'ON SALE 50% OFF PICK THIS GENDER NOW AND GET ONE FREE',
     'No one ever would pick this one',
     'None of the above'
