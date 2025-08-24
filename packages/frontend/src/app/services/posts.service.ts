@@ -318,6 +318,18 @@ export class PostsService {
   }
 
   processSinglePost(unlinked: unlinkedPosts, collection: ProcessedPost[]): ProcessedPost {
+    const superMutedWordsRaw = localStorage.getItem('superMutedWords')
+    let superMutedWords: string[] = []
+    try {
+      if (superMutedWordsRaw && superMutedWordsRaw.trim().length > 0) {
+        superMutedWords = JSON.parse(superMutedWordsRaw)
+          .split(',')
+          .map((word: string) => word.trim().toLowerCase())
+          .filter((word: string) => word.length > 0)
+      }
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Something wrong with your supermuted words!' })
+    }
     const mutedWordsRaw = localStorage.getItem('mutedWords')
     let mutedWords: string[] = []
     try {
@@ -459,12 +471,21 @@ export class PostsService {
       }
       newPost.ask = ask
     }
-    const cwedWords = mutedWords.filter(
-      (word) =>
-        newPost.content.toLowerCase().includes(word.toLowerCase()) ||
-        newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
-        newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
-    )
+    const cwedWords = mutedWords
+      .filter(
+        (word) =>
+          newPost.content.toLowerCase().includes(word.toLowerCase()) ||
+          newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
+          newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
+      )
+      .concat(
+        superMutedWords.filter(
+          (word) =>
+            newPost.content.toLowerCase().includes(word.toLowerCase()) ||
+            newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
+            newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
+        )
+      )
     if (cwedWords.length > 0) {
       newPost.muted_words_cw = `Post includes muted words: ${cwedWords}`
     }
