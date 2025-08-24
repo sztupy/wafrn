@@ -94,7 +94,15 @@ export class AppComponent implements OnInit {
         // we are no longer asking nicely
         if (updateAvaiable) {
           localStorage.setItem('wafrnUpdated', 'true')
-          window.location.reload()
+          if (window.location.toString().toLowerCase().endsWith('/editor')) {
+            if (confirm('There is an update available, would you like to update?')) {
+              window.location.reload()
+            } else {
+              alert('Please reload manualy after writing the post!')
+            }
+          } else {
+            window.location.reload()
+          }
         }
       })
     }
