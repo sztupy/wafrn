@@ -114,6 +114,7 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       if (!postUrl.startsWith('https://bsky.app/')) {
         fediTags.push({
           type: 'Link',
+          mediaType: 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
           name: `RE: ${postUrl}`,
           href: postUrl
         })
@@ -207,6 +208,7 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       sensitive: !!post.content_warning || contentWarning,
       atomUri: `${completeEnvironment.frontendUrl}/fediverse/post/${post.id}`,
       inReplyToAtomUri: parentPostString,
+      quote: misskeyQuoteURL,
       quoteUrl: misskeyQuoteURL,
       _misksey_quote: misskeyQuoteURL,
       quoteUri: misskeyQuoteURL,

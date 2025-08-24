@@ -278,13 +278,14 @@ async function getPostThreadRecursive(
         }
         newPost.setMedias(medias)
         try {
-          if (postPetition.quoteUrl) {
-            const postToQuote = await getPostThreadRecursive(user, postPetition.quoteUrl)
+          if (postPetition.quote || postPetition.quoteUrl) {
+            const urlQuote = postPetition.quoteUrl || postPetition.quote
+            const postToQuote = await getPostThreadRecursive(user, urlQuote)
             if (postToQuote && postToQuote.privacy != Privacy.DirectMessage) {
               quotes.push(postToQuote)
             }
             if (!postToQuote) {
-              postToCreate.content = postToCreate.content + `<p>RE: ${postPetition.quoteUrl}</p>`
+              postToCreate.content = postToCreate.content + `<p>RE: ${urlQuote}</p>`
             }
             const postsToQuotePromise: any[] = []
             postPetition.tag
