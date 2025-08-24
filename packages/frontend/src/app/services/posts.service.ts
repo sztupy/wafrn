@@ -471,21 +471,25 @@ export class PostsService {
       }
       newPost.ask = ask
     }
-    const cwedWords = mutedWords
-      .filter(
-        (word) =>
-          newPost.content.toLowerCase().includes(word.toLowerCase()) ||
-          newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
-          newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
+    const cwedWords = [
+      ...new Set(
+        mutedWords
+          .filter(
+            (word) =>
+              newPost.content.toLowerCase().includes(word.toLowerCase()) ||
+              newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
+              newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
+          )
+          .concat(
+            superMutedWords.filter(
+              (word) =>
+                newPost.content.toLowerCase().includes(word.toLowerCase()) ||
+                newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
+                newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
+            )
+          )
       )
-      .concat(
-        superMutedWords.filter(
-          (word) =>
-            newPost.content.toLowerCase().includes(word.toLowerCase()) ||
-            newPost.medias?.some((media) => media.description?.toLowerCase().includes(word.toLowerCase())) ||
-            newPost.tags.some((tag) => tag.tagName.toLowerCase().includes(word.toLowerCase()))
-        )
-      )
+    ]
     if (cwedWords.length > 0) {
       newPost.muted_words_cw = `Post includes muted words: ${cwedWords}`
     }
