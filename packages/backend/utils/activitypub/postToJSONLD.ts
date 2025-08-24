@@ -86,11 +86,9 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
   // we remove the wafrnmedia from the post for the outside world, as they get this on the attachments
   processedContent = processedContent.replaceAll(wafrnMediaRegex, '')
   if (ask) {
-    processedContent = `<p>${getUserName(userAsker)} asked </p> <blockquote>${
-      ask.question
-    }</blockquote> ${processedContent} <p>To properly see this ask, <a href="${
+    processedContent = `<p>${getUserName(userAsker)} <a href="${
       completeEnvironment.frontendUrl + '/fediverse/post/' + post.id
-    }">check the post in the original instance</a></p>`
+    }">asked</a> </p> <blockquote>${ask.question}</blockquote> ${processedContent}`
   }
   const mentions: string[] = post.mentionPost.map((elem: any) => elem.id)
   const fediMentions: fediverseTag[] = []
