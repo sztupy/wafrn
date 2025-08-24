@@ -721,10 +721,8 @@ export class PostsService {
         const isLocalUserLink =
           linkAsUrl.hostname === hostUrl &&
           (linkAsUrl.pathname.startsWith('/blog') || linkAsUrl.pathname.startsWith('/fediverse/blog'))
-
         if (isUserTag) {
           link.classList.add('mention')
-
           if (isRemoteUser) {
             // Remote blog, mirror to local blog
             link.href = `/blog/${sanitizedContent}@${linkAsUrl.hostname}`
@@ -742,7 +740,7 @@ export class PostsService {
           link.classList.add('local-user-link')
         }
       }
-      link.removeAttribute('target');
+      link.target = '_blank'
       sanitized = parsedAsHTML.documentElement.innerHTML
     })
 
