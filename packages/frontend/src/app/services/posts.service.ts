@@ -688,7 +688,6 @@ export class PostsService {
       }
     })
     Array.from(links).forEach((link) => {
-      let linkIsLocalUser = false
       const youtubeMatch = link.href.matchAll(this.youtubeRegex)
       if (link.innerText === link.href && youtubeMatch) {
         // NOTE: Since this should not be part of the image Viewer, we have to add then no-viewer class to be checked for later
@@ -724,7 +723,6 @@ export class PostsService {
           (linkAsUrl.pathname.startsWith('/blog') || linkAsUrl.pathname.startsWith('/fediverse/blog'))
         if (isUserTag) {
           link.classList.add('mention')
-          linkIsLocalUser = true
           if (isRemoteUser) {
             // Remote blog, mirror to local blog
             link.href = `/blog/${sanitizedContent}@${linkAsUrl.hostname}`
@@ -742,11 +740,7 @@ export class PostsService {
           link.classList.add('local-user-link')
         }
       }
-      if (linkIsLocalUser) {
-        link.removeAttribute('target')
-      } else {
-        link.target = '_blank'
-      }
+      link.target = '_blank'
       sanitized = parsedAsHTML.documentElement.innerHTML
     })
 
