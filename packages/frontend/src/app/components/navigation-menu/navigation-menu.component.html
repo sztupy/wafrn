@@ -4,6 +4,7 @@
     class="side-menu"
     [mode]="mobile() ? 'over' : 'side'"
     [opened]="menuVisible || !mobile()"
+    [disableClose]="!horizontalMenuMode() || !mobile()"
     (closed)="hideMenu()"
   >
     <a [href]="'/'" class="block" (click)="hideMenu()">

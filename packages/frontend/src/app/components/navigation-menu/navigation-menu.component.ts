@@ -72,7 +72,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   menuItemsMobile: MenuItem[][] = []
   maintenanceMode = EnvironmentService.environment.maintenance
   maintenanceMessage = EnvironmentService.environment.maintenanceMessage
-  menuVisible = false
+  menuVisible: boolean
   notifications = 0
   adminNotifications = 0
   usersAwaitingApproval = 0
@@ -142,6 +142,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     merge(fromEvent(window, 'resize'), toObservable(this.horizontalMenuMode), toObservable(topToolbarMode)).subscribe(
       () => this.syncMobileMode()
     )
+
+    this.menuVisible = !this.mobile()
   }
 
   ngOnInit(): void {
