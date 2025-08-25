@@ -222,8 +222,14 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
           .join()
           .toLowerCase()
         if (
-          superMutedWords.length > 0 &&
-          superMutedWords.some((supermuteWord) => textOfPosts.includes(supermuteWord))
+          (superMutedWords.length > 0 &&
+            superMutedWords.some((supermuteWord) => textOfPosts.includes(supermuteWord))) ||
+          (this.postService.blockedUserIds.length > 0 &&
+            post.some(
+              (elem) =>
+                (elem.mentionPost?.filter((mention) => this.postService.blockedUserIds.includes(mention.id)) || [])
+                  .length > 0
+            ))
         ) {
           return false
         }
