@@ -110,9 +110,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     private audioService: AudioService,
     themeService: ThemeService
   ) {
-    this.loginSubscription = this.loginSubscription = this.loginService.loginEventEmitter.subscribe(() => {
-      this.drawMenu()
-    })
+    this.loginSubscription = this.loginSubscription = this.loginService.loginEventEmitter.subscribe(() => {})
     if (this.loginService.getForceClassicLogo()) {
       this.logo = '/assets/classicLogo.png'
     }
@@ -139,50 +137,23 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     )
 
     this.menuVisible = !this.mobile()
-  }
 
-  ngOnInit(): void {
-    this.drawMenu()
-
-    // IMPORTANT: HIDE THE SPLASH SCREEN
-    const splashElement = document.getElementById('splash')
-    splashElement?.classList.add('loaded')
-
-    const microformatsElement = document.getElementById('indieweb')
-    microformatsElement?.classList.add('loaded')
-  }
-
-  ngOnDestroy(): void {
-    this.navigationSubscription.unsubscribe()
-    this.loginSubscription.unsubscribe()
-    this.scrollSubscription.unsubscribe()
-  }
-
-  showMenu() {
-    this.menuVisible = true
-  }
-
-  hideMenu() {
-    this.menuVisible = false
-    this.editorService.launchPostEditorEmitter.next({ action: Action.Close })
-  }
-
-  drawMenu() {
+    // JSON driven UI lmao
     this.menuItems = [
-      {
-        label: 'menu.login',
-        icon: faHouse,
-        visible: !this.jwtService.tokenValid(),
-        routerLink: '/login',
-        command: () => {
-          this.hideMenu()
-        }
-      },
       {
         label: 'menu.register',
         icon: faUser,
         visible: !this.jwtService.tokenValid(),
         routerLink: '/register',
+        command: () => {
+          this.hideMenu()
+        }
+      },
+      {
+        label: 'menu.login',
+        icon: faHouse,
+        visible: !this.jwtService.tokenValid(),
+        routerLink: '/login',
         command: () => {
           this.hideMenu()
         }
@@ -673,6 +644,30 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     ]
   }
 
+  ngOnInit(): void {
+    // IMPORTANT: HIDE THE SPLASH SCREEN
+    const splashElement = document.getElementById('splash')
+    splashElement?.classList.add('loaded')
+
+    const microformatsElement = document.getElementById('indieweb')
+    microformatsElement?.classList.add('loaded')
+  }
+
+  ngOnDestroy(): void {
+    this.navigationSubscription.unsubscribe()
+    this.loginSubscription.unsubscribe()
+    this.scrollSubscription.unsubscribe()
+  }
+
+  showMenu() {
+    this.menuVisible = true
+  }
+
+  hideMenu() {
+    this.menuVisible = false
+    this.editorService.launchPostEditorEmitter.next({ action: Action.Close })
+  }
+
   async updateNotifications(url: string) {
     if (this.jwtService.tokenValid()) {
       const previousNotifications =
@@ -692,7 +687,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       if (previousNotifications != newNotifications && localStorage.getItem('disableSounds') != 'true') {
         this.audioService.playSound('/assets/sounds/4.ogg')
       }
-      this.drawMenu()
       this.cdr.detectChanges()
     }
   }
