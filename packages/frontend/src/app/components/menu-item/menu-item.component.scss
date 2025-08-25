@@ -3,3 +3,12 @@
   justify-content: center;
   min-width: 20px;
 }
+
+.menu-item-arrow {
+  rotate: -90deg;
+  transition: rotate 100ms linear;
+}
+
+.menu-open {
+  rotate: 0deg;
+}

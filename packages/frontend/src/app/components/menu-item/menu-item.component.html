@@ -28,6 +28,8 @@
 } @else {
   <a
     [matMenuTriggerFor]="item.items ? menu : null"
+    [matMenuTriggerRestoreFocus]="false"
+    #menuTrigger="matMenuTrigger"
     [routerLink]="item.routerLink ? item.routerLink : null"
     [matBadge]="item.badge"
     [matBadgeHidden]="item.badge === 0"
@@ -35,7 +37,7 @@
     *ngIf="item.visible"
     mat-list-item
     (click)="doCommand()"
-    (keydown)="handleKey($event)"
+    (keydown)="handleKey($event, menuTrigger)"
     tabIndex="0"
   >
     <div class="flex align-items-center justify-content-start navigation-menu-button">
@@ -45,10 +47,15 @@
         </span>
       }
       <span class="ml-3 mr-1 menu-item-content">{{ item.label }}</span>
+      @if (item.items) {
+        <span class="ml-auto menu-item-arrow" [class.menu-open]="expanded"
+          ><fa-icon [icon]="arrowIcon" size="xs"
+        /></span>
+      }
     </div>
   </a>
 
-  <mat-menu #menu="matMenu">
+  <mat-menu #menu="matMenu" (closed)="menuClose()">
     @for (elem of item.items; track $index) {
       <app-menu-item [item]="elem"></app-menu-item>
     }

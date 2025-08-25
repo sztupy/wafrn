@@ -4,9 +4,9 @@ import { MatListModule } from '@angular/material/list'
 import { Router, RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MenuItem } from 'src/app/interfaces/menu-item'
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { MatBadgeModule } from '@angular/material/badge'
-import { MatMenuModule } from '@angular/material/menu'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { CommonModule } from '@angular/common'
 
 @Component({
@@ -24,8 +24,7 @@ import { CommonModule } from '@angular/common'
   styleUrl: './menu-item.component.scss'
 })
 export class MenuItemComponent {
-  chevronUp = faChevronUp
-  chevronDown = faChevronDown
+  arrowIcon = faChevronDown
 
   @Input() item!: MenuItem
   @Input() button = false
@@ -46,14 +45,18 @@ export class MenuItemComponent {
     }
   }
 
-  handleKey(event: KeyboardEvent) {
+  handleKey(event: KeyboardEvent, menuTrigger?: MatMenuTrigger) {
     if (event.key !== 'Enter') return
 
     // Run the associated event
     if (this.item.items) {
       this.expanded = !this.expanded
+      menuTrigger?.openMenu()
     } else {
       this.doCommand()
     }
+  }
+  menuClose() {
+    this.expanded = false
   }
 }
