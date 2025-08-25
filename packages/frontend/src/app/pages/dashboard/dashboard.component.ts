@@ -224,7 +224,8 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
         if (
           (superMutedWords.length > 0 &&
             superMutedWords.some((supermuteWord) => textOfPosts.includes(supermuteWord))) ||
-          (this.postService.blockedUserIds.length > 0 &&
+          (!localStorage.getItem('displayMentionsOfBlockedUsersFromOtherUsers') === true &&
+            this.postService.blockedUserIds.length > 0 &&
             post.some(
               (elem) =>
                 (elem.mentionPost?.filter((mention) => this.postService.blockedUserIds.includes(mention.id)) || [])

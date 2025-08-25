@@ -253,7 +253,8 @@ export class LoginService {
       disableSounds: 'wafrn.disableSounds',
       replaceAIWithCocaine: 'wafrn.replaceAIWithCocaine',
       replaceAIWord: 'wafrn.replaceAIWord',
-      hideQuotes: 'wafrn.hideQuotes'
+      hideQuotes: 'wafrn.hideQuotes',
+      displayMentionsOfBlockedUsersFromOtherUsers: 'wafrn.displayMentionsOfBlockedUsersFromOtherUsers'
     }
 
     try {

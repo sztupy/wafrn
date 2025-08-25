@@ -158,7 +158,8 @@
       "customCocAIne": "Custom word for AI replacement",
       "notRecommendedOptions": "Not recommended options",
       "disableNSFWFilter": "Disable NSFW images filter",
-      "automaticallyExpandAllPosts": "Automatically expand all posts"
+      "automaticallyExpandAllPosts": "Automatically expand all posts",
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users"
     },
     "privacy": {
       "defaultPostPrivacy": "Default post privacy",
