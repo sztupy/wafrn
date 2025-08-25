@@ -123,11 +123,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       }
     })
 
-    setTimeout(() => {
-      // TODO think of a better hack than wait 250 ms then redraw the menu for translations
-      this.drawMenu()
-    }, 250)
-
     this.scrollSubscription = this.dashboardService.scrollEventEmitter.subscribe(() => {
       this.updateNotifications('scroll')
     })
@@ -175,9 +170,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   drawMenu() {
     this.menuItems = [
       {
-        label: this.translateService.instant('menu.login'),
+        label: 'menu.login',
         icon: faHouse,
-        title: this.translateService.instant('menu.login'),
         visible: !this.jwtService.tokenValid(),
         routerLink: '/login',
         command: () => {
@@ -185,9 +179,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.register'),
+        label: 'menu.register',
         icon: faUser,
-        title: this.translateService.instant('menu.register'),
         visible: !this.jwtService.tokenValid(),
         routerLink: '/register',
         command: () => {
@@ -195,9 +188,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.exploreWafrn'),
+        label: 'menu.exploreWafrn',
         icon: faCompass,
-        title: this.translateService.instant('menu.exploreWafrn'),
         visible: !this.jwtService.tokenValid(),
         routerLink: '/dashboard/exploreLocal',
         command: () => {
@@ -205,9 +197,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.dashboard'),
+        label: 'menu.dashboard',
         icon: faHouse,
-        title: this.translateService.instant('menu.dashboardHover'),
         visible: this.jwtService.tokenValid(),
         routerLink: '/dashboard',
         command: () => {
@@ -215,9 +206,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.writeWoot'),
+        label: 'menu.writeWoot',
         icon: faPencil,
-        title: this.translateService.instant('menu.writeWoot'),
         visible: this.jwtService.tokenValid(),
         command: async () => {
           this.hideMenu()
@@ -225,9 +215,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.notifications'),
+        label: 'menu.notifications',
         icon: faBell,
-        title: this.translateService.instant('menu.notifications'),
         visible: this.jwtService.tokenValid(),
         badge: this.notifications,
         routerLink: '/dashboard/notifications',
@@ -236,15 +225,13 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.explore'),
+        label: 'menu.explore',
         icon: faCompass,
-        title: this.translateService.instant('menu.exploreDescription'),
         visible: this.jwtService.tokenValid(),
         items: [
           {
-            label: this.translateService.instant('menu.exploreWafrn'),
+            label: 'menu.exploreWafrn',
             icon: faServer,
-            title: this.translateService.instant('menu.exploreWafrnDescription'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/dashboard/exploreLocal',
             command: () => {
@@ -252,9 +239,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.exploreFediverse'),
+            label: 'menu.exploreFediverse',
             icon: faCompass,
-            title: this.translateService.instant('menu.exploreFediverseDescription'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/dashboard/explore',
             command: () => {
@@ -264,9 +250,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: this.translateService.instant('menu.unansweredAsks'),
+        label: 'menu.unansweredAsks',
         icon: faQuestion,
-        title: this.translateService.instant('menu.unansweredAsks'),
         visible: this.jwtService.tokenValid(),
         badge: this.awaitingAsks,
         routerLink: '/profile/myAsks',
@@ -275,9 +260,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.privateMessages'),
+        label: 'menu.privateMessages',
         icon: faEnvelope,
-        title: this.translateService.instant('menu.privateMessages'),
         visible: this.jwtService.tokenValid(),
         routerLink: '/dashboard/private',
         command: () => {
@@ -285,16 +269,14 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.admin.title'),
+        label: 'menu.admin.title',
         icon: faPowerOff,
-        title: this.translateService.instant('menu.admin.title'),
         visible: this.jwtService.adminToken(),
         badge: this.adminNotifications + this.usersAwaitingApproval,
         items: [
           {
-            label: this.translateService.instant('menu.admin.serverList'),
+            label: 'menu.admin.serverList',
             icon: faServer,
-            title: this.translateService.instant('menu.admin.serverList'),
             visible: true,
             routerLink: '/admin/server-list',
             command: () => {
@@ -302,9 +284,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.admin.addEmojis'),
+            label: 'menu.admin.addEmojis',
             icon: faIcons,
-            title: this.translateService.instant('menu.admin.addEmojis'),
             visible: true,
             routerLink: '/admin/emojis',
             command: () => {
@@ -312,9 +293,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.admin.reports'),
+            label: 'menu.admin.reports',
             icon: faExclamationTriangle,
-            title: this.translateService.instant('menu.admin.reports'),
             visible: true,
             badge: this.adminNotifications,
             routerLink: '/admin/user-reports',
@@ -323,9 +303,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.admin.bans'),
+            label: 'menu.admin.bans',
             icon: faBan,
-            title: this.translateService.instant('menu.admin.bans'),
             visible: true,
             routerLink: '/admin/bans',
             command: () => {
@@ -333,9 +312,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.admin.blocklist'),
+            label: 'menu.admin.blocklist',
             icon: faHourglass,
-            title: this.translateService.instant('menu.admin.blocklist'),
             visible: true,
             routerLink: '/admin/user-blocks',
             command: () => {
@@ -343,9 +321,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.admin.stats'),
+            label: 'menu.admin.stats',
             icon: faChartSimple,
-            title: this.translateService.instant('menu.admin.stats'),
             visible: true,
             routerLink: '/admin/stats',
             command: () => {
@@ -353,9 +330,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.admin.awaitingAproval'),
+            label: 'menu.admin.awaitingAproval',
             icon: faUserLock,
-            title: this.translateService.instant('menu.admin.awaitingAproval'),
             visible: true,
             badge: this.usersAwaitingApproval,
             routerLink: '/admin/activate-users',
@@ -366,9 +342,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: this.translateService.instant('menu.search'),
+        label: 'menu.search',
         icon: faSearch,
-        title: this.translateService.instant('menu.search'),
         visible: this.jwtService.tokenValid(),
         routerLink: '/dashboard/search',
         command: () => {
@@ -376,16 +351,14 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.settings.title'),
+        label: 'menu.settings.title',
         icon: faCog,
-        title: this.translateService.instant('menu.settings.title'),
         visible: this.jwtService.tokenValid(),
         badge: this.followsAwaitingApproval,
         items: [
           {
-            label: this.translateService.instant('menu.settings.follows'),
+            label: 'menu.settings.follows',
             icon: faUser,
-            title: this.translateService.instant('menu.settings.follows'),
             visible: true,
             badge: this.followsAwaitingApproval,
             routerLink: '/blog/' + this.jwtService.getTokenData().url + '/followers',
@@ -394,9 +367,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           // {
-          //   label: this.translateService.instant('menu.settings.enableBluesky'),
+          //   label: 'menu.settings.enableBluesky',
           //   icon: faBluesky,
-          //   title: this.translateService.instant('menu.settings.enableBluesky'),
           //   visible: true,
           //   routerLink: '/profile/enable-bluesky',
           //   command: () => {
@@ -404,9 +376,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           //   }
           // },
           {
-            label: this.translateService.instant('menu.settings.editProfile'),
+            label: 'menu.settings.editProfile',
             icon: faUserEdit,
-            title: this.translateService.instant('menu.settings.editProfile'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/edit',
             command: () => {
@@ -414,9 +385,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.themeEditor'),
+            label: 'menu.settings.themeEditor',
             icon: faPaintbrush,
-            title: this.translateService.instant('menu.settings.themeEditor'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/css',
             command: () => {
@@ -424,9 +394,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.mutedUsers'),
+            label: 'menu.settings.mutedUsers',
             icon: faVolumeMute,
-            title: this.translateService.instant('menu.settings.mutedUsers'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/mutes',
             command: () => {
@@ -434,9 +403,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.mutedPosts'),
+            label: 'menu.settings.mutedPosts',
             icon: faBellSlash,
-            title: this.translateService.instant('menu.settings.mutedPosts'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/silencedPosts',
             command: () => {
@@ -444,9 +412,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.followedHashtags'),
+            label: 'menu.settings.followedHashtags',
             icon: faHashtag,
-            title: this.translateService.instant('menu.settings.followedHashtags'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/manageFollowedHashtags',
             command: () => {
@@ -454,9 +421,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.bookmarkedPosts'),
+            label: 'menu.settings.bookmarkedPosts',
             icon: faBookmark,
-            title: this.translateService.instant('menu.settings.bookmarkedPosts'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/bookmarkedPosts',
             command: () => {
@@ -464,9 +430,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.myBlockedUsers'),
+            label: 'menu.settings.myBlockedUsers',
             icon: faBan,
-            title: this.translateService.instant('menu.settings.myBlockedUsers'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/blocks',
             command: () => {
@@ -474,9 +439,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.myBlockedServers'),
+            label: 'menu.settings.myBlockedServers',
             icon: faServer,
-            title: this.translateService.instant('menu.settings.myBlockedServers'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/serverBlocks',
             command: () => {
@@ -484,9 +448,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.importFollows'),
+            label: 'menu.settings.importFollows',
             icon: faUserEdit,
-            title: this.translateService.instant('menu.settings.importFollows'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/profile/importFollows',
             command: () => {
@@ -494,9 +457,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: this.translateService.instant('menu.settings.superSecretMenu'),
+            label: 'menu.settings.superSecretMenu',
             icon: faSkull,
-            title: this.translateService.instant('menu.settings.superSecretMenu'),
             visible: this.jwtService.tokenValid(),
             routerLink: '/doom',
             command: () => {
@@ -506,9 +468,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: this.translateService.instant('menu.myBlog'),
+        label: 'menu.myBlog',
         icon: faUser,
-        title: this.translateService.instant('menu.myBlog'),
         visible: this.jwtService.tokenValid(),
         routerLink: '/blog/' + (this.jwtService.tokenValid() ? this.jwtService.getTokenData()['url'] : ''),
         command: () => {
@@ -517,14 +478,12 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: '',
-        title: '',
         visible: true,
         divider: true
       },
       {
-        label: this.translateService.instant('menu.privacy'),
+        label: 'menu.privacy',
         icon: faEyeSlash,
-        title: this.translateService.instant('menu.privacy'),
         visible: true,
         routerLink: '/about',
         command: () => {
@@ -532,9 +491,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.faq'),
+        label: 'menu.faq',
         icon: faQuestion,
-        title: this.translateService.instant('menu.faq'),
         visible: true,
         url: 'https://wafrn.net/faq/overview.html',
         command: () => {
@@ -542,9 +500,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.source'),
+        label: 'menu.source',
         icon: faCode,
-        title: this.translateService.instant('menu.source'),
         visible: true,
         url: 'https://codeberg.org/wafrn/wafrn',
         command: () => {
@@ -552,9 +509,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.patreon'),
+        label: 'menu.patreon',
         icon: faEuro,
-        title: this.translateService.instant('menu.patreon'),
         visible: true,
         url: 'https://patreon.com/wafrn',
         command: () => {
@@ -562,9 +518,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.kofi'),
+        label: 'menu.kofi',
         icon: faEuro,
-        title: this.translateService.instant('menu.kofi'),
         visible: true,
         url: 'https://ko-fi.com/wafrn',
         command: () => {
@@ -572,9 +527,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: this.translateService.instant('menu.logout'),
+        label: 'menu.logout',
         icon: faSignOut,
-        title: this.translateService.instant('menu.logout'),
         visible: this.jwtService.tokenValid(),
         command: () => {
           this.loginService.logOut()
@@ -586,9 +540,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     this.menuItemsMobile = [
       [
         {
-          label: this.translateService.instant('menu.showMenu'),
+          label: 'menu.showMenu',
           icon: faBars,
-          title: this.translateService.instant('menu.showMenu'),
           visible: true,
           badge:
             this.awaitingAsks + this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval,
@@ -599,9 +552,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       ],
       [
         {
-          label: this.translateService.instant('menu.home'),
+          label: 'menu.home',
           icon: faHouse,
-          title: this.translateService.instant('menu.home'),
           visible: this.jwtService.tokenValid(),
           routerLink: '/',
           command: () => {
@@ -609,9 +561,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: this.translateService.instant('menu.login'),
+          label: 'menu.login',
           icon: faHouse,
-          title: this.translateService.instant('menu.login'),
           visible: !this.jwtService.tokenValid(),
           routerLink: '/login',
           command: () => {
@@ -619,9 +570,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: this.translateService.instant('menu.register'),
+          label: 'menu.register',
           icon: faUser,
-          title: this.translateService.instant('menu.register'),
           visible: !this.jwtService.tokenValid(),
           routerLink: '/register',
           command: () => {
@@ -629,9 +579,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: this.translateService.instant('menu.exploreWafrn'),
+          label: 'menu.exploreWafrn',
           icon: faCompass,
-          title: this.translateService.instant('menu.exploreWafrn'),
           visible: !this.jwtService.tokenValid(),
           routerLink: '/dashboard/exploreLocal',
           command: () => {
@@ -639,15 +588,13 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: this.translateService.instant('menu.explore'),
+          label: 'menu.explore',
           icon: faCompass,
-          title: this.translateService.instant('menu.exploreDescription'),
           visible: this.jwtService.tokenValid(),
           items: [
             {
-              label: this.translateService.instant('menu.dashboard'),
+              label: 'menu.dashboard',
               icon: faHouse,
-              title: this.translateService.instant('menu.dashboardHover'),
               visible: this.jwtService.tokenValid(),
               routerLink: '/dashboard',
               command: () => {
@@ -655,9 +602,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
               }
             },
             {
-              label: this.translateService.instant('menu.exploreWafrn'),
+              label: 'menu.exploreWafrn',
               icon: faServer,
-              title: this.translateService.instant('menu.exploreWafrnDescription'),
               visible: this.jwtService.tokenValid(),
               routerLink: '/dashboard/exploreLocal',
               command: () => {
@@ -665,9 +611,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
               }
             },
             {
-              label: this.translateService.instant('menu.exploreFediverse'),
+              label: 'menu.exploreFediverse',
               icon: faCompass,
-              title: this.translateService.instant('menu.exploreFediverseDescription'),
               visible: this.jwtService.tokenValid(),
               routerLink: '/dashboard/explore',
               command: () => {
@@ -675,9 +620,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
               }
             },
             {
-              label: this.translateService.instant('menu.privateMessages'),
+              label: 'menu.privateMessages',
               icon: faEnvelope,
-              title: this.translateService.instant('menu.privateMessages'),
               visible: this.jwtService.tokenValid(),
               routerLink: '/dashboard/private',
               command: () => {
@@ -685,9 +629,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
               }
             },
             {
-              label: this.translateService.instant('menu.search'),
+              label: 'menu.search',
               icon: faSearch,
-              title: this.translateService.instant('menu.search'),
               visible: this.jwtService.tokenValid(),
               routerLink: '/dashboard/search',
               command: () => {
@@ -697,9 +640,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           ]
         },
         {
-          label: this.translateService.instant('menu.notifications'),
+          label: 'menu.notifications',
           icon: faBell,
-          title: this.translateService.instant('menu.notifications'),
           visible: this.jwtService.tokenValid(),
           badge: this.notifications,
           routerLink: '/dashboard/notifications',
@@ -708,9 +650,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: this.translateService.instant('menu.myBlog'),
+          label: 'menu.myBlog',
           icon: faUser,
-          title: this.translateService.instant('menu.myBlog'),
           visible: this.jwtService.tokenValid(),
           routerLink: '/blog/' + (this.jwtService.tokenValid() ? this.jwtService.getTokenData()['url'] : ''),
           command: () => {
@@ -720,9 +661,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       ],
       [
         {
-          label: this.translateService.instant('menu.writeWoot'),
+          label: 'menu.writeWoot',
           icon: faPencil,
-          title: this.translateService.instant('menu.writeWoot'),
           visible: this.jwtService.tokenValid(),
           command: async () => {
             this.hideMenu()

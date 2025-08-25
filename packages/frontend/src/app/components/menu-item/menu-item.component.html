@@ -46,7 +46,7 @@
           <fa-icon [icon]="item.icon"></fa-icon>
         </span>
       }
-      <span class="ml-3 mr-1 menu-item-content">{{ item.label }}</span>
+      <span class="ml-3 mr-1 menu-item-content">{{ item.label | translate }}</span>
       @if (item.items) {
         <span class="ml-auto menu-item-arrow" [class.menu-open]="expanded"
           ><fa-icon [icon]="arrowIcon" size="xs"

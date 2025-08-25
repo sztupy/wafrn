@@ -8,6 +8,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { MatBadgeModule } from '@angular/material/badge'
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { CommonModule } from '@angular/common'
+import { TranslateModule } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-menu-item',
@@ -18,7 +19,8 @@ import { CommonModule } from '@angular/common'
     MatButtonModule,
     MatListModule,
     MatBadgeModule,
-    MatMenuModule
+    MatMenuModule,
+    TranslateModule
   ],
   templateUrl: './menu-item.component.html',
   styleUrl: './menu-item.component.scss'
