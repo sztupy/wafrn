@@ -186,7 +186,7 @@ export class ThemeService {
     }
   }
 
-  public async setColorScheme(scheme: ColorScheme, doNotSavePreference = false) {
+  public setColorScheme = async (scheme: ColorScheme, doNotSavePreference = false) => {
     this.colorScheme.set(scheme)
     localStorage?.setItem('colorScheme', scheme)
 
@@ -196,26 +196,26 @@ export class ThemeService {
 
     // User settings
     if (doNotSavePreference) return
-    await this.loginService.updateUserOptions([{ name: 'wafrn.colorScheme', value: scheme }])
+    return await this.loginService.updateUserOptions([{ name: 'wafrn.colorScheme', value: scheme }])
   }
 
-  public async setTheme(theme: ColorTheme, doNotSavePreference = false) {
+  public setTheme = async (theme: ColorTheme, doNotSavePreference = false) => {
     this.theme.set(theme)
     document.documentElement.setAttribute('data-theme', theme)
     localStorage?.setItem('theme', theme)
 
     // User settings
     if (doNotSavePreference) return
-    await this.loginService.updateUserOptions([{ name: 'wafrn.theme', value: theme }])
+    return await this.loginService.updateUserOptions([{ name: 'wafrn.theme', value: theme }])
   }
 
-  public async setAdditionalStyleMode(mode: AdditionalStyleMode, value: boolean, doNotSavePreference = false) {
+  public setAdditionalStyleMode = async (mode: AdditionalStyleMode, value: boolean, doNotSavePreference = false) => {
     this.additionalStyleModes[mode].set(value)
     localStorage?.setItem(mode, value.toString())
 
     // User settings
     if (doNotSavePreference) return
-    await this.loginService.updateUserOptions([{ name: `wafrn.${mode}`, value: value.toString() }])
+    return await this.loginService.updateUserOptions([{ name: `wafrn.${mode}`, value: value.toString() }])
   }
 
   public async toggleAdditionalStyleMode(mode: AdditionalStyleMode, doNotSavePreference = false) {

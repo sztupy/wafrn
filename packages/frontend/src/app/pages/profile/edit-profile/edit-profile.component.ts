@@ -144,9 +144,9 @@ export class EditProfileComponent implements OnInit {
       .filter(([_, enabled]) => enabled())
       .map(([val, _]) => val) as AdditionalStyleMode[]
 
-    this.setColorScheme = themeService.setColorScheme.bind(themeService)
-    this.setTheme = themeService.setTheme.bind(themeService)
-    this.setAdditionalStyleMode = themeService.setAdditionalStyleMode.bind(themeService)
+    this.setColorScheme = themeService.setColorScheme
+    this.setTheme = themeService.setTheme
+    this.setAdditionalStyleMode = themeService.setAdditionalStyleMode
 
     this.colorSchemeGroupList = colorSchemeGroupList
 
