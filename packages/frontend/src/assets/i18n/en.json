@@ -127,6 +127,8 @@
       "colorScheme": "Color Scheme",
       "theme": "Theme",
       "additionalStyleModes": "Additional Style Modes",
+      "language": "Language",
+      "appLanguage": "App language",
       "notificationFilters": "Notification filtering",
       "showNotificationsFrom": "Show notifications from",
       "notifyFrom": {

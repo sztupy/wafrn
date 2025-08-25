@@ -21,6 +21,7 @@ import {
   ThemeService
 } from 'src/app/services/theme.service'
 import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-edit-profile',
@@ -114,6 +115,9 @@ export class EditProfileComponent implements OnInit {
   additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> }
   additionalStyleModesSelect: AdditionalStyleMode[]
 
+  allLanguages: string[]
+  appLanguage: string
+
   // Data copies
   colorSchemeData = colorSchemeData
   colorThemeData = colorThemeData
@@ -133,7 +137,8 @@ export class EditProfileComponent implements OnInit {
     private mediaService: MediaService,
     private loginService: LoginService,
     private messages: MessageService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private translationService: TranslateService
   ) {
     this.colorScheme = themeService.colorScheme
     this.colorSchemeSelect = this.colorScheme()
@@ -151,6 +156,9 @@ export class EditProfileComponent implements OnInit {
     this.colorSchemeGroupList = colorSchemeGroupList
 
     this.themeService.setCustomCSS('')
+
+    this.allLanguages = this.translationService.langs
+    this.appLanguage = this.translationService.currentLang
   }
 
   syncColorScheme() {
@@ -167,6 +175,12 @@ export class EditProfileComponent implements OnInit {
     const disabledModes = allModes.filter((mode) => !this.additionalStyleModesSelect.includes(mode))
     enabledModes.forEach((mode) => this.setAdditionalStyleMode(mode, true))
     disabledModes.forEach((mode) => this.setAdditionalStyleMode(mode, false))
+  }
+
+  syncLang() {
+    this.translationService.use(this.appLanguage)
+    localStorage?.setItem('appLanguage', this.appLanguage)
+    this.loginService.updateUserOptions([{ name: 'wafrn.appLanguage', value: this.appLanguage }])
   }
 
   ngOnInit(): void {

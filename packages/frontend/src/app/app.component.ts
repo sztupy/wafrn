@@ -26,19 +26,28 @@ export class AppComponent implements OnInit {
     private loginService: LoginService,
     private environmentService: EnvironmentService,
     @Inject(DOCUMENT) private document: Document,
-    private translate: TranslateService,
+    private translateService: TranslateService,
     private websocketService: WebsocketService,
     private router: Router,
     private messages: MessageService
   ) {
-    this.translate.addLangs(['en', 'pl', 'es'])
-    this.translate.setDefaultLang('en')
-    try {
-      // TODO re enable this
-      // this.translate.use(this.translate.getBrowserLang() || 'en')
-    } catch (error) {
-      // probably lang not avaiable
+    this.translateService.addLangs(['en', 'pl', 'es'])
+    this.translateService.setDefaultLang('en')
+
+    // User specified language
+    const userLanguage = localStorage?.getItem('appLanguage')
+    if (userLanguage !== null && translateService.langs.includes(userLanguage)) {
+      // Given the above call to add languages is correct to what we have, this should always succeed
+      translateService.use(userLanguage)
     }
+
+    // Keep the 'lang' property up to date
+    const currentLang = this.translateService.currentLang || this.translateService.getDefaultLang() || 'en'
+    this.document.documentElement.lang = currentLang
+    this.translateService.onLangChange.subscribe((event) => {
+      this.document.documentElement.lang = event.lang
+    })
+
     router.events
       .pipe(
         filter((evt) => evt instanceof NavigationError),
@@ -116,10 +125,5 @@ export class AppComponent implements OnInit {
           console.log(notificationSubscription)
         })
     }
-    const currentLang = this.translate.currentLang || this.translate.getDefaultLang() || 'en'
-    this.document.documentElement.lang = currentLang
-    this.translate.onLangChange.subscribe((event) => {
-      this.document.documentElement.lang = event.lang
-    })
   }
 }
