@@ -423,3 +423,8 @@ mat-tab-header {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+.wafrn-toolbar-section {
+  display: flex;
+  gap: 0.25rem;
+}

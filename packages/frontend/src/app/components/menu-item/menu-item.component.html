@@ -7,17 +7,16 @@
     matBadgePosition="above after"
     *ngIf="item.visible"
     mat-button
+    class="mat-circle-button"
     (click)="doCommand()"
     (keydown)="handleKey($event)"
     tabIndex="0"
   >
-    <div class="flex align-items-center justify-content-start navigation-menu-button">
-      @if (item.icon) {
-        <span class="menu-item-icon">
-          <fa-icon [icon]="item.icon"></fa-icon>
-        </span>
-      }
-    </div>
+    @if (item.icon) {
+      <span class="menu-item-icon">
+        <fa-icon [icon]="item.icon"></fa-icon>
+      </span>
+    }
   </a>
 
   <mat-menu #menu="matMenu">

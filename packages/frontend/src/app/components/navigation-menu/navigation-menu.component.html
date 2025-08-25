@@ -39,7 +39,7 @@
   <mat-drawer-content>
     <mat-toolbar class="wafrn-toolbar" *ngIf="mobile()">
       @for (section of menuItemsMobile; track $index) {
-        <div>
+        <div class="wafrn-toolbar-section">
           @for (link of section; track $index) {
             @if (!link.divider && link.visible) {
               <app-menu-item [button]="true" [item]="link"></app-menu-item>
