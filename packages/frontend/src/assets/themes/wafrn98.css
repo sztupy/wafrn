@@ -676,7 +676,7 @@ div.fragment-content-warning button {}
     }
 
     /* MEDIA CONTAINER */
-    app-wafrn-media {
+    .media-gallery {
         max-width: 70%;
 
         display: block;
