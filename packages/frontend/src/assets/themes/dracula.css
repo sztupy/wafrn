@@ -20,13 +20,13 @@
   --mat-sys-primary-container: var(--drac-line);
   --mat-sys-on-primary-container: var(--drac-fg);
   --mat-sys-inverse-primary: var(--drac-purple);
-  --mat-sys-primary-fixed: var(--failue);
+  --mat-sys-primary-fixed: var(--drac-cyan);
   --mat-sys-primary-fixed-dim: var(--drac-cmnt);
-  --mat-sys-on-primary-fixed: var(--failure);
+  --mat-sys-on-primary-fixed: var(--drac-fg);
   --mat-sys-on-primary-fixed-variant: var(--failure);
   
   /* Secondary palette variables */
-  --mat-sys-secondary: var(--failure);
+  --mat-sys-secondary: var(--drac-purple);
   --mat-sys-on-secondary: var(--failure);
   --mat-sys-secondary-container: var(--drac-cmnt);
   --mat-sys-on-secondary-container: var(--drac-bg);
