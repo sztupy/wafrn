@@ -3,7 +3,7 @@ import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms
 import { LoginService } from 'src/app/services/login.service'
 import { MessageService } from 'src/app/services/message.service'
 
-import { faEye, faEyeSlash, faUpload, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faEye, faEyeSlash, faUpload, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { Router } from '@angular/router'
 
@@ -14,16 +14,15 @@ import { Router } from '@angular/router'
   standalone: false
 })
 export class RegisterComponent {
-  loading = false
   isPasswordVisible = false // Track visibility of password
-  logo = EnvironmentService.environment.logo
   manuallyReview = EnvironmentService.environment.reviewRegistrations
 
   // Font Awesome icons
-  faUser = faUser
+  faUserPlus = faUserPlus
   faEye = faEye
   faEyeSlash = faEyeSlash
   faUpload = faUpload
+  submitIcon = faArrowRight
 
   minimumRegistrationDate: Date
   minDate: Date
@@ -289,7 +288,7 @@ export class RegisterComponent {
   }
 
   async onSubmit() {
-    this.loading = true
+    this.loginForm.disable()
     try {
       const petition = await this.loginService.register(this.loginForm, this.img)
       if (petition) {
@@ -303,14 +302,14 @@ export class RegisterComponent {
           severity: 'warn',
           summary: 'Email or url in use'
         })
-        this.loading = false
+        this.loginForm.enable()
       }
     } catch (exception) {
       this.messages.add({
         severity: 'error',
         summary: 'Something failed!'
       })
-      this.loading = false
+      this.loginForm.enable()
     }
   }
 

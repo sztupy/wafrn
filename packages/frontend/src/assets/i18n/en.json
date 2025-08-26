@@ -4,22 +4,29 @@
     "characters": "characters"
   },
   "login": {
+    "title": "Log in",
     "welcomeBack": "Welcome back!",
     "exploreWithoutAccount": "Click here to take a look without an account!",
     "dontHaveAccount": "Don't have an account?",
     "register": "Register now!",
-    "checkSpam": "If you have any issue, please check your spam folder!",
+    "checkSpam": "If you have any issues logging in, please check your spam folder!",
     "email": "Email",
     "password": "Password",
     "mfaToken": "Token",
     "mfaTokenEnter": "Enter your token from your Authenticator application",
-    "forgottenPassword": "Forgot password? Click here!",
+    "forgottenPassword": "Forgot password",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "loginButton": "Log in",
     "checkEmail": "Please check your email",
     "checkEmailLine1": "We have sent you an email. Please do check your email and the spam folder",
     "checkEmailLine2": "If you have any problem, write to the instance admin, whose email can be found <a href=\"/about\">here</a>"
+  },
+  "register": {
+    "title": "Register",
+    "welcome": "Welcome to Wafrn!",
+    "manualReviewInfo": "An administrator will review your profile before you can join. This process can take a few hours.",
+    "registerButton": "Register"
   },
   "notifications": {
     "loadingMore": "Loading more notifications",

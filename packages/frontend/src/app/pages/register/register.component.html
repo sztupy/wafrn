@@ -1,18 +1,21 @@
-<mat-card class="p-3 mb-6 lg:mx-4 scalein wafrn-container">
-  <div class="text-center mb-5">
-    <img loading="lazy" [src]="logo" alt="Image" height="50" class="mb-3" />
-    <div class="text-3xl font-medium mb-3">Welcome! We hope you enjoy this place!</div>
-    <span class="font-medium line-height-3">Do you have an account?</span>
-    <a routerLink="/login" class="font-medium no-underline ml-2 cursor-pointer">Just log in!</a>
-  </div>
+<mat-card class="pb-3 mb-6 lg:mx-4 mat-card-higher wafrn-container">
+  <mat-card-header class="pb-3 wafrn-container-header">
+    <mat-card-title class="flex gap-2"
+      ><fa-icon [icon]="faUserPlus"></fa-icon
+      ><span class="font-medium">{{ 'register.title' | translate }}</span></mat-card-title
+    >
+  </mat-card-header>
+  <section class="my-6 mx-3 text-center">
+    <h1 class="mb-0 text-5xl">{{ 'register.welcome' | translate }}</h1>
+  </section>
 
   @if (manuallyReview) {
-    <button mat-flat-button color="warn" class="w-full h-full py-2 mb-3">
-      An administrator will review your profile before you can join. This process can take a few hours.
-    </button>
+    <section class="mx-3 mb-4">
+      <app-info-card type="info">{{ 'register.manualReviewInfo' | translate }}</app-info-card>
+    </section>
   }
 
-  <form [hidden]="loading" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form class="px-3" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <mat-form-field class="w-full">
       <mat-label>Email</mat-label>
       <input formControlName="email" type="email" matInput />
@@ -28,10 +31,10 @@
     </mat-form-field>
 
     <mat-form-field class="w-full mb-3" subscriptSizing="dynamic">
-      <mat-label>Your username</mat-label>
+      <mat-label>Username</mat-label>
       <input formControlName="url" type="text" matInput />
-      <mat-hint>Right now we do not allow special characters nor spaces</mat-hint>
-      <mat-error>Your username contains invalid characters</mat-error>
+      <mat-hint>Right now we do not allow special characters or spaces</mat-hint>
+      <mat-error>Username contains invalid characters</mat-error>
     </mat-form-field>
 
     <mat-form-field class="w-full mb-3" subscriptSizing="dynamic">
@@ -84,15 +87,21 @@
       </div>
     </div>
 
-    <button
-      color="primary"
-      mat-flat-button
-      extended
-      [disabled]="loading || !loginForm.valid"
-      class="w-full border-round-md mt-4"
-    >
-      <fa-icon [icon]="faUser"></fa-icon>
-      Register
-    </button>
+    <div class="flex">
+      <button
+        color="primary"
+        mat-flat-button
+        extended
+        [disabled]="!loginForm.valid"
+        class="w-full border-round-md mt-4"
+      >
+        <span class="flex gap-2"
+          >{{ 'register.registerButton' | translate }} <fa-icon [icon]="submitIcon"></fa-icon
+        ></span>
+      </button>
+      @if (loginForm.disabled) {
+        <mat-spinner diameter="24" class="mt-5 mx-3"></mat-spinner>
+      }
+    </div>
   </form>
 </mat-card>

@@ -1,24 +1,24 @@
-<mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">
-  <div class="text-center mb-5">
-    <img loading="lazy" style="display: unset" [src]="logo" alt="Image" height="64" class="mb-3 text-center" />
-    <div class="text-3xl font-medium mb-4">{{ 'login.welcomeBack' | translate }}</div>
-    <p class="text-xl font-medium mb-3">
-      <a [routerLink]="['/dashboard/explore']"> {{ 'login.exploreWithoutAccount' | translate }}</a>
+<mat-card class="pb-3 mb-6 lg:mx-4 mat-card-higher wafrn-container">
+  <mat-card-header class="pb-3 wafrn-container-header">
+    <mat-card-title class="flex gap-2"
+      ><fa-icon [icon]="faArrowRightToBracket"></fa-icon
+      ><span class="font-medium">{{ 'login.title' | translate }}</span></mat-card-title
+    >
+  </mat-card-header>
+  <section class="my-6 mx-3 text-center">
+    <h1 class="text-5xl">{{ 'login.welcomeBack' | translate }}</h1>
+    <p class="m-0 login-motd" [class.animate]="loginReset" (click)="refreshLoginMessage()">
+      <em>{{ loginMessage }}</em>
     </p>
-    <p>
-      <span class="font-medium line-height-3">{{ 'login.dontHaveAccount' | translate }}</span>
-      <a routerLink="/" class="font-medium no-underline ml-2 cursor-pointer">{{ 'login.register' | translate }}</a>
-    </p>
-    <p class="font-medium line-height-3">{{ 'login.checkSpam' | translate }}</p>
-  </div>
+  </section>
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <mat-form-field class="w-full">
+  <form class="px-3" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="mb-1 w-full">
       <mat-label>{{ 'login.email' | translate }}</mat-label>
       <input formControlName="email" name="email" type="email" matInput />
     </mat-form-field>
 
-    <mat-form-field class="w-full">
+    <mat-form-field class="mb-1 w-full mat-form-field-no-padding">
       <mat-label>{{ 'login.password' | translate }}</mat-label>
       <input formControlName="password" [type]="showPassword ? 'text' : 'password'" name="password" matInput />
       <button
@@ -31,12 +31,10 @@
       >
         <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
       </button>
-      <mat-hint>
-        <a routerLink="/recoverPassword" class="font-medium no-underline ml-2 text-right cursor-pointer">{{
-          'login.forgottenPassword' | translate
-        }}</a>
-      </mat-hint>
     </mat-form-field>
+    <div class="mt-1">
+      <a routerLink="/recoverPassword">{{ 'login.forgottenPassword' | translate }}</a>
+    </div>
 
     <div class="flex">
       <button
@@ -46,10 +44,9 @@
         extended
         class="w-full border-round-md mt-4"
       >
-        <fa-icon [icon]="faUser"></fa-icon>
-        {{ 'login.loginButton' | translate }}
+        <span class="flex gap-2">{{ 'login.loginButton' | translate }}<fa-icon [icon]="submitIcon"></fa-icon></span>
       </button>
-      @if (!loginForm.enabled) {
+      @if (loginForm.disabled) {
         <mat-spinner diameter="24" class="mt-5 mx-3"></mat-spinner>
       }
     </div>

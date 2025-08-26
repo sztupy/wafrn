@@ -27,6 +27,11 @@
   content: unset !important;
 }
 
+// Add higher height card option
+.mat-card-higher {
+  --mat-card-elevated-container-elevation: var(--mat-sys-level2);
+}
+
 // Fix drawer border radius without requiring themes to use !important, though uses 0 2 0 specificity
 :root .mat-drawer {
   border-top-right-radius: 0;

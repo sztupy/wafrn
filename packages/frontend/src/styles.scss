@@ -116,6 +116,10 @@ body {
   max-width: 800px;
 }
 
+.wafrn-container-header {
+  border-bottom: 2px dashed var(--mat-sys-outline-variant);
+}
+
 .wafrn-content {
   padding-top: 1.5rem;
   padding-bottom: calc(64px + 1em);
