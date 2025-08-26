@@ -36,7 +36,7 @@
             class="mt-4 new-woot-button"
             routerLink="/editor"
             mat-list-item
-            (click)="openEditor()"
+            (click)="hideMenu(); openEditor()"
             (keydown)="handleWootKeydown($event)"
             tabIndex="0"
           >
