@@ -191,7 +191,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       const newNotifications =
         this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
       if (previousNotifications != newNotifications && localStorage.getItem('disableSounds') != 'true') {
-        this.audioService.playSound('/assets/sounds/4.ogg')
+        this.audioService.playSound('notification')
       }
       this.cdr.detectChanges()
     }
