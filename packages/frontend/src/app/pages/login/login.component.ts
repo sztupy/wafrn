@@ -14,7 +14,6 @@ import { EnvironmentService } from 'src/app/services/environment.service'
   standalone: false
 })
 export class LoginComponent implements OnInit {
-  loading = false
   logo = EnvironmentService.environment.logo
   faUser = faUser
   faEye = faEye
@@ -36,7 +35,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   async onSubmit() {
-    this.loading = true
+    this.loginForm.disable()
     try {
       const login = await this.loginService.logIn(this.loginForm)
       if (!login) {
@@ -52,7 +51,7 @@ export class LoginComponent implements OnInit {
         summary: 'Something failed!'
       })
     }
-    this.loading = false
+    this.loginForm.enable()
   }
 
   // Toggle password visibility

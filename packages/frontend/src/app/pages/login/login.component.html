@@ -12,7 +12,7 @@
     <p class="font-medium line-height-3">{{ 'login.checkSpam' | translate }}</p>
   </div>
 
-  <form [hidden]="loading" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <mat-form-field class="w-full">
       <mat-label>{{ 'login.email' | translate }}</mat-label>
       <input formControlName="email" name="email" type="email" matInput />
@@ -21,7 +21,14 @@
     <mat-form-field class="w-full">
       <mat-label>{{ 'login.password' | translate }}</mat-label>
       <input formControlName="password" [type]="showPassword ? 'text' : 'password'" name="password" matInput />
-      <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? ('login.hidePassword' | translate) : ('login.showPassword' | translate)" [attr.aria-pressed]="showPassword">
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="showPassword ? ('login.hidePassword' | translate) : ('login.showPassword' | translate)"
+        [attr.aria-pressed]="showPassword"
+      >
         <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
       </button>
       <mat-hint>
@@ -31,15 +38,20 @@
       </mat-hint>
     </mat-form-field>
 
-    <button
-      [disabled]="loading || !loginForm.valid"
-      mat-flat-button
-      color="primary"
-      extended
-      class="w-full border-round-md mt-4"
-    >
-      <fa-icon [icon]="faUser"></fa-icon>
-      {{ 'login.loginButton' | translate }}
-    </button>
+    <div class="flex">
+      <button
+        [disabled]="!loginForm.valid"
+        mat-flat-button
+        color="primary"
+        extended
+        class="w-full border-round-md mt-4"
+      >
+        <fa-icon [icon]="faUser"></fa-icon>
+        {{ 'login.loginButton' | translate }}
+      </button>
+      @if (!loginForm.enabled) {
+        <mat-spinner diameter="24" class="mt-5 mx-3"></mat-spinner>
+      }
+    </div>
   </form>
 </mat-card>
