@@ -929,6 +929,10 @@ app-post hr > div a:hover {}
         background: #808080 !important;
     }
 
+:root .footer-links a {
+  color: var(--mat-sys-on-surface);
+}
+
 /* Bottom Toolbar */
 .wafrn-toolbar {
   border-top: 2px outset;
