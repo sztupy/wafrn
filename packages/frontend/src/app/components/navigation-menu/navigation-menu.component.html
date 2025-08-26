@@ -2,22 +2,24 @@
   <mat-drawer
     style="position: fixed"
     class="side-menu"
+    [class.keyboard-active]="keyboardActive"
     [mode]="mobile() ? 'over' : 'side'"
     [opened]="menuVisible || !mobile()"
     [disableClose]="!horizontalMenuMode() && !mobile()"
     (closed)="hideMenu()"
   >
-    <a [href]="'/'" class="block" (click)="hideMenu()">
-      <img
-        [src]="logo"
-        class="instance-logo block mx-auto"
-        alt="instance logo"
-        width="200"
-        height="150"
-        style="object-fit: contain"
-      />
-    </a>
-    <hr />
+    <header class="mb-4">
+      <a [href]="'/'" class="block" (click)="hideMenu()">
+        <img
+          [src]="logo"
+          class="instance-logo block mx-auto"
+          alt="instance logo"
+          width="200"
+          height="150"
+          style="object-fit: contain"
+        />
+      </a>
+    </header>
     <nav aria-label="Navigation menu">
       <mat-nav-list class="side-menu-nav-list">
         @for (link of menuItems; track $index) {
@@ -29,11 +31,42 @@
             }
           }
         }
+        @if (loggedIn()) {
+          <a
+            class="mt-4 new-woot-button"
+            routerLink="/editor"
+            mat-list-item
+            (click)="openEditor()"
+            (keydown)="handleWootKeydown($event)"
+            tabIndex="0"
+          >
+            <div class="flex align-items-center justify-content-start">
+              <span class="new-woot-icon">
+                <fa-icon [icon]="pencilIcon" [fixedWidth]="true"></fa-icon>
+              </span>
+              <span class="ml-3 mr-1 menu-item-content">
+                {{ 'menu.writeWoot' | translate }}
+              </span>
+            </div>
+          </a>
+        }
       </mat-nav-list>
     </nav>
     <div class="drawer-footer">
-      <app-color-scheme-switcher></app-color-scheme-switcher>
-      <div class="text-sm version-text">v{{ frontendVersion }}</div>
+      <div class="px-2 text-sm footer-links">
+        @for (item of menuLinks; track $index) {
+          @if (item.routerLink) {
+            <a class="subtle-link" [routerLink]="item.routerLink">{{ item.label | translate }} </a>
+          } @else {
+            <a class="subtle-link" [href]="item.url">{{ item.label | translate }}</a>
+          }
+        }
+      </div>
+      <hr />
+      <div class="footer-stack">
+        <app-color-scheme-switcher></app-color-scheme-switcher>
+        <div class="text-sm version-text">v{{ frontendVersion }}</div>
+      </div>
     </div>
   </mat-drawer>
   <mat-drawer-content>
@@ -41,8 +74,12 @@
       @for (section of menuItemsMobile; track $index) {
         <div class="wafrn-toolbar-section">
           @for (link of section; track $index) {
-            @if (!link.divider && link.visible()) {
-              <app-menu-item [button]="true" [item]="link"></app-menu-item>
+            @if (link.visible()) {
+              @if (link.divider) {
+                <span class="mx-1 vertical-rule"></span>
+              } @else {
+                <app-menu-item [button]="true" [item]="link"></app-menu-item>
+              }
             }
           }
         </div>

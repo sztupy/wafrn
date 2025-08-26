@@ -1,7 +1,10 @@
 .menu-item-icon {
   display: flex;
   justify-content: center;
-  min-width: 20px;
+}
+
+.menu-item-content {
+  font-weight: 500;
 }
 
 .menu-item-arrow {
@@ -11,4 +14,10 @@
 
 .menu-open {
   rotate: 0deg;
+}
+
+.subroute-active,
+.route-active {
+  --mat-list-list-item-label-text-color: var(--mat-sys-on-primary-container);
+  --mat-list-list-item-container-color: var(--mat-sys-secondary-container);
 }

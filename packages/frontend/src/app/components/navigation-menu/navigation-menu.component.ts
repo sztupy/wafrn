@@ -34,9 +34,6 @@ import {
   faSearch,
   faUserEdit,
   faVolumeMute,
-  faEyeSlash,
-  faCode,
-  faEuro,
   faSignOut,
   faBars,
   faUserLock,
@@ -50,9 +47,14 @@ import {
   faBookmark,
   faSync,
   faHashtag,
-  faArrowLeft
+  faArrowLeft,
+  faUserPlus,
+  faArrowRightToBracket,
+  faGrip,
+  faImagePortrait,
+  faUsers
 } from '@fortawesome/free-solid-svg-icons'
-import { MenuItem } from 'src/app/interfaces/menu-item'
+import { MenuItem, MenuLink } from 'src/app/interfaces/menu-item'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { AudioService } from 'src/app/services/audio.service'
 import { ThemeService } from 'src/app/services/theme.service'
@@ -68,6 +70,8 @@ import packageJson from '../../../../package.json'
 export class NavigationMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = []
   menuItemsMobile: MenuItem[][] = []
+  menuLinks: MenuLink[]
+
   maintenanceMode = EnvironmentService.environment.maintenance
   maintenanceMessage = EnvironmentService.environment.maintenanceMessage
   menuVisible: boolean
@@ -90,6 +94,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   backIcon = faArrowLeft
 
   pwaPage: boolean
+
+  keyboardActive = true
 
   horizontalMenuMode: Signal<boolean>
   offsetTopArea: Signal<boolean>
@@ -125,6 +131,10 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
     this.pwaPage = window.matchMedia('(display-mode: standalone)').matches
 
+    // Focus overlay evil fix
+    fromEvent(document, 'keydown').subscribe(() => (this.keyboardActive = true))
+    fromEvent(document, 'click').subscribe(() => (this.keyboardActive = false))
+
     this.mobile = signal(window.innerWidth <= 992)
     this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
@@ -140,7 +150,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     this.menuItems = [
       {
         label: 'menu.register',
-        icon: faUser,
+        icon: faUserPlus,
         visible: () => !this.loggedIn(),
         routerLink: '/register',
         command: () => {
@@ -149,12 +159,17 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'menu.login',
-        icon: faHouse,
+        icon: faArrowRightToBracket,
         visible: () => !this.loggedIn(),
         routerLink: '/login',
         command: () => {
           this.hideMenu()
         }
+      },
+      {
+        label: '',
+        visible: () => !this.loggedIn(),
+        divider: true
       },
       {
         label: 'menu.exploreWafrn',
@@ -170,25 +185,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         icon: faHouse,
         visible: () => this.loggedIn(),
         routerLink: '/dashboard',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.writeWoot',
-        icon: faPencil,
-        visible: () => this.loggedIn(),
-        command: async () => {
-          this.hideMenu()
-          this.openEditor()
-        }
-      },
-      {
-        label: 'menu.notifications',
-        icon: faBell,
-        visible: () => this.loggedIn(),
-        badge: this.notifications,
-        routerLink: '/dashboard/notifications',
         command: () => {
           this.hideMenu()
         }
@@ -219,11 +215,25 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: 'menu.unansweredAsks',
-        icon: faQuestion,
+        label: 'menu.search',
+        icon: faSearch,
         visible: () => this.loggedIn(),
-        badge: this.awaitingAsks,
-        routerLink: '/profile/myAsks',
+        routerLink: '/dashboard/search',
+        command: () => {
+          this.hideMenu()
+        }
+      },
+      {
+        label: '',
+        visible: () => this.loggedIn(),
+        divider: true
+      },
+      {
+        label: 'menu.notifications',
+        icon: faBell,
+        visible: () => this.loggedIn(),
+        badge: this.notifications,
+        routerLink: '/dashboard/notifications',
         command: () => {
           this.hideMenu()
         }
@@ -238,99 +248,59 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: 'menu.admin.title',
-        icon: faPowerOff,
-        visible: () => this.jwtService.adminToken(),
-        badge: this.adminNotifications + this.usersAwaitingApproval,
+        label: '',
+        visible: () => this.loggedIn(),
+        divider: true
+      },
+      {
+        label: 'menu.profile',
+        icon: faUser,
+        visible: () => this.loggedIn(),
+        badge: this.followsAwaitingApproval,
         items: [
           {
-            label: 'menu.admin.serverList',
-            icon: faServer,
-            visible: () => true,
-            routerLink: '/admin/server-list',
+            label: 'menu.myBlog',
+            icon: faImagePortrait,
+            visible: () => this.loggedIn(),
+            routerLinkDynamic: () => '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
             command: () => {
               this.hideMenu()
             }
           },
           {
-            label: 'menu.admin.addEmojis',
-            icon: faIcons,
-            visible: () => true,
-            routerLink: '/admin/emojis',
+            label: 'menu.unansweredAsks',
+            icon: faQuestion,
+            visible: () => this.loggedIn(),
+            badge: this.awaitingAsks,
+            routerLink: '/profile/myAsks',
             command: () => {
               this.hideMenu()
             }
           },
           {
-            label: 'menu.admin.reports',
-            icon: faExclamationTriangle,
-            visible: () => true,
-            badge: this.adminNotifications,
-            routerLink: '/admin/user-reports',
+            label: 'menu.logout',
+            icon: faSignOut,
+            visible: () => this.loggedIn(),
             command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.bans',
-            icon: faBan,
-            visible: () => true,
-            routerLink: '/admin/bans',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.blocklist',
-            icon: faHourglass,
-            visible: () => true,
-            routerLink: '/admin/user-blocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.stats',
-            icon: faChartSimple,
-            visible: () => true,
-            routerLink: '/admin/stats',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.awaitingAproval',
-            icon: faUserLock,
-            visible: () => true,
-            badge: this.usersAwaitingApproval,
-            routerLink: '/admin/activate-users',
-            command: () => {
+              this.loginService.logOut()
               this.hideMenu()
             }
           }
         ]
       },
       {
-        label: 'menu.search',
-        icon: faSearch,
-        visible: () => this.loggedIn(),
-        routerLink: '/dashboard/search',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
         label: 'menu.settings.title',
         icon: faCog,
         visible: () => this.loggedIn(),
+        highlightRoute: false,
         badge: this.followsAwaitingApproval,
         items: [
           {
             label: 'menu.settings.follows',
-            icon: faUser,
+            icon: faUsers,
             visible: () => true,
             badge: this.followsAwaitingApproval,
-            routerLink: '/blog/' + this.jwtService.getTokenData().url + '/followers',
+            routerLinkDynamic: () => '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
             command: () => {
               this.hideMenu()
             }
@@ -424,7 +394,14 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             command: () => {
               this.hideMenu()
             }
-          },
+          }
+        ]
+      },
+      {
+        label: 'menu.more',
+        icon: faGrip,
+        visible: () => this.loggedIn(),
+        items: [
           {
             label: 'menu.settings.superSecretMenu',
             icon: faSkull,
@@ -437,72 +414,77 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: 'menu.myBlog',
-        icon: faUser,
-        visible: () => this.loggedIn(),
-        routerLink: '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: '',
-        visible: () => true,
-        divider: true
-      },
-      {
-        label: 'menu.privacy',
-        icon: faEyeSlash,
-        visible: () => true,
-        routerLink: '/about',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.faq',
-        icon: faQuestion,
-        visible: () => true,
-        url: 'https://wafrn.net/faq/overview.html',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.source',
-        icon: faCode,
-        visible: () => true,
-        url: 'https://codeberg.org/wafrn/wafrn',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.patreon',
-        icon: faEuro,
-        visible: () => true,
-        url: 'https://patreon.com/wafrn',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.kofi',
-        icon: faEuro,
-        visible: () => true,
-        url: 'https://ko-fi.com/wafrn',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.logout',
-        icon: faSignOut,
-        visible: () => this.loggedIn(),
-        command: () => {
-          this.loginService.logOut()
-          this.hideMenu()
-        }
+        label: 'menu.admin.title',
+        icon: faPowerOff,
+        visible: () => this.jwtService.adminToken(),
+        badge: this.adminNotifications + this.usersAwaitingApproval,
+        items: [
+          {
+            label: 'menu.admin.serverList',
+            icon: faServer,
+            visible: () => true,
+            routerLink: '/admin/server-list',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.addEmojis',
+            icon: faIcons,
+            visible: () => true,
+            routerLink: '/admin/emojis',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.reports',
+            icon: faExclamationTriangle,
+            visible: () => true,
+            badge: this.adminNotifications,
+            routerLink: '/admin/user-reports',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.bans',
+            icon: faBan,
+            visible: () => true,
+            routerLink: '/admin/bans',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.blocklist',
+            icon: faHourglass,
+            visible: () => true,
+            routerLink: '/admin/user-blocks',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.stats',
+            icon: faChartSimple,
+            visible: () => true,
+            routerLink: '/admin/stats',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.awaitingAproval',
+            icon: faUserLock,
+            visible: () => true,
+            badge: this.usersAwaitingApproval,
+            routerLink: '/admin/activate-users',
+            command: () => {
+              this.hideMenu()
+            }
+          }
+        ]
       }
     ]
 
@@ -521,28 +503,33 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       ],
       [
         {
-          label: 'menu.home',
-          icon: faHouse,
-          visible: () => this.loggedIn(),
-          routerLink: '/',
+          label: 'menu.register',
+          icon: faUserPlus,
+          visible: () => !this.loggedIn(),
+          routerLink: '/register',
           command: () => {
             this.hideMenu()
           }
         },
         {
           label: 'menu.login',
-          icon: faHouse,
-          routerLink: '/login',
+          icon: faArrowRightToBracket,
           visible: () => !this.loggedIn(),
+          routerLink: '/login',
           command: () => {
             this.hideMenu()
           }
         },
         {
-          label: 'menu.register',
-          icon: faUser,
-          routerLink: '/register',
+          label: '',
           visible: () => !this.loggedIn(),
+          divider: true
+        },
+        {
+          label: 'menu.home',
+          icon: faHouse,
+          visible: () => this.loggedIn(),
+          routerLink: '/',
           command: () => {
             this.hideMenu()
           }
@@ -633,12 +620,36 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           label: 'menu.writeWoot',
           icon: faPencil,
           visible: () => this.loggedIn(),
+          routerLink: '/editor',
           command: async () => {
             this.hideMenu()
             this.openEditor()
           }
         }
       ]
+    ]
+
+    this.menuLinks = [
+      {
+        label: 'menu.privacy',
+        routerLink: '/about'
+      },
+      {
+        label: 'menu.faq',
+        url: 'https://wafrn.net/faq/overview.html'
+      },
+      {
+        label: 'menu.source',
+        url: 'https://codeberg.org/wafrn/wafrn'
+      },
+      {
+        label: 'menu.patreon',
+        url: 'https://patreon.com/wafrn'
+      },
+      {
+        label: 'menu.kofi',
+        url: 'https://ko-fi.com/wafrn'
+      }
     ]
   }
 
@@ -697,6 +708,11 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     if (!['INPUT', 'TEXTAREA', 'DIV'].includes(nodeName) && this.loggedIn()) {
       this.editorService.openDialogWithData(undefined)
     }
+  }
+
+  handleWootKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Enter') return
+    this.openEditor()
   }
 
   onCloseMenu() {

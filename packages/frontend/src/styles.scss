@@ -436,3 +436,7 @@ mat-tab-header {
   display: flex;
   gap: 0.25rem;
 }
+
+.vertical-rule {
+  border-right: 1px solid var(--mat-sys-outline-variant);
+}

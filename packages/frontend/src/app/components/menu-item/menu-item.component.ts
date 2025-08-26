@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, computed, Input } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatListModule } from '@angular/material/list'
 import { Router, RouterModule } from '@angular/router'
@@ -32,7 +32,33 @@ export class MenuItemComponent {
   @Input() button = false
   expanded = false
 
+  parsedLink = computed(() => {
+    if (this.item.routerLink) {
+      return this.item.routerLink
+    }
+    if (this.item.routerLinkDynamic) {
+      return this.item.routerLinkDynamic()
+    }
+
+    return null
+  })
+
   constructor(private router: Router) {}
+
+  routeChildActive() {
+    if (this.item.highlightRoute === false) return false
+    const childMatches =
+      this.item.items?.some((menuItem) => {
+        if (menuItem.routerLinkDynamic) {
+          return this.router.url.endsWith(menuItem.routerLinkDynamic())
+        }
+        if (menuItem.routerLink) {
+          return this.router.url.endsWith(menuItem.routerLink)
+        }
+        return false
+      }) === true
+    return childMatches
+  }
 
   doCommand() {
     if (this.item.items && this.item.items.length > 0) {
