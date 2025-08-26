@@ -71,7 +71,7 @@ https://app.wafrn.net/blog/vv0ltz
 
         --mat-sys-corner-small: 0px;
 
-        --mat-sys-primary: #6b6b6b;
+        --mat-sys-primary: #9a9a9a;
 
         --mat-sys-surface-variant: silver;
 
@@ -96,6 +96,8 @@ https://app.wafrn.net/blog/vv0ltz
         --info-card-warning-background: #ff6b6b;
 
         --sys-on-primary-container: white;
+
+        --mat-sys-tertiary: #1084d0;
     }
 
 
@@ -211,13 +213,20 @@ https://app.wafrn.net/blog/vv0ltz
 
 
 
-    .ml-3 {
-        color: var(--main-textcolor);
-    }
-
     .menu-item-icon {
         color: var(--button-accent-color);
+
+        .subroute-active &,
+        .route-active & {
+            --mat-list-list-item-focus-label-text-color: var(--mat-sys-on-primary-container);
+            color: inherit
+        }
     }
+
+   .subroute-active,
+   .route-active {
+      --mat-list-list-item-focus-label-text-color: var(--mat-sys-on-primary-container);
+   }
 
 
     /* LOGO */
@@ -445,18 +454,8 @@ div.follow-counts {}
 
 */
     /* TEXT EDITOR */
-    .ql-snow > .ql-editor {
-        background-color: var(--element-bgcolor);
-
-        color: var(--main-textcolor) !important;
-
-        max-height: 600px;
-    }
-
-    .ql-snow > .ql-editor:focus {
-        background-color: var(--element-bgcolor);
-
-        color: var(--main-textcolor);
+    :root .below-editor-toolbar {
+        --mat-icon-button-icon-color: var(--mat-sys-on-surface);
     }
 
     /* CREATE POST */
@@ -945,4 +944,9 @@ app-post hr > div a:hover {}
 /* Bottom Toolbar */
 .wafrn-toolbar {
   border-top: 2px outset;
+}
+
+:root .new-woot-button {
+  --mat-sys-on-primary: silver;
+  --mat-sys-primary: navy;
 }
