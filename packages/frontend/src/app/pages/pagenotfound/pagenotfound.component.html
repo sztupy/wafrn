@@ -1,5 +1,17 @@
-<mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">
-  <h2>Looks like there isn't anything here.</h2>
-  <h3>Sorry or something</h3>
-  <a [routerLink]="'/'" id="linkhome">how about we go back home</a>
+<mat-card class="mb-6 lg:mx-4 mat-card-higher wafrn-container">
+  <mat-card-header class="pb-3 wafrn-container-header">
+    <mat-card-title class="flex gap-2"
+      ><fa-icon [icon]="pageIcon"></fa-icon
+      ><span class="font-medium">{{ 'page-not-found.title' | translate }}</span></mat-card-title
+    >
+  </mat-card-header>
+  <section class="my-6 mx-3 text-center">
+    <h1>{{ 'page-not-found.subtitle' | translate }}</h1>
+    <p>
+      <span class="path">{{ path }}</span> {{ 'page-not-found.couldNotFind' | translate }}
+    </p>
+  </section>
+  <section class="mx-3 mb-3">
+    <a class="w-full" [routerLink]="'/'" mat-stroked-button>{{ 'page-not-found.returnHome' | translate }}</a>
+  </section>
 </mat-card>

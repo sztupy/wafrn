@@ -1,8 +1,4 @@
-#cardcontainer {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-#linkhome {
-  float: right;
+.path {
+  color: var(--mat-sys-error);
+  font-style: italic;
 }
