@@ -57,6 +57,13 @@
   opacity: var(--mat-list-list-item-focus-state-layer-opacity, var(--mat-sys-focus-state-layer-opacity));
 }
 
+// Fix badges going off the sidenav
+:root .mat-badge-after .mat-badge-content {
+  --mat-badge-container-overlap-offset: 0 0 -12px 0;
+  left: unset;
+  right: 0;
+}
+
 // Make menu selections not have block padding
 :root .mat-mdc-menu-content {
   padding-block: 0;
