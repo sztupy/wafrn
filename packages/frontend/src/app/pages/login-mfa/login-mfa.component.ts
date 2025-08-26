@@ -4,7 +4,7 @@ import { LoginService } from 'src/app/services/login.service'
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import { MessageService } from 'src/app/services/message.service'
-import { faUser, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faEye, faEyeSlash, faArrowRightToBracket, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { EnvironmentService } from 'src/app/services/environment.service'
 
 @Component({
@@ -17,6 +17,8 @@ export class LoginMfaComponent implements OnInit {
   loading = false
   logo = EnvironmentService.environment.logo
   faUser = faUser
+  faArrowRightToBracket = faArrowRightToBracket
+  submitIcon = faArrowRight
 
   loginMfaForm = new UntypedFormGroup({
     token: new UntypedFormControl('', [Validators.required])
@@ -31,7 +33,7 @@ export class LoginMfaComponent implements OnInit {
   ngOnInit(): void {}
 
   async onSubmit() {
-    this.loading = true
+    this.loginMfaForm.disable()
     try {
       const login = await this.loginService.logInMfa(this.loginMfaForm)
       if (!login) {
@@ -47,6 +49,6 @@ export class LoginMfaComponent implements OnInit {
         summary: 'Something failed!'
       })
     }
-    this.loading = false
+    this.loginMfaForm.enable()
   }
 }
