@@ -150,9 +150,9 @@ hr {
 .new-woot-button {
   font-weight: 500;
   --mat-list-list-item-one-line-container-height: 3.25rem;
-  --mat-list-list-item-label-text-color: var(--mat-sys-on-primary-fixed);
+  --mat-list-list-item-label-text-color: var(--mat-sys-on-primary);
   --mat-list-list-item-container-color: var(--mat-sys-primary-fixed-dim);
-  background-image: linear-gradient(in oklab 60deg, var(--mat-sys-primary-fixed-dim), var(--mat-sys-primary-fixed));
+  background-image: linear-gradient(in oklab 60deg, var(--mat-sys-primary), var(--mat-sys-tertiary));
 }
 
 .new-woot-icon {
