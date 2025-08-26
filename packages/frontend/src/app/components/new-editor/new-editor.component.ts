@@ -459,7 +459,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
         severity: 'success',
         summary: 'Your woot has been published!',
         confettiEmojis: disableConfetti ? [] : ['✏️', '🖍️', '✒️', '🖊️'],
-        soundUrl: '/assets/sounds/2.ogg'
+        soundName: 'sendWoot'
       })
       this.postCreatorForm.value.content = ''
       this.uploadedMedias = []

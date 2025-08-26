@@ -148,7 +148,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
       this.messages.add({
         severity: 'success',
         summary: 'You now follow this user!',
-        soundUrl: '/assets/sounds/5.ogg'
+        soundName: 'follow'
       })
     } else {
       this.messages.add({

@@ -145,7 +145,7 @@ export class BottomReplyBarComponent implements OnChanges {
         severity: 'success',
         summary: 'You successfully liked this woot',
         confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
-        soundUrl: '/assets/sounds/1.ogg'
+        soundName: 'like'
       })
     } else {
       this.messages.add({
@@ -223,7 +223,7 @@ export class BottomReplyBarComponent implements OnChanges {
           severity: 'success',
           summary: 'You rewooted the woot!',
           confettiEmojis: disableConfetti ? [] : ['🔁'],
-          soundUrl: '/assets/sounds/2.ogg'
+          soundName: 'sendWoot'
         })
       }
     } else {

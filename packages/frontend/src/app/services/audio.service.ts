@@ -1,5 +1,26 @@
 import { Injectable } from '@angular/core'
 
+const audioNameVariants = [
+  'like',
+  'sendWoot',
+  // no use for 3.ogg yet
+  'notification',
+  'follow'
+] as const
+type AudioNameTuple = typeof audioNameVariants
+export type AudioName = AudioNameTuple[number]
+export type AudioData = {
+  [key in AudioName]: string
+}
+
+export const audioMap: AudioData = {
+  like: '/assets/sounds/1.ogg',
+  sendWoot: '/assets/sounds/2.ogg',
+  // no use for 3.ogg yet
+  notification: '/assets/sounds/4.ogg',
+  follow: '/assets/sounds/5.ogg'
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,12 +44,13 @@ export class AudioService {
     })
   }
 
-  playSound(name: string, volume = 0.3) {
+  playSound(name: AudioName, volume = 0.3) {
+    const soundFile = audioMap[name]
     try {
-      let audio = this.audios.get(name)
+      let audio = this.audios.get(soundFile)
       if (!audio) {
-        audio = new Audio(name)
-        this.audios.set(name, audio)
+        audio = new Audio(soundFile)
+        this.audios.set(soundFile, audio)
       }
       audio.volume = volume
       audio.play()
