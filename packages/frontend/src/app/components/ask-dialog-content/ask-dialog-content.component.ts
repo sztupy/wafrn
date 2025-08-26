@@ -1,5 +1,5 @@
 
-import { Component, Inject, OnInit } from '@angular/core'
+import { Component, Inject, OnInit, Signal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
@@ -28,7 +28,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox'
   styleUrl: './ask-dialog-content.component.scss'
 })
 export class AskDialogContentComponent implements OnInit {
-  loggedIn: boolean
+  loggedIn: Signal<boolean>
   allowAnons = false
   constructor(
     private dialogRef: MatDialogRef<AskDialogContentComponent>,
@@ -38,9 +38,9 @@ export class AskDialogContentComponent implements OnInit {
       details: BlogDetails
     },
     private blogService: BlogService,
-    private loginService: LoginService
+    loginService: LoginService
   ) {
-    this.loggedIn = loginService.checkUserLoggedIn()
+    this.loggedIn = loginService.loggedIn
     this.askForm.controls['anonymous'].patchValue(!this.loggedIn)
   }
   ngOnInit(): void {

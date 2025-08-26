@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core'
+import { Injectable, signal, WritableSignal } from '@angular/core'
 import { Router } from '@angular/router'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { UntypedFormGroup } from '@angular/forms'
@@ -16,7 +16,7 @@ import { environment } from 'src/environments/environment'
   providedIn: 'root'
 })
 export class LoginService {
-  public loginEventEmitter: EventEmitter<string> = new EventEmitter()
+  public loggedIn: WritableSignal<boolean>
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -25,10 +25,8 @@ export class LoginService {
     private postsService: PostsService,
     private messagesService: MessageService,
     private translate: TranslateService
-  ) {}
-
-  checkUserLoggedIn(): boolean {
-    return this.jwt.tokenValid()
+  ) {
+    this.loggedIn = signal(this.jwt.tokenValid())
   }
 
   async logIn(loginForm: UntypedFormGroup): Promise<boolean> {
@@ -73,7 +71,7 @@ export class LoginService {
   logOut() {
     localStorage.clear()
     this.router.navigate(['/'])
-    this.loginEventEmitter.emit('logged out')
+    this.loggedIn.set(false)
   }
 
   async register(registerForm: UntypedFormGroup, img: File | null): Promise<boolean> {
@@ -368,7 +366,7 @@ export class LoginService {
 
   async handleSuccessfulLogin() {
     await this.postsService.loadFollowers()
-    this.loginEventEmitter.emit('logged in')
+    this.loggedIn.set(true)
     this.router.navigate(['/dashboard'])
   }
 

@@ -5,8 +5,8 @@
       <div>
         <img [src]="avatarUrl()" alt="user avatar" class="blog-avatar-image" />
       </div>
-      @if (userLoggedIn && !isMe) {
-        @if (userLoggedIn) {
+      @if (loggedIn() && !isMe) {
+        @if (loggedIn()) {
           <div class="flex">
             @if (!postService.notYetAcceptedFollowedUsersIds.includes(blogDetails().id)) {
               <button
@@ -22,7 +22,7 @@
                 {{ postService.followedUserIds.indexOf(blogDetails().id) === -1 ? 'Follow' : 'Unfollow' }}
               </button>
             }
-            @if (postService.notYetAcceptedFollowedUsersIds.includes(blogDetails().id) && userLoggedIn) {
+            @if (postService.notYetAcceptedFollowedUsersIds.includes(blogDetails().id) && loggedIn()) {
               <button
                 mat-stroked-button
                 color="accent"
@@ -169,9 +169,9 @@
     </details>
   }
   @if (blogDetails().url.startsWith('@')) {
-    <app-info-card [type]="userLoggedIn ? 'info' : 'caution'">
+    <app-info-card [type]="loggedIn() ? 'info' : 'caution'">
       {{
-        userLoggedIn
+        loggedIn()
           ? 'As this user is from a remote instance, the shown information may be incomplete.'
           : 'To see external users you need to be logged in. You can view their profile on their actual instance.'
       }}

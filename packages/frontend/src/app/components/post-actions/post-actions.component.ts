@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core'
+import { Component, Input, OnChanges, OnInit, Signal, signal, SimpleChanges } from '@angular/core'
 import { ProcessedPost } from '../../interfaces/processed-post'
 import { MessageService } from '../../services/message.service'
 
@@ -42,7 +42,7 @@ import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 })
 export class PostActionsComponent implements OnChanges {
   @Input() content!: ProcessedPost
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   myId: string = 'user-00000000-0000-0000-0000-000000000000 '
   postSilenced = false
   myRewootsIncludePost = false
@@ -72,13 +72,13 @@ export class PostActionsComponent implements OnChanges {
     private messages: MessageService,
     private editor: EditorService,
     private postService: PostsService,
-    private loginService: LoginService,
+    loginService: LoginService,
     private reportService: ReportService,
     private deletePostService: DeletePostService,
     private utilsService: UtilsService
   ) {
-    this.userLoggedIn = loginService.checkUserLoggedIn()
-    if (this.userLoggedIn) {
+    this.loggedIn = loginService.loggedIn
+    if (this.loggedIn()) {
       this.myId = loginService.getLoggedUserUUID()
     }
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, inject, model, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, inject, model, OnDestroy, OnInit, Signal, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'
@@ -58,7 +58,7 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
   subscription!: Subscription
   updateFollowsSubscription: Subscription
   navigationStart!: Subscription
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   myId = ''
   notYetAcceptedFollows: string[] = []
   followedUsers: string[] = []
@@ -91,7 +91,7 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
       this.followedUsers = this.postService.followedUserIds
       this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
     })
-    this.userLoggedIn = loginService.checkUserLoggedIn()
+    this.loggedIn = loginService.loggedIn
   }
 
   snOnCreate(): void {
@@ -119,7 +119,7 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {})
 
-    if (this.userLoggedIn) {
+    if (this.loggedIn()) {
       this.myId = this.loginService.getLoggedUserUUID()
     }
 

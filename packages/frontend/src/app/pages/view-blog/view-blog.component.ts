@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core'
+import { Component, OnDestroy, OnInit, Signal, signal, WritableSignal } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router } from '@angular/router'
 import {
@@ -43,7 +43,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   blogUrl: string = ''
   avatarUrl = ''
   blogDetails = signal<BlogDetails | undefined>(undefined)
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   paramSubscription!: Subscription
   showModalTheme = false
   viewedPostsIds: string[] = []
@@ -77,7 +77,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     private readonly dialog: MatDialog,
     private readonly snappy: SnappyRouter
   ) {
-    this.userLoggedIn = loginService.checkUserLoggedIn()
+    this.loggedIn = loginService.loggedIn
   }
   snOnShow(): void {
     const blogDetails = this.blogDetails()
@@ -87,7 +87,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   snOnHide(): void {
-    if (this.userLoggedIn) {
+    if (this.loggedIn()) {
       this.themeService.setMyTheme()
     } else {
       this.themeService.setCustomCSS('')
@@ -226,7 +226,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     if (!this.blogDetails()) {
       return
     }
-    if (!this.userLoggedIn && this.blogDetails()!.url.startsWith('@')) {
+    if (!this.loggedIn() && this.blogDetails()!.url.startsWith('@')) {
       this.loading.set(false)
       this.noMorePosts = true
       return

@@ -83,7 +83,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   logo = EnvironmentService.environment.logo
   defaultIcon = faQuestion
   navigationSubscription: Subscription
-  loginSubscription: Subscription
+  loggedIn: Signal<boolean>
   scrollSubscription: Subscription
   hamburguerIcon = faBars
   pencilIcon = faPencil
@@ -110,7 +110,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     private audioService: AudioService,
     themeService: ThemeService
   ) {
-    this.loginSubscription = this.loginSubscription = this.loginService.loginEventEmitter.subscribe(() => {})
     if (this.loginService.getForceClassicLogo()) {
       this.logo = '/assets/classicLogo.png'
     }
@@ -120,6 +119,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         this.updateNotifications(ev.url)
       }
     })
+
+    this.loggedIn = loginService.loggedIn
 
     this.scrollSubscription = this.dashboardService.scrollEventEmitter.subscribe(() => {
       this.updateNotifications('scroll')
@@ -655,7 +656,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.navigationSubscription.unsubscribe()
-    this.loginSubscription.unsubscribe()
     this.scrollSubscription.unsubscribe()
   }
 
