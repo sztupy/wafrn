@@ -15,7 +15,7 @@
   --failure2   : #a80;   /* << If you see his color, I made a mistake */
   
   /* Primary palette variables */
-  --mat-sys-primary: var(--drac-fg);
+  --mat-sys-primary: var(--drac-pink);
   --mat-sys-on-primary: var(--drac-line);
   --mat-sys-primary-container: var(--drac-line);
   --mat-sys-on-primary-container: var(--drac-fg);
@@ -36,7 +36,7 @@
   --mat-sys-on-secondary-fixed-variant: var(--failure);
   
   /* Tertiary palette variables */
-  --mat-sys-tertiary: var(--failure);
+  --mat-sys-tertiary: var(--drac-orange);
   --mat-sys-on-tertiary: var(--failure);
   --mat-sys-tertiary-container: var(--drac-or);
   --mat-sys-on-tertiary-container: var(--failure);
