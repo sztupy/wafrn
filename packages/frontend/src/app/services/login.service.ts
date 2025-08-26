@@ -306,6 +306,7 @@ export class LoginService {
   }
 
   async updateUserOptions(options: { name: string; value: string }[]): Promise<boolean> {
+    if (!this.loggedIn()) return false
     let success = false
     try {
       const payload: FormData = new FormData()

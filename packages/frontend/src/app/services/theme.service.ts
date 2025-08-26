@@ -1,8 +1,9 @@
 import { Injectable, signal, WritableSignal } from '@angular/core'
 import { LoginService } from './login.service'
 import { HttpClient } from '@angular/common/http'
-import { firstValueFrom } from 'rxjs'
+import { filter, firstValueFrom } from 'rxjs'
 import { EnvironmentService } from './environment.service'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 // !! NOTE FOR ADDING THEMES !! //
 //
@@ -167,10 +168,15 @@ export class ThemeService {
     private loginService: LoginService,
     private http: HttpClient
   ) {
-    const savedScheme = localStorage?.getItem('colorScheme') ?? ''
+    // Setup when logging in or out and run once (yay signals)
+    toObservable(loginService.loggedIn).subscribe(() => this.setup())
+  }
+
+  setup() {
+    const savedScheme = localStorage?.getItem('colorScheme') ?? 'default'
     if (isColorScheme(savedScheme)) this.setColorScheme(savedScheme)
 
-    const savedTheme = localStorage?.getItem('theme') ?? ''
+    const savedTheme = localStorage?.getItem('theme') ?? 'auto'
     if (isColorTheme(savedTheme)) this.setTheme(savedTheme)
 
     Object.entries(this.additionalStyleModes).forEach(([mode, value]) => {

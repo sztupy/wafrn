@@ -3,7 +3,7 @@ import { IconDefinition } from '@fortawesome/free-solid-svg-icons'
 export interface MenuItem {
   label: string
   icon?: IconDefinition
-  visible: boolean
+  visible: () => boolean
   badge?: number
   items?: MenuItem[]
   routerLink?: string

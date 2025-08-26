@@ -21,7 +21,7 @@
     <nav aria-label="Navigation menu">
       <mat-nav-list class="side-menu-nav-list">
         @for (link of menuItems; track $index) {
-          @if (link.visible) {
+          @if (link.visible()) {
             @if (link.divider) {
               <hr />
             } @else {
@@ -41,7 +41,7 @@
       @for (section of menuItemsMobile; track $index) {
         <div class="wafrn-toolbar-section">
           @for (link of section; track $index) {
-            @if (!link.divider && link.visible) {
+            @if (!link.divider && link.visible()) {
               <app-menu-item [button]="true" [item]="link"></app-menu-item>
             }
           }
