@@ -155,6 +155,9 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     const microformatsElement = document.getElementById('indieweb')
     microformatsElement?.classList.add('loaded')
     this.drawMenu()
+    if (localStorage.getItem('horizontalMenu') === 'true') {
+      this.onCloseMenu()
+    }
   }
 
   ngOnDestroy(): void {
