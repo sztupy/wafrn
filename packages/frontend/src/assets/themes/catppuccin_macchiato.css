@@ -47,13 +47,13 @@
   --mat-sys-primary-container: var(--surface0);
   --mat-sys-on-primary-container: var(--subtext1);
   --mat-sys-inverse-primary: var(--overlay2);
-  --mat-sys-primary-fixed: var(--failure);
+  --mat-sys-primary-fixed: var(--accent2);
   --mat-sys-primary-fixed-dim: var(--tags);
-  --mat-sys-on-primary-fixed: var(--failure);
+  --mat-sys-on-primary-fixed: var(--base);
   --mat-sys-on-primary-fixed-variant: var(--failure);
 
   /* Secondary palette variables */
-  --mat-sys-secondary: var(--failure);
+  --mat-sys-secondary: var(--accent3);
   --mat-sys-on-secondary: var(--failure);
   --mat-sys-secondary-container: var(--surface1);
   --mat-sys-on-secondary-container: var(--failure);
