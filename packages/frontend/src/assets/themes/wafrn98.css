@@ -85,7 +85,7 @@ https://app.wafrn.net/blog/vv0ltz
 
         --mat-sys-surface-container-high: silver;
 
-        --mat-sys-primary-container: navy;
+        --mat-sys-primary-container: #4c9de0;
 
         --mat-sys-outline: #323232;
 
@@ -95,7 +95,7 @@ https://app.wafrn.net/blog/vv0ltz
 
         --info-card-warning-background: #ff6b6b;
 
-        --sys-on-primary-container: white;
+        --mat-sys-on-primary-container: var(--mat-sys-on-surface);
 
         --mat-sys-tertiary: #1084d0;
     }
@@ -215,19 +215,7 @@ https://app.wafrn.net/blog/vv0ltz
 
     .menu-item-icon {
         color: var(--button-accent-color);
-
-        .subroute-active &,
-        .route-active & {
-            --mat-list-list-item-focus-label-text-color: var(--mat-sys-on-primary-container);
-            color: inherit
-        }
     }
-
-   .subroute-active,
-   .route-active {
-      --mat-list-list-item-focus-label-text-color: var(--mat-sys-on-primary-container);
-   }
-
 
     /* LOGO */
     .instance-logo {
