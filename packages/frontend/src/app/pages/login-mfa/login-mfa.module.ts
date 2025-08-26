@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { TranslateModule } from '@ngx-translate/core'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 const routes: Routes = [
   {
@@ -31,7 +32,8 @@ const routes: Routes = [
     MatInputModule,
     MatButtonModule,
     FontAwesomeModule,
-    TranslateModule
+    TranslateModule,
+    MatProgressSpinnerModule
   ]
 })
-export class LoginMfaModule { }
+export class LoginMfaModule {}

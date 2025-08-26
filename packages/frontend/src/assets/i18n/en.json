@@ -12,6 +12,7 @@
     "checkSpam": "If you have any issues logging in, please check your spam folder!",
     "email": "Email",
     "password": "Password",
+    "mfaNextStep": "One more step...",
     "mfaToken": "Token",
     "mfaTokenEnter": "Enter your token from your Authenticator application",
     "forgottenPassword": "Forgot password",
