@@ -12,7 +12,7 @@
   --mat-sys-primary-container: light-dark(#8ff200, #0bae00);
 
   /* Secondary palette variables */
-  --mat-sys-secondary-container: var(--mat-sys-primary);
+  --mat-sys-secondary-container: var(--mat-sys-primary-container);
 
   /* Neutral palette variables */
   --mat-sys-background: none;
@@ -24,6 +24,8 @@
   --mat-sys-outline-variant: light-dark(#dddddd, #141414);
   --mat-sys-inverse-surface: light-dark(#7bcc6c, #c8f08d);
   --mat-sys-inverse-on-surface: var(--mat-sys-on-background);
+  --mat-sys-primary-fixed: #c8f08d;
+  --mat-sys-primary-fixed-dim: #7bcc6c;
 
   /* Specific theme styles */
   --background: light-dark(#f7f7f7, #141414);
@@ -232,7 +234,7 @@ button[aria-label="Go back to the dashboard"] {
 
 /* Interactive buttons */
 .mdc-list-item__primary-text {
-  color: var(--mat-sys-on-background);
+  /* Overriding all breaks new style! */
 }
 
 .mdc-list-item:active .mdc-list-item__primary-text {
