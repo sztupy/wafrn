@@ -144,7 +144,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.register',
         icon: faUser,
-        visible: !this.jwtService.tokenValid(),
+        visible: !this.loggedIn(),
         routerLink: '/register',
         command: () => {
           this.hideMenu()
@@ -153,7 +153,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.login',
         icon: faHouse,
-        visible: !this.jwtService.tokenValid(),
+        visible: !this.loggedIn(),
         routerLink: '/login',
         command: () => {
           this.hideMenu()
@@ -162,7 +162,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.exploreWafrn',
         icon: faCompass,
-        visible: !this.jwtService.tokenValid(),
+        visible: !this.loggedIn(),
         routerLink: '/dashboard/exploreLocal',
         command: () => {
           this.hideMenu()
@@ -171,7 +171,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.dashboard',
         icon: faHouse,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         routerLink: '/dashboard',
         command: () => {
           this.hideMenu()
@@ -180,7 +180,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.writeWoot',
         icon: faPencil,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         command: async () => {
           this.hideMenu()
           this.openEditor()
@@ -189,7 +189,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.notifications',
         icon: faBell,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         badge: this.notifications,
         routerLink: '/dashboard/notifications',
         command: () => {
@@ -199,12 +199,12 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.explore',
         icon: faCompass,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         items: [
           {
             label: 'menu.exploreWafrn',
             icon: faServer,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/dashboard/exploreLocal',
             command: () => {
               this.hideMenu()
@@ -213,7 +213,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.exploreFediverse',
             icon: faCompass,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/dashboard/explore',
             command: () => {
               this.hideMenu()
@@ -224,7 +224,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.unansweredAsks',
         icon: faQuestion,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         badge: this.awaitingAsks,
         routerLink: '/profile/myAsks',
         command: () => {
@@ -234,7 +234,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.privateMessages',
         icon: faEnvelope,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         routerLink: '/dashboard/private',
         command: () => {
           this.hideMenu()
@@ -316,7 +316,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.search',
         icon: faSearch,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         routerLink: '/dashboard/search',
         command: () => {
           this.hideMenu()
@@ -325,7 +325,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.settings.title',
         icon: faCog,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         badge: this.followsAwaitingApproval,
         items: [
           {
@@ -350,7 +350,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.editProfile',
             icon: faUserEdit,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/edit',
             command: () => {
               this.hideMenu()
@@ -359,7 +359,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.themeEditor',
             icon: faPaintbrush,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/css',
             command: () => {
               this.hideMenu()
@@ -368,7 +368,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.mutedUsers',
             icon: faVolumeMute,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/mutes',
             command: () => {
               this.hideMenu()
@@ -377,7 +377,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.mutedPosts',
             icon: faBellSlash,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/silencedPosts',
             command: () => {
               this.hideMenu()
@@ -386,7 +386,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.followedHashtags',
             icon: faHashtag,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/manageFollowedHashtags',
             command: () => {
               this.hideMenu()
@@ -395,7 +395,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.bookmarkedPosts',
             icon: faBookmark,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/bookmarkedPosts',
             command: () => {
               this.hideMenu()
@@ -404,7 +404,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.myBlockedUsers',
             icon: faBan,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/blocks',
             command: () => {
               this.hideMenu()
@@ -413,7 +413,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.myBlockedServers',
             icon: faServer,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/serverBlocks',
             command: () => {
               this.hideMenu()
@@ -422,7 +422,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.importFollows',
             icon: faUserEdit,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/profile/importFollows',
             command: () => {
               this.hideMenu()
@@ -431,7 +431,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           {
             label: 'menu.settings.superSecretMenu',
             icon: faSkull,
-            visible: this.jwtService.tokenValid(),
+            visible: this.loggedIn(),
             routerLink: '/doom',
             command: () => {
               this.hideMenu()
@@ -442,8 +442,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.myBlog',
         icon: faUser,
-        visible: this.jwtService.tokenValid(),
-        routerLink: '/blog/' + (this.jwtService.tokenValid() ? this.jwtService.getTokenData()['url'] : ''),
+        visible: this.loggedIn(),
+        routerLink: '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
         command: () => {
           this.hideMenu()
         }
@@ -501,7 +501,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       {
         label: 'menu.logout',
         icon: faSignOut,
-        visible: this.jwtService.tokenValid(),
+        visible: this.loggedIn(),
         command: () => {
           this.loginService.logOut()
           this.hideMenu()
@@ -526,7 +526,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.home',
           icon: faHouse,
-          visible: this.jwtService.tokenValid(),
+          visible: this.loggedIn(),
           routerLink: '/',
           command: () => {
             this.hideMenu()
@@ -535,8 +535,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.login',
           icon: faHouse,
-          visible: !this.jwtService.tokenValid(),
           routerLink: '/login',
+          visible: !this.loggedIn(),
           command: () => {
             this.hideMenu()
           }
@@ -544,8 +544,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.register',
           icon: faUser,
-          visible: !this.jwtService.tokenValid(),
           routerLink: '/register',
+          visible: !this.loggedIn(),
           command: () => {
             this.hideMenu()
           }
@@ -553,7 +553,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.exploreWafrn',
           icon: faCompass,
-          visible: !this.jwtService.tokenValid(),
+          visible: !this.loggedIn(),
           routerLink: '/dashboard/exploreLocal',
           command: () => {
             this.hideMenu()
@@ -562,12 +562,12 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.explore',
           icon: faCompass,
-          visible: this.jwtService.tokenValid(),
+          visible: this.loggedIn(),
           items: [
             {
               label: 'menu.dashboard',
               icon: faHouse,
-              visible: this.jwtService.tokenValid(),
+              visible: this.loggedIn(),
               routerLink: '/dashboard',
               command: () => {
                 this.hideMenu()
@@ -576,7 +576,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             {
               label: 'menu.exploreWafrn',
               icon: faServer,
-              visible: this.jwtService.tokenValid(),
+              visible: this.loggedIn(),
               routerLink: '/dashboard/exploreLocal',
               command: () => {
                 this.hideMenu()
@@ -585,7 +585,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             {
               label: 'menu.exploreFediverse',
               icon: faCompass,
-              visible: this.jwtService.tokenValid(),
+              visible: this.loggedIn(),
               routerLink: '/dashboard/explore',
               command: () => {
                 this.hideMenu()
@@ -594,7 +594,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             {
               label: 'menu.privateMessages',
               icon: faEnvelope,
-              visible: this.jwtService.tokenValid(),
+              visible: this.loggedIn(),
               routerLink: '/dashboard/private',
               command: () => {
                 this.hideMenu()
@@ -603,7 +603,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             {
               label: 'menu.search',
               icon: faSearch,
-              visible: this.jwtService.tokenValid(),
+              visible: this.loggedIn(),
               routerLink: '/dashboard/search',
               command: () => {
                 this.hideMenu()
@@ -614,7 +614,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.notifications',
           icon: faBell,
-          visible: this.jwtService.tokenValid(),
+          visible: this.loggedIn(),
           badge: this.notifications,
           routerLink: '/dashboard/notifications',
           command: () => {
@@ -624,8 +624,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.myBlog',
           icon: faUser,
-          visible: this.jwtService.tokenValid(),
-          routerLink: '/blog/' + (this.jwtService.tokenValid() ? this.jwtService.getTokenData()['url'] : ''),
+          visible: this.loggedIn(),
+          routerLink: '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
           command: () => {
             this.hideMenu()
           }
@@ -635,7 +635,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         {
           label: 'menu.writeWoot',
           icon: faPencil,
-          visible: this.jwtService.tokenValid(),
+          visible: this.loggedIn(),
           command: async () => {
             this.hideMenu()
             this.openEditor()
@@ -669,7 +669,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   }
 
   async updateNotifications(url: string) {
-    if (this.jwtService.tokenValid()) {
+    if (this.loggedIn()) {
       const previousNotifications =
         this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
       const response = await this.notificationsService.getUnseenNotifications()
@@ -697,7 +697,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
   async openEditor() {
     const nodeName = document.activeElement?.nodeName ? document.activeElement.nodeName : ''
-    if (!['INPUT', 'TEXTAREA', 'DIV'].includes(nodeName) && this.jwtService.tokenValid()) {
+    if (!['INPUT', 'TEXTAREA', 'DIV'].includes(nodeName) && this.loggedIn()) {
       this.editorService.openDialogWithData(undefined)
     }
   }
