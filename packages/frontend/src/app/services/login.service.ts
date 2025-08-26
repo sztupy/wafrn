@@ -36,14 +36,16 @@ export class LoginService {
         .post(`${EnvironmentService.environment.baseUrl}/login`, loginForm.value)
         .toPromise()
       if (petition.success) {
-        localStorage.setItem('authToken', petition.token)
         if (petition.mfaRequired) {
           success = true
-          this.router.navigate(['/login/mfa'])
+          // HACK DO NOT TOUCH THE ASYNC. IM SERIOUS. IT WOULD SKIP THIS SCREEN
+          // IF YOU TOUCH THIS CODE YOU NEED TO TEST LOGIN WITH AN MFA ACC
+          await this.router.navigate(['/login/mfa'])
         } else {
           await this.handleSuccessfulLogin()
           success = true
         }
+        localStorage.setItem('authToken', petition.token)
       }
     } catch (exception) {
       console.error(exception)
