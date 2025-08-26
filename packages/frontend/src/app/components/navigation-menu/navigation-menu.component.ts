@@ -70,7 +70,7 @@ import packageJson from '../../../../package.json'
 export class NavigationMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = []
   menuItemsMobile: MenuItem[][] = []
-  menuLinks: MenuLink[]
+  menuLinks: MenuLink[] = []
 
   maintenanceMode = EnvironmentService.environment.maintenance
   maintenanceMessage = EnvironmentService.environment.maintenanceMessage
@@ -145,7 +145,88 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     )
 
     this.menuVisible = !this.mobile()
+  }
 
+  ngOnInit(): void {
+    // IMPORTANT: HIDE THE SPLASH SCREEN
+    const splashElement = document.getElementById('splash')
+    splashElement?.classList.add('loaded')
+
+    const microformatsElement = document.getElementById('indieweb')
+    microformatsElement?.classList.add('loaded')
+    this.drawMenu()
+  }
+
+  ngOnDestroy(): void {
+    this.navigationSubscription.unsubscribe()
+    this.scrollSubscription.unsubscribe()
+  }
+
+  showMenu() {
+    this.menuVisible = true
+  }
+
+  hideMenu() {
+    this.menuVisible = false
+    this.editorService.launchPostEditorEmitter.next({ action: Action.Close })
+  }
+
+  async updateNotifications(url: string) {
+    if (this.loggedIn()) {
+      const previousNotifications =
+        this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
+      const response = await this.notificationsService.getUnseenNotifications()
+      if (url === '/dashboard/notifications') {
+        this.notifications = 0
+      } else {
+        this.notifications = response.notifications
+      }
+      this.adminNotifications = response.reports
+      this.usersAwaitingApproval = response.usersAwaitingApproval
+      this.followsAwaitingApproval = response.followsAwaitingApproval
+      this.awaitingAsks = response.asks
+      const newNotifications =
+        this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
+      if (previousNotifications != newNotifications && localStorage.getItem('disableSounds') != 'true') {
+        this.audioService.playSound('/assets/sounds/4.ogg')
+      }
+      this.cdr.detectChanges()
+    }
+    this.drawMenu()
+  }
+
+  syncMobileMode() {
+    this.mobile.set(window.innerWidth <= 992 || this.horizontalMenuMode())
+  }
+
+  async openEditor() {
+    const nodeName = document.activeElement?.nodeName ? document.activeElement.nodeName : ''
+    if (!['INPUT', 'TEXTAREA', 'DIV'].includes(nodeName) && this.loggedIn()) {
+      this.editorService.openDialogWithData(undefined)
+    }
+  }
+
+  handleWootKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Enter') return
+    this.openEditor()
+  }
+
+  onCloseMenu() {
+    this.menuVisible = false
+  }
+
+  historyBack() {
+    history.back()
+  }
+
+  refresh() {
+    const currentUrl = this.router.url
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([currentUrl])
+    })
+  }
+
+  drawMenu() {
     // JSON driven UI lmao
     this.menuItems = [
       {
@@ -256,7 +337,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         label: 'menu.profile',
         icon: faUser,
         visible: () => this.loggedIn(),
-        badge: this.followsAwaitingApproval,
+        badge: this.awaitingAsks,
         items: [
           {
             label: 'menu.myBlog',
@@ -651,82 +732,5 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         url: 'https://ko-fi.com/wafrn'
       }
     ]
-  }
-
-  ngOnInit(): void {
-    // IMPORTANT: HIDE THE SPLASH SCREEN
-    const splashElement = document.getElementById('splash')
-    splashElement?.classList.add('loaded')
-
-    const microformatsElement = document.getElementById('indieweb')
-    microformatsElement?.classList.add('loaded')
-  }
-
-  ngOnDestroy(): void {
-    this.navigationSubscription.unsubscribe()
-    this.scrollSubscription.unsubscribe()
-  }
-
-  showMenu() {
-    this.menuVisible = true
-  }
-
-  hideMenu() {
-    this.menuVisible = false
-    this.editorService.launchPostEditorEmitter.next({ action: Action.Close })
-  }
-
-  async updateNotifications(url: string) {
-    if (this.loggedIn()) {
-      const previousNotifications =
-        this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
-      const response = await this.notificationsService.getUnseenNotifications()
-      if (url === '/dashboard/notifications') {
-        this.notifications = 0
-      } else {
-        this.notifications = response.notifications
-      }
-      this.adminNotifications = response.reports
-      this.usersAwaitingApproval = response.usersAwaitingApproval
-      this.followsAwaitingApproval = response.followsAwaitingApproval
-      this.awaitingAsks = response.asks
-      const newNotifications =
-        this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
-      if (previousNotifications != newNotifications && localStorage.getItem('disableSounds') != 'true') {
-        this.audioService.playSound('/assets/sounds/4.ogg')
-      }
-      this.cdr.detectChanges()
-    }
-  }
-
-  syncMobileMode() {
-    this.mobile.set(window.innerWidth <= 992 || this.horizontalMenuMode())
-  }
-
-  async openEditor() {
-    const nodeName = document.activeElement?.nodeName ? document.activeElement.nodeName : ''
-    if (!['INPUT', 'TEXTAREA', 'DIV'].includes(nodeName) && this.loggedIn()) {
-      this.editorService.openDialogWithData(undefined)
-    }
-  }
-
-  handleWootKeydown(event: KeyboardEvent) {
-    if (event.key !== 'Enter') return
-    this.openEditor()
-  }
-
-  onCloseMenu() {
-    this.menuVisible = false
-  }
-
-  historyBack() {
-    history.back()
-  }
-
-  refresh() {
-    const currentUrl = this.router.url
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([currentUrl])
-    })
   }
 }
