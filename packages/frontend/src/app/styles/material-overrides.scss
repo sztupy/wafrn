@@ -41,6 +41,9 @@
 // Make sidebar buttons shorter
 :root {
   --mat-list-list-item-one-line-container-height: 2rem;
+// Make menu selections not have block padding
+:root .mat-mdc-menu-content {
+  padding-block: 0;
 }
 
 // Basic element adjustments
