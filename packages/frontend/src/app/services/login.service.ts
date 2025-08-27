@@ -41,11 +41,12 @@ export class LoginService {
           // HACK DO NOT TOUCH THE ASYNC. IM SERIOUS. IT WOULD SKIP THIS SCREEN
           // IF YOU TOUCH THIS CODE YOU NEED TO TEST LOGIN WITH AN MFA ACC
           await this.router.navigate(['/login/mfa'])
+          localStorage.setItem('authToken', petition.token)
         } else {
+          localStorage.setItem('authToken', petition.token)
           await this.handleSuccessfulLogin()
           success = true
         }
-        localStorage.setItem('authToken', petition.token)
       }
     } catch (exception) {
       console.error(exception)
