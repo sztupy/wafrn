@@ -58,7 +58,7 @@
           @if (item.routerLink) {
             <a class="subtle-link" [routerLink]="item.routerLink">{{ item.label | translate }} </a>
           } @else {
-            <a class="subtle-link" [href]="item.url">{{ item.label | translate }}</a>
+            <a class="subtle-link" [href]="item.url" target="_blank">{{ item.label | translate }}</a>
           }
         }
       </div>
