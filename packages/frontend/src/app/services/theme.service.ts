@@ -136,7 +136,7 @@ function isColorScheme(value: string): value is ColorScheme {
 }
 
 // More styles!
-const additionalStyleModeVariants = ['centerLayout', 'topToolbar', 'horizontalMenu'] as const
+const additionalStyleModeVariants = ['centerLayout', 'topToolbar', 'horizontalMenu', 'lowContrastSidebar'] as const
 type AdditionalStyleModeTuple = typeof additionalStyleModeVariants
 export type AdditionalStyleMode = AdditionalStyleModeTuple[number]
 
@@ -149,7 +149,8 @@ type AdditionalStyleModeData = {
 export const additionalStyleModesData: AdditionalStyleModeData = {
   centerLayout: { name: 'Center Layout' },
   topToolbar: { name: 'Top Toolbar' },
-  horizontalMenu: { name: 'Horizontal Menu' }
+  horizontalMenu: { name: 'Horizontal Menu' },
+  lowContrastSidebar: { name: 'Low Contrast Sidebar' }
 }
 
 @Injectable({
@@ -161,7 +162,8 @@ export class ThemeService {
   public additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> } = {
     centerLayout: signal(false),
     topToolbar: signal(false),
-    horizontalMenu: signal(false)
+    horizontalMenu: signal(false),
+    lowContrastSidebar: signal(false)
   }
 
   constructor(
