@@ -84,7 +84,11 @@
 
 <mat-menu #additionalOptionsMenu="matMenu">
   @for (entry of additionalStyleModes | keyvalue: null; track entry.key) {
-    <button mat-menu-item class="pl-1" (click)="toggleAdditionalStyleMode(entry.key); $event.stopPropagation()">
+    <button
+      mat-menu-item
+      class="pl-1 additional-option-button"
+      (click)="toggleAdditionalStyleMode(entry.key); $event.stopPropagation()"
+    >
       <mat-checkbox [checked]="entry.value()"
         ><span class="theme-selector-button">{{ $any(additionalStyleModesData)[entry.key].name }}</span></mat-checkbox
       >
