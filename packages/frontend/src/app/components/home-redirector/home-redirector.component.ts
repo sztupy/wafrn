@@ -10,10 +10,10 @@ import { LoginService } from 'src/app/services/login.service'
 })
 export class HomeRedirectorComponent {
   constructor(
-    private loginService: LoginService,
+    loginService: LoginService,
     private router: Router
   ) {
-    if (!loginService.checkUserLoggedIn()) {
+    if (!loginService.loggedIn()) {
       this.router.navigate(['/dashboard/exploreLocal'])
     }
   }

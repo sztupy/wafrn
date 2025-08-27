@@ -15,7 +15,7 @@ export class WebsocketService {
     private loginService: LoginService,
     private dashboardService: DashboardService,
   ) {
-    if (loginService.checkUserLoggedIn()) {
+    if (loginService.loggedIn()) {
       this.connectSocket()
     }
   }

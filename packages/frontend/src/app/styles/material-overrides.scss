@@ -27,15 +27,46 @@
   content: unset !important;
 }
 
+// Add higher height card option
+.mat-card-higher {
+  --mat-card-elevated-container-elevation: var(--mat-sys-level2);
+}
+
 // Fix drawer border radius without requiring themes to use !important, though uses 0 2 0 specificity
 :root .mat-drawer {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-// Make sidebar buttons shorter
+// Sidenav options
 :root {
-  --mat-list-list-item-one-line-container-height: 2rem;
+  --mat-sidenav-container-width: 300px;
+  --mat-list-list-item-one-line-container-height: 2.5rem;
+  --mat-list-active-indicator-shape: var(--mat-sys-corner-small);
+
+  // Hide the on-click focus color
+  --mat-list-list-item-focus-state-layer-opacity: 0;
+  .keyboard-active {
+    --mat-list-list-item-focus-state-layer-opacity: 0.12;
+  }
+}
+
+.mdc-list-item:active::before {
+  --mat-list-list-item-focus-state-layer-opacity: 0.16;
+  background-color: var(--mat-list-list-item-focus-state-layer-color, var(--mat-sys-on-surface));
+  opacity: var(--mat-list-list-item-focus-state-layer-opacity, var(--mat-sys-focus-state-layer-opacity));
+}
+
+// Fix badges going off the sidenav
+:root .mat-badge-after .mat-badge-content {
+  --mat-badge-container-overlap-offset: 0 0 -12px 0;
+  left: unset;
+  right: 0;
+}
+
+// Make menu selections not have block padding
+:root .mat-mdc-menu-content {
+  padding-block: 0;
 }
 
 // Basic element adjustments

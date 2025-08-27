@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core'
+import { Component, input, OnInit, Signal } from '@angular/core'
 import { FormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { QuestionPoll } from '../../interfaces/questionPoll'
 import { LoginService } from '../../services/login.service'
@@ -11,18 +11,18 @@ import { PostsService } from '../../services/posts.service'
   standalone: false
 })
 export class PollComponent implements OnInit {
-  poll = input.required<QuestionPoll>();
+  poll = input.required<QuestionPoll>()
   total = 0
   openPoll = false
   form = new UntypedFormGroup({})
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   alreadyVoted = true
 
   constructor(
-    private loginService: LoginService,
+    loginService: LoginService,
     private postsService: PostsService
   ) {
-    this.userLoggedIn = loginService.checkUserLoggedIn()
+    this.loggedIn = loginService.loggedIn
   }
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class PollComponent implements OnInit {
           new FormControl(
             {
               value: question.questionPollAnswers.length > 0,
-              disabled: this.alreadyVoted || !this.userLoggedIn || !this.openPoll
+              disabled: this.alreadyVoted || !this.loggedIn() || !this.openPoll
             },
             Validators.required
           )
@@ -52,7 +52,7 @@ export class PollComponent implements OnInit {
         new FormControl(
           {
             value: existingReply ? existingReply.id : '',
-            disabled: this.alreadyVoted || !this.userLoggedIn || !this.openPoll
+            disabled: this.alreadyVoted || !this.loggedIn() || !this.openPoll
           },
           Validators.required
         )

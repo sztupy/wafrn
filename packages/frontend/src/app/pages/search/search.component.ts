@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, OnDestroy, OnInit, Signal, signal } from '@angular/core'
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -34,7 +34,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   followedUsers: string[] = []
   notYetAcceptedFollows: string[] = []
 
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   currentPage = 0
   loading = signal(false)
   navigationSubscription: Subscription
@@ -48,11 +48,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     private messages: MessageService,
     public postService: PostsService,
-    private loginService: LoginService,
+    loginService: LoginService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private themeService: ThemeService
   ) {
+    this.loggedIn = loginService.loggedIn
     this.themeService.setMyTheme()
     this.navigationSubscription = router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -72,7 +73,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.followedUsers = this.postService.followedUserIds
     this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
-    this.userLoggedIn = this.loginService.checkUserLoggedIn()
     if (this.activatedRoute.snapshot.paramMap.get('term')) {
       this.searchForm.patchValue({
         search: this.activatedRoute.snapshot.paramMap.get('term')

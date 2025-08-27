@@ -34,6 +34,7 @@ export default function dashboardRoutes(app: Application) {
         return
       }
 
+      let postsWithTags: Promise<PostTag[]> | PostTag[] = []
       let whereObject: any = {
         privacy: Privacy.Public
       }
@@ -77,13 +78,35 @@ export default function dashboardRoutes(app: Application) {
           ]
           const subscribedTags = await getFollowedHashtags(posterId)
           if (subscribedTags && subscribedTags.length > 0) {
-            orConditions.push({
-              privacy: 0,
-              '$postTags.tagName$': {
-                [Op.iLike]: {
-                  [Op.any]: subscribedTags
+            // query: get posts with hashtag thing
+            postsWithTags = PostTag.findAll({
+              include: [
+                {
+                  model: Post,
+                  attributes: ['privacy', 'id', 'createdAt'],
+                  where: {
+                    privacy: 0
+                  }
                 }
-              }
+              ],
+              where: {
+                tagName: {
+                  [Op.iLike]: {
+                    [Op.any]: subscribedTags
+                  }
+                },
+                [Op.and]: [
+                  {
+                    createdAt: { [Op.lt]: getStartScrollParam(req) }
+                  },
+                  {
+                    // limit the tags to 72 hours for test reasons. increase later. a scroll page (20 posts) should be at much 24 hours?
+                    createdAt: { [Op.gt]: new Date(getStartScrollParam(req).getTime() - 72 * 3600) }
+                  }
+                ]
+              },
+              limit: POSTS_PER_PAGE,
+              order: [['createdAt', 'DESC']]
             })
           }
           whereObject = {
@@ -168,12 +191,8 @@ export default function dashboardRoutes(app: Application) {
         }
       }
       // we get the list of posts
-      const postIds = await Post.findAll({
+      let postIds: Post[] | Promise<Post[]> = Post.findAll({
         include: [
-          {
-            model: PostTag,
-            required: false
-          },
           {
             model: User,
             as: 'user',
@@ -199,12 +218,25 @@ export default function dashboardRoutes(app: Application) {
         }
       })
 
-      res.send(
-        await getUnjointedPosts(
-          postIds.map((elem: any) => elem.id),
-          posterId
-        )
-      )
+      await Promise.all([postsWithTags, postIds])
+      postIds = await postIds
+      postsWithTags = await postsWithTags
+      let onlyPostIds: string[] = postIds.map((elem) => elem.id)
+      if (postsWithTags.length > 0) {
+        let postIdsWithDates: Set<{ postId: string; date: Date }> = new Set()
+        for (let post of postIds) {
+          postIdsWithDates.add({ postId: post.id, date: post.createdAt })
+        }
+        for (let tagPost of postsWithTags) {
+          postIdsWithDates.add({ postId: tagPost.postId, date: tagPost.post.createdAt })
+        }
+        onlyPostIds = [...postIdsWithDates]
+          .sort((a, b) => b.date.getTime() - a.date.getTime())
+          .slice(0, POSTS_PER_PAGE)
+          .map((elem) => elem.postId)
+      }
+
+      res.send(await getUnjointedPosts(onlyPostIds, posterId))
     }
   )
 }

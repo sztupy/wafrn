@@ -34,45 +34,55 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
 
   if (post.parentId) {
     let dbPost = (await getPostAndUserFromPostId(post.parentId)).data
-    if (post.bskyDid) {
-      // we do same check for all parents
-      const ancestorIdsQuery = await sequelize.query(
-        `SELECT "ancestorId" FROM "postsancestors" where "postsId" = '${post.parentId}'`
-      )
-      const ancestorIds: string[] = ancestorIdsQuery[0].map((elem: any) => elem.ancestorId)
-      if (ancestorIds.length > 0) {
-        const ancestors = await Post.findAll({
-          include: [
-            {
-              model: User,
-              as: 'user',
-              attributes: ['url']
-            }
-          ],
-          where: {
-            id: {
-              [Op.in]: ancestorIds
-            }
+
+    const ancestorIdsQuery = await sequelize.query(
+      `SELECT "ancestorId" FROM "postsancestors" where "postsId" = '${post.parentId}'`
+    )
+    let ancestors: Post[] = []
+    const ancestorIds: string[] = ancestorIdsQuery[0].map((elem: any) => elem.ancestorId)
+    if (ancestorIds.length > 0) {
+      ancestors = await Post.findAll({
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['url']
           }
-        })
+        ],
+        where: {
+          id: {
+            [Op.in]: ancestorIds
+          }
+        },
+        order: [['createdAt', 'DESC']]
+      })
+      if (post.bskyDid) {
+        // we do same check for all parents
+
         const parentsUserUrls = ancestors.map((elem) => elem.user.url)
         if (parentsUserUrls.some((elem) => elem.split('@').length == 2)) {
           return undefined
         }
       }
     }
-    while (
-      dbPost &&
-      dbPost.content === '' &&
-      dbPost.hierarchyLevel !== 0 &&
-      dbPost.postTags.length == 0 &&
-      dbPost.medias.length == 0 &&
-      dbPost.quoted.length == 0 && // fix this this is still dirty
-      dbPost.content_warning.length == 0
-    ) {
-      // TODO optimize this
-      const tmpPost = (await getPostAndUserFromPostId(post.parentId)).data
-      dbPost = tmpPost
+    for await (const ancestor of ancestors) {
+      if (
+        dbPost &&
+        dbPost.content === '' &&
+        dbPost.hierarchyLevel !== 0 &&
+        dbPost.postTags.length == 0 &&
+        dbPost.medias.length == 0 &&
+        dbPost.quoted.length == 0 && // fix this this is still dirty
+        dbPost.content_warning.length == 0
+      ) {
+        // TODO optimize this.
+        // yes this is still optimizable but we are no longer using a while that could infinite loop
+        // and also there are some checks in this function. so its ok ish
+        // but still
+        dbPost = (await getPostAndUserFromPostId(ancestor.id)).data
+      } else {
+        break
+      }
     }
     parentPostString = dbPost?.remotePostId
       ? dbPost.remotePostId
@@ -86,11 +96,9 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
   // we remove the wafrnmedia from the post for the outside world, as they get this on the attachments
   processedContent = processedContent.replaceAll(wafrnMediaRegex, '')
   if (ask) {
-    processedContent = `<p>${getUserName(userAsker)} asked </p> <blockquote>${
-      ask.question
-    }</blockquote> ${processedContent} <p>To properly see this ask, <a href="${
+    processedContent = `<p>${getUserName(userAsker)} <a href="${
       completeEnvironment.frontendUrl + '/fediverse/post/' + post.id
-    }">check the post in the original instance</a></p>`
+    }">asked</a> </p> <blockquote>${ask.question}</blockquote> ${processedContent}`
   }
   const mentions: string[] = post.mentionPost.map((elem: any) => elem.id)
   const fediMentions: fediverseTag[] = []
@@ -106,6 +114,7 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       if (!postUrl.startsWith('https://bsky.app/')) {
         fediTags.push({
           type: 'Link',
+          mediaType: 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
           name: `RE: ${postUrl}`,
           href: postUrl
         })
@@ -199,6 +208,7 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       sensitive: !!post.content_warning || contentWarning,
       atomUri: `${completeEnvironment.frontendUrl}/fediverse/post/${post.id}`,
       inReplyToAtomUri: parentPostString,
+      quote: misskeyQuoteURL,
       quoteUrl: misskeyQuoteURL,
       _misksey_quote: misskeyQuoteURL,
       quoteUri: misskeyQuoteURL,

@@ -1,6 +1,6 @@
 @if (title) {
   <div class="mx-3 lg:mx-4 wafrn-container">
-    <h2 class="mb-2 text-3xl dashboard-title">{{ title }}</h2>
+    <h2 class="my-3 text-3xl dashboard-title">{{ title }}</h2>
   </div>
 }
 @for (post of posts; track $index) {
@@ -20,6 +20,6 @@
   </mat-card>
 }
 
-<footer class="p-4 flex gap-3 align-items-center">
+<footer class="p-8 flex gap-3 align-items-center">
   <div [hidden]="loadingPosts || noMorePosts" id="if-you-see-this-load-more-posts" class="m-0 text-lg"></div>
 </footer>

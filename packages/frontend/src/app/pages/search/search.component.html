@@ -50,7 +50,7 @@
   </div>
 
   <mat-card
-    *ngIf="currentSearch && userLoggedIn && !loading()"
+    *ngIf="currentSearch && loggedIn() && !loading()"
     class="mb-6 overflow-hidden wafrn-container post-card blog-header"
   >
     <button
@@ -90,10 +90,10 @@
                 class="block mx-auto my-2 border-round-md"
               />
               <div class="flex-grow-1 p-2">
-                @if (followedUsers.indexOf(user.id) === -1 && userLoggedIn) {
+                @if (followedUsers.indexOf(user.id) === -1 && loggedIn()) {
                   <button mat-raised-button color="primary" (click)="followUser(user.id)" class="mb-4">Follow</button>
                 }
-                @if (followedUsers.indexOf(user.id) !== -1 && userLoggedIn) {
+                @if (followedUsers.indexOf(user.id) !== -1 && loggedIn()) {
                   <button mat-raised-button color="primary" (click)="unfollowUser(user.id)">Unfollow</button>
                 }
                 <p>{{ user.name }}</p>

@@ -15,6 +15,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { ThemeManagerComponent } from './theme-manager/theme-manager.component'
+import { HotkeyManagerComponent } from './components/hotkey-manager/hotkey-manager.component'
 
 const globalRippleConfig: RippleGlobalOptions = {
   disabled: true,
@@ -50,7 +51,8 @@ const globalRippleConfig: RippleGlobalOptions = {
         deps: [HttpClient]
       }
     }),
-    ThemeManagerComponent
+    ThemeManagerComponent,
+    HotkeyManagerComponent
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

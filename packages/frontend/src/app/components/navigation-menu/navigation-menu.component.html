@@ -2,24 +2,28 @@
   <mat-drawer
     style="position: fixed"
     class="side-menu"
-    [mode]="mobile ? 'over' : 'side'"
-    [opened]="menuVisible || !mobile"
+    [class.keyboard-active]="keyboardActive"
+    [mode]="mobile() ? 'over' : 'side'"
+    [opened]="menuVisible || !mobile()"
+    [disableClose]="!horizontalMenuMode() && !mobile()"
     (closed)="hideMenu()"
   >
-    <a [href]="'/'" class="block" (click)="hideMenu()">
-      <img
-        [src]="logo"
-        class="instance-logo block mx-auto"
-        alt="instance logo"
-        width="200"
-        style="object-fit: contain"
-      />
-    </a>
-    <hr />
+    <header class="mb-4">
+      <a [href]="'/'" class="block" (click)="hideMenu()">
+        <img
+          [src]="logo"
+          class="instance-logo block mx-auto"
+          alt="instance logo"
+          width="200"
+          height="150"
+          style="object-fit: contain"
+        />
+      </a>
+    </header>
     <nav aria-label="Navigation menu">
       <mat-nav-list class="side-menu-nav-list">
         @for (link of menuItems; track $index) {
-          @if (link.visible) {
+          @if (link.visible()) {
             @if (link.divider) {
               <hr />
             } @else {
@@ -27,48 +31,87 @@
             }
           }
         }
+        @if (loggedIn()) {
+          <a
+            class="mt-4 new-woot-button"
+            routerLink="/editor"
+            mat-list-item
+            (click)="hideMenu(); openEditor()"
+            (keydown)="handleWootKeydown($event)"
+            tabIndex="0"
+          >
+            <div class="flex align-items-center justify-content-start">
+              <span class="new-woot-icon">
+                <fa-icon [icon]="pencilIcon" [fixedWidth]="true"></fa-icon>
+              </span>
+              <span class="ml-3 mr-1 menu-item-content">
+                {{ 'menu.writeWoot' | translate }}
+              </span>
+            </div>
+          </a>
+        }
       </mat-nav-list>
     </nav>
     <div class="drawer-footer">
-      <app-color-scheme-switcher></app-color-scheme-switcher>
+      <div class="px-2 text-sm footer-links">
+        @for (item of menuLinks; track $index) {
+          @if (item.routerLink) {
+            <a class="subtle-link" [routerLink]="item.routerLink">{{ item.label | translate }} </a>
+          } @else {
+            <a class="subtle-link" [href]="item.url">{{ item.label | translate }}</a>
+          }
+        }
+      </div>
+      <hr />
+      <div class="footer-stack">
+        <app-color-scheme-switcher></app-color-scheme-switcher>
+        <div class="text-sm version-text">v{{ frontendVersion }}</div>
+      </div>
     </div>
   </mat-drawer>
   <mat-drawer-content>
-    <mat-toolbar class="wafrn-toolbar" *ngIf="!!mobile">
+    <mat-toolbar class="wafrn-toolbar" *ngIf="mobile()">
       @for (section of menuItemsMobile; track $index) {
-        <div>
+        <div class="wafrn-toolbar-section">
           @for (link of section; track $index) {
-            @if (!link.divider && link.visible) {
-              <app-menu-item [button]="true" [item]="link"></app-menu-item>
+            @if (link.visible()) {
+              @if (link.divider) {
+                <span class="mx-1 vertical-rule"></span>
+              } @else {
+                <app-menu-item [button]="true" [item]="link"></app-menu-item>
+              }
             }
           }
         </div>
       }
     </mat-toolbar>
-    <button *ngIf="true" (click)="refresh()" mat-mini-fab color="default" aria-label="Refresh" class="refresh-button">
+    @if (mobile() && pwaPage) {
+      <button
+        (click)="historyBack()"
+        mat-mini-fab
+        color="default"
+        aria-label="Previous page"
+        class="floating-button previous-page-button"
+        [class.offset-for-toolbar]="offsetTopArea()"
+      >
+        <fa-icon [icon]="backIcon" />
+      </button>
+    }
+    <button
+      (click)="refresh()"
+      mat-mini-fab
+      color="default"
+      aria-label="Refresh"
+      class="floating-button refresh-button"
+      [class.offset-for-toolbar]="offsetTopArea()"
+    >
       <fa-icon [icon]="reloadIcon" />
     </button>
-    <main id="main-content" class="wafrn-content">
+    <main id="main-content" class="wafrn-content" [class.offset-for-toolbar]="offsetTopArea()">
       @if (maintenanceMode) {
         <div [innerHtml]="maintenanceMessage"></div>
       }
       <snappy-router> </snappy-router>
     </main>
-    <!-- Needed some space at the bottom I know is ugly but mb-2 gets ignored-->
-    <br />
-    <br />
   </mat-drawer-content>
 </mat-drawer-container>
-
-<button
-  *ngIf="!mobile"
-  style="position: fixed; z-index: 500; bottom: 1em; right: 1em"
-  mat-fab
-  color="primary"
-  [hidden]="!mobile || !jwtService.tokenValid() || currentRoute === '/editor'"
-  type="button"
-  class="show-sidebar-menu-button create-post-button slideup"
-  (click)="this.hideMenu(); this.openEditor()"
->
-  <fa-icon [icon]="pencilIcon"></fa-icon>
-</button>

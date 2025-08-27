@@ -42,18 +42,18 @@
   --overlay2: light-dark(var(--ctp-latte-overlay2), var(--ctp-mocha-overlay2));
   
   /* Primary palette variables */
-  --mat-sys-primary: var(--text);
+  --mat-sys-primary: var(--accent1);
   --mat-sys-on-primary: var(--base);
   --mat-sys-primary-container: var(--surface0);
   --mat-sys-on-primary-container: var(--subtext1);
   --mat-sys-inverse-primary: var(--overlay2);
-  --mat-sys-primary-fixed: var(--failure);
+  --mat-sys-primary-fixed: var(--accent2);
   --mat-sys-primary-fixed-dim: var(--tags);
-  --mat-sys-on-primary-fixed: var(--failure);
+  --mat-sys-on-primary-fixed: var(--base);
   --mat-sys-on-primary-fixed-variant: var(--failure);
 
   /* Secondary palette variables */
-  --mat-sys-secondary: var(--failure);
+  --mat-sys-secondary: var(--accent2);
   --mat-sys-on-secondary: var(--failure);
   --mat-sys-secondary-container: var(--surface1);
   --mat-sys-on-secondary-container: var(--failure);
@@ -63,7 +63,7 @@
   --mat-sys-on-secondary-fixed-variant: var(--failure);
 
   /* Tertiary palette variables */
-  --mat-sys-tertiary: var(--failure);
+  --mat-sys-tertiary: var(--accent3);
   --mat-sys-on-tertiary: var(--failure);
   --mat-sys-tertiary-container: var(--failure);
   --mat-sys-on-tertiary-container: var(--failure);

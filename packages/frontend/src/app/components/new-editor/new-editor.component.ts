@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common'
-import { Component, HostListener, inject, OnDestroy, ViewChild } from '@angular/core'
+import { Component, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -85,7 +85,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
   templateUrl: './new-editor.component.html',
   styleUrl: './new-editor.component.scss'
 })
-export class NewEditorComponent implements OnDestroy {
+export class NewEditorComponent implements OnInit, OnDestroy {
   privacyOptions = [
     { level: 0, name: 'Public', icon: faGlobe },
     { level: 3, name: 'Unlisted', icon: faUnlock },
@@ -188,6 +188,19 @@ export class NewEditorComponent implements OnDestroy {
       this.uploadedMedias = this.data.post.medias ? this.data.post.medias.filter((elem) => elem.mediaOrder < 9999) : []
       this.privacy = this.data.post.privacy
     }
+  }
+
+  ngOnInit() {
+    // Do not autofocus on touchscreens due to IOS bug
+    const deviceIsTouchscreen = window.matchMedia('(pointer: coarse)').matches
+    if (deviceIsTouchscreen) return
+
+    const autoFocusElem = <HTMLElement | null>document.querySelector('[autofocus]')
+
+    // Focus on the next frame (EVIL FIX)
+    requestAnimationFrame(() => {
+      autoFocusElem?.focus()
+    })
   }
 
   @HostListener('window:scroll')
@@ -446,7 +459,7 @@ export class NewEditorComponent implements OnDestroy {
         severity: 'success',
         summary: 'Your woot has been published!',
         confettiEmojis: disableConfetti ? [] : ['✏️', '🖍️', '✒️', '🖊️'],
-        soundUrl: '/assets/sounds/2.ogg'
+        soundName: 'sendWoot'
       })
       this.postCreatorForm.value.content = ''
       this.uploadedMedias = []

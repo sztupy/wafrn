@@ -30,7 +30,7 @@
   }
 </form>
 
-@if (!alreadyVoted && this.userLoggedIn && this.openPoll) {
+@if (!alreadyVoted && this.loggedIn() && this.openPoll) {
   <button
     mat-flat-button
     color="primary"

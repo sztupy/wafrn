@@ -8,7 +8,9 @@ import { completeEnvironment } from './utils/backendOptions.js'
 //const firehose = new Firehose(`wss://bolson.bsky.dev`);
 
 let cachedDids = await getCacheAtDids(true)
-const firehose = new Firehose()
+const firehose = new Firehose({
+  relay: `wss://atproto.africa`
+})
 
 const firehoseQueue = new Queue('firehoseQueue', {
   connection: completeEnvironment.bullmqConnection,

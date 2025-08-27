@@ -175,20 +175,20 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
       this.router.navigate(['/dashboard/exploreLocal'])
     }
     // we do the filtering here to avoid repeating posts. Also by doing it here we avoid flickering
+    const superMutedWordsRaw = localStorage.getItem('superMutedWords')
+    let superMutedWords: string[] = []
+    try {
+      if (superMutedWordsRaw && superMutedWordsRaw.trim().length > 0) {
+        superMutedWords = JSON.parse(superMutedWordsRaw)
+          .split(',')
+          .map((word: string) => word.trim().toLowerCase())
+          .filter((word: string) => word.length > 0)
+      }
+    } catch (error) {
+      this.messages.add({ severity: 'error', summary: 'Something wrong with your supermuted words!' })
+    }
     const filteredPosts = tmpPosts
       .filter((post: ProcessedPost[]) => {
-        const superMutedWordsRaw = localStorage.getItem('superMutedWords')
-        let superMutedWords: string[] = []
-        try {
-          if (superMutedWordsRaw && superMutedWordsRaw.trim().length > 0) {
-            superMutedWords = JSON.parse(superMutedWordsRaw)
-              .split(',')
-              .map((word: string) => word.trim().toLowerCase())
-              .filter((word: string) => word.length > 0)
-          }
-        } catch (error) {
-          this.messages.add({ severity: 'error', summary: 'Something wrong with your supermuted words!' })
-        }
         // if quote level = 3 & post has quotes
         if (this.hideQuotesLevel == 3) {
           if (
@@ -222,8 +222,15 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
           .join()
           .toLowerCase()
         if (
-          superMutedWords.length > 0 &&
-          superMutedWords.some((supermuteWord) => textOfPosts.includes(supermuteWord))
+          (superMutedWords.length > 0 &&
+            superMutedWords.some((supermuteWord) => textOfPosts.includes(supermuteWord))) ||
+          (!localStorage.getItem('displayMentionsOfBlockedUsersFromOtherUsers') === true &&
+            this.postService.blockedUserIds.length > 0 &&
+            post.some(
+              (elem) =>
+                (elem.mentionPost?.filter((mention) => this.postService.blockedUserIds.includes(mention.id)) || [])
+                  .length > 0
+            ))
         ) {
           return false
         }

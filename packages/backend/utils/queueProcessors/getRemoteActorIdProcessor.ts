@@ -50,7 +50,7 @@ async function getRemoteActorIdProcessor(job: Job) {
     if (hostBanned) {
       res = await getDeletedUser()
     } else {
-      const user = await User.findByPk(job.data.userId)
+      const user = (await User.findByPk(job.data.userId)) as User
       const userPetition = await getPetitionSigned(user, actorUrl)
       if (userPetition) {
         if (!federatedHost && url) {

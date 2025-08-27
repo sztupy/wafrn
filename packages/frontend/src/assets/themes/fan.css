@@ -5,8 +5,6 @@
     --mat-sys-primary-container: #001935;
     --mat-sys-on-primary-container:  #eedbff;
     --mat-sys-inverse-primary: #001935;
-    --mat-sys-primary-fixed: #001935;
-    --mat-sys-primary-fixed-dim: #001935;
     --mat-sys-on-primary-fixed: #290351;
     --mat-sys-on-primary-fixed-variant: #1d1e1d;
     --mat-sys-background: #001935;
@@ -37,13 +35,16 @@
     --mat-sys-neutral-variant20: #342e39;
     --mat-sys-secondary-container: #159ee1;
     }
-    
+
     .mat-mdc-card{
      background-color: white;
     }
-    
+
     .instance-logo{
         content: url("https://cdn.wafrn.net/api/cache/?media=https%3A%2F%2Fmedia.wafrn.net%2F1740507552037_59331cdf922b5916f4c01435ef59741fdfb1ad07.webp");
+        width: unset;
+        max-width: calc(100% - 32px);
+        height: 100px;
     }
     .mat-mdc-input-element ng-tns-c508571215-6 ng-pristine ng-valid mat-mdc-form-field-textarea-control mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored ng-touched{
     color:black;
@@ -51,7 +52,7 @@
     .mat-mdc-form-field-input-control.mat-mdc-form-field-input-control {
     color: black !important;
     }
-    
+
     .emojireact-overlay, .theme-selector-button, .info-card, .quoted-post, .post-editor-data, .mat-mdc-menu-item, .mdc-label {
         color: black !important;
     }

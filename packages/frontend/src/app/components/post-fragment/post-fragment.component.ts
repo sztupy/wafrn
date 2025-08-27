@@ -363,7 +363,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
           severity: 'success',
           summary: 'You successfully liked this woot',
           confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
-          soundUrl: '/assets/sounds/1.ogg'
+          soundName: 'like'
         })
       }
     } else {
@@ -382,7 +382,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
           this.messages.add({
             severity: 'success',
             summary: `Reacted with ${emojiReaction.name} successfully`,
-            soundUrl: '/assets/sounds/1.ogg'
+            soundName: 'like'
           })
         }
       }

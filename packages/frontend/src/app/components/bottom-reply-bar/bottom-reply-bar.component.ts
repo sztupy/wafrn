@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core'
+import { Component, Input, OnChanges, Signal, signal, SimpleChanges } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
@@ -43,7 +43,7 @@ export class BottomReplyBarComponent implements OnChanges {
   @Input() fragment!: ProcessedPost
   @Input() post!: ProcessedPost[]
   @Input() notes: string = ''
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   isEmptyReblog = false
   myId = ''
   loadingAction = false
@@ -79,8 +79,8 @@ export class BottomReplyBarComponent implements OnChanges {
     private readonly messages: MessageService,
     private readonly editor: EditorService
   ) {
-    this.userLoggedIn = loginService.checkUserLoggedIn()
-    if (this.userLoggedIn) {
+    this.loggedIn = loginService.loggedIn
+    if (this.loggedIn()) {
       this.myId = loginService.getLoggedUserUUID()
     }
   }
@@ -145,7 +145,7 @@ export class BottomReplyBarComponent implements OnChanges {
         severity: 'success',
         summary: 'You successfully liked this woot',
         confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
-        soundUrl: '/assets/sounds/1.ogg'
+        soundName: 'like'
       })
     } else {
       this.messages.add({
@@ -223,7 +223,7 @@ export class BottomReplyBarComponent implements OnChanges {
           severity: 'success',
           summary: 'You rewooted the woot!',
           confettiEmojis: disableConfetti ? [] : ['🔁'],
-          soundUrl: '/assets/sounds/2.ogg'
+          soundName: 'sendWoot'
         })
       }
     } else {

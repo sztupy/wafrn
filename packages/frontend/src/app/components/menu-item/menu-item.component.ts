@@ -1,13 +1,14 @@
-import { Component, Input } from '@angular/core'
+import { Component, computed, Input } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatListModule } from '@angular/material/list'
 import { Router, RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MenuItem } from 'src/app/interfaces/menu-item'
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { MatBadgeModule } from '@angular/material/badge'
-import { MatMenuModule } from '@angular/material/menu'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { CommonModule } from '@angular/common'
+import { TranslateModule } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-menu-item',
@@ -18,20 +19,46 @@ import { CommonModule } from '@angular/common'
     MatButtonModule,
     MatListModule,
     MatBadgeModule,
-    MatMenuModule
+    MatMenuModule,
+    TranslateModule
   ],
   templateUrl: './menu-item.component.html',
   styleUrl: './menu-item.component.scss'
 })
 export class MenuItemComponent {
-  chevronUp = faChevronUp
-  chevronDown = faChevronDown
+  arrowIcon = faChevronDown
 
   @Input() item!: MenuItem
   @Input() button = false
   expanded = false
 
+  parsedLink = computed(() => {
+    if (this.item.routerLink) {
+      return this.item.routerLink
+    }
+    if (this.item.routerLinkDynamic) {
+      return this.item.routerLinkDynamic()
+    }
+
+    return null
+  })
+
   constructor(private router: Router) {}
+
+  routeChildActive() {
+    if (this.item.highlightRoute === false) return false
+    const childMatches =
+      this.item.items?.some((menuItem) => {
+        if (menuItem.routerLinkDynamic) {
+          return this.router.url.endsWith(menuItem.routerLinkDynamic())
+        }
+        if (menuItem.routerLink) {
+          return this.router.url.endsWith(menuItem.routerLink)
+        }
+        return false
+      }) === true
+    return childMatches
+  }
 
   doCommand() {
     if (this.item.items && this.item.items.length > 0) {
@@ -46,14 +73,18 @@ export class MenuItemComponent {
     }
   }
 
-  handleKey(event: KeyboardEvent) {
+  handleKey(event: KeyboardEvent, menuTrigger?: MatMenuTrigger) {
     if (event.key !== 'Enter') return
 
     // Run the associated event
     if (this.item.items) {
       this.expanded = !this.expanded
+      menuTrigger?.openMenu()
     } else {
       this.doCommand()
     }
+  }
+  menuClose() {
+    this.expanded = false
   }
 }

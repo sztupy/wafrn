@@ -48,7 +48,7 @@
       </span>
     </button>
   }
-  @if (userLoggedIn) {
+  @if (loggedIn()) {
     <button [disabled]="!content.canReply" (click)="replyPost()" mat-menu-item>
       <span class="post-actions-menu-span-content">
         <fa-icon class="mr-2" [icon]="reblogIcon"></fa-icon>

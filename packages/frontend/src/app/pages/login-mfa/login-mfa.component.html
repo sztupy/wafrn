@@ -1,29 +1,37 @@
-<mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">
-  <div class="text-center mb-5">
-    <img loading="lazy" style="display: unset" [src]="logo" alt="Image" height="64" class="mb-3 text-center" />
-    <div class="text-3xl font-medium mb-4">{{ 'login.welcomeBack' | translate }}</div>
-    <p class="text-xl font-medium mb-3">
-      <a [routerLink]="['/dashboard/explore']"> {{ 'login.exploreWithoutAccount' | translate }}</a>
-    </p>
-    <p>
-      <span class="font-medium line-height-3">{{ 'login.dontHaveAccount' | translate }}</span>
-      <a routerLink="/" class="font-medium no-underline ml-2 cursor-pointer">{{ 'login.register' | translate }}</a>
-    </p>
-    <p class="font-medium line-height-3">{{ 'login.checkSpam' | translate }}</p>
-  </div>
+<mat-card class="pb-3 mb-6 lg:mx-4 mat-card-higher wafrn-container">
+  <mat-card-header class="pb-3 wafrn-container-header">
+    <mat-card-title class="flex gap-2"
+      ><fa-icon [icon]="faArrowRightToBracket"></fa-icon
+      ><span class="font-medium">{{ 'login.title' | translate }}</span></mat-card-title
+    >
+  </mat-card-header>
+  <section class="my-6 mx-3 text-center">
+    <h1 class="text-5xl">{{ 'login.welcomeBack' | translate }}</h1>
+    <p>{{ 'login.mfaNextStep' | translate }}</p>
+  </section>
 
-  <form [hidden]="loading" [formGroup]="loginMfaForm" (ngSubmit)="onSubmit()">
+  <form class="px-3" [formGroup]="loginMfaForm" (ngSubmit)="onSubmit()">
     <p class="font-medium line-height-3">{{ 'login.mfaTokenEnter' | translate }}</p>
 
-    <mat-form-field class="w-full">
+    <mat-form-field class="w-full mat-form-field-no-padding">
       <mat-label>{{ 'login.mfaToken' | translate }}</mat-label>
       <input formControlName="token" name="token" type="token" matInput />
     </mat-form-field>
 
-    <button [disabled]="loading || !loginMfaForm.valid" mat-flat-button color="primary" extended
-      class="w-full border-round-md mt-4">
-      <fa-icon [icon]="faUser"></fa-icon>
-      {{ 'login.loginButton' | translate }}
-    </button>
+    <div class="flex">
+      <button
+        [disabled]="!loginMfaForm.valid"
+        mat-flat-button
+        color="primary"
+        extended
+        class="w-full border-round-md mt-4"
+      >
+        {{ 'login.loginButton' | translate }}
+        <fa-icon [icon]="submitIcon"></fa-icon>
+      </button>
+      @if (loginMfaForm.disabled) {
+        <mat-spinner diameter="24" class="mt-5 mx-3"></mat-spinner>
+      }
+    </div>
   </form>
 </mat-card>

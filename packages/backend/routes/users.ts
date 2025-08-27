@@ -477,6 +477,18 @@ function userRoutes(app: Application) {
           // also update the bluesky password
           if (user.enableBsky && user.bskyDid) {
             await updateBskyPassword(user, req.body.password)
+            const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
+              ? completeEnvironment.bskyPds
+              : 'https://' + completeEnvironment.bskyPds
+
+            const agent = new AtpAgent({
+              service: serviceUrl
+            })
+            await agent.login({
+              identifier: user.bskyDid as string,
+              password: req.body.password
+            })
+            await createBskyPassword(user, agent)
           }
 
           success = true
@@ -1329,7 +1341,8 @@ function userRoutes(app: Application) {
       success: askToIgnore ? true : false
     })
     if (askToIgnore) {
-      await askToIgnore.destroy()
+      askToIgnore.answered = true
+      await askToIgnore.save()
     }
   })
 
@@ -1416,17 +1429,17 @@ function userRoutes(app: Application) {
       `
         <h1>We are sad to see you go</h1>
         <p>
-          We have recived your request to delete your account. 
-          It will still ve visible for a few moments. 
+          We have recived your request to delete your account.
+          It will still ve visible for a few moments.
           In 24 hours or less we will complete the destruction process and at that point there will be no going back
         </p>
         <p>
           This is a slow process on our side and thats why its not done imediately.
         </p>
         <p>
-          The deletion task is run every day at night (02:00 UTC). 
-          It is slow because we have to send every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW" message. 
-          And we send those one by one so this task takes time and slows down the server. 
+          The deletion task is run every day at night (02:00 UTC).
+          It is slow because we have to send every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW" message.
+          And we send those one by one so this task takes time and slows down the server.
         </p>
         <p>
           If within 2 days your account is not deleted, please contact your server admin.
@@ -1443,6 +1456,11 @@ function userRoutes(app: Application) {
     const newUserRemoteId: string = req.body.target
     const localUser = await User.scope('full').findByPk(req.jwtData?.userId)
     let message = `User not yet found`
+    const newRemoteUser = (await User.findOne({
+      where: {
+        remoteId: newUserRemoteId
+      }
+    })) as User
     if (newUserRemoteId && localUser) {
       message = `User found but new account doesnt seems to have an alias pointing towards you`
       try {
@@ -1502,8 +1520,10 @@ function userRoutes(app: Application) {
             })
             for await (const localFollow of localFollows) {
               try {
-                await follow(localFollow.id, localUser.id)
-              } catch (error) {}
+                await follow(localFollow.id, newRemoteUser.id)
+              } catch (error) {
+                logger.info(error)
+              }
             }
             // third step: return data and set message to succ ess
             localUser.userMigratedTo = newUserRemoteId
@@ -1631,7 +1651,7 @@ async function createBskyAccount({
     ? completeEnvironment.bskyPdsUrl.replace('https://', '').replace('http://', '')
     : completeEnvironment.bskyPdsUrl
 
-  const sanitizedUrl = user.url.replaceAll('_', '-').replaceAll('.', '-')
+  const sanitizedUrl = user.url.replaceAll('_', '-').replaceAll('.', '-').substring(0, 17)
 
   // this try-catch block does not catch very much, it is only used to add the error to the logger.
   try {

@@ -21,6 +21,7 @@ import {
   ThemeService
 } from 'src/app/services/theme.service'
 import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-edit-profile',
@@ -96,7 +97,8 @@ export class EditProfileComponent implements OnInit {
     notifyRewoots: new FormControl(true),
     replaceAIWithCocaine: new FormControl(false),
     replaceAIWord: new FormControl('cocaine'),
-    hideQuotes: new FormControl(1)
+    hideQuotes: new FormControl(1),
+    displayMentionsOfBlockedUsersFromOtherUsers: new FormControl(false)
   })
 
   password = ''
@@ -112,6 +114,9 @@ export class EditProfileComponent implements OnInit {
   themeSelect = ''
   additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> }
   additionalStyleModesSelect: AdditionalStyleMode[]
+
+  allLanguages: string[]
+  appLanguage: string
 
   // Data copies
   colorSchemeData = colorSchemeData
@@ -132,7 +137,8 @@ export class EditProfileComponent implements OnInit {
     private mediaService: MediaService,
     private loginService: LoginService,
     private messages: MessageService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private translationService: TranslateService
   ) {
     this.colorScheme = themeService.colorScheme
     this.colorSchemeSelect = this.colorScheme()
@@ -143,13 +149,16 @@ export class EditProfileComponent implements OnInit {
       .filter(([_, enabled]) => enabled())
       .map(([val, _]) => val) as AdditionalStyleMode[]
 
-    this.setColorScheme = themeService.setColorScheme.bind(themeService)
-    this.setTheme = themeService.setTheme.bind(themeService)
-    this.setAdditionalStyleMode = themeService.setAdditionalStyleMode.bind(themeService)
+    this.setColorScheme = themeService.setColorScheme
+    this.setTheme = themeService.setTheme
+    this.setAdditionalStyleMode = themeService.setAdditionalStyleMode
 
     this.colorSchemeGroupList = colorSchemeGroupList
 
     this.themeService.setCustomCSS('')
+
+    this.allLanguages = this.translationService.langs
+    this.appLanguage = this.translationService.currentLang
   }
 
   syncColorScheme() {
@@ -166,6 +175,12 @@ export class EditProfileComponent implements OnInit {
     const disabledModes = allModes.filter((mode) => !this.additionalStyleModesSelect.includes(mode))
     enabledModes.forEach((mode) => this.setAdditionalStyleMode(mode, true))
     disabledModes.forEach((mode) => this.setAdditionalStyleMode(mode, false))
+  }
+
+  syncLang() {
+    this.translationService.use(this.appLanguage)
+    localStorage?.setItem('appLanguage', this.appLanguage)
+    this.loginService.updateUserOptions([{ name: 'wafrn.appLanguage', value: this.appLanguage }])
   }
 
   ngOnInit(): void {
@@ -279,6 +294,14 @@ export class EditProfileComponent implements OnInit {
         this.editProfileForm.controls['notifyRewoots'].patchValue(localStorageNotifyRewoots == 'true')
       }
 
+      const localStoragedisplayMentionsOfBlockedUsersFromOtherUsers = localStorage.getItem(
+        'displayMentionsOfBlockedUsersFromOtherUsers'
+      )
+      if (localStoragedisplayMentionsOfBlockedUsersFromOtherUsers) {
+        this.editProfileForm.controls['displayMentionsOfBlockedUsersFromOtherUsers'].patchValue(
+          localStoragedisplayMentionsOfBlockedUsersFromOtherUsers == 'true'
+        )
+      }
       const localStorageHideQuotes = localStorage.getItem('hideQuotes')
       if (localStorageHideQuotes) {
         this.editProfileForm.controls['hideQuotes'].patchValue(parseInt(localStorageHideQuotes))

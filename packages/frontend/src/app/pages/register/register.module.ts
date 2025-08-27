@@ -11,6 +11,9 @@ import { MatInputModule } from '@angular/material/input'
 import { MatButtonModule } from '@angular/material/button'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MatSelectModule } from '@angular/material/select'
+import { TranslateModule } from '@ngx-translate/core'
+import { InfoCardComponent } from 'src/app/components/info-card/info-card.component'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 const routes: Routes = [
   {
     path: '',
@@ -32,7 +35,10 @@ const routes: Routes = [
     MatButtonModule,
     FontAwesomeModule,
     MatSelectModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    InfoCardComponent,
+    MatProgressSpinnerModule,
+    TranslateModule
   ]
 })
 export class RegisterModule {}

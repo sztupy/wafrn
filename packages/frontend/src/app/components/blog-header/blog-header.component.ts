@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, computed, input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core'
+import { Component, computed, input, OnChanges, OnDestroy, Signal, SimpleChanges } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatDialog } from '@angular/material/dialog'
@@ -54,7 +54,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
           encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blogDetails().avatar)
   })
   headerUrl = ''
-  userLoggedIn = false
+  loggedIn: Signal<boolean>
   isMe = false
   expandDownIcon = faChevronDown
   muteUserIcon = faVolumeMute
@@ -93,7 +93,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     public environmentService: EnvironmentService,
     public reportService: ReportService
   ) {
-    this.userLoggedIn = loginService.checkUserLoggedIn()
+    this.loggedIn = loginService.loggedIn
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.blogDetails) {
@@ -106,7 +106,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
       if (this.blogDetails().url.startsWith('@')) {
         askLevel = 3
       }
-      this.allowAsk = this.loginService.checkUserLoggedIn() ? [1, 2].includes(askLevel) : askLevel == 1
+      this.allowAsk = this.loginService.loggedIn() ? [1, 2].includes(askLevel) : askLevel == 1
       this.allowAsk = this.allowAsk && this.loginService.getLoggedUserUUID() != this.blogDetails().id
       this.allowRemoteAsk = askLevel != 3 && this.loginService.getLoggedUserUUID() != this.blogDetails().id
       this.isMe = this.blogDetails().id == this.loginService.getLoggedUserUUID()
@@ -148,7 +148,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
       this.messages.add({
         severity: 'success',
         summary: 'You now follow this user!',
-        soundUrl: '/assets/sounds/5.ogg'
+        soundName: 'follow'
       })
     } else {
       this.messages.add({

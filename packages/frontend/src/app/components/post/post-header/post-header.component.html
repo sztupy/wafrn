@@ -38,7 +38,7 @@
       @if (
         !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
         !postService.followedUserIds.includes(fragment.userId) &&
-        userLoggedIn
+        loggedIn()
         ) {
         <button
           mat-button
@@ -50,7 +50,7 @@
           Follow
         </button>
       }
-      @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && userLoggedIn) {
+      @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
         <button
           mat-button
           color="accent"

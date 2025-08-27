@@ -12,7 +12,7 @@
       </p>
     }
   </div>
-  @if (userLoggedIn) {
+  @if (loggedIn()) {
     <div class="flex gap-1 action-list" aria-label="Action list">
       @if (fragment.privacy !== 10 && fragment.privacy !== 1 && fragment.privacy !== 2) {
         <button

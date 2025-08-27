@@ -11,4 +11,5 @@ export interface fediverseTag {
     url: string
     type: string
   }
+  mediaType?: string
 }

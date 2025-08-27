@@ -1,8 +1,9 @@
 import { Injectable, signal, WritableSignal } from '@angular/core'
 import { LoginService } from './login.service'
 import { HttpClient } from '@angular/common/http'
-import { firstValueFrom } from 'rxjs'
+import { filter, firstValueFrom } from 'rxjs'
 import { EnvironmentService } from './environment.service'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 // !! NOTE FOR ADDING THEMES !! //
 //
@@ -167,10 +168,15 @@ export class ThemeService {
     private loginService: LoginService,
     private http: HttpClient
   ) {
-    const savedScheme = localStorage?.getItem('colorScheme') ?? ''
+    // Setup when logging in or out and run once (yay signals)
+    toObservable(loginService.loggedIn).subscribe(() => this.setup())
+  }
+
+  setup() {
+    const savedScheme = localStorage?.getItem('colorScheme') ?? 'default'
     if (isColorScheme(savedScheme)) this.setColorScheme(savedScheme)
 
-    const savedTheme = localStorage?.getItem('theme') ?? ''
+    const savedTheme = localStorage?.getItem('theme') ?? 'auto'
     if (isColorTheme(savedTheme)) this.setTheme(savedTheme)
 
     Object.entries(this.additionalStyleModes).forEach(([mode, value]) => {
@@ -186,7 +192,7 @@ export class ThemeService {
     }
   }
 
-  public async setColorScheme(scheme: ColorScheme, doNotSavePreference = false) {
+  public setColorScheme = async (scheme: ColorScheme, doNotSavePreference = false) => {
     this.colorScheme.set(scheme)
     localStorage?.setItem('colorScheme', scheme)
 
@@ -196,26 +202,26 @@ export class ThemeService {
 
     // User settings
     if (doNotSavePreference) return
-    await this.loginService.updateUserOptions([{ name: 'wafrn.colorScheme', value: scheme }])
+    return await this.loginService.updateUserOptions([{ name: 'wafrn.colorScheme', value: scheme }])
   }
 
-  public async setTheme(theme: ColorTheme, doNotSavePreference = false) {
+  public setTheme = async (theme: ColorTheme, doNotSavePreference = false) => {
     this.theme.set(theme)
     document.documentElement.setAttribute('data-theme', theme)
     localStorage?.setItem('theme', theme)
 
     // User settings
     if (doNotSavePreference) return
-    await this.loginService.updateUserOptions([{ name: 'wafrn.theme', value: theme }])
+    return await this.loginService.updateUserOptions([{ name: 'wafrn.theme', value: theme }])
   }
 
-  public async setAdditionalStyleMode(mode: AdditionalStyleMode, value: boolean, doNotSavePreference = false) {
+  public setAdditionalStyleMode = async (mode: AdditionalStyleMode, value: boolean, doNotSavePreference = false) => {
     this.additionalStyleModes[mode].set(value)
     localStorage?.setItem(mode, value.toString())
 
     // User settings
     if (doNotSavePreference) return
-    await this.loginService.updateUserOptions([{ name: `wafrn.${mode}`, value: value.toString() }])
+    return await this.loginService.updateUserOptions([{ name: `wafrn.${mode}`, value: value.toString() }])
   }
 
   public async toggleAdditionalStyleMode(mode: AdditionalStyleMode, doNotSavePreference = false) {

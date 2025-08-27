@@ -1,0 +1,11 @@
+<button
+  (click)="openHotkeyListDialog()"
+  mat-button
+  class="mat-circle-button hotkey-help-icon, hotkey-help-icon"
+  [class.horizontal-menu-offset]="offsetDialogButton()"
+  aria-label="keyboard shortcuts"
+  matTooltip="Keyboard
+  Shortcuts"
+>
+  <fa-icon [icon]="keyboardIcon" />
+</button>

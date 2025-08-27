@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+import { faArrowRight, faEllipsis, faQuestion } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-pagenotfound',
@@ -7,7 +9,12 @@ import { Component, OnInit } from '@angular/core'
   standalone: false
 })
 export class PagenotfoundComponent implements OnInit {
-  constructor() {}
+  pageIcon = faQuestion
+  path: string
+
+  constructor(router: Router) {
+    this.path = router.url
+  }
 
   ngOnInit(): void {}
 }

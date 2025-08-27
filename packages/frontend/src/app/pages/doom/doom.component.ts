@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, ElementRef, viewChild } from '@angular/core'
 import { Title } from '@angular/platform-browser'
 
 @Component({
@@ -7,10 +7,15 @@ import { Title } from '@angular/platform-browser'
   styleUrls: ['./doom.component.scss'],
   standalone: false
 })
-export class DoomComponent implements OnInit {
+export class DoomComponent {
+  doomFrame = viewChild<ElementRef<HTMLIFrameElement>>('doom')
+
   constructor(private titleService: Title) {
     this.titleService.setTitle('Wafrn - the social network with DOOM!')
   }
 
-  ngOnInit(): void {}
+  snOnHide() {
+    // Destroy the DOOM player when navigating away
+    this.doomFrame()?.nativeElement.remove()
+  }
 }

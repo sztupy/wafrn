@@ -2,16 +2,14 @@
 :root .side-menu {
   background-color: var(--mat-sys-surface-container-low);
   box-shadow: var(--mat-sys-level2);
-  z-index: 5
+  z-index: 5;
 }
 
 .mat-drawer-inner-container {
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
-  padding-right: 0.25rem;
   overscroll-behavior-y: contain;
-  scrollbar-gutter: stable;
 }
 
 .mat-drawer-content {
@@ -20,9 +18,26 @@
 .mat-drawer-content-checked-pattern-bg {
   background-color: var(--mat-sys-background) !important;
   opacity: 1 !important;
-  background-image: repeating-linear-gradient(45deg, var( --mat-sys-surface-bright) 25%, transparent 25%, transparent 75%, var( --mat-sys-surface-bright) 75%, var( --mat-sys-surface-bright)),
-    repeating-linear-gradient(45deg, var( --mat-sys-surface-bright) 25%, var(--mat-sys-background) 25%, var(--mat-sys-background) 75%, var( --mat-sys-surface-bright) 75%, var( --mat-sys-surface-bright)) !important;
-  background-position: 0 0, 80px 80px !important;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--mat-sys-surface-bright) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--mat-sys-surface-bright) 75%,
+      var(--mat-sys-surface-bright)
+    ),
+    repeating-linear-gradient(
+      45deg,
+      var(--mat-sys-surface-bright) 25%,
+      var(--mat-sys-background) 25%,
+      var(--mat-sys-background) 75%,
+      var(--mat-sys-surface-bright) 75%,
+      var(--mat-sys-surface-bright)
+    ) !important;
+  background-position:
+    0 0,
+    80px 80px !important;
   background-size: 160px 160px !important;
 }
 
@@ -49,16 +64,100 @@ hr {
   margin: 16px 0;
 }
 
+.version-text {
+  color: var(--mat-sys-outline);
+  text-align: center;
+}
+
 .drawer-footer {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
   margin-top: auto;
   padding-top: 1rem;
 }
 
-@media (min-width: 992px) {
-  .drawer-footer {
-    justify-content: normal;
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25em 1em;
+
+  a {
+    color: var(--mat-sys-secondary);
   }
+}
+.footer-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+}
+
+@media (min-width: 992px) {
+  .version-text {
+    text-align: unset;
+  }
+
+  .footer-stack {
+    justify-content: space-between;
+    flex-direction: row;
+  }
+}
+
+.offset-for-toolbar {
+  margin-top: 64px;
+}
+
+.previous-page-button {
+  left: 1em;
+}
+
+.refresh-button {
+  right: 1em;
+}
+
+.floating-button {
+  /* Evil specificity hack */
+  :root & {
+    position: fixed;
+  }
+  z-index: 500;
+  top: 1em;
+
+  // Notch fixes
+  margin-bottom: env(safe-area-inset-bottom);
+
+  transition: margin-top 200ms ease-out;
+}
+
+/* Mobile mode breakpoint*/
+@media screen and (max-width: 992px) {
+  .floating-button {
+    top: unset;
+    bottom: calc(64px + 1em);
+  }
+}
+
+/* mat-toolbar breakpoint */
+@media screen and (max-width: 599px) {
+  .floating-button {
+    bottom: calc(56px + 1em);
+  }
+
+  .offset-for-toolbar {
+    margin-top: 56px;
+  }
+}
+
+.new-woot-button {
+  font-weight: 500;
+  --mat-list-list-item-one-line-container-height: 3.25rem;
+  --mat-list-list-item-label-text-color: var(--mat-sys-on-primary);
+  --mat-list-list-item-focus-label-text-color: var(--mat-sys-on-primary);
+  --mat-list-list-item-hover-label-text-color: var(--mat-sys-on-primary);
+  --mat-list-list-item-container-color: var(--mat-sys-primary-fixed-dim);
+  background-image: linear-gradient(in oklab 60deg, var(--mat-sys-primary), var(--mat-sys-tertiary));
+}
+
+.new-woot-icon {
+  display: flex;
+  justify-content: center;
 }

@@ -8,6 +8,7 @@ import { Op } from 'sequelize'
 import { searchRemoteUser } from '../utils/activitypub/searchRemoteUser.js'
 import { follow } from '../utils/follow.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { wait } from '../utils/wait.js'
 export default function listRoutes(app: Application) {
   // Recomended users to follow
   app.post(
@@ -42,8 +43,9 @@ export default function listRoutes(app: Application) {
           let notFoundUsersUrls = allUsers.filter((elem) => !foundUsersUrls.includes(elem))
           const notFoundUsersToFetch = notFoundUsersUrls.filter((elem) => !localUsersUrls.includes(elem))
           // try to get all users
-          const userFetchPromise = await Promise.allSettled(
-            notFoundUsersToFetch.map((usr) => searchRemoteUser(usr, petitionBy))
+          const userFetchPromise = await promiseRace(
+            notFoundUsersToFetch.map((usr) => searchRemoteUser(usr, petitionBy)),
+            5000
           )
           foundUsers = await User.findAll({
             where: {
@@ -77,4 +79,12 @@ export default function listRoutes(app: Application) {
       }
     }
   )
+
+  async function promiseRace(promises: Promise<any>[], timeoutTime: number) {
+    return Promise.allSettled(
+      promises.map((p) => {
+        return Promise.race([p, wait(5000)])
+      })
+    )
+  }
 }

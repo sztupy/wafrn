@@ -12,6 +12,7 @@ import { MenuItemComponent } from '../menu-item/menu-item.component'
 import { SnappyRouter } from '../snappy/snappy-router.component'
 import { NavigationMenuComponent } from './navigation-menu.component'
 import { MatToolbarModule } from '@angular/material/toolbar'
+import { TranslateModule } from '@ngx-translate/core'
 
 @NgModule({
   declarations: [NavigationMenuComponent],
@@ -27,7 +28,8 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     MatDialogModule,
     ColorSchemeSwitcherComponent,
     SnappyRouter,
-    MatToolbarModule
+    MatToolbarModule,
+    TranslateModule
   ],
   exports: [NavigationMenuComponent]
 })
