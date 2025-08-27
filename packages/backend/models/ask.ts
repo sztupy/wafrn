@@ -1,79 +1,82 @@
-import {
-  Model, Table, Column, DataType, ForeignKey, BelongsTo
-} from "sequelize-typescript";
-import { Post } from "./post.js";
-import { User } from "./user.js";
+import { Model, Table, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript'
+import { Post } from './post.js'
+import { User } from './user.js'
 
 export interface AskAttributes {
-  id?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-  question?: string;
-  apObject?: string | null;
-  creationIp?: string;
-  answered?: boolean;
-  postId?: string | null;
-  userAsked?: string;
-  userAsker?: string;
+  id?: number
+  createdAt?: Date
+  updatedAt?: Date
+  question?: string
+  apObject?: string | null
+  creationIp?: string
+  answered?: boolean
+  postId?: string | null
+  userAsked?: string
+  userAsker?: string
 }
 
 @Table({
-  tableName: "asks",
-  modelName: "asks",
-  timestamps: true
+  tableName: 'asks',
+  modelName: 'asks',
+  timestamps: true,
+  defaultScope: {
+    attributes: {
+      exclude: ['creationIp']
+    }
+  }
 })
 export class Ask extends Model<AskAttributes, AskAttributes> implements AskAttributes {
   @Column({
     allowNull: true,
     type: DataType.STRING
   })
-  declare question: string;
+  declare question: string
 
   @Column({
     allowNull: true,
     type: DataType.STRING
   })
-  declare apObject: string | null;
+  declare apObject: string | null
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255)
   })
-  declare creationIp: string;
+  declare creationIp: string
 
   @Column({
     allowNull: true,
     type: DataType.BOOLEAN
   })
-  declare answered: boolean;
+  declare answered: boolean
 
   @ForeignKey(() => Post)
   @Column({
     allowNull: true,
     type: DataType.UUID
   })
-  declare postId: string | null;
+  declare postId: string | null
 
   @ForeignKey(() => User)
   @Column({
     allowNull: true,
     type: DataType.UUID
   })
-  declare userAsked: string;
+  declare userAsked: string
 
   @ForeignKey(() => User)
   @Column({
     allowNull: true,
     type: DataType.UUID
   })
-  declare userAsker: string;
+  declare userAsker: string
 
-  @BelongsTo(() => Post, "postId")
-  declare post: Post;
+  @BelongsTo(() => Post, 'postId')
+  declare post: Post
 
-  @BelongsTo(() => User, "userAsked")
-  declare userAskedUser: User;
+  @BelongsTo(() => User, 'userAsked')
+  declare userAskedUser: User
 
-  @BelongsTo(() => User, "userAsker")
-  declare userAskerUser: User;
+  @BelongsTo(() => User, 'userAsker')
+  declare userAskerUser: User
 }

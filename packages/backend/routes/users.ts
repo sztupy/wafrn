@@ -1341,7 +1341,8 @@ function userRoutes(app: Application) {
       success: askToIgnore ? true : false
     })
     if (askToIgnore) {
-      await askToIgnore.destroy()
+      askToIgnore.answered = true
+      await askToIgnore.save()
     }
   })
 
