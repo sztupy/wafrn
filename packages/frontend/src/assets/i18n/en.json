@@ -30,6 +30,7 @@
     "registerButton": "Register"
   },
   "notifications": {
+    "title": "Notifications",
     "loadingMore": "Loading more notifications",
     "refresh": "Refresh"
   },
