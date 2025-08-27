@@ -778,7 +778,7 @@ export default function postsRoutes(app: Application) {
       let user = await userPromise
       let remotePost = await remotePostPromise
 
-      if (remotePost?.remotePostId) {
+      if (remotePost?.remotePostId && user) {
         // fedi post
         const postPetition = await getPetitionSigned(user, remotePost.remotePostId)
         if (postPetition) {
