@@ -24,18 +24,22 @@ async function FollowActivity(body: activityPubObject, remoteUser: User, user: U
         muteRewoots: false
       }
     })
+    remoteFollow.remoteFollowId = apObject.id
+    await remoteFollow.save()
     // we accept it if user accepts follows automaticaly
-    if (remoteFollow.accepted && created) {
-      createNotification(
-        {
-          notificationType: 'FOLLOW',
-          userId: remoteUser.id,
-          notifiedUserId: userToBeFollowed.id
-        },
-        {
-          userUrl: remoteUser.url
-        }
-      )
+    if (remoteFollow.accepted) {
+      if (created) {
+        createNotification(
+          {
+            notificationType: 'FOLLOW',
+            userId: remoteUser.id,
+            notifiedUserId: userToBeFollowed.id
+          },
+          {
+            userUrl: remoteUser.url
+          }
+        )
+      }
       await acceptRemoteFollow(userToBeFollowed.id, remoteUser.id)
     }
   }
