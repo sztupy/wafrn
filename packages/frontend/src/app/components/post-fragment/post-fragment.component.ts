@@ -442,10 +442,12 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     })
   }
 
-  createUserObject() {
+  createUserObject(): SimplifiedUser | undefined {
+    const currentUser = this.jwtService.getTokenData()
+    if (currentUser === null) return undefined
     return {
-      url: this.jwtService.getTokenData()['url'],
-      name: this.jwtService.getTokenData()['url'],
+      url: currentUser.url,
+      name: currentUser.url,
       id: this.loginService.getLoggedUserUUID(),
       avatar: ''
     }
