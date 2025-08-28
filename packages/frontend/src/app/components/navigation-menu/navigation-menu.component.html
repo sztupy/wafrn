@@ -33,7 +33,7 @@
         }
         @if (loggedIn()) {
           <a
-            class="mt-4 new-woot-button"
+            class="my-4 new-woot-button"
             routerLink="/editor"
             mat-list-item
             (click)="hideMenu(); openEditor()"
@@ -58,7 +58,7 @@
           @if (item.routerLink) {
             <a class="subtle-link" [routerLink]="item.routerLink">{{ item.label | translate }} </a>
           } @else {
-            <a class="subtle-link" [href]="item.url">{{ item.label | translate }}</a>
+            <a class="subtle-link" [href]="item.url" target="_blank">{{ item.label | translate }}</a>
           }
         }
       </div>
