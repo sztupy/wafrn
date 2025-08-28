@@ -92,6 +92,20 @@
 }
 
 .tag {
+  background: transparent;
+  border: 0px;
+  color: var(--mat-sys-outline)!important;
+  font-size: 0.9em;
+  padding: 0px 6px;
+  text-decoration: none;
+  border-radius: var(--mat-sys-corner-small);
+}
+
+.tag:hover {
+  background: var(--mat-sys-surface-container-highest);
+}
+
+.tag.oldstyle {
   padding: 0 0.75ch;
   cursor: pointer;
   background-color: var(--mat-sys-primary-container);
@@ -104,6 +118,10 @@
   word-break: break-all;
   border: 1px solid var(--mat-sys-primary-fixed-dim);
   box-sizing: border-box;
+}
+
+.tag:hover.oldstyle {
+  background: unset;
 }
 
 .quoted-post {
