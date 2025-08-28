@@ -40,6 +40,14 @@
       </span>
     </button>
   }
+  @if (myId == content.userId) {
+    <button (click)="forceRefederate()" mat-menu-item>
+      <span class="post-actions-menu-span-content">
+        <fa-icon class="mr-2" [icon]="globeIcon"></fa-icon>
+        Force refederate post
+      </span>
+    </button>
+  }
   @if (content.user.url.startsWith('@') && content.privacy !== 1 && content.privacy !== 10) {
     <button (click)="viewOriginalPost()" mat-menu-item>
       <span class="post-actions-menu-span-content">

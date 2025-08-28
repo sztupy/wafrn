@@ -67,6 +67,7 @@ export class PostActionsComponent implements OnChanges {
   quoteIcon = faQuoteLeft
   bookmarkIcon = faBookmark
   unbookmarkIcon = faBookBookmark
+  globeIcon = faGlobe
 
   constructor(
     private messages: MessageService,
@@ -285,5 +286,9 @@ export class PostActionsComponent implements OnChanges {
 
   private async checkPostSilenced() {
     this.postSilenced = (await this.utilsService.getSilencedPostIds()).includes(this.content.id)
+  }
+
+  async forceRefederate() {
+    await this.postService.forceRefederate(this.content.id)
   }
 }

@@ -929,4 +929,14 @@ export class PostsService {
     this.loadFollowers()
     return res
   }
+
+  async forceRefederate(postId: string) {
+    const res = await firstValueFrom(
+      this.http.post(`${EnvironmentService.environment.baseUrl}/refederatePost`, {
+        postId: postId
+      })
+    )
+    this.loadFollowers()
+    return res
+  }
 }

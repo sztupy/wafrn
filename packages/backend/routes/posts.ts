@@ -135,7 +135,7 @@ export default function postsRoutes(app: Application) {
 
   /**
    * @deprecated We recomend instead using the forum endpoint. This method will not recive maintenance
-   */
+
   app.get(
     '/api/v2/descendents/:id',
     optionalAuthentication,
@@ -202,6 +202,7 @@ export default function postsRoutes(app: Application) {
       }
     }
   )
+  */
   app.get('/api/v2/blog', optionalAuthentication, async (req: AuthorizedRequest, res: Response) => {
     let success = false
     const id = req.query.id as string
@@ -739,6 +740,28 @@ export default function postsRoutes(app: Application) {
       }
     }
   )
+
+  app.post('/api/refederatePost', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
+    let success = false
+    const user = (await User.findByPk(req.jwtData?.userId as string)) as User
+    const post = await Post.findOne({
+      where: {
+        userId: user.id,
+        id: req.body.postId as string
+      }
+    })
+    if (post) {
+      await prepareSendPostQueue.add(
+        'prepareSendPost',
+        { postId: post.id, petitionBy: post.userId },
+        { jobId: post.id, delay: 1500 }
+      )
+      success = true
+    }
+    res.send({
+      success
+    })
+  })
 
   app.post('/api/reportPost', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     let success = false
