@@ -37,10 +37,10 @@ export class MediaService {
     return localStorage.getItem('forceClassicVideoPlayer') === 'true'
   }
 
-  // if the user is logged in and over 18
+  // if the user is logged out or logged in over 18
   isAdult(): boolean {
     const tokenData = this.jwt.getTokenData()
-    if (tokenData === null) return false
+    if (tokenData === null) return true
 
     const birthDate = new Date(tokenData.birthDate)
     const minimumBirthDate = new Date()
