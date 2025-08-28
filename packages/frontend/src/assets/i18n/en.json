@@ -21,7 +21,8 @@
     "loginButton": "Log in",
     "checkEmail": "Please check your email",
     "checkEmailLine1": "We have sent you an email. Please do check your email and the spam folder",
-    "checkEmailLine2": "If you have any problem, write to the instance admin, whose email can be found <a href=\"/about\">here</a>"
+    "checkEmailLine2": "If you have any problem, write to the instance admin, whose email can be found <a href=\"/about\">here</a>",
+    "alreadyLoggedIn": "You are already logged in on with that account"
   },
   "register": {
     "title": "Register",
@@ -53,6 +54,9 @@
     "source": "Source",
     "patreon": "Patreon",
     "kofi": "Ko-fi",
+    "inbox": "Inbox",
+    "switchAccount": "Switch account",
+    "addAccount": "Add account",
     "logout": "Log out",
     "faq": "FAQ",
     "more": "More",

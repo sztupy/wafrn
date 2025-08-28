@@ -3,6 +3,17 @@
   justify-content: center;
 }
 
+.menu-item-image {
+  width: 1.25em;
+  height: 1.25em;
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  img {
+    height: 100%;
+    width: 100%;
+  }
+}
+
 .menu-item-content {
   font-weight: 500;
 }

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common'
 import { RegisterComponent } from './register.component'
 import { RouterModule, Routes } from '@angular/router'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { userLoggedGuard } from 'src/app/guards/user-logged.guard'
 import { MatCardModule } from '@angular/material/card'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -17,8 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 const routes: Routes = [
   {
     path: '',
-    component: RegisterComponent,
-    canActivate: [userLoggedGuard]
+    component: RegisterComponent
   }
 ]
 
