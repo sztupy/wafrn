@@ -1,0 +1,14 @@
+:root .subroute-active,
+:root .route-active {
+  --mat-list-list-item-label-text-color: unset;
+  --mat-list-list-item-container-color: unset;
+}
+
+.new-woot-button {
+  --mat-list-list-item-one-line-container-height: 2.5rem;
+  --mat-list-list-item-label-text-color: inherit;
+  --mat-list-list-item-focus-label-text-color: inherit;
+  --mat-list-list-item-hover-label-text-color: inherit;
+  --mat-list-list-item-container-color: transparent;
+  background-image: unset;
+}

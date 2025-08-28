@@ -79,55 +79,54 @@ export class PostsService {
   }
 
   async loadFollowers() {
-    if (this.jwtService.tokenValid()) {
-      const followsAndBlocks = await firstValueFrom(
-        this.http.get<{
-          followedUsers: string[]
-          myFollowers: string[]
-          blockedUsers: string[]
-          notAcceptedFollows: string[]
-          options: UserOptions[]
-          silencedPosts: string[]
-          emojis: EmojiCollection[]
-          mutedUsers: string[]
-          followedHashtags: string[]
-          mutedRewoots: string[]
-          mutedQuotes: string[]
-          enableBluesky: boolean
-        }>(`${EnvironmentService.environment.baseUrl}/my-ui-options`)
-      )
-      this.followedHashtags = followsAndBlocks.followedHashtags
-      this.emojiCollections = followsAndBlocks.emojis ? followsAndBlocks.emojis : []
-      this.emojiCollections = this.emojiCollections.concat({
-        name: 'Keyboard Emojis',
-        comment: 'Your phone emojis',
-        emojis: this.keyboardEmojis
+    if (!this.jwtService.tokenValid()) return
+
+    const followsAndBlocks = await firstValueFrom(
+      this.http.get<{
+        followedUsers: string[]
+        myFollowers: string[]
+        blockedUsers: string[]
+        notAcceptedFollows: string[]
+        options: UserOptions[]
+        silencedPosts: string[]
+        emojis: EmojiCollection[]
+        mutedUsers: string[]
+        followedHashtags: string[]
+        mutedRewoots: string[]
+        mutedQuotes: string[]
+        enableBluesky: boolean
+      }>(`${EnvironmentService.environment.baseUrl}/my-ui-options`)
+    )
+
+    this.followedHashtags = followsAndBlocks.followedHashtags
+    this.emojiCollections = followsAndBlocks.emojis ? followsAndBlocks.emojis : []
+    this.emojiCollections = this.emojiCollections.concat({
+      name: 'Keyboard Emojis',
+      comment: 'Your phone emojis',
+      emojis: this.keyboardEmojis
+    })
+    this.followedUserIds = followsAndBlocks.followedUsers
+    this.blockedUserIds = followsAndBlocks.blockedUsers
+    this.notYetAcceptedFollowedUsersIds = followsAndBlocks.notAcceptedFollows
+    this.mutedUsers = followsAndBlocks.mutedUsers
+    this.enableBluesky = followsAndBlocks.enableBluesky
+    this.myFollowers = followsAndBlocks.myFollowers
+    this.usersQuotesDisabled = followsAndBlocks.mutedQuotes
+    this.usersRewootsDisabled = followsAndBlocks.mutedRewoots
+    // Here we check user options
+    if (followsAndBlocks.options?.length > 0) {
+      // frontend options start with wafrn.
+      const options = followsAndBlocks.options.filter((option) => option.optionName.startsWith('wafrn.'))
+      options.forEach((option) => {
+        localStorage.setItem(option.optionName.split('wafrn.')[1], option.optionValue)
       })
-      this.followedUserIds = followsAndBlocks.followedUsers
-      this.blockedUserIds = followsAndBlocks.blockedUsers
-      this.notYetAcceptedFollowedUsersIds = followsAndBlocks.notAcceptedFollows
-      this.mutedUsers = followsAndBlocks.mutedUsers
-      this.enableBluesky = followsAndBlocks.enableBluesky
-      this.myFollowers = followsAndBlocks.myFollowers
-      this.usersQuotesDisabled = followsAndBlocks.mutedQuotes
-      this.usersRewootsDisabled = followsAndBlocks.mutedRewoots
-      // Here we check user options
-      if (followsAndBlocks.options?.length > 0) {
-        // frontend options start with wafrn.
-        const options = followsAndBlocks.options
-        options
-          .filter((option) => option.optionName.startsWith('wafrn.'))
-          .forEach((option) => {
-            localStorage.setItem(option.optionName.split('wafrn.')[1], option.optionValue)
-          })
-      }
-      if (followsAndBlocks.silencedPosts) {
-        this.silencedPostsIds = followsAndBlocks.silencedPosts
-      } else {
-        this.silencedPostsIds = []
-      }
-      this.updateFollowers.next(true)
     }
+    if (followsAndBlocks.silencedPosts) {
+      this.silencedPostsIds = followsAndBlocks.silencedPosts
+    } else {
+      this.silencedPostsIds = []
+    }
+    this.updateFollowers.next(true)
   }
 
   async followUser(id: string): Promise<boolean> {
