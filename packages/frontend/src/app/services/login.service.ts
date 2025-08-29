@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { UntypedFormGroup } from '@angular/forms'
 
 import { UtilsService } from './utils.service'
-import { JwtService } from './jwt.service'
+import { JwtService, JwtTokenDecoded } from './jwt.service'
 import { PostsService } from './posts.service'
 import { firstValueFrom } from 'rxjs'
 import { EnvironmentService } from './environment.service'
@@ -39,10 +39,24 @@ export class LoginService {
   ) {
     this.loggedIn = signal(this.jwt.tokenValid())
 
-    const savedAccountList: AccountData[] = JSON.parse(localStorage.getItem('accountList') ?? '[]')
+    const savedAccountList: AccountData[] = localStorage.getItem('accountList')
+      ? JSON.parse(localStorage.getItem('accountList') as string)
+      : []
+    if (this.loggedIn() && savedAccountList.length === 0) {
+      let url = (this.jwt.getTokenData() as JwtTokenDecoded)['url']
+      this.dashboardService.getBlogDetails(url, false).then((res) => {
+        savedAccountList.push({
+          token: localStorage.getItem('authToken') as string,
+          blog: res
+        })
+        localStorage.setItem('accountList', JSON.stringify(savedAccountList))
+      })
+    }
     this.accountList = signal(savedAccountList)
 
-    this.currentAccount = computed(() => this.accountList().at(0)?.blog)
+    this.currentAccount = computed(() => {
+      return this.accountList().at(0)?.blog
+    })
   }
 
   async logIn(loginForm: UntypedFormGroup): Promise<boolean> {
