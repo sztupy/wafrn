@@ -1,32 +1,31 @@
+<div class="mx-3 lg:mx-4 wafrn-container">
+  <h2 class="my-3 text-3xl">{{ 'menu.admin.awaitingAproval' | translate }}</h2>
+</div>
+
+@if (loading()) {
+  <app-loader>users</app-loader>
+}
+
 @for (user of pendingUsers; track user) {
-  <mat-card class="p-3 mb-6 lg:mx-4 scalein wafrn-container">
-    <div class="flex justify-content-center mb-2">
-      <img
-        loading="lazy"
-        style="max-width: 100%; max-height: 15vh"
-        [src]="user.avatar"
-        alt="user avatar"
-        class="border-round-md"
-        />
+  <mat-card class="p-3 mb-6 lg:mx-4 mat-card-higher wafrn-container">
+    <div class="mb-3 flex flex-wrap align-items-center gap-3">
+      <img loading="lazy" [src]="user.avatar" alt="user avatar" class="mx-auto lg:mx-0 user-image" />
+      <div>
+        <p><strong>URL:</strong> {{ user.url }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p>
+          <strong>Registration IP:</strong> {{ user.registerIp }}
+          <a target="_blank" [href]="'https://ipinfo.io/' + user.registerIp">Check on ipinfo</a>
+        </p>
+        <p><strong>Description:</strong> {{ user.description }}</p>
+      </div>
     </div>
-    <div class="flex justify-content-center flex-wrap"></div>
-    <div class="flex justify-content-center flex-wrap mb-2">
-      <div [innerText]="user.url" class="line-height-3"></div>
+    <div class="flex flex-wrap gap-2">
+      <button (click)="activateUser(user.id)" mat-flat-button class="w-full lg:w-auto primary mr-auto">
+        Activate user
+      </button>
+      <button (click)="requireExtra(user.id)" mat-flat-button class="w-full lg:w-auto warn">Require extra steps</button>
+      <button (click)="userUsedVPN(user.id)" mat-flat-button class="w-full lg:w-auto warn">User used vpn</button>
     </div>
-    <div class="flex justify-content-center flex-wrap mb-2">
-      <div [innerText]="user.email" class="line-height-3"></div>
-    </div>
-    <div class="flex justify-content-center flex-wrap mt-3 mb-2">
-      <div style="word-wrap: anywhere" [innerHtml]="user.registerIp"></div>
-      <p>
-        <a target="_blank" [href]="'https://ipinfo.io/' + user.registerIp">Check on ipinfo</a>
-      </p>
-    </div>
-    <div class="flex justify-content-center flex-wrap mt-3 mb-2">
-      <div style="word-wrap: anywhere" [innerHtml]="user.description"></div>
-    </div>
-    <button (click)="activateUser(user.id)" mat-flat-button color="primary">Activate user</button>
-    <button (click)="requireExtra(user.id)" mat-flat-button color="warn">Require extra steps</button>
-    <button (click)="userUsedVPN(user.id)" mat-flat-button color="warn">User used vpn</button>
   </mat-card>
 }
