@@ -127,10 +127,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       })
   )
 
-  test() {
-    console.log(this.accountList())
-  }
-
   maintenanceMode = EnvironmentService.environment.maintenance
   maintenanceMessage = EnvironmentService.environment.maintenanceMessage
   menuVisible: boolean
@@ -416,7 +412,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: '',
-        labelDynamic: () => this.currentAccount()?.name ?? '',
+        labelDynamic: computed(() => this.currentAccount()?.name ?? 'No one will believe you'),
         image:
           this.currentAccount() !== undefined
             ? this.dashboardService.getAvatarUrl(<BlogDetails>this.currentAccount())
