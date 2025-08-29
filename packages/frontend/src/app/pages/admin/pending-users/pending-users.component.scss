@@ -1,0 +1,13 @@
+.user-image {
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+  outline: 1px solid var(--mat-sys-outline);
+}
+
+.primary {
+  --mat-button-filled-container-color: var(--mat-sys-primary);
+}
+.warn {
+  --mat-button-filled-container-color: var(--mat-sys-error);
+}

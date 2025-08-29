@@ -504,10 +504,21 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         badge: this.adminNotifications + this.usersAwaitingApproval,
         items: [
           {
-            label: 'menu.admin.serverList',
-            icon: faServer,
+            label: 'menu.admin.awaitingAproval',
+            icon: faUserLock,
             visible: () => true,
-            routerLink: '/admin/server-list',
+            badge: this.usersAwaitingApproval,
+            routerLink: '/admin/activate-users',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.reports',
+            icon: faExclamationTriangle,
+            visible: () => true,
+            badge: this.adminNotifications,
+            routerLink: '/admin/user-reports',
             command: () => {
               this.hideMenu()
             }
@@ -522,11 +533,19 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: 'menu.admin.reports',
-            icon: faExclamationTriangle,
+            label: 'menu.admin.stats',
+            icon: faChartSimple,
             visible: () => true,
-            badge: this.adminNotifications,
-            routerLink: '/admin/user-reports',
+            routerLink: '/admin/stats',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.serverList',
+            icon: faServer,
+            visible: () => true,
+            routerLink: '/admin/server-list',
             command: () => {
               this.hideMenu()
             }
@@ -545,25 +564,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             icon: faHourglass,
             visible: () => true,
             routerLink: '/admin/user-blocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.stats',
-            icon: faChartSimple,
-            visible: () => true,
-            routerLink: '/admin/stats',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.awaitingAproval',
-            icon: faUserLock,
-            visible: () => true,
-            badge: this.usersAwaitingApproval,
-            routerLink: '/admin/activate-users',
             command: () => {
               this.hideMenu()
             }
