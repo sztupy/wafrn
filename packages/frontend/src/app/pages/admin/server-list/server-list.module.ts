@@ -9,6 +9,7 @@ import { MatTableModule } from '@angular/material/table'
 import { MatInputModule } from '@angular/material/input'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatButtonModule } from '@angular/material/button'
+import { TranslateModule } from '@ngx-translate/core'
 
 const routes: Route[] = [
   {
@@ -28,7 +29,8 @@ const routes: Route[] = [
     MatPaginatorModule,
     MatInputModule,
     MatCheckboxModule,
-    MatButtonModule
+    MatButtonModule,
+    TranslateModule
   ]
 })
 export class ServerListModule {}
