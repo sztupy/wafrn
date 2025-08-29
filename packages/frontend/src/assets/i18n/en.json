@@ -55,9 +55,11 @@
     "patreon": "Patreon",
     "kofi": "Ko-fi",
     "inbox": "Inbox",
-    "switchAccount": "Switch account",
+    "otherAccounts": "Other accounts",
     "addAccount": "Add account",
     "logout": "Log out",
+    "viewBlog": "View blog",
+    "switchToAlt": "Switch to account",
     "faq": "FAQ",
     "more": "More",
     "settings": {

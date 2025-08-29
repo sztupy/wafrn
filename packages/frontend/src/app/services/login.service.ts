@@ -106,13 +106,23 @@ export class LoginService {
 
     // Multiple accounts
     this.accountList.update((list) => [
-      ...list,
       {
         token,
         blog
-      }
+      },
+      ...list
     ])
     localStorage.setItem('accountList', JSON.stringify(this.accountList()))
+
+    // Reload on logging in to other account
+    if (this.accountList().length > 1) {
+      const splashElement = document.getElementById('splash')
+      splashElement?.classList.remove('loaded')
+
+      await this.handleSuccessfulLogin()
+
+      window.location.reload()
+    }
   }
 
   logOut() {
@@ -120,6 +130,11 @@ export class LoginService {
     this.router.navigate(['/'])
     this.loggedIn.set(false)
     this.accountList.set([])
+  }
+
+  logOutAccount(token: string) {
+    this.accountList.update((accounts) => accounts.filter((elem) => elem.token !== token))
+    localStorage.setItem('accountList', JSON.stringify(this.accountList()))
   }
 
   async register(registerForm: UntypedFormGroup, img: File | null): Promise<boolean> {

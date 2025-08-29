@@ -15,6 +15,8 @@ export interface MenuItem {
   command?: () => void
   divider?: boolean
   plainText?: boolean
+  class?: string
+  active?: boolean
 }
 
 export interface MenuLink {

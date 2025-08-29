@@ -54,7 +54,8 @@ import {
   faGrip,
   faImagePortrait,
   faUsers,
-  faPlus
+  faPlus,
+  faShuffle
 } from '@fortawesome/free-solid-svg-icons'
 import { MenuItem, MenuLink } from 'src/app/interfaces/menu-item'
 import { EnvironmentService } from 'src/app/services/environment.service'
@@ -86,11 +87,41 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           labelDynamic: () => account.blog.name,
           image: this.dashboardService.getAvatarUrl(account.blog),
           visible: () => this.loggedIn(),
-          badge: 0,
-          command: () => {
-            this.hideMenu()
-            this.loginService.switchAccount(account.token)
-          }
+          badge: 0, // TODO: badges on other accounts from token (needs API)
+          items: [
+            {
+              label: 'menu.viewBlog',
+              icon: faImagePortrait,
+              visible: () => this.loggedIn(),
+              routerLinkDynamic: computed(() => '/blog/' + account.blog.url),
+              command: () => {
+                this.hideMenu()
+              }
+            },
+            {
+              label: 'menu.switchToAlt',
+              icon: faShuffle,
+              visible: () => this.loggedIn(),
+              command: () => {
+                this.hideMenu()
+                this.loginService.switchAccount(account.token)
+              }
+            },
+            {
+              label: '',
+              visible: () => this.loggedIn(),
+              divider: true
+            },
+            {
+              label: 'menu.logout',
+              icon: faSignOut,
+              visible: () => this.loggedIn(),
+              command: () => {
+                this.loginService.logOutAccount(account.token)
+                this.hideMenu()
+              }
+            }
+          ]
         }
       })
   )
@@ -390,6 +421,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             ? this.dashboardService.getAvatarUrl(<BlogDetails>this.currentAccount())
             : '',
         visible: () => this.loggedIn(),
+        class: 'active-account',
+        active: true,
         items: [
           {
             label: 'menu.myBlog',
@@ -426,7 +459,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: 'menu.switchAccount',
+        label: 'menu.otherAccounts',
         visible: () => this.loggedIn() && this.accountList().length > 1,
         plainText: true
       },

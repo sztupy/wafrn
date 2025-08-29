@@ -44,6 +44,7 @@
     mat-list-item
     (click)="doCommand()"
     (keydown)="handleKey($event, menuTrigger)"
+    class="{{ item.class }}"
     tabIndex="0"
   >
     <div class="flex align-items-center justify-content-start navigation-menu-button">
