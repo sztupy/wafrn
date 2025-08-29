@@ -44,8 +44,6 @@
   color: var(--mat-sys-outline);
 }
 
-
-
 .post-emoji {
   display: inline-flex;
   max-height: 1.5em;
@@ -91,10 +89,16 @@
   }
 }
 
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-inline: -6px;
+}
+
 .tag {
   background: transparent;
   border: 0px;
-  color: var(--mat-sys-outline)!important;
+  color: var(--mat-sys-outline);
   font-size: 0.9em;
   padding: 0px 6px;
   text-decoration: none;
@@ -109,7 +113,7 @@
   padding: 0 0.75ch;
   cursor: pointer;
   background-color: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container)!important;
+  color: var(--mat-sys-on-primary-container) !important;
   text-decoration: none;
   border-radius: var(--mat-sys-corner-small);
   font-size: 0.8em;
@@ -125,8 +129,8 @@
 }
 
 .quoted-post {
-	padding: 0.5em;	
-	cursor: pointer !important;
+  padding: 0.5em;
+  cursor: pointer !important;
   border-radius: 12px;
   border: 1px solid var(--mat-sys-outline-variant);
   background-color: var(--mat-sys-surface-container-high);
@@ -197,5 +201,5 @@
 }
 
 .post-text img {
-  max-width: 100%!important;
-} 
+  max-width: 100% !important;
+}
