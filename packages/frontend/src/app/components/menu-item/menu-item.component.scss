@@ -4,11 +4,13 @@
 }
 
 .menu-item-image {
+  min-width: 1.25em;
   width: 1.25em;
   height: 1.25em;
   border: 1px solid var(--mat-sys-outline-variant);
 
   img {
+    background-color: var(--mat-sys-surface-container-highest);
     height: 100%;
     width: 100%;
   }
@@ -16,6 +18,9 @@
 
 .menu-item-content {
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu-item-arrow {
