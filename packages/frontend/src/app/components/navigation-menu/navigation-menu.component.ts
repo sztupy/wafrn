@@ -55,7 +55,8 @@ import {
   faImagePortrait,
   faUsers,
   faPlus,
-  faShuffle
+  faShuffle,
+  faInbox
 } from '@fortawesome/free-solid-svg-icons'
 import { MenuItem, MenuLink } from 'src/app/interfaces/menu-item'
 import { EnvironmentService } from 'src/app/services/environment.service'
@@ -373,7 +374,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'menu.inbox',
-        icon: faEnvelope,
+        icon: faInbox,
         visible: () => this.loggedIn(),
         badge: this.notifications + this.awaitingAsks,
         items: [
