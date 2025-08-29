@@ -24,6 +24,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  ::ng-deep img {
+    vertical-align: top;
+  }
 }
 
 .menu-item-arrow {

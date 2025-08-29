@@ -54,9 +54,7 @@ export class LoginService {
     }
     this.accountList = signal(savedAccountList)
 
-    this.currentAccount = computed(() => {
-      return this.accountList().at(0)?.blog
-    })
+    this.currentAccount = computed(() => this.accountList()[0]?.blog)
   }
 
   async logIn(loginForm: UntypedFormGroup): Promise<boolean> {
@@ -105,7 +103,7 @@ export class LoginService {
     localStorage.setItem('authToken', token)
 
     const decoded = this.jwt.decodeToken(token)
-    const blog = await this.dashboardService.getBlogDetails(decoded.url, true)
+    const blog = await this.dashboardService.getBlogDetails(decoded.url)
 
     // Don't record double logins
     if (this.currentAccount()?.id === blog.id) {
