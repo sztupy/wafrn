@@ -105,7 +105,7 @@ export class LoginService {
     localStorage.setItem('authToken', token)
 
     const decoded = this.jwt.decodeToken(token)
-    const blog = await this.dashboardService.getBlogDetails(decoded.url, true)
+    const blog = await this.dashboardService.getBlogDetails(decoded.url)
 
     // Don't record double logins
     if (this.currentAccount()?.id === blog.id) {

@@ -58,9 +58,10 @@
           <img [src]="item.image" />
         </span>
       }
-      <span class="mr-1 menu-item-content"
-        >{{ item.label | translate }}{{ item.labelDynamic && item.labelDynamic() }}</span
-      >
+      <span
+        class="mr-1 menu-item-content"
+        [innerHTML]="item.labelDynamic ? item.labelDynamic() : (item.label | translate)"
+      ></span>
       @if (item.items) {
         <span class="ml-auto menu-item-arrow" [class.menu-open]="expanded"
           ><fa-icon [icon]="arrowIcon" size="xs"
