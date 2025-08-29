@@ -6,6 +6,12 @@
   <app-loader>users</app-loader>
 }
 
+@if (pendingUsers.length === 0) {
+  <div class="mx-3 lg:mx-4 wafrn-container">
+    <p>No users pending approval!</p>
+  </div>
+}
+
 @for (user of pendingUsers; track user) {
   <mat-card class="p-3 mb-6 lg:mx-4 mat-card-higher wafrn-container">
     <div class="mb-3 flex flex-wrap align-items-center gap-3">
