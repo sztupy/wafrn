@@ -1,0 +1,141 @@
+@use 'sass:color';
+@use 'sass:list';
+@use '../../../../../node_modules/@oddbird/blend';
+
+@function clamp-colors($colors) {
+  $adjusted_colors: ();
+  @each $color in $colors {
+    // Case for low contrast
+    @if (saturation($color) < 5%) {
+      @if (lightness($color) < 5%) {
+        $adjusted_colors: list.append(
+          $adjusted_colors,
+          blend.set($color, $chroma: 0, $lightness: 38%),
+          $separator: comma
+        );
+      } @else {
+        $adjusted_colors: list.append(
+          $adjusted_colors,
+          blend.set($color, $chroma: 0, $lightness: 68%),
+          $separator: comma
+        );
+      }
+    } @else {
+      $adjusted_colors: list.append($adjusted_colors, blend.set($color, $lightness: 50%), $separator: comma);
+    }
+  }
+  @return $adjusted_colors;
+}
+
+@mixin gradient-text($colors...) {
+  &.tag {
+    color: transparent;
+  }
+  & .tag-text {
+    background-image: linear-gradient(in oklab to right, clamp-colors($colors));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+// Flag color text
+// Colors are transformed to be web safe, so use the exact colors from the flag
+[data-tag='lgbt'],
+[data-tag='lgbtq'],
+[data-tag='lgbtqia'],
+[data-tag='pride'],
+[data-tag='queer'] {
+  @include gradient-text(#e50000, #ff8d00, #ffee00, #028121, #004cff, #770088);
+}
+
+[data-tag='transgender'],
+[data-tag='trans'] {
+  @include gradient-text(#55cdfc, #fff, #f7a8b8);
+}
+
+[data-tag='bisexual'],
+[data-tag='bi'] {
+  @include gradient-text(#d60270, #9b4f96, #0038a8);
+}
+
+[data-tag='nonbinary'],
+[data-tag='enby'],
+[data-tag='nb'] {
+  @include gradient-text(#fff430, #fff, #9c59d1, #000);
+}
+
+// Might overlap with people talking about Balatro
+[data-tag='asexual'],
+[data-tag='ace'] {
+  @include gradient-text(#000, #aaa, #810081);
+}
+
+[data-tag='gay'] {
+  @include gradient-text(#26ceaa, #f1efff, #5049cc);
+}
+
+[data-tag='lesbian'] {
+  @include gradient-text(#d62900, #ff9b55, #d461a6, #a50062);
+}
+
+[data-tag='intersex'] {
+  @include gradient-text(#ffda00, #7a00ac);
+}
+
+// Might overlap with people talking about frying pans
+[data-tag='pansexual'],
+[data-tag='pan'] {
+  @include gradient-text(#ff1b8d, #ffda00, #1bb3ff);
+}
+
+[data-tag='aromantic'],
+[data-tag='aro'] {
+  @include gradient-text(#3aa63f, #a8d47a, #aaa, #000);
+}
+
+[data-tag='agender'] {
+  @include gradient-text(#000, #aaa, #b6f583, #aaa, #000);
+}
+
+[data-tag='bigender'] {
+  @include gradient-text(#6992d9, #90c3e8, #aaa, #c4a4ea, #aaa, #90c3e8, #6992d9);
+}
+
+[data-tag='aroace'] {
+  @include gradient-text(#000, #810081, #aaa, #fff, #a8d47a, #3aa63f);
+}
+
+[data-tag='demisexual'] {
+  @include gradient-text(#fff, #7c0070, #aaa);
+}
+
+[data-tag='demiromantic'] {
+  @include gradient-text(#fff, #339933, #aaa);
+}
+
+[data-tag='voidpunk'] {
+  @include gradient-text(#362d49, #9f74b7, #e9e9e9, #51ad55, #20442d);
+}
+
+// Silly
+[data-tag='italian'] {
+  @include gradient-text(#009344, #fff, #cf2734);
+}
+
+[data-tag='wafrn'] {
+  &.tag {
+    display: flex;
+    gap: 0.125ch;
+    align-items: center;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      background-image: url(https://cdn.wafrn.net/api/cache?media=https%3A%2F%2Fmedia.wafrn.net%2Femojipacks%2Fwaffy%2Fyeah_waffy.png);
+      background-size: 100%;
+      width: 1.125em;
+      height: 1.125em;
+    }
+  }
+}
