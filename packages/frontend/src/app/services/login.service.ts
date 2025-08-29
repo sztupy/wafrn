@@ -54,9 +54,7 @@ export class LoginService {
     }
     this.accountList = signal(savedAccountList)
 
-    this.currentAccount = computed(() => {
-      return this.accountList().at(0)?.blog
-    })
+    this.currentAccount = computed(() => this.accountList()[0]?.blog)
   }
 
   async logIn(loginForm: UntypedFormGroup): Promise<boolean> {

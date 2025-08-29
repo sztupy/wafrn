@@ -335,6 +335,17 @@ export class EditProfileComponent implements OnInit {
         this.headerImg
       )
 
+      // Update multiple account saved data
+      const currentBlog = this.loginService.currentAccount()
+      if (currentBlog) {
+        const newBlog = await this.dashboardService.getBlogDetails(currentBlog.url)
+        this.loginService.accountList.update((list) => {
+          list[0].blog = newBlog
+          return [...list]
+        })
+        localStorage.setItem('accountList', JSON.stringify(this.loginService.accountList()))
+      }
+
       this.messages.add({
         severity: 'success',
         summary: 'Your profile was updated!'
