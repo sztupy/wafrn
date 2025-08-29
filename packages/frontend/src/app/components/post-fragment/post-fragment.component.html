@@ -81,7 +81,9 @@
     @if (fragment().tags && fragment().tags.length) {
       <div class="tag-list">
         @for (tag of fragment().tags; track $index) {
-          <a class="tag" [routerLink]="'/dashboard/search/' + tag.tagName"> #{{ tag.tagName }} </a>
+          <a class="tag" [routerLink]="'/dashboard/search/' + tag.tagName">
+            <span [attr.data-tag]="tag.tagName">#{{ tag.tagName }}</span>
+          </a>
         }
       </div>
     }
