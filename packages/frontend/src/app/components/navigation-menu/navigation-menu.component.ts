@@ -127,10 +127,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
       })
   )
 
-  test() {
-    console.log(this.accountList())
-  }
-
   maintenanceMode = EnvironmentService.environment.maintenance
   maintenanceMessage = EnvironmentService.environment.maintenanceMessage
   menuVisible: boolean
