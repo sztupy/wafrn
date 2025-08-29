@@ -1,19 +1,21 @@
-
-import { Component } from '@angular/core'
+import { Component, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
+import { TranslateModule } from '@ngx-translate/core'
+import { LoaderComponent } from 'src/app/components/loader/loader.component'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { AdminService } from 'src/app/services/admin.service'
 import { EnvironmentService } from 'src/app/services/environment.service'
 
 @Component({
   selector: 'app-pending-users',
-  imports: [MatButtonModule, MatCardModule],
+  imports: [MatButtonModule, MatCardModule, LoaderComponent, TranslateModule],
   templateUrl: './pending-users.component.html',
   styleUrl: './pending-users.component.scss'
 })
 export class PendingUsersComponent {
   pendingUsers: SimplifiedUser[] = []
+  loading = signal(true)
 
   constructor(private adminService: AdminService) {
     this.reloadList()
@@ -34,13 +36,14 @@ export class PendingUsersComponent {
     this.reloadList()
   }
 
-  reloadList() {
+  async reloadList() {
     this.pendingUsers = []
-    this.adminService.getPendingActivationUsers().then((response) => {
+    await this.adminService.getPendingActivationUsers().then((response) => {
       this.pendingUsers = response.map((elem) => {
         elem.avatar = EnvironmentService.environment.baseMediaUrl + elem.avatar
         return elem
       })
     })
+    this.loading.set(false)
   }
 }

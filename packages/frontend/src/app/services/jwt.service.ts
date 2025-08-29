@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
 
+export type JwtTokenDecoded = {
+  userId: string
+  email: string
+  birthDate: string
+  url: string
+  role: number | string
+  exp: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,22 +39,20 @@ export class JwtService {
   adminToken(): boolean {
     const res = false
     if (this.tokenValid()) {
-      return parseInt(this.getTokenData().role) === 10
+      return this.getTokenData()?.role == 10
     }
     return res
   }
 
-  decodeToken(token: string) {
+  public decodeToken(token: string): JwtTokenDecoded {
     const jwtData = token.split('.')[1]
     return JSON.parse(window.atob(jwtData))
   }
 
-  getTokenData() {
+  getTokenData(): JwtTokenDecoded | null {
     const tokenString = localStorage.getItem('authToken')
-    if (tokenString) {
-      return this.decodeToken(tokenString)
-    } else {
-      return {}
-    }
+    if (!tokenString) return null
+
+    return this.decodeToken(tokenString)
   }
 }

@@ -63,6 +63,9 @@
   left: unset;
   right: 0;
 }
+:root .mat-mdc-menu-panel {
+  overflow: unset;
+}
 
 // Make menu selections not have block padding
 :root .mat-mdc-menu-content {

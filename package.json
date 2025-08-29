@@ -14,6 +14,7 @@
     "frontend:serve": "cd packages/frontend && ng serve",
     "frontend:develop": "cd packages/frontend && ng serve --configuration development",
     "frontend:develop:prod": "cd packages/frontend && ng serve --configuration devprod",
+    "frontend:develop:development": "cd packages/frontend && ng serve --configuration devdevelopment",
     "frontend:build": "cd packages/frontend && ng build",
     "frontend:deploy": "cd packages/frontend && ng build && rm -rf ../../frontend && mv dist/wafrn/browser ../../frontend",
     "frontend:test": "cd packages/frontend && jest",

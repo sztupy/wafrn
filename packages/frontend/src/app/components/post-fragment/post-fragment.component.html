@@ -79,9 +79,11 @@
       }
     </section>
     @if (fragment().tags && fragment().tags.length) {
-      <div class="flex flex-wrap gap-2 tag-list">
+      <div class="tag-list">
         @for (tag of fragment().tags; track $index) {
-          <a class="tag" [routerLink]="'/dashboard/search/' + tag.tagName"> #{{ tag.tagName }} </a>
+          <a class="tag" [routerLink]="'/dashboard/search/' + tag.tagName">
+            <span [attr.data-tag]="tag.tagName">#{{ tag.tagName }}</span>
+          </a>
         }
       </div>
     }

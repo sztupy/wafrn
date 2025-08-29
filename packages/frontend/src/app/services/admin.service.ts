@@ -7,6 +7,19 @@ import { SimplifiedUser } from '../interfaces/simplified-user'
 import { statsReply } from '../interfaces/statsReply'
 import { EnvironmentService } from './environment.service'
 
+export type UserReport = {
+  id: string
+  resolved: string
+  severity: string
+  description: string
+  userId: string
+  user: string
+  postId: string
+  post: string
+  reportedUserId: string
+  reportedUser: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,8 +47,8 @@ export class AdminService {
     return response
   }
 
-  async getReports(): Promise<any> {
-    return firstValueFrom(this.http.get(`${EnvironmentService.environment.baseUrl}/admin/reportList`))
+  async getReports(): Promise<UserReport[]> {
+    return firstValueFrom(this.http.get<UserReport[]>(`${EnvironmentService.environment.baseUrl}/admin/reportList`))
   }
 
   async ignoreReport(id: number): Promise<any> {

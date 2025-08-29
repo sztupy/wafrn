@@ -1,17 +1,17 @@
-
 import { Component } from '@angular/core'
 import { MatCardModule } from '@angular/material/card'
+import { TranslateModule } from '@ngx-translate/core'
 import { statsReply } from 'src/app/interfaces/statsReply'
 import { AdminService } from 'src/app/services/admin.service'
 
 @Component({
   selector: 'app-stats',
-  imports: [MatCardModule],
+  imports: [MatCardModule, TranslateModule],
   templateUrl: './stats.component.html',
   styleUrl: './stats.component.scss'
 })
 export class StatsComponent {
-  backendReply!: statsReply
+  backendReply: statsReply | undefined
   constructor(private adminService: AdminService) {
     adminService.getStats().then((response) => {
       this.backendReply = response
