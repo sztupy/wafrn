@@ -184,7 +184,10 @@ export class EditProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dashboardService.getBlogDetails(this.jwtService.getTokenData()['url'], true).then(async (blogDetails) => {
+    const userBlog = this.jwtService.getTokenData()
+    if (userBlog === null) return
+
+    this.dashboardService.getBlogDetails(userBlog.url, true).then(async (blogDetails) => {
       blogDetails['avatar'] = ''
       this.editProfileForm.patchValue(blogDetails)
       if (blogDetails.descriptionMarkdown) {

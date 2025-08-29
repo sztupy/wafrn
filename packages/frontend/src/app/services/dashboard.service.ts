@@ -192,4 +192,11 @@ export class DashboardService {
       }
     })
   }
+
+  public getAvatarUrl(blog: BlogDetails) {
+    return blog.url.startsWith('@')
+      ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.avatar)
+      : EnvironmentService.environment.externalCacheurl +
+          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
+  }
 }

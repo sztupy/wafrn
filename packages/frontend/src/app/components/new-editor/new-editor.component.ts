@@ -166,7 +166,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.emojiCollections = this.postService.emojiCollections
     })
     let postCreatorContent = ''
-    const currentUserId = this.jwtService.getTokenData().userId
+    const currentUserId = this.jwtService.getTokenData()?.userId
     if (this.data?.post?.mentionPost && this.data.post.mentionPost.length > 0) {
       const mentionedUsersSet = new Set(this.data.post.mentionPost.filter((elem) => elem.id != currentUserId))
       this.mentionedUsers = Array.from(mentionedUsersSet)

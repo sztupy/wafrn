@@ -1,4 +1,4 @@
-import { Injectable, signal, WritableSignal } from '@angular/core'
+import { computed, effect, Injectable, Signal, signal, WritableSignal } from '@angular/core'
 import { Router } from '@angular/router'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { UntypedFormGroup } from '@angular/forms'
@@ -11,12 +11,22 @@ import { EnvironmentService } from './environment.service'
 import { MessageService } from './message.service'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
+import { DashboardService } from './dashboard.service'
+import { BlogDetails } from '../interfaces/blogDetails'
+
+export type AccountData = {
+  token: string
+  blog: BlogDetails
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
   public loggedIn: WritableSignal<boolean>
+  public currentAccount: Signal<BlogDetails | undefined>
+  public accountList: WritableSignal<AccountData[]>
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -24,9 +34,15 @@ export class LoginService {
     private jwt: JwtService,
     private postsService: PostsService,
     private messagesService: MessageService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private dashboardService: DashboardService
   ) {
     this.loggedIn = signal(this.jwt.tokenValid())
+
+    const savedAccountList: AccountData[] = JSON.parse(localStorage.getItem('accountList') ?? '[]')
+    this.accountList = signal(savedAccountList)
+
+    this.currentAccount = computed(() => this.accountList().at(0)?.blog)
   }
 
   async logIn(loginForm: UntypedFormGroup): Promise<boolean> {
@@ -41,9 +57,9 @@ export class LoginService {
           // HACK DO NOT TOUCH THE ASYNC. IM SERIOUS. IT WOULD SKIP THIS SCREEN
           // IF YOU TOUCH THIS CODE YOU NEED TO TEST LOGIN WITH AN MFA ACC
           await this.router.navigate(['/login/mfa'])
-          localStorage.setItem('authToken', petition.token)
+          await this.addToken(petition.token)
         } else {
-          localStorage.setItem('authToken', petition.token)
+          await this.addToken(petition.token)
           await this.handleSuccessfulLogin()
           success = true
         }
@@ -61,7 +77,7 @@ export class LoginService {
         .post(`${EnvironmentService.environment.baseUrl}/login/mfa`, loginMfaForm.value)
         .toPromise()
       if (petition.success) {
-        localStorage.setItem('authToken', petition.token)
+        this.addToken(petition.token)
         await this.handleSuccessfulLogin()
         success = true
       }
@@ -71,10 +87,54 @@ export class LoginService {
     return success
   }
 
+  async addToken(token: string) {
+    localStorage.setItem('authToken', token)
+
+    const decoded = this.jwt.decodeToken(token)
+    const blog = await this.dashboardService.getBlogDetails(decoded.url, true)
+
+    // Don't record double logins
+    if (this.currentAccount()?.id === blog.id) {
+      if (this.loggedIn()) {
+        this.messagesService.add({
+          severity: 'warn',
+          summary: this.translate.instant('login.alreadyLoggedIn')
+        })
+      }
+      return
+    }
+
+    // Multiple accounts
+    this.accountList.update((list) => [
+      {
+        token,
+        blog
+      },
+      ...list
+    ])
+    localStorage.setItem('accountList', JSON.stringify(this.accountList()))
+
+    // Reload on logging in to other account
+    if (this.accountList().length > 1) {
+      const splashElement = document.getElementById('splash')
+      splashElement?.classList.remove('loaded')
+
+      await this.handleSuccessfulLogin()
+
+      window.location.reload()
+    }
+  }
+
   logOut() {
     localStorage.clear()
     this.router.navigate(['/'])
     this.loggedIn.set(false)
+    this.accountList.set([])
+  }
+
+  logOutAccount(token: string) {
+    this.accountList.update((accounts) => accounts.filter((elem) => elem.token !== token))
+    localStorage.setItem('accountList', JSON.stringify(this.accountList()))
   }
 
   async register(registerForm: UntypedFormGroup, img: File | null): Promise<boolean> {
@@ -375,8 +435,8 @@ export class LoginService {
   }
 
   getLoggedUserUUID(): string {
-    const res = this.jwt.getTokenData().userId
-    return res ? res : ''
+    const res = this.jwt.getTokenData()?.userId ?? ''
+    return res
   }
 
   getUserDefaultPostPrivacyLevel(): number {
@@ -397,5 +457,24 @@ export class LoginService {
       )
     )
     return res
+  }
+
+  async switchAccount(token: string) {
+    localStorage.setItem('authToken', token)
+
+    this.accountList.update((accounts) => {
+      const otherAccounts = accounts.filter((elem) => elem.token !== token)
+      const firstAccount = accounts.find((elem) => elem.token === token) ?? this.accountList()[0]
+      return [firstAccount, ...otherAccounts]
+    })
+    localStorage.setItem('accountList', JSON.stringify(this.accountList()))
+
+    // Show splash
+    const splashElement = document.getElementById('splash')
+    splashElement?.classList.remove('loaded')
+
+    await this.postsService.loadFollowers()
+
+    window.location.reload()
   }
 }
