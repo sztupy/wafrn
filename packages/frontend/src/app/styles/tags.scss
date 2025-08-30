@@ -37,11 +37,12 @@
 }
 
 @mixin gradient-text($colors...) {
+  --gradient-colors: #{clamp-colors($colors, html[data-theme] == 'dark')};
   &.tag {
     color: transparent;
   }
   & .tag-text {
-     background-image: linear-gradient(in oklab to right, clamp-colors($colors,  html[data-theme]== 'dark'));
+    background-image: linear-gradient(in oklab to right, var(--gradient-colors));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
