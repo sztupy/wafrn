@@ -233,9 +233,10 @@ async function processSinglePost(
     postText = postText.replaceAll('\n', '<br>')
 
     const labels = getPostLabels(post)
-    const cw = labels.length > 0
-      ? `Post is labeled as: ${labels.join(', ')}`
-      : undefined
+    let cw = labels.length > 0 ? `Post is labeled as: ${labels.join(', ')}` : undefined
+    if (!cw && postCreator.NSFW) {
+      cw = 'User posts unlabeled NSFW content'
+    }
     const newData = {
       userId: postCreator.id,
       bskyCid: post.cid,
