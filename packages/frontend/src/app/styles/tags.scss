@@ -6,8 +6,8 @@
   $adjusted_colors: ();
   @each $color in $colors {
     // Case for low contrast
-    @if (saturation($color) < 5%) {
-      @if (lightness($color) < 5%) {
+    @if (color.channel($color, 'saturation', $space: hsl) < 5%) {
+      @if (color.channel($color, 'lightness', $space: hsl) < 5%) {
         $adjusted_colors: list.append(
           $adjusted_colors,
           blend.set($color, $chroma: 0, $lightness: 38%),
