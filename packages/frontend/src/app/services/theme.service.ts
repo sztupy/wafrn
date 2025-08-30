@@ -141,7 +141,8 @@ const additionalStyleModeVariants = [
   'topToolbar',
   'horizontalMenu',
   'lowContrastSidebar',
-  'oldTags'
+  'oldTags',
+  'colorfulTags'
 ] as const
 type AdditionalStyleModeTuple = typeof additionalStyleModeVariants
 export type AdditionalStyleMode = AdditionalStyleModeTuple[number]
@@ -157,7 +158,8 @@ export const additionalStyleModesData: AdditionalStyleModeData = {
   topToolbar: { name: 'Top Toolbar' },
   horizontalMenu: { name: 'Horizontal Menu' },
   lowContrastSidebar: { name: 'Low Contrast Sidebar' },
-  oldTags: { name: 'Old Tags' }
+  oldTags: { name: 'Old Tags' },
+  colorfulTags: { name: 'Colorful Tags' }
 }
 
 @Injectable({
@@ -171,7 +173,8 @@ export class ThemeService {
     topToolbar: signal(false),
     horizontalMenu: signal(false),
     lowContrastSidebar: signal(false),
-    oldTags: signal(false)
+    oldTags: signal(false),
+    colorfulTags: signal(false)
   }
 
   constructor(

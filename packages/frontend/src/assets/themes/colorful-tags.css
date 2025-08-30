@@ -1,0 +1,5 @@
+:root .tag {
+  --gradient-colors: var(--gradient-colors-raw);
+  --gradient-colors-light: var(--gradient-colors-raw);
+  --gradient-colors-dark: var(--gradient-colors-raw);
+}
