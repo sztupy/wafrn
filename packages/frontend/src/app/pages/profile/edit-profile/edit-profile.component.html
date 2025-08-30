@@ -341,7 +341,7 @@
             />
           </mat-form-field>
           @if (editProfileForm.value.superMutedWords.split(',').length > 0) {
-            <div class="taglist flex flex-wrap mb-2">
+            <div class="tag-list flex flex-wrap mb-2">
               @for (tag of editProfileForm.value.superMutedWords.split(','); track $index) {
                 @if (tag && tag !== '' && tag.trim() !== '') {
                   <div class="tag">

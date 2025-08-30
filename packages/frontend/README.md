@@ -4,21 +4,29 @@ This package is the frontend of Wafrn.
 
 The frontend of Wafrn uses [Angular](https://angular.io/). Have fun doing stuff ;D
 
-- [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Local Development](#local-development)
+- [Prerequisites](#prerequisites)
+- [Local Development](#local-development)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Prerequisites
+
+Start by setting up the frontend as noted in the main `development.md` file.
+
+The frontend is developed from the main directory due to the monorepo structure of this project. As such, run the noted commands from the root directory.
 
 ## Local Development
 
 You can run the development server through the command line:
 
 ```bash
-npm run frontend:develop      # Point to local backend
-npm run frontend:develop:prod # Point to production backend
+npm run frontend:develop             # Point to local backend
+npm run frontend:develop:prod        # Point to production app.wafrn.net backend
+npm run frontend:develop:development # Point to development.wafrn.net backend
 ```
+
+> [!NOTE]
+> When switching backend sources, make sure to clear your localStorage as the environment is cached
 
 If you have Nix installed, you can also run the development environment through the provided `shell.nix` file which includes Node 20.
 
@@ -47,7 +55,7 @@ Watch mode enabled. Watching for file changes...
 Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.
 
-Merge pull requests to the `main` branch.
+Merge pull requests to the `development` branch.
 
 ## License
 
