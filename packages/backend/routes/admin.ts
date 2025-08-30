@@ -201,27 +201,16 @@ export default function adminRoutes(app: Application) {
       userToBeBanned.banned = true
       await userToBeBanned.save()
       // TOO fix this dirty thing oh my god
-      const unsolvedReports = await PostReport.findAll({
-        where: {
-          resolved: false
+      await PostReport.update(
+        {
+          resolved: true
         },
-        include: [
-          {
-            model: Post,
-            where: {
-              userId: req.body.id
-            }
+        {
+          where: {
+            reportedUserId: req.body.id
           }
-        ]
-      })
-      if (unsolvedReports) {
-        await Promise.allSettled(
-          unsolvedReports.map((elem: any) => {
-            elem.resolved = true
-            return elem.save()
-          })
-        )
-      }
+        }
+      )
     }
 
     res.send({
@@ -229,6 +218,37 @@ export default function adminRoutes(app: Application) {
     })
   })
 
+  app.post('/api/admin/forceNSFWUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
+    const userToBeNSFW = await User.scope('full').findByPk(req.body.id)
+    if (userToBeNSFW) {
+      userToBeNSFW.NSFW = true
+      await userToBeNSFW.save()
+      await PostReport.update(
+        {
+          resolved: true
+        },
+        {
+          where: {
+            reportedUserId: req.body.id
+          }
+        }
+      )
+      await Post.update(
+        {
+          content_warning: 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+        },
+        {
+          where: {
+            userId: req.body.id,
+            content_warning: ''
+          }
+        }
+      )
+    }
+    res.send({
+      success: true
+    })
+  })
   app.post('/api/admin/ignoreReport', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     res.send(
       await PostReport.update(

@@ -54,6 +54,11 @@ export class ReportListComponent implements OnInit {
     this.loadReports()
   }
 
+  async forceNSFW(id: string) {
+    await this.adminService.forceNSFWUser(id)
+    this.loadReports()
+  }
+
   mapReport(key: number) {
     return this.reportMap[key] ?? 'unknown'
   }

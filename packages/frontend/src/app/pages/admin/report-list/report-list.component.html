@@ -52,6 +52,9 @@
           @if (!element.resolved) {
             <div class="flex gap-2">
               <button mat-flat-button class="primary" (click)="ignore(element.id)">Ignore report</button>
+              <button mat-flat-button class="warn" (click)="forceNSFW(element.reportedUser.id)">
+                Mark user as NSFW
+              </button>
               <button mat-flat-button class="warn" (click)="ban(element.reportedUser.id)">Ban user</button>
             </div>
           }

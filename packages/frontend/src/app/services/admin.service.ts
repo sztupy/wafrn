@@ -59,6 +59,10 @@ export class AdminService {
     return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/banUser`, { id: id }))
   }
 
+  async forceNSFWUser(id: string) {
+    return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/forceNSFWUser`, { id: id }))
+  }
+
   async banList() {
     return firstValueFrom(this.http.get(`${EnvironmentService.environment.baseUrl}/admin/getBannedUsers`))
   }
