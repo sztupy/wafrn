@@ -37,6 +37,7 @@
 }
 
 @mixin gradient-text($colors...) {
+  --gradient-colors-raw: #{$colors};
   --gradient-colors: #{clamp-colors($colors, html[data-theme] == 'dark')};
   --gradient-colors-light: #{clamp-colors($colors, false)};
   --gradient-colors-dark: #{clamp-colors($colors, true)};
