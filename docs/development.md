@@ -29,16 +29,16 @@ If you would like to help develop the Frontend or Backend, read the README.md of
 - [Frontend - README.md](../packages/frontend/README.md)
 - [Backend - README.md](../packages/backend/README.md)
 
-## Local setup pointing to the production frontend
+## Local setup pointing to the production frontend
 
 If you want to do development on the frontend and what you do does not require doing something like posting a lot or spaming an external account, you can simply:
 
 1. Clone the repo
-2. install node 24
-3. do this command on the root of the project
-   ```npm install````
-4. Do this command and enjoy!
-   `npm run frontend:develop:prod`
+2. Install node 24 or use the provided Nix shell script
+3. Run `npm install` at the root of the project
+4. Run `npm run frontend:develop:prod`
+
+If you want to point to a different backend or see additional information on the nix shells script, see the Frontend README file.
 
 ## Local setup with a local dummy instance
 
