@@ -4,20 +4,24 @@ This package is the frontend of Wafrn.
 
 The frontend of Wafrn uses [Angular](https://angular.io/). Have fun doing stuff ;D
 
-- [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Local Development](#local-development)
+- [Prerequisites](#prerequisites)
+- [Local Development](#local-development)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Prerequisites
+
+Start by setting up the frontend as noted in the main `development.md` file.
+
+The frontend is developed from the main directory due to the monorepo structure of this project. As such, run the noted commands from the root directory.
 
 ## Local Development
 
 You can run the development server through the command line:
 
 ```bash
-npm run frontend:develop      # Point to local backend
-npm run frontend:develop:prod # Point to production app.wafrn.net backend
+npm run frontend:develop             # Point to local backend
+npm run frontend:develop:prod        # Point to production app.wafrn.net backend
 npm run frontend:develop:development # Point to development.wafrn.net backend
 ```
 
