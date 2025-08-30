@@ -3,6 +3,7 @@
 @use '../../../../../node_modules/@oddbird/blend';
 
 @function clamp-colors($colors, $dark-mode: false) {
+  @debug "hello";
   $darker: 34%;
   $lighter: 62%;
   $medium: 45%;
@@ -41,13 +42,7 @@
     color: transparent;
   }
   & .tag-text {
-    html[data-theme='light'] & {
-      background-image: linear-gradient(in oklab to right, clamp-colors($colors));
-    }
-    html[data-theme='dark'] & {
-      background-image: linear-gradient(in oklab to right, clamp-colors($colors, true));
-    }
-
+     background-image: linear-gradient(in oklab to right, clamp-colors($colors,  html[data-theme]== 'dark'));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
