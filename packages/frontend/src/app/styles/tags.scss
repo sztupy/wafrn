@@ -61,7 +61,17 @@
 
 [data-tag='transgender'],
 [data-tag='trans'] {
-  @include gradient-text(#55cdfc, #fff, #f7a8b8);
+  @include gradient-text(#5bcefa, #f5a9b8, #fff, #f5a9b8, #5bcefa);
+}
+
+[data-tag='transfeminine'],
+[data-tag='transfem'] {
+  @include gradient-text(#73deff, #ffe0ed, #ff8cbe, #ffe0ed, #73deff);
+}
+
+[data-tag='transmasculine'],
+[data-tag='transmasc'] {
+  @include gradient-text(#ff8abd, #cdf5fe, #74dfff, #cdf5fe, #ff8abd);
 }
 
 [data-tag='bisexual'],
@@ -81,12 +91,22 @@
   @include gradient-text(#000, #aaa, #810081);
 }
 
-[data-tag='gay'] {
+[data-tag='gay'],
+[data-tag='mlm'] {
   @include gradient-text(#26ceaa, #f1efff, #5049cc);
 }
 
-[data-tag='lesbian'] {
+[data-tag='achillean'] {
+  @include gradient-text(#99c6ea, #f9fdea, #99c6ea);
+}
+
+[data-tag='lesbian'],
+[data-tag='wlw'] {
   @include gradient-text(#d62900, #ff9b55, #d461a6, #a50062);
+}
+
+[data-tag='sapphic'] {
+  @include gradient-text(#fd8ba8, #fbf2ff, #fd8ba8);
 }
 
 [data-tag='intersex'] {
@@ -131,6 +151,11 @@
 // Silly
 [data-tag='italian'] {
   @include gradient-text(#009344, #fff, #cf2734);
+}
+
+[data-tag='tax fraud'],
+[data-tag='tax evasion'] {
+  @include gradient-text(#7d9d6c, #5f5f5f, #681a09, #5f5f5f, #7d9d6c);
 }
 
 [data-tag='wafrn'] {
