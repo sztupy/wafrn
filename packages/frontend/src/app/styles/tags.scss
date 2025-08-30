@@ -90,6 +90,10 @@
   @include gradient-text(#fff430, #fff, #9c59d1, #000);
 }
 
+[data-tag='genderqueer'] {
+  @include gradient-text(#b57edc, #fff, #4a8123);
+}
+
 // Might overlap with people talking about Balatro
 [data-tag='asexual'],
 [data-tag='ace'] {
