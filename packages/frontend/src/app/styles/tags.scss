@@ -2,7 +2,16 @@
 @use 'sass:list';
 @use '../../../../../node_modules/@oddbird/blend';
 
-@function clamp-colors($colors) {
+@function clamp-colors($colors, $dark-mode: false) {
+  $darker: 34%;
+  $lighter: 62%;
+  $medium: 45%;
+  @if ($dark-mode) {
+    $darker: 48%;
+    $lighter: 78%;
+    $medium: 60%;
+  }
+
   $adjusted_colors: ();
   @each $color in $colors {
     // Case for low contrast
@@ -10,18 +19,18 @@
       @if (color.channel($color, 'lightness', $space: hsl) < 5%) {
         $adjusted_colors: list.append(
           $adjusted_colors,
-          blend.set($color, $chroma: 0, $lightness: 38%),
+          blend.set($color, $chroma: 0, $lightness: $darker),
           $separator: comma
         );
       } @else {
         $adjusted_colors: list.append(
           $adjusted_colors,
-          blend.set($color, $chroma: 0, $lightness: 68%),
+          blend.set($color, $chroma: 0, $lightness: $lighter),
           $separator: comma
         );
       }
     } @else {
-      $adjusted_colors: list.append($adjusted_colors, blend.set($color, $lightness: 50%), $separator: comma);
+      $adjusted_colors: list.append($adjusted_colors, blend.set($color, $lightness: $medium), $separator: comma);
     }
   }
   @return $adjusted_colors;
@@ -32,7 +41,13 @@
     color: transparent;
   }
   & .tag-text {
-    background-image: linear-gradient(in oklab to right, clamp-colors($colors));
+    html[data-theme='light'] & {
+      background-image: linear-gradient(in oklab to right, clamp-colors($colors));
+    }
+    html[data-theme='dark'] & {
+      background-image: linear-gradient(in oklab to right, clamp-colors($colors, true));
+    }
+
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
