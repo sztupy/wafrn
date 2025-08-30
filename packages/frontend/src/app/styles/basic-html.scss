@@ -1,5 +1,5 @@
 a,
-a:visited,
+a:where(:visited),
 .ql-snow a {
   color: var(--mat-sys-primary);
 }
