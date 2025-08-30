@@ -49,28 +49,36 @@ async function sendMail() {
         }
       }
     })
-    const subject = `Hello ${user.url}, we have added a button that fucking kills you.`
+    const subject = `Hello ${user.url}, this new wafrn update includes gay tags and will not gaslight you!.`
     const body = `
     <h1>${user.url}, We miss you at <a href="https://app.wafrn.net">wafrn</a>!</h1>
     <p>As you can see, other people also misses you, as you have ${notificationsCount} unread notifications!</p>
     ${
       notificationsCount == 0
-        ? '<p>Wow, still zero. You should come back and make this number bigger next time we send you an email</p>'
+        ? '<p>Wow, still zero. Are you going to come back or should I keep roasting you on those emails? (please come back :3 )</p>'
         : ''
     }
 <br />
+<img src="https://cdn.wafrn.net/api/cache?media=https%3A%2F%2Fmedia.wafrn.net%2F1756576344253_aa9288f523582f1072066f1f21aafb45cc64ba25_processed.webp" style="width: 100%"> </img>
 So some of the changelog for last month:
 <ul>
+  <li>MULTIPLE ACCOUNTS. YOU CAN HAVE MULTIPLE ACCOUNTS NOW</li>
+	<li>No gaslighting</li>
+  <li>Gay hashtags</li>
 	<li>The button that fucking kills you: on edit profile -> misceaneous we have added a button that rolls a dice and if you are unlucky we crash your browser</li>
   <li>Improved bluesky integration: now you can log in into your bluesky account hosted in wafrn! (this one is very janky but that has never stopped us)</li>
 	<li>Disable rewoots from other users</li>
-	<li>Replace AI with cocaine</li>
 	<li>Performance improvements</li>
 	<li>We have added new bugs</li>
+  <li>No more gaslighting</li>
+  <li>Added pictures of herobrine</li>
+
+
 </ul>
 And finaly, the part of the email where I say "give me money". Well, first, give money to the team, and then me
 
 <ul>
+  <li><a href="https://app.wafrn.net/blog/fireisgood">FireIsGood</a> has done A LOT. Like A HUGE FUCKING LOT. You should give her moneys <a href="https://ko-fi.com/fireisgood">here</a> </li>
 	<li><a href="https://social.sztupy.hu/blog/sztupy" target="_blank">SztupY</a> has helped to create a wafrn hosting guide and streamlined the process a lot. You should give <a href="https://ko-fi.com/SztupY" target="_blank">SztupY</a> some money. Also yes his profile is not on the main wafrn!</li>
 	<li><a href="https://ko-fi.com/juandjara" target="_blank">Javascript</a> made <a href="https://wafrn.net/" target="_blank">the mobile app</a>, its realy cool</li>
 	<li><a href="https://ko-fi.com/cyrneko/tiers" target="_blank">Alexia</a> has helped improve the quality of the code and made the way for other improvements. She has done a lot to help wafrn grow</li>
@@ -83,7 +91,13 @@ And finaly, the part of the email where I say "give me money". Well, first, give
 <p>Apologies if last time link did not work. Sorry</p>
     `
     console.log(`mailing ${user.url}`)
-    await sendActivationEmail(user.email, '', subject, body)
+    try {
+      await sendActivationEmail(user.email, '', subject, body)
+    } catch (error) {
+      console.log(error)
+      console.log('Extra waiting time')
+      await wait(5000)
+    }
     await wait(1500)
   }
 }
