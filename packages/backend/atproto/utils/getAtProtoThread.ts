@@ -235,7 +235,7 @@ async function processSinglePost(
     const labels = getPostLabels(post)
     let cw = labels.length > 0 ? `Post is labeled as: ${labels.join(', ')}` : undefined
     if (!cw && postCreator.NSFW) {
-      cw = 'User posts unlabeled NSFW content'
+      cw = 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
     }
     const newData = {
       userId: postCreator.id,
