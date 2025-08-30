@@ -41,6 +41,8 @@
   --gradient-colors: #{clamp-colors($colors, html[data-theme] == 'dark')};
   --gradient-colors-light: #{clamp-colors($colors, false)};
   --gradient-colors-dark: #{clamp-colors($colors, true)};
+  --on-gradient-colors-light: var(--mat-sys-primary-fixed);
+  --on-gradient-colors-dark: var(--mat-sys-on-primary-fixed);
   &.tag {
     color: transparent;
   }
