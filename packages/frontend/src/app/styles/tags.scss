@@ -3,7 +3,6 @@
 @use '../../../../../node_modules/@oddbird/blend';
 
 @function clamp-colors($colors, $dark-mode: false) {
-  @debug "hello";
   $darker: 34%;
   $lighter: 62%;
   $medium: 45%;
