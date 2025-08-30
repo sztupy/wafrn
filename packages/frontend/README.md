@@ -17,8 +17,12 @@ You can run the development server through the command line:
 
 ```bash
 npm run frontend:develop      # Point to local backend
-npm run frontend:develop:prod # Point to production backend
+npm run frontend:develop:prod # Point to production app.wafrn.net backend
+npm run frontend:develop:development # Point to development.wafrn.net backend
 ```
+
+> [!NOTE]
+> When switching backend sources, make sure to clear your localStorage as the environment is cached
 
 If you have Nix installed, you can also run the development environment through the provided `shell.nix` file which includes Node 20.
 
