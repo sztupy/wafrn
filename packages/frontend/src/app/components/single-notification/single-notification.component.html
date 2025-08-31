@@ -4,9 +4,9 @@
     role="article"
     [attr.aria-labelledby]="'notification-title-' + notification.url"
   >
-    <h4 class="sr-only" [attr.id]="'notification-title-' + notification.url">
+    <h1 class="sr-only" [attr.id]="'notification-title-' + notification.url">
       {{ notification.userName }}
-    </h4>
+    </h1>
     <app-post-ribbon
       [user]="{
         avatar: notification.avatar,
@@ -15,6 +15,7 @@
         name: notification.url
       }"
       [icon]="notificationIcons[notification.type]"
+      [image]="emojiUrl || undefined"
       [card]="false"
       [time]="notification.date"
     >
@@ -41,18 +42,7 @@
             quoted you in a woot
           }
           @case ('EMOJIREACT') {
-            reacted with
-            @if (emojiUrl) {
-              <img
-                class="post-emoji"
-                [src]="emojiUrl"
-                [alt]="notification.emojiName"
-                [title]="notification.emojiName"
-              />
-            } @else {
-              {{ notification.emojiName }}
-            }
-            to your woot
+            reacted to your woot
           }
         }
       </span>
