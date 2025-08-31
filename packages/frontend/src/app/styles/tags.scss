@@ -39,6 +39,16 @@
 @mixin gradient-text($colors...) {
   --gradient-colors-raw: #{$colors};
   --gradient-colors: #{clamp-colors($colors, html[data-theme] == 'dark')};
+
+  html[data-theme='light'] & {
+    --gradient-colors: #{clamp-colors($colors, false)};
+    --gradient-colors-inverse: #{clamp-colors($colors, true)};
+  }
+  html[data-theme='dark'] & {
+    --gradient-colors: #{clamp-colors($colors, true)};
+    --gradient-colors-inverse: #{clamp-colors($colors, false)};
+  }
+
   --gradient-colors-light: #{clamp-colors($colors, false)};
   --gradient-colors-dark: #{clamp-colors($colors, true)};
   --on-gradient-colors-light: var(--mat-sys-primary-fixed);
