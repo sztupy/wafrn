@@ -80,9 +80,10 @@ else
   fi
 
   echo Please select from the following packages:
-  echo "1: Minimum install (default); Runs the bare minimum to get Wafrn running"
-  echo "2: Monitoring support; Minimum install with added Grafana to monitor your instance"
-  echo "3: Advanced install; More advanced config, with separate workers to handle the load. Preferred options for larger instances."
+  # workers dont work well on minimum install and ªªªª
+  #echo "1: Minimum install (default); Runs the bare minimum to get Wafrn running"
+  #echo "2: Monitoring support; Minimum install with added Grafana to monitor your instance"
+  echo "3: Advanced install (recommended); More advanced config, with separate workers to handle the load. Preferred options for larger instances."
   echo "4: Advanced install with monitoring support; The full package: advanced install plus Grafana support"
 
   read INSTALL_TYPE
