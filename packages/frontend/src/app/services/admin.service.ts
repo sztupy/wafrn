@@ -13,11 +13,11 @@ export type UserReport = {
   severity: string
   description: string
   userId: string
-  user: string
+  user: SimplifiedUser
   postId: string
   post: string
   reportedUserId: string
-  reportedUser: string
+  reportedUser: SimplifiedUser
 }
 
 @Injectable({
@@ -55,8 +55,10 @@ export class AdminService {
     return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/ignoreReport`, { id: id }))
   }
 
-  async banUser(id: string) {
-    return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/banUser`, { id: id }))
+  async banUser(id: string, message: string | null) {
+    return firstValueFrom(
+      this.http.post(`${EnvironmentService.environment.baseUrl}/admin/banUser`, { id: id, message: message })
+    )
   }
 
   async forceNSFWUser(id: string) {

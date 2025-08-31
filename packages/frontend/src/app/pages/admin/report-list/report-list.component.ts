@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { MatPaginator } from '@angular/material/paginator'
 import { MatTableDataSource } from '@angular/material/table'
-import { AdminService } from 'src/app/services/admin.service'
+import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
+import { AdminService, UserReport } from 'src/app/services/admin.service'
 
 @Component({
   selector: 'app-report-list',
@@ -49,8 +50,18 @@ export class ReportListComponent implements OnInit {
     })
   }
 
-  async ban(id: string) {
-    await this.adminService.banUser(id)
+  async ban(report: UserReport) {
+    let success = false
+    let banMessage: string | null = ''
+    if (!report.reportedUser.url.startsWith('@')) {
+      banMessage = prompt('Reason for ban (user will recive this in email)')
+      success = !!banMessage
+    } else {
+      success = confirm(`Proceed with ban of user ${report.reportedUser.url} ?`)
+    }
+    if (success) {
+      await this.adminService.banUser(report.reportedUser.url, banMessage)
+    }
     this.loadReports()
   }
 

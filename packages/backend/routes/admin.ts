@@ -8,6 +8,7 @@ import { redisCache } from '../utils/redis.js'
 import sendActivationEmail from '../utils/sendActivationEmail.js'
 import { UserAttributes } from '../models/user.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { logger } from '../utils/logger.js'
 
 export default function adminRoutes(app: Application) {
   app.get('/api/admin/server-list', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
@@ -198,9 +199,20 @@ export default function adminRoutes(app: Application) {
   app.post('/api/admin/banUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     const userToBeBanned = await User.scope('full').findByPk(req.body.id)
     if (userToBeBanned && userToBeBanned.role != 10) {
+      if (userToBeBanned.email && req.body.message) {
+        try {
+          await sendActivationEmail(
+            userToBeBanned.email,
+            '',
+            'You have been banned from wafrn',
+            `Hello, you have been banned from wafrn. Reason: ${req.body.message}`
+          )
+        } catch (error) {
+          logger.info(error)
+        }
+      }
       userToBeBanned.banned = true
       await userToBeBanned.save()
-      // TOO fix this dirty thing oh my god
       await PostReport.update(
         {
           resolved: true
