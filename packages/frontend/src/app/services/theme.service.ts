@@ -70,7 +70,7 @@ export const colorSchemeData: ColorSchemeData = {
   rizzler: { name: 'Rizzler', compatibility: 'both', autoReset: true },
   contrastWater: { name: 'Contrast Water', compatibility: 'both', autoReset: true },
   wafrn98: { name: 'Wafrn98', compatibility: 'dark' },
-  aqua: { name: 'Aqua', compatibility: 'both' },
+  aqua: { name: 'Aqua', compatibility: 'light' },
   unwafrn: { name: 'Unwafrn', compatibility: 'dark' },
   wafrnverse: { name: 'Wafrnverse', compatibility: 'both' },
   dracula: { name: 'Dracula', compatibility: 'both' },
