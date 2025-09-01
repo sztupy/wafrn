@@ -15,8 +15,11 @@
 }
 
 .reply-list {
+  display: flex;
+  gap: 0.2rem 0.75ch;
   width: fit-content;
   border-bottom: 1px solid var(--mat-sys-surface-container-highest);
+  font-size: 0.8rem;
 }
 
 .reply-list-title {

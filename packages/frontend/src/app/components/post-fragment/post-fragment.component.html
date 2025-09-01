@@ -30,7 +30,7 @@
          for posts which already have the mentions in the body of the post. I failed to find one.
     -->
       @if (mentionPosts.length != 0) {
-        <section class="flex gap-2 reply-list">
+        <section class="reply-list">
           <span class="reply-list-title">{{ 'post-fragment.replyingTo' | translate }}</span>
           @for (url of mentionPosts; track $index) {
             <a [routerLink]="['/blog/' + url]" class="subtle-link reply-list-link">{{ url }}</a>
