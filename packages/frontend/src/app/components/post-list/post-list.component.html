@@ -1,0 +1,7 @@
+@for (post of posts(); track $index) {
+  <app-post [post]="post"></app-post>
+}
+@if (loading()) {
+  <app-loader>posts</app-loader>
+}
+<div #bottom class="visibility-hidden"></div>

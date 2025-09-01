@@ -7,10 +7,10 @@ import { loginRequiredGuard } from 'src/app/guards/login-required.guard'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MatButtonModule } from '@angular/material/button'
-import { LoaderComponent } from 'src/app/components/loader/loader.component'
 import { ReuseableRouteType } from 'src/app/services/routing.service'
 import { ForumComponent } from '../forum/forum.component'
 import { MatCardModule } from '@angular/material/card'
+import { PostListComponent } from 'src/app/components/post-list/post-list.component'
 
 const routes: Routes = [
   {
@@ -46,9 +46,9 @@ const routes: Routes = [
     MatProgressSpinnerModule,
     MatButtonModule,
     FontAwesomeModule,
-    LoaderComponent,
     ForumComponent,
-    MatCardModule
+    MatCardModule,
+    PostListComponent
   ]
 })
-export class DashboardModule { }
+export class DashboardModule {}

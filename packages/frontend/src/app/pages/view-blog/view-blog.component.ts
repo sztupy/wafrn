@@ -65,6 +65,8 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
 
   test = snappyInject(SnappyBlogData)
 
+  postsVisible = true
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly dashboardService: DashboardService,
@@ -84,6 +86,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     if (blogDetails) {
       this.handleTheme(blogDetails)
     }
+    this.postsVisible = true
   }
 
   snOnHide(): void {
@@ -92,6 +95,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     } else {
       this.themeService.setCustomCSS('')
     }
+    this.postsVisible = false
   }
 
   ngOnDestroy(): void {
@@ -163,24 +167,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       this.handleTheme(blogDetails)
     }
 
-    this.intersectionObserverForLoadPosts = new IntersectionObserver(
-      (intersectionEntries: IntersectionObserverEntry[]) => {
-        if (intersectionEntries[0].isIntersecting) {
-          this.currentPage++
-          this.loadPosts(this.currentPage)
-        }
-      }
-    )
-
-    this.loadPosts(this.currentPage).then(() => {
-      setTimeout(() => {
-        const element = document.querySelector('#if-you-see-this-load-more-posts')
-        if (element) {
-          this.intersectionObserverForLoadPosts.observe(element)
-        }
-      })
-    })
-
     this.loadingBlog.set(false)
   }
 
@@ -220,6 +206,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   async loadPosts(page: number) {
+    this.currentPage += 1
     if (this.blogUrl === '') {
       return
     }

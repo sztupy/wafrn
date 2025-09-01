@@ -122,22 +122,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
       }
     })
 
-    this.loadPosts(this.currentPage).then(() => {
-      setTimeout(() => {
-        this.themeService.setMyTheme()
-        // we detect the bottom; of the page and load more posts
-        const element = document.querySelector('#if-you-see-this-load-more-posts')
-        const observer = new IntersectionObserver((intersectionEntries: IntersectionObserverEntry[]) => {
-          if (intersectionEntries[0].isIntersecting) {
-            this.currentPage++
-            this.loadPosts(this.currentPage)
-          }
-        })
-        if (element) {
-          observer.observe(element)
-        }
-      })
-    })
+    this.loadPosts(this.currentPage)
   }
 
   reloadPosts() {
@@ -154,6 +139,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
   }
 
   async loadPosts(page: number) {
+    this.currentPage += 1
     this.loadingPosts = true
     let scrollDate = new Date(this.timestamp)
     if (page == 0) {
