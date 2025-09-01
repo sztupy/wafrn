@@ -30,13 +30,11 @@
          for posts which already have the mentions in the body of the post. I failed to find one.
     -->
       @if (mentionPosts.length != 0) {
-        <section style="border-bottom: 1px solid var(--mat-sys-surface-container-highest); width: fit-content">
-          <span
-            ><small
-              ><span style="color: var(--mat-sys-outline)">{{ 'post-fragment.replyingTo' | translate }}</span
-              ><a [routerLink]="['/blog/' + url]" *ngFor="let url of mentionPosts">{{ url }} </a></small
-            ></span
-          >
+        <section class="reply-list">
+          <span class="reply-list-title">{{ 'post-fragment.replyingTo' | translate }}</span>
+          @for (url of mentionPosts; track $index) {
+            <a [routerLink]="['/blog/' + url]" class="subtle-link reply-list-link">{{ url }}</a>
+          }
         </section>
       }
       <div #mediaInline class="fragment-content overflow-hidden">
