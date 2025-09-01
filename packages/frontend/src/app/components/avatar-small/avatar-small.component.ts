@@ -13,10 +13,13 @@ import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AvatarSmallComponent {
-  user = input.required<SimplifiedUser>()
+  user = input<SimplifiedUser>()
   readonly disabled = input(false)
   avatar = computed(() => {
     const user = this.user()
+    if (user === undefined) {
+      return '/assets/img/anon.webp'
+    }
     return (
       EnvironmentService.environment.externalCacheurl +
       encodeURIComponent(
