@@ -7,6 +7,7 @@
   padding: 0 0.75ch;
   cursor: pointer;
   background-color: var(--mat-sys-primary-container);
+  background-image: linear-gradient(in oklab to right, var(--gradient-colors-inverse));
   color: var(--mat-sys-on-primary-container);
   text-decoration: none;
   border-radius: var(--mat-sys-corner-small);
@@ -18,6 +19,11 @@
   box-sizing: border-box;
 
   &:hover {
-    background: var(--mat-sys-surface-container-high);
+    background-color: var(--mat-sys-surface-container-high);
+    border-color: var(--mat-sys-primary-fixed);
+  }
+
+  .tag-text {
+    color: var(--on-gradient-colors, var(--mat-sys-on-primary-container));
   }
 }
