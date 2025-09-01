@@ -1,29 +1,49 @@
 .ask-container {
-	cursor: pointer !important;
-  flex-shrink: 0;
-  overflow: hidden;
-  margin-bottom: 4px;
-  position: relative;
-  border-color: transparent!important;
+  --ask-background-color: var(--mat-sys-surface-container-high);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
 }
 
 .ask-content {
-  border: 1px solid var(--mat-sys-outline-variant);
-  padding: 0.5em;	
-  border-radius: 12px;
-  width: 100%;
-  margin-left: 8px;
-  margin-right: 0px;
+  position: relative;
+  padding: 0.5em 0.75em;
+  border: 2px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-small);
+  background-color: var(--ask-background-color);
+
+  &::after {
+    --arrow-size: 0.75rem;
+    content: '';
+    display: block;
+    width: var(--arrow-size);
+    height: var(--arrow-size);
+    position: absolute;
+    right: 0;
+    top: 1rem;
+    background-color: var(--ask-background-color);
+    rotate: 45deg;
+    translate: calc(var(--arrow-size) / 2 + 2px);
+    border: 0 solid var(--mat-sys-outline-variant);
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
 }
 
 .ask-avatar {
-  margin-left: 8px;
-  transform: scale(1.35);
+  --avatar-size: 45px;
 }
 
-.ask-container:has(.ask-avatar-anon) {
-  display: block!important;
+.ask-header {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
-.ask-container:has(.ask-avatar-anon) .ask-content {
-  margin-left: 0px;
+
+.ask-user {
+  color: var(--mat-sys-primary);
+  font-weight: 500;
+}
+
+.ask-text {
+  margin-bottom: 0;
 }
