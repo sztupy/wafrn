@@ -330,11 +330,13 @@ a.tag:hover {
 }
 
 /* Quoted posts and asks */
-div.quoted-post,
-.ask-container {
+div.quoted-post {
   border: 1px solid light-dark(#adadad, #4e4e4e) !important;
   border-radius: var(--mat-sys-corner-medium) !important;
   box-shadow: none !important;
+}
+.ask-content {
+  border-radius: var(--mat-sys-corner-medium) !important;
 }
 
 /* Content warning text */
