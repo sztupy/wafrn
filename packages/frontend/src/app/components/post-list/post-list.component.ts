@@ -32,11 +32,12 @@ export class PostListComponent {
     this.currentPostObserver = new IntersectionObserver((entries) => this.handleCurrentPostObserver(entries[0]))
 
     // Observe the first post after loading
-    afterRenderEffect(() => {
+    const firstLoadEffect = afterRenderEffect(() => {
       if (this.loading()) return
       const firstPost = this.postElementAt(0)
       if (firstPost) {
         this.currentPostObserver.observe(firstPost)
+        firstLoadEffect.destroy()
       }
     })
 
