@@ -14,6 +14,7 @@ import { JwtService } from 'src/app/services/jwt.service'
 import { LoginService } from 'src/app/services/login.service'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ThemeService } from 'src/app/services/theme.service'
+import { HotkeyService, HotkeyType } from 'src/app/services/hotkey.service'
 
 type HotkeyConfig = Record<string, string | undefined>
 type ShortcutFunctionMap = Record<string, Function>
@@ -25,6 +26,8 @@ const defaultKeybinds: HotkeyConfig = {
   scrollUp: 'k',
   scrollDownPage: 'd',
   scrollUpPage: 'u',
+  nextPost: 'n',
+  previousPost: 'p',
   openEditor: 'e',
   viewKeyboardShortcuts: '?'
 }
@@ -57,6 +60,8 @@ export class HotkeyManagerComponent {
     scrollUp: () => this.scrollUp(),
     scrollDownPage: () => this.scrollDownPage(),
     scrollUpPage: () => this.scrollUpPage(),
+    nextPost: () => this.hotkeyService.hotkeySubscription.next(HotkeyType.nextPost),
+    previousPost: () => this.hotkeyService.hotkeySubscription.next(HotkeyType.previousPost),
     openEditor: () => this.openEditor(),
     viewKeyboardShortcuts: () => this.openHotkeyListDialog(),
     no_op: () => {}
@@ -70,6 +75,7 @@ export class HotkeyManagerComponent {
     private jwtService: JwtService,
     private dialogService: MatDialog,
     private loginService: LoginService,
+    private hotkeyService: HotkeyService,
     themeService: ThemeService
   ) {
     const cachedMap = localStorage.getItem('customHotKeyMapping')
