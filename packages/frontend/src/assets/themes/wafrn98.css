@@ -635,6 +635,10 @@ div.fragment-content-warning div.fragment-content {}
 div.fragment-content-warning button {}
 
 */
+    /* Post ask*/
+    :root .ask-user {
+        color: var(--mat-sys-on-surface);
+    }
     /* POST TEXT */
     div.wafrn-text-default {
         color: var(--main-textcolor);
