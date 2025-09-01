@@ -12,7 +12,7 @@ import { LoaderComponent } from '../loader/loader.component'
 export class PostListComponent {
   posts = input<ProcessedPost[][]>([])
   visible = input<boolean>(true) // Disables keybinds, required due to SnappyRouter so we do not act off screen
-  loading = input<boolean>(true)
+  loading = input.required<boolean>()
   loadPosts = output<void>()
 
   bottomPageElementRef = viewChild<ElementRef<HTMLElement>>('bottom')
