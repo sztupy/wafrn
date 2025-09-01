@@ -153,14 +153,6 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     this.loadPosts(this.currentPage)
   }
 
-  async countViewedPost() {
-    this.viewedPostsNumber++
-    if (this.posts.length - 1 < this.viewedPostsNumber) {
-      this.currentPage++
-      await this.loadPosts(this.currentPage)
-    }
-  }
-
   async loadPosts(page: number) {
     this.loadingPosts = true
     let scrollDate = new Date(this.timestamp)
