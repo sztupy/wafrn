@@ -2,6 +2,7 @@ import { Component, computed, ElementRef, input, output, viewChild } from '@angu
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { PostModule } from '../post/post.module'
 import { LoaderComponent } from '../loader/loader.component'
+import { HotkeyService, HotkeyType } from 'src/app/services/hotkey.service'
 
 @Component({
   selector: 'app-post-list',
@@ -19,7 +20,11 @@ export class PostListComponent {
   bottomPageElement = computed(() => this.bottomPageElementRef()?.nativeElement)
   bottomPageObserver: IntersectionObserver | undefined
 
-  constructor() {}
+  selectedPost: number | null = null // null means no hotkeys pressed yet
+
+  constructor(hotkeyService: HotkeyService) {
+    hotkeyService.hotkeySubscription.subscribe((type) => this.handleHotkeys(type))
+  }
 
   ngOnInit() {
     this.bottomPageObserver = new IntersectionObserver((entries) => {
@@ -31,5 +36,67 @@ export class PostListComponent {
       this.loadPosts.emit()
     })
     this.bottomPageObserver.observe(this.bottomPageElement()!)
+  }
+
+  postElementAt(index: number): HTMLElement | null {
+    return document.getElementById('post-element-' + this.posts().at(index)?.at(-1)?.id)
+  }
+
+  handleHotkeys(type: HotkeyType) {
+    if (!this.visible()) return
+
+    switch (type) {
+      case HotkeyType.nextPost:
+        this.nextPost()
+        break
+      case HotkeyType.previousPost:
+        this.previousPost()
+        break
+      default:
+        break
+    }
+  }
+
+  previousPost() {
+    if (this.selectedPost === null) {
+      this.selectedPost = 0
+      this.scrollToSelectedPost()
+      return
+    }
+    if (this.selectedPost > 0) {
+      this.selectedPost -= 1
+    }
+    this.scrollToSelectedPost()
+  }
+
+  nextPost() {
+    if (this.selectedPost === null) {
+      this.selectedPost = 0
+      this.scrollToSelectedPost()
+      return
+    }
+    if (this.selectedPost < this.posts().length - 1) {
+      this.selectedPost += 1
+    }
+    if (this.selectedPost === this.posts().length - 1) {
+      this.loadPosts.emit()
+      this.scrollToLoader()
+      return
+    }
+    this.scrollToSelectedPost()
+  }
+
+  scrollToLoader() {
+    this.bottomPageElement()?.scrollIntoView()
+  }
+
+  scrollToSelectedPost() {
+    const nextPost = this.postElementAt(this.selectedPost ?? 0)
+    if (nextPost === null) return
+    nextPost?.scrollIntoView({ behavior: 'instant' })
+  }
+
+  test() {
+    console.log('hi')
   }
 }
