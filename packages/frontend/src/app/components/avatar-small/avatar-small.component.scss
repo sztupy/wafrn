@@ -2,4 +2,7 @@
   height: var(--avatar-size);
   width: var(--avatar-size);
   border-radius: var(--mat-sys-corner-small);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
