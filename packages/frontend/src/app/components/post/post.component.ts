@@ -150,6 +150,8 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
     this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
     this.originalPostContent = this.post
     this.finalPosts = this.originalPostContent.slice(-5)
+    this.uniquePost = this.post.at(-1)
+
     if (!this.showFull) {
       this.post = this.post.slice(0, EnvironmentService.environment.shortenPosts)
 
@@ -183,7 +185,6 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
     const notes = this.post[this.post.length - 1].notes
     this.notes = notes.toString()
 
-    this.uniquePost = this.post.at(-1)
     // if the last post is an EMPTY reblog we evaluate the like of the parent.
     const postToEvaluate =
       this.isEmptyReblog() && this.post.length > 1 ? this.post[this.post.length - 2] : this.post[this.post.length - 1]
