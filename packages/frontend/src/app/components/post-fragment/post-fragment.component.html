@@ -2,9 +2,6 @@
   @if (fragment().title) {
     <h1 [innerText]="fragment().title"></h1>
   }
-  @if (fragment().ask) {
-    <app-single-ask [ask]="fragment().ask!"></app-single-ask>
-  }
   @if (fragment().content_warning || fragment().muted_words_cw) {
     <div class="content-warning-text" [innerHTML]="fragment().muted_words_cw"></div>
     <div class="content-warning-text" [innerHTML]="fragment().content_warning"></div>
@@ -25,11 +22,14 @@
     class="flex flex-column gap-3 post-content"
     [ngClass]="{ hidden: (fragment().content_warning || fragment().muted_words_cw) && !showSensitiveContent() }"
   >
+    @if (fragment().ask) {
+      <app-single-ask [ask]="fragment().ask!"></app-single-ask>
+    }
     @for (block of wafrnFormattedContent(); track $index) {
       <!-- The thing that I really struggled at here is giving this @if a condition that made sense
          for posts which already have the mentions in the body of the post. I failed to find one.
     -->
-      @if (mentionPosts.length != 0) {
+      @if (mentionPosts.length != 0 && !fragment().ask) {
         <section style="border-bottom: 1px solid var(--mat-sys-surface-container-highest); width: fit-content">
           <span
             ><small
