@@ -6,7 +6,7 @@
         <span class="ask-user">
           @let user = ask.user;
           @if (user) {
-            <a [routerLink]="user.url" class="subtle-link">{{ user.url }}</a>
+            <a [routerLink]="'/blog/' + user.url" class="subtle-link">{{ user.url }}</a>
           } @else {
             Anonymous
           }
