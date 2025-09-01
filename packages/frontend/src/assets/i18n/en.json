@@ -261,6 +261,8 @@
     "scrollUp": "Scroll up",
     "scrollDownPage": "Scroll a page down",
     "scrollUpPage": "Scroll a page up",
+    "nextPost": "Next post",
+    "previousPost": "Previous post",
     "openEditor": "Open editor",
     "viewKeyboardShortcuts": "View keyboard shortcuts",
     "unbound": "unbound",
