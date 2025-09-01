@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { NgClass, NgTemplateOutlet } from '@angular/common'
 import { DateTime } from 'luxon'
+import { faArrowLeft, faEllipsisV, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-post-ribbon',
@@ -14,10 +15,13 @@ import { DateTime } from 'luxon'
   styleUrl: './post-ribbon.component.scss'
 })
 export class PostRibbonComponent implements OnInit {
-  readonly user = input.required<SimplifiedUser>();
-  readonly icon = input.required<IconDefinition>();
-  readonly time = input.required<Date>();
-  readonly card = input(true);
+  readonly user = input.required<SimplifiedUser>()
+  readonly icon = input<IconDefinition>()
+  readonly image = input<string>()
+  readonly time = input.required<Date>()
+  readonly card = input(true)
+
+  plusIcon = faPlus
 
   timeAgo = ''
 
@@ -27,5 +31,5 @@ export class PostRibbonComponent implements OnInit {
     this.timeAgo = relative ? relative : 'ERROR GETING TIME'
   }
 
-  ngOnChanges(changes: SimpleChanges): void { }
+  ngOnChanges(changes: SimpleChanges): void {}
 }
