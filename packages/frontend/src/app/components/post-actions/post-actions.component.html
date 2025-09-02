@@ -40,7 +40,7 @@
       </span>
     </button>
   }
-  @if (myId == content.userId) {
+  @if (myId == content.userId && content.privacy != 2) {
     <button (click)="forceRefederate()" mat-menu-item>
       <span class="post-actions-menu-span-content">
         <fa-icon class="mr-2" [icon]="globeIcon"></fa-icon>
