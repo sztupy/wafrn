@@ -23,7 +23,9 @@ Use the below button to set up a fully working Wafrn instance on Oracle Cloud's 
 
 [![Deploy to Oracle Cloud][magic_button]][magic_wafrn_basic_stack]
 
-Documentation for the OCI integration [can be found in a separate repository](https://github.com/sztupy/wafrn-opentofu).
+If it doesn't work then alternatively download the latest release from https://codeberg.org/wafrn/wafrn-opentofu/releases/download/latest/wafrn-opentofu-latest.zip and go to https://cloud.oracle.com/resourcemanager/stacks/create to upload the templates as zip file.
+
+Documentation for the OCI integration [can be found in a separate repository](https://codeberg.org/wafrn/wafrn-opentofu).
 
 ## Installer
 
@@ -122,7 +124,7 @@ You can also find a small management script that can backup, restore and update 
 ./install/manage.sh update
 ```
 
-By default the installation will create a backup every day and keep it for 10 days. You can also [add post-backup scripts](https://github.com/sztupy/wafrn-opentofu/blob/main/scripts/post_backup.template.sh) that you can configure to copy the backups to an off-site location, like any S3 compatible bucket.
+By default the installation will create a backup every day and keep it for 10 days. You can also [add post-backup scripts](https://codeberg.org/wafrn/wafrn-opentofu/blob/main/scripts/post_backup.template.sh) that you can configure to copy the backups to an off-site location, like any S3 compatible bucket.
 
 You can also restore a backup if needed:
 
@@ -159,4 +161,4 @@ If you set up wafrn manually, then follow the steps below:
 11. Open up your selected account profile and click "Enable bluesky". If all goes well, this account will now be enabled and accessible on Bluesky. Do note that some names are reserved under Bluesky and you won't be able to create an account for them, even on a personal server. For the full list of reserved names please see https://github.com/bluesky-social/atproto/blob/main/packages/pds/src/handle/reserved.ts
 
 [magic_button]: https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg
-[magic_wafrn_basic_stack]: https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/sztupy/wafrn-opentofu/releases/latest/download/wafrn-opentofu-latest.zip
+[magic_wafrn_basic_stack]: https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://codeberg.org/wafrn/wafrn-opentofu/releases/download/latest/wafrn-opentofu-latest.zip
