@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   EventEmitter,
+  input,
   Input,
   OnChanges,
   OnDestroy,
@@ -44,6 +45,7 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 })
 export class PostComponent implements OnInit, OnDestroy, OnChanges {
   @Input() post!: ProcessedPost[]
+  active = input<boolean>(false)
   showFull: boolean = false
   postCanExpand = computed(() => {
     let textLength = 0
@@ -75,6 +77,7 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
   loadingAction = false
   // 0 no display at all 1 display like 2 display dislike
   showLikeFinalPost: number = 0
+  uniquePost: ProcessedPost | undefined // ID unique to post (cover empty reblogs)
   finalPost!: ProcessedPost
 
   // icons
@@ -147,6 +150,8 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
     this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
     this.originalPostContent = this.post
     this.finalPosts = this.originalPostContent.slice(-5)
+    this.uniquePost = this.post.at(-1)
+
     if (!this.showFull) {
       this.post = this.post.slice(0, EnvironmentService.environment.shortenPosts)
 
