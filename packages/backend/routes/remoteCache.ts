@@ -74,6 +74,15 @@ export default function cacheRoutes(app: Application) {
                 '&cid=' +
                 encodeURIComponent(cid)
               mediaUrl = url
+            } else if (did.startsWith('did:web')) {
+              const url =
+                'https://' +
+                did.split('did:web:')[1] +
+                '/xrpc/com.atproto.sync.getBlob?did=' +
+                encodeURIComponent(did) +
+                '&cid=' +
+                encodeURIComponent(cid)
+              mediaUrl = url
             }
           } catch (error) {
             return res.sendStatus(500)
