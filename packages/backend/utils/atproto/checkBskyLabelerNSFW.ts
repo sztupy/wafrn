@@ -6,17 +6,17 @@ import { getAdminUser } from '../getAdminAndDeletedUser.js'
 import { logger } from '../logger.js'
 
 async function checkBskyLabelersNSFW(posts: Post[]): Promise<void> {
-  const localUsers = await getAllLocalUserIds()
-  const dids: string[] = posts
-    .filter((elem) => elem.bskyUri && !localUsers.includes(elem.userId))
-    .map((elem) => elem.bskyUri as string)
-  const agent = await getAtProtoSession(await getAdminUser())
-  const getLabelsPetition = agent.com.atproto.label.queryLabels({
-    uriPatterns: dids,
-    // hardcoded: bsky moderation service
-    sources: ['did:plc:ar7c4by46qjdydhdevvrndac']
-  })
   try {
+    const localUsers = await getAllLocalUserIds()
+    const dids: string[] = posts
+      .filter((elem) => elem.bskyUri && !localUsers.includes(elem.userId))
+      .map((elem) => elem.bskyUri as string)
+    const agent = await getAtProtoSession(await getAdminUser())
+    const getLabelsPetition = agent.com.atproto.label.queryLabels({
+      uriPatterns: dids,
+      // hardcoded: bsky moderation service
+      sources: ['did:plc:ar7c4by46qjdydhdevvrndac']
+    })
     let petitionResult = (await promiseRace([getLabelsPetition], 2500))[0]
     if (petitionResult?.data?.labels && petitionResult.data.labels.length > 0) {
       for await (const element of petitionResult.data.labels) {
