@@ -1,7 +1,7 @@
 @if (!loading() && !found) {
   <app-pagenotfound />
 }
-<app-blog-header [blogDetails]="blogDetails()"></app-blog-header>
+<app-blog-header *ngIf="blogDetails()" [blogDetails]="blogDetails()"></app-blog-header>
 @for (post of posts; track $index) {
   <ng-template></ng-template>
   <app-post [post]="post"></app-post>
