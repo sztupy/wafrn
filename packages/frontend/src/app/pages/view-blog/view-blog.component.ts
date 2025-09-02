@@ -34,7 +34,6 @@ import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 })
 export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyShow {
   loading = signal<boolean>(true)
-  loadingBlog = signal<boolean>(true)
   noMorePosts = false
   found = true
   viewedPosts = 0
@@ -128,7 +127,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   async configureUser(reload: boolean) {
-    this.loadingBlog.set(true)
     this.loading.set(true)
 
     const blogUrl = this.activatedRoute.snapshot.paramMap.get('url')
@@ -180,8 +178,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
         }
       })
     })
-
-    this.loadingBlog.set(false)
   }
 
   handleTheme(blogDetails: BlogDetails) {
