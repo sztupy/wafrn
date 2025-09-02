@@ -26,6 +26,8 @@ import getFollowedsIds from './cacheGetters/getFollowedsIds.js'
 import { Queue } from 'bullmq'
 import { completeEnvironment } from './backendOptions.js'
 import { InteractionControl, InteractionControlType, Privacy } from '../models/post.js'
+import { getAllLocalUserIds } from './cacheGetters/getAllLocalUserIds.js'
+import { checkBskyLabelersNSFW } from './atproto/checkBskyLabelerNSFW.js'
 
 const updateMediaDataQueue = new Queue('processRemoteMediaData', {
   connection: completeEnvironment.bullmqConnection,
@@ -201,6 +203,24 @@ async function getUnjointedPosts(postIdsInput: string[], posterId: string, doNot
   // we need a list of all the userId we just got from the post
   let userIds: string[] = []
   let postIds: string[] = []
+  if (completeEnvironment.enableBsky) {
+    // DETECT BSKY NSFW
+    const bskyPosts = await Post.findAll({
+      where: {
+        id: {
+          [Op.in]: postIdsInput
+        },
+        userId: {
+          [Op.notIn]: await getAllLocalUserIds()
+        },
+        bskyUri: {
+          [Op.ne]: null
+        }
+      }
+    })
+    await checkBskyLabelersNSFW(bskyPosts.filter((elem) => !elem.content_warning))
+    // END DETECT BSKY NSFW
+  }
   const posts = await Post.findAll({
     include: [
       {

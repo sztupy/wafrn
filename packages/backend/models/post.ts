@@ -70,7 +70,7 @@ export interface PostAttributes {
   id?: string
   createdAt?: Date
   updatedAt?: Date
-  content_warning?: string
+  content_warning?: string | null
   content?: string
   markdownContent?: string
   title?: string
