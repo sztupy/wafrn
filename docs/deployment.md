@@ -158,5 +158,41 @@ If you set up wafrn manually, then follow the steps below:
 
 11. Open up your selected account profile and click "Enable bluesky". If all goes well, this account will now be enabled and accessible on Bluesky. Do note that some names are reserved under Bluesky and you won't be able to create an account for them, even on a personal server. For the full list of reserved names please see https://github.com/bluesky-social/atproto/blob/main/packages/pds/src/handle/reserved.ts
 
+## Running on servers with other web applications
+
+The setup assumes that Wafrn and PDS will be the only things running on the server you're on. The frontend image uses ports `80` and `443` and to operate properly needs access to both those ports for TLS management, especially for Bluesky support. This means that if you want to install Wafrn to a server that already runs other web based applications running on either ports, you're going to have a conflict. Wafrn uses Caddy as the web-server, which is a modern, fast, secure-by-default web server. While you can technically run Wafrn on other web servers (like apache or nginx), Bluesky's PDS specifically requires Caddy (especially it's `on_demand_tls` feature), and access to ports `80` and `443` for proper operation.
+
+To help people who want to install both Wafrn and other web applications on the same server, Wafrn's `Caddyfile` is set up in a way for you to allow adding extra configuration. You can use this feature either to use Wafrn's Caddy to host your other apps directly, ot at least to reverse proxy to your existing web server (albeit with TLS/HTTPS already taken care of by Wafrn's Caddy), which will then serve your existing apps.
+
+To facilitate this Wafrn's Caddy includes a couple hooks, where you can add extra configuration. The two most important are:
+
+* If you create a file in `packages/caddy/main_domain_pre`, e.g. `packages/caddy/main_domain_pre/website.conf`, you can add extra configuration to your main Wafrn domain. Example:
+
+  ```bash
+  handle_path /website* {
+    reverse_proxy host.docker.internal:8888
+  }
+  ```
+
+  This setting will route anything on `https://<your_wafrn_domain>/website` to anything that's running on port `8888` on your `localhost`. Note: Caddy is secure-by-default, so accessing this through `http` will always redirect to `https` by default. There is currently no way to disable this for subdomains.
+
+  *Note:* Make sure to also allow access to this host and port in your docker-compose file, by adding `extra_hosts: ["host.docker.internal:host-gateway"]` to your `frontend` configuration.
+
+* If you create a file in `packages/caddy/vhosts`, e.g. `packages/caddy/vhosts/website.example.com.conf`, you can add additional vhosts. Example:
+
+  ```bash
+  website.example.com {
+    reverse_proxy host.docker.internal:8888
+  }
+  ```
+
+  This setting will route anything on `https://website.example.com` to whatever's running on port `8888`. As above, `http` will be automatically redirected to `https`, and Caddy will take care of obtaining the TLS certificates for you through Let's Encrypt. If you want to disable this, you can specify `http://website.example.com` on the first line to force this setting for http only. Also see the caveats about networking as well.
+
+* There are other hooks if you need to update the global Caddy config, or want to add something to the other domains (cache, monitoring, pds) as well. The full list of hooks can be found in the [Caddyfile](https://codeberg.org/wafrn/wafrn/src/commit/main/packages/frontend/Caddyfile.example).
+
+> *Note:* while it is possible to put Wafrn itself behind a reverse proxy of your existing web server, this is currently not a supported configuration, especially if you want to have Bluesky support enabled as well.
+>
+> If you really-really-really want to go down this route you'll need to disable caddy's automatic https feature, by creating a file called `packages/caddy/global/disable_https.conf` with the single line content of `auto_https disable_redirects`, and then change your docker compose file to serve the frontend on a port different to `80`, like `8123`. Afterwards update your existing web server's setting to reverse proxy all of the the wafrn domains (main, cache, cdn, pds) to this port, and you should be done. Note that Bluesky support will likely fail, unless you set up your web server to do TLS termination either for the entire `*.<bluesky_domain>` domain you have set up, or at least for the usernames your Bluesky users will be using, like `admin.<bluesky_domain>`, etc.
+
 [magic_button]: https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg
 [magic_wafrn_basic_stack]: https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/sztupy/wafrn-opentofu/releases/latest/download/wafrn-opentofu-latest.zip
