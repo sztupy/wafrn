@@ -34,7 +34,6 @@ import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 })
 export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyShow {
   loading = signal<boolean>(true)
-  loadingBlog = signal<boolean>(true)
   noMorePosts = false
   found = true
   viewedPosts = 0
@@ -132,7 +131,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   async configureUser(reload: boolean) {
-    this.loadingBlog.set(true)
     this.loading.set(true)
 
     const blogUrl = this.activatedRoute.snapshot.paramMap.get('url')
@@ -167,7 +165,23 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       this.handleTheme(blogDetails)
     }
 
-    this.loadingBlog.set(false)
+    this.intersectionObserverForLoadPosts = new IntersectionObserver(
+      (intersectionEntries: IntersectionObserverEntry[]) => {
+        if (intersectionEntries[0].isIntersecting) {
+          this.currentPage++
+          this.loadPosts(this.currentPage)
+        }
+      }
+    )
+
+    this.loadPosts(this.currentPage).then(() => {
+      setTimeout(() => {
+        const element = document.querySelector('#if-you-see-this-load-more-posts')
+        if (element) {
+          this.intersectionObserverForLoadPosts.observe(element)
+        }
+      })
+    })
   }
 
   handleTheme(blogDetails: BlogDetails) {
