@@ -1,3 +1,4 @@
+import { Label } from '@atproto/api'
 import { getAtProtoSession } from '../../atproto/utils/getAtProtoSession.js'
 import { promiseRace } from '../../atproto/utils/promiseRace.js'
 import { Post } from '../../models/index.js'
@@ -19,10 +20,25 @@ async function checkBskyLabelersNSFW(posts: Post[]): Promise<void> {
     })
     let petitionResult = (await promiseRace([getLabelsPetition], 2500))[0]
     if (petitionResult?.data?.labels && petitionResult.data.labels.length > 0) {
-      for await (const element of petitionResult.data.labels) {
-        let postToLabel = posts.find((elem) => elem.bskyUri === element.uri)
-        if (postToLabel) {
-          postToLabel.content_warning = `Post labeled as ${element.val}`
+      let labels: Map<string, string[]> = new Map()
+      for await (const label of petitionResult.data.labels) {
+        if (!labels.get(label.uri)) {
+          labels.set(label.uri, [])
+        }
+        if (label.neg && labels.has(label.val)) {
+          labels.set(
+            label.uri,
+            (labels.get(label.uri) as string[]).filter((elem) => elem != label.val)
+          )
+        } else {
+          labels.set(label.uri, (labels.get(label.uri) as string[]).concat([label.val]))
+        }
+      }
+      for await (const uri of labels.keys()) {
+        let postToLabel = posts.find((elem) => elem.bskyUri === uri)
+        if (postToLabel && labels.get(uri)?.length) {
+          const postLabels = (labels.get(uri) as string[]).join(',')
+          postToLabel.content_warning = `Post labeled as ${postLabels}`
           await postToLabel.save()
         }
       }
