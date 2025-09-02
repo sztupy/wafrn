@@ -113,11 +113,20 @@ Go to your `wafrn` directory and enter:
 
 ```bash
 git pull origin main
-docker compose stop
+docker compose pull
+docker compose build
+rm -rf packages/backend/cache
+mkdir packages/backend/cache
 docker compose up --build -d
 ```
 
-You can also find a small management script that can backup, restore and update your instance:
+Or if you don't like to type these out every time then simply do
+
+```bash
+./install/manage.sh update
+```
+
+This small management script can also backup and restore your instance. For example you can backup before an update:
 
 ```bash
 ./install/manage.sh backup
@@ -132,7 +141,7 @@ You can also restore a backup if needed:
 ./install/manage.sh restore <backup_directory>
 ```
 
-## BlueSky integraton
+## Bluesky integraton
 
 If you used the OCI integration or the installer and enabled Bluesky then it should already work you.
 
