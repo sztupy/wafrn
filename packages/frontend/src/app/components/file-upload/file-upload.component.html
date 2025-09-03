@@ -13,9 +13,7 @@
       <fa-icon size="lg" [icon]="uploadIcon"></fa-icon>
     </button>
   </div>
-}
-
-@if (uploadStatus === UploadStatus.Uploading) {
+} @else {
   <button
     mat-button
     class="flex align-items-center justify-content-center file-upload-spinner-wrapper"
