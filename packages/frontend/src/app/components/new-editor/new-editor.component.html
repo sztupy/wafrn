@@ -162,6 +162,7 @@
           class="w-full"
           (blur)="editorFocusedOut()"
           (focus)="editorFocusedIn()"
+          (paste)="handlePaste($event)"
           rows="4"
           placeholder="{{ 'editor.wootTextPlaceholder' | translate }}"
           matNativeControl

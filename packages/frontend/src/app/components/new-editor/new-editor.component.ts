@@ -107,6 +107,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   uploadedMedias: WafrnMedia[] = []
   emojiCollections: EmojiCollection[] = []
   @ViewChild('suggestionsMenu') suggestionsMenu!: MatMenuTrigger
+  @ViewChild(FileUploadComponent) fileUploadComponent: FileUploadComponent | undefined
   suggestions: { img: string; text: string }[] = []
   cursorPosition = {
     x: 0,
@@ -625,5 +626,19 @@ export class NewEditorComponent implements OnInit, OnDestroy {
 
   mediaIsVideo(media: WafrnMedia) {
     return media.url.endsWith('mp4') // technology
+  }
+
+  handlePaste(event: ClipboardEvent) {
+    const item = event.clipboardData?.items[0]
+    if (item === undefined) return
+
+    const mediaFormats = ['image', 'video', 'audio']
+    const itemIsMedia = mediaFormats.some((format) => item.type.includes(format))
+    if (!itemIsMedia) return
+
+    const image = item.getAsFile()
+    if (!image) return
+
+    this.fileUploadComponent?.uploadFile(image)
   }
 }

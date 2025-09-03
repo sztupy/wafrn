@@ -1,11 +1,11 @@
 import { HttpEventType } from '@angular/common/http'
-import { Component, EventEmitter, Output, input } from '@angular/core'
+import { Component, EventEmitter, Input, Output, input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
-import { Subscription } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { WafrnMedia } from 'src/app/interfaces/wafrn-media'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { FileUploadService } from 'src/app/services/file-upload.service'
@@ -13,7 +13,6 @@ import { FileUploadService } from 'src/app/services/file-upload.service'
 enum UploadStatus {
   Pending = 'PENDING',
   Uploading = 'UPLOADING',
-  Success = 'SUCCESS',
   Error = 'ERROR'
 }
 
@@ -44,16 +43,16 @@ export class FileUploadComponent {
   constructor(private fileUploadService: FileUploadService) {}
 
   async onFileSelected(event: Event) {
-    this.uploadStatus = UploadStatus.Uploading
     const el = event.target as HTMLInputElement
+    if (el.files === null || el.files.length === 0) return
 
-    if (el.files === null || el.files.length === 0) {
-      this.uploadStatus = UploadStatus.Pending
-      return
-    }
+    this.uploadFile(el.files[0])
+  }
 
+  uploadFile(file: File) {
+    this.uploadStatus = UploadStatus.Uploading
     this.uploadSubscription = this.fileUploadService
-      .uploadFile(EnvironmentService.environment.baseUrl + this.config().url, el.files[0], this.config().formdataName)
+      .uploadFile(EnvironmentService.environment.baseUrl + this.config().url, file, this.config().formdataName)
       .subscribe({
         next: (event) => {
           if (event.type === HttpEventType.UploadProgress) {
@@ -62,11 +61,11 @@ export class FileUploadComponent {
           }
           if (event.type === HttpEventType.Response) {
             const response = event.body
-            this.uploadStatus = UploadStatus.Success
             if (response && response[0]) {
               this.fileUpload.emit(response[0])
               this.uploadProgress = 0
             }
+            this.uploadStatus = UploadStatus.Pending
           }
         },
         error: () => {
