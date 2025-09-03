@@ -218,7 +218,9 @@ async function getUnjointedPosts(postIdsInput: string[], posterId: string, doNot
         }
       }
     })
-    await checkBskyLabelersNSFW(bskyPosts.filter((elem) => !elem.content_warning))
+    if (bskyPosts && bskyPosts.length) {
+      await checkBskyLabelersNSFW(bskyPosts.filter((elem) => !elem.content_warning && elem.bskyUri))
+    }
     // END DETECT BSKY NSFW
   }
   const posts = await Post.findAll({

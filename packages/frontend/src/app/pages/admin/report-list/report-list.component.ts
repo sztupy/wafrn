@@ -60,7 +60,7 @@ export class ReportListComponent implements OnInit {
       success = confirm(`Proceed with ban of user ${report.reportedUser.url} ?`)
     }
     if (success) {
-      await this.adminService.banUser(report.reportedUser.url, banMessage)
+      await this.adminService.banUser(report.reportedUser.id, banMessage)
     }
     this.loadReports()
   }

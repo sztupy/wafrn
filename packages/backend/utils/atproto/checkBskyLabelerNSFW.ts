@@ -7,6 +7,9 @@ import { getAdminUser } from '../getAdminAndDeletedUser.js'
 import { logger } from '../logger.js'
 
 async function checkBskyLabelersNSFW(posts: Post[]): Promise<void> {
+  if (posts.length == 0) {
+    return
+  }
   try {
     const localUsers = await getAllLocalUserIds()
     const dids: string[] = posts
