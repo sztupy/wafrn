@@ -99,8 +99,8 @@ export const baseEnvironment: Environment = {
   ignoreBlockHosts: ${{IGNORE_BLOCK_HOSTS:-[]}} as string[],
   // default SEO data that will be used when trying to load server data
   defaultSEOData: {
-    title: '${{DOMAIN_NAME}}',
-    description: '${{DOMAIN_NAME}}, a wafrn instance',
+    title: '${{FRONTEND_SHORT_TITLE:-Wafrn, the social media that respects you}}',
+    description: '${{FRONTEND_DESCRIPTION:-Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky}}',
     img: 'https://${{DOMAIN_NAME}}/assets/logo.png'
   },
   enableBsky: ${{ENABLE_BSKY:-false}},

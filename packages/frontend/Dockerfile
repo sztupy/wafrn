@@ -12,6 +12,9 @@ RUN npm install
 
 COPY . .
 
+# Override frontend files with files put here. Allows easy overriding of assets, and potentially actual code as well
+RUN cp -af /app/packages/frontend/overrides/* /app/packages/frontend/src || true
+
 # angular.json expects this to be two levels up, so we put it there
 RUN ln -s /app/packages/frontend/node_modules /app/node_modules
 
@@ -31,12 +34,19 @@ ARG MEDIA_DOMAIN
 ARG ACME_EMAIL
 ARG DOMAIN_NAME
 
+ARG FRONTEND_SHORT_TITLE
+ARG FRONTEND_LONG_TITLE
+ARG FRONTEND_DESCRIPTION
+
 ARG CACHE_HOST
 
 COPY Caddyfile.example /app/Caddyfile
 
 RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/Caddyfile && \
   perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/Caddyfile
+
+RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/frontend/index.html && \
+  perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/frontend/index.html
 
 FROM caddy:2
 

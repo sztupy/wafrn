@@ -2,27 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Wafrn</title>
+    <title>${{FRONTEND_SHORT_TITLE:-Wafrn}}</title>
     <!-- BEGIN REMOVE THIS IN EXPRESS FOR SEO -->
-    <meta property="og:title" content="Wafrn, the social media that respects you" />
+    <meta property="og:title" content="${{FRONTEND_LONG_TITLE:-Wafrn, the social media that respects you}}" />
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Wafrn, the social media that respects you" />
+    <meta property="twitter:title" content="${{FRONTEND_LONG_TITLE:-Wafrn, the social media that respects you}}" />
     <meta
       property="description"
-      content="Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky"
+      content="${{FRONTEND_DESCRIPTION:-Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky}}"
     />
     <meta
       property="og:description"
-      content="Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky"
+      content="${{FRONTEND_DESCRIPTION:-Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky}}"
     />
     <meta
       property="twitter:description"
-      content="Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky"
+      content="${{FRONTEND_DESCRIPTION:-Wafrn is a federated social media inspired by tumblr that connects with the fediverse and bluesky}}"
     />
     <meta property="og:image" content="/assets/logo.png" />
     <meta property="twitter:image" content="/assets/logo.png" />
-    <meta property="og:site_name" content="app.wafrn.net" />
-    <meta property="twitter:site" content="app.wafrn.net" />
+    <meta property="og:site_name" content="${{DOMAIN_NAME:-app.wafrn.net}}" />
+    <meta property="twitter:site" content="${{DOMAIN_NAME:-app.wafrn.net}}" />
     <!-- END REMOVE THIS IN EXPRESS FOR SEO -->
 
     <base href="/" />
