@@ -101,6 +101,7 @@ services:
       - "caddy:/data"
       - "frontend:/var/www/html/frontend"
       - ./packages/backend/uploads:/var/www/html/uploads
+      - ./packages/caddy:/etc/caddy/config
 
   db:
     build:
