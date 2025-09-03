@@ -19,7 +19,7 @@ export class FileUploadService {
     return this.http.post<WafrnMedia[]>(url, formData, { reportProgress: true, observe: 'events' }).pipe(
       catchError((error) => {
         this.messageService.add({ severity: 'error', summary: 'Failed to upload.' })
-        return throwError(error)
+        return throwError(() => error)
       })
     )
   }
