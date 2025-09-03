@@ -23,7 +23,9 @@ Use the below button to set up a fully working Wafrn instance on Oracle Cloud's 
 
 [![Deploy to Oracle Cloud][magic_button]][magic_wafrn_basic_stack]
 
-Documentation for the OCI integration [can be found in a separate repository](https://github.com/sztupy/wafrn-opentofu).
+If it doesn't work then alternatively download the latest release from https://codeberg.org/wafrn/wafrn-opentofu/releases/download/latest/wafrn-opentofu-latest.zip and go to https://cloud.oracle.com/resourcemanager/stacks/create to upload the templates as zip file.
+
+Documentation for the OCI integration [can be found in a separate repository](https://codeberg.org/wafrn/wafrn-opentofu).
 
 ## Installer
 
@@ -111,18 +113,27 @@ Go to your `wafrn` directory and enter:
 
 ```bash
 git pull origin main
-docker compose stop
+docker compose pull
+docker compose build
+rm -rf packages/backend/cache
+mkdir packages/backend/cache
 docker compose up --build -d
 ```
 
-You can also find a small management script that can backup, restore and update your instance:
+Or if you don't like to type these out every time then simply do
+
+```bash
+./install/manage.sh update
+```
+
+This small management script can also backup and restore your instance. For example you can backup before an update:
 
 ```bash
 ./install/manage.sh backup
 ./install/manage.sh update
 ```
 
-By default the installation will create a backup every day and keep it for 10 days. You can also [add post-backup scripts](https://github.com/sztupy/wafrn-opentofu/blob/main/scripts/post_backup.template.sh) that you can configure to copy the backups to an off-site location, like any S3 compatible bucket.
+By default the installation will create a backup every day and keep it for 10 days. You can also [add post-backup scripts](https://codeberg.org/wafrn/wafrn-opentofu/blob/main/scripts/post_backup.template.sh) that you can configure to copy the backups to an off-site location, like any S3 compatible bucket.
 
 You can also restore a backup if needed:
 
@@ -130,7 +141,7 @@ You can also restore a backup if needed:
 ./install/manage.sh restore <backup_directory>
 ```
 
-## BlueSky integraton
+## Bluesky integraton
 
 If you used the OCI integration or the installer and enabled Bluesky then it should already work you.
 
@@ -195,4 +206,4 @@ To facilitate this Wafrn's Caddy includes a couple hooks, where you can add extr
 > If you really-really-really want to go down this route you'll need to disable caddy's automatic https feature, by creating a file called `packages/caddy/global/disable_https.conf` with the single line content of `auto_https disable_redirects`, and then change your docker compose file to serve the frontend on a port different to `80`, like `8123`. Afterwards update your existing web server's setting to reverse proxy all of the the wafrn domains (main, cache, cdn, pds) to this port, and you should be done. Note that Bluesky support will likely fail, unless you set up your web server to do TLS termination either for the entire `*.<bluesky_domain>` domain you have set up, or at least for the usernames your Bluesky users will be using, like `admin.<bluesky_domain>`, etc.
 
 [magic_button]: https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg
-[magic_wafrn_basic_stack]: https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/sztupy/wafrn-opentofu/releases/latest/download/wafrn-opentofu-latest.zip
+[magic_wafrn_basic_stack]: https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://codeberg.org/wafrn/wafrn-opentofu/releases/download/latest/wafrn-opentofu-latest.zip

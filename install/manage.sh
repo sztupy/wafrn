@@ -13,6 +13,10 @@ case $1 in
   update)
     pushd "${SCRIPT_DIR}/.."
       git pull origin main
+      docker compose pull
+      docker compose build
+      rm -rf packages/backend/cache
+      mkdir packages/backend/cache
       docker compose up --build -d
       docker compose logs -t -n 50 -f
     popd
