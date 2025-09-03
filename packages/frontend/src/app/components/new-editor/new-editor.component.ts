@@ -127,6 +127,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   urlPostToQuote: string = ''
   quoteLoading = false
   postBeingSubmitted = false
+  draggingOverTextarea = false
 
   closeIcon = faClose
   quoteIcon = faQuoteLeft
@@ -640,5 +641,27 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     if (!image) return
 
     this.fileUploadComponent?.uploadFile(image)
+  }
+
+  handleDrop(event: DragEvent) {
+    event.preventDefault()
+    this.draggingOverTextarea = false
+
+    const item = event.dataTransfer?.files[0]
+    if (item === undefined) return
+
+    const mediaFormats = ['image', 'video', 'audio']
+    const itemIsMedia = mediaFormats.some((format) => item.type.includes(format))
+    if (!itemIsMedia) return
+
+    this.fileUploadComponent?.uploadFile(item)
+  }
+
+  handleDrag(event: DragEvent) {
+    if (event.type === 'dragenter') {
+      this.draggingOverTextarea = true
+    } else {
+      this.draggingOverTextarea = false
+    }
   }
 }

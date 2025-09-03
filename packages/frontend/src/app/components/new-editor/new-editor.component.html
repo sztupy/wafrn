@@ -153,7 +153,7 @@
       }
     }
 
-    <form [formGroup]="postCreatorForm">
+    <form class="relative" [formGroup]="postCreatorForm">
       <mat-form-field class="w-full mat-form-field-no-padding" appearance="outline">
         <mat-label>{{ 'editor.wootTextLabel' | translate }}</mat-label>
         <textarea
@@ -163,12 +163,18 @@
           (blur)="editorFocusedOut()"
           (focus)="editorFocusedIn()"
           (paste)="handlePaste($event)"
+          (drop)="handleDrop($event)"
+          (dragenter)="handleDrag($event)"
+          (dragleave)="handleDrag($event)"
           rows="4"
           placeholder="{{ 'editor.wootTextPlaceholder' | translate }}"
           matNativeControl
           autofocus
         ></textarea>
       </mat-form-field>
+      @if (draggingOverTextarea) {
+        <div class="media-drop-indicator">{{ 'editor.uploadMediaIndicator' | translate }}</div>
+      }
     </form>
     <mat-progress-bar
       *ngIf="postService.enableBluesky && (!data?.post || data?.post?.bskyUri) && privacy === 0"

@@ -149,6 +149,18 @@ app-media-preview {
   padding: 0.5rem;
 }
 
+.media-drop-indicator {
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: var(--mat-sys-corner-small);
+  background-color: rgb(from var(--mat-sys-primary) r g b / 0.25);
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  color: rgb(from var(--mat-sys-on-surface) r g b / 0.5);
+  pointer-events: none;
+}
+
 svg {
   display: block;
 }
