@@ -12,7 +12,8 @@ const loginMessageVariants: string[] = [
   'waf waf waf (...) waf;',
   '() => "funny login message"',
   'assert(<MessageOfTheDay>"hi")',
-  'echo "echo wafrn" >> ~/.bashrc'
+  'echo "echo wafrn" >> ~/.bashrc',
+  'click to add subtitle'
 ]
 
 @Component({
