@@ -1,7 +1,10 @@
-<h1 class="shortcut-list-title">{{ 'keyboard-shortcuts.keyboardShortcuts' | translate }}</h1>
+<div class="mb-3 flex gap-2 dialog-header">
+  <fa-icon [icon]="titleIcon"></fa-icon
+  ><span class="font-medium">{{ 'keyboard-shortcuts.keyboardShortcuts' | translate }}</span>
+</div>
 @for (entry of hotkeyData; track $index) {
   @if (entry.type === 'header') {
-    <h2 class="shortcut-section-title">{{ 'keyboard-shortcuts.' + entry.value | translate }}</h2>
+    <h2 class="mt-0 mb-2 shortcut-section-title">{{ 'keyboard-shortcuts.' + entry.value | translate }}</h2>
   } @else if (entry.type === 'group') {
     <dl class="shortcut-list">
       @for (action of entry.value; track $index) {

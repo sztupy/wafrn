@@ -282,6 +282,7 @@ export class HotkeyListComponent {
   smoothScroll = smoothScroll
 
   undoIcon = faRotateLeft
+  titleIcon = faKeyboard
 
   constructor(private translateService: TranslateService) {
     this.cancelSetKeybind.subscribe(() => {
