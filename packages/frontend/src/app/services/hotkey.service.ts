@@ -12,6 +12,7 @@ const hotkeyActionsVariants = [
   'rewootPost',
   'replyPost',
   'quotePost',
+  'bookmarkPost',
   'openEditor',
   'viewKeyboardShortcuts'
 ] as const

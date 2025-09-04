@@ -182,21 +182,15 @@ export class BottomReplyBarComponent implements OnChanges {
     }
     this.loadingAction = false
   }
-  async unbookmarkPost() {
-    if (await this.postService.unbookmarkPost(this.fragment.id)) {
-      this.fragment.bookmarkers = this.fragment.bookmarkers.filter((elem) => elem != this.myId)
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully unbookmarked this woot'
-      })
-      this.bookmarked.set(false)
+
+  async toggleBookmark() {
+    if (!this.bookmarked()) {
+      this.bookmarkPost()
     } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
+      this.unbookmarkPost()
     }
   }
+
   async bookmarkPost() {
     if (await this.postService.bookmarkPost(this.fragment.id)) {
       this.fragment.bookmarkers.push(this.myId)
@@ -207,6 +201,22 @@ export class BottomReplyBarComponent implements OnChanges {
         confettiEmojis: disableConfetti ? [] : ['💾']
       })
       this.bookmarked.set(true)
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'Something went wrong. Please try again'
+      })
+    }
+  }
+
+  async unbookmarkPost() {
+    if (await this.postService.unbookmarkPost(this.fragment.id)) {
+      this.fragment.bookmarkers = this.fragment.bookmarkers.filter((elem) => elem != this.myId)
+      this.messages.add({
+        severity: 'success',
+        summary: 'You successfully unbookmarked this woot'
+      })
+      this.bookmarked.set(false)
     } else {
       this.messages.add({
         severity: 'error',

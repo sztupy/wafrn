@@ -230,6 +230,9 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
       case 'quotePost':
         await this.bottomReplyBar()?.quotePost(this.finalPost)
         break
+      case 'bookmarkPost':
+        await this.bottomReplyBar()?.toggleBookmark()
+        break
       default:
         break
     }

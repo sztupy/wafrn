@@ -14,7 +14,6 @@ import { LoginService } from 'src/app/services/login.service'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ThemeService } from 'src/app/services/theme.service'
 import { HotkeyAction, HotkeyService } from 'src/app/services/hotkey.service'
-import { KeyValueTypedPipe } from 'src/app/pipes/keyvaluetyped.pipe'
 
 type HotkeyConfig = {
   [key in HotkeyAction]: string | undefined
@@ -43,6 +42,7 @@ const defaultKeybinds: HotkeyConfig = {
   rewootPost: 'R',
   replyPost: 'r',
   quotePost: 'q',
+  bookmarkPost: 'b',
   openEditor: 'e',
   viewKeyboardShortcuts: '?'
 }
@@ -81,6 +81,7 @@ export class HotkeyManagerComponent {
     rewootPost: () => this.broadcastHotkey('rewootPost'),
     replyPost: () => this.broadcastHotkey('replyPost'),
     quotePost: () => this.broadcastHotkey('quotePost'),
+    bookmarkPost: () => this.broadcastHotkey('bookmarkPost'),
     openEditor: () => this.openEditor(),
     viewKeyboardShortcuts: () => this.openHotkeyListDialog(),
     no_op: () => {}
@@ -261,7 +262,7 @@ interface DialogData {
 
 @Component({
   selector: 'app-hotkey-list-dialog',
-  imports: [MatButtonModule, FontAwesomeModule, TranslateModule, KeyValueTypedPipe, MatCheckboxModule],
+  imports: [MatButtonModule, FontAwesomeModule, TranslateModule, MatCheckboxModule],
   templateUrl: './hotkey-list-dialog.component.html',
   styleUrl: './hotkey-manager.component.scss'
 })
