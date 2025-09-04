@@ -1,16 +1,14 @@
 @if (!loading() && !found) {
   <app-pagenotfound />
 }
-<app-blog-header *ngIf="blogDetails()" [blogDetails]="blogDetails()"></app-blog-header>
-@for (post of posts; track $index) {
-  <ng-template></ng-template>
-  <app-post [post]="post"></app-post>
-}
-@if (loading()) {
-  <app-loader>posts</app-loader>
-}
+<app-blog-header [blogDetails]="blogDetails()"></app-blog-header>
+<app-post-list
+  [posts]="posts"
+  [visible]="postsVisible"
+  [loading]="loading()"
+  (loadPosts)="loadPosts(currentPage)"
+></app-post-list>
 <footer class="p-4 text-center wafrn-container">
-  <div [hidden]="loading() || noMorePosts" id="if-you-see-this-load-more-posts"></div>
   @if (noMorePosts) {
     <div>
       <p class="mb-4 text-lg">No more posts...</p>
