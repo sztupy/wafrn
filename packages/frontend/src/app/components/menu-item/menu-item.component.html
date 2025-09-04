@@ -14,6 +14,7 @@
     class="mat-circle-button"
     (click)="doCommand()"
     (keydown)="handleKey($event)"
+    [attr.data-menu-item]="item.label"
     tabIndex="0"
   >
     @if (item.icon) {
@@ -44,6 +45,7 @@
     mat-list-item
     (click)="doCommand()"
     (keydown)="handleKey($event, menuTrigger)"
+    [attr.data-menu-item]="item.label"
     class="{{ item.class }}"
     tabIndex="0"
   >
