@@ -23,6 +23,15 @@ type ShortcutFunctionMap = Record<string, Function>
 
 type ScrollInput = 'up' | 'down' | 'upPage' | 'downPage' | null
 
+const hotkeyData: Array<{ type: 'group'; value: HotkeyAction[] } | { type: 'header'; value: string }> = [
+  { type: 'header', value: 'groupNavigation' },
+  { type: 'group', value: ['scrollDown', 'scrollUp', 'scrollDownPage', 'scrollUpPage', 'nextPost', 'previousPost'] },
+  { type: 'header', value: 'groupPostAction' },
+  { type: 'group', value: ['likePost', 'rewootPost', 'replyPost', 'quotePost'] },
+  { type: 'header', value: 'groupMisc' },
+  { type: 'group', value: ['openEditor', 'viewKeyboardShortcuts'] }
+]
+
 const defaultKeybinds: HotkeyConfig = {
   scrollDown: 'j',
   scrollUp: 'k',
@@ -260,6 +269,7 @@ export class HotkeyListComponent {
   readonly data = inject<DialogData>(MAT_DIALOG_DATA)
   mapping = this.data.currentHotkeys
   defaultKeybinds = defaultKeybinds
+  hotkeyData = hotkeyData
 
   changingKey: string | null = null
   cancelSetKeybind = new Subject()

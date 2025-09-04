@@ -1,32 +1,38 @@
 <h1 class="shortcut-list-title">{{ 'keyboard-shortcuts.keyboardShortcuts' | translate }}</h1>
-<dl class="shortcut-list">
-  @for (shortcut of defaultKeybinds | KeyValue; track $index) {
-    <div>
-      <dt>{{ 'keyboard-shortcuts.' + shortcut.key | translate }}</dt>
-      <dd>
-        <kbd>
-          <button
-            (click)="setKeybind(shortcut.key)"
-            class="set-keybind"
-            [class.changing]="changingKey === shortcut.key"
-            [class.overlapping]="isOverlapping(mapping[shortcut.key])"
-            mat-flat-button
-          >
-            {{ getKeybind(shortcut.key) }}
-          </button>
-        </kbd>
-        <button
-          (click)="resetKeybind(shortcut.key)"
-          class="mat-circle-button reset-keybind"
-          mat-button
-          [disabled]="shortcut.value === mapping[shortcut.key]"
-        >
-          <fa-icon [icon]="undoIcon" />
-        </button>
-      </dd>
-    </div>
+@for (entry of hotkeyData; track $index) {
+  @if (entry.type === 'header') {
+    <h2 class="shortcut-section-title">{{ 'keyboard-shortcuts.' + entry.value | translate }}</h2>
+  } @else if (entry.type === 'group') {
+    <dl class="shortcut-list">
+      @for (action of entry.value; track $index) {
+        <div>
+          <dt>{{ 'keyboard-shortcuts.' + action | translate }}</dt>
+          <dd>
+            <kbd>
+              <button
+                (click)="setKeybind(action)"
+                class="set-keybind"
+                [class.changing]="changingKey === action"
+                [class.overlapping]="isOverlapping(mapping[action])"
+                mat-flat-button
+              >
+                {{ getKeybind(action) }}
+              </button>
+            </kbd>
+            <button
+              (click)="resetKeybind(action)"
+              class="mat-circle-button reset-keybind"
+              mat-button
+              [disabled]="defaultKeybinds[action] === mapping[action]"
+            >
+              <fa-icon [icon]="undoIcon" />
+            </button>
+          </dd>
+        </div>
+      }
+    </dl>
   }
-</dl>
+}
 
 <h2 class="shortcut-section-title">{{ 'keyboard-shortcuts.additionalOptions' | translate }}</h2>
 <mat-checkbox [checked]="smoothScroll()" (click)="toggleSignal(smoothScroll)">{{
