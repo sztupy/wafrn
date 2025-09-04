@@ -20,7 +20,7 @@ export class BlogLinkDirective implements OnInit {
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent): void {
     if (!this.blogLink) return;
-    if (event.button === 0) {
+    if (!event.ctrlKey && event.button === 0) {
       event.preventDefault();
       const wrapper = new SnappyBlogData(this.blogLink);
       this.snappy.navigateTo('/blog/' + this.blogLink.url, wrapper);

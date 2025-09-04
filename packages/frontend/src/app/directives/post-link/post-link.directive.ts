@@ -20,7 +20,7 @@ export class PostLinkDirective implements OnInit {
 
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent): void {
-    if (event.button === 0) {
+    if (!event.ctrlKey && event.button === 0) {
       event.preventDefault();
       const wrapper: any = this.postLink.parentCollection.length > 0 ? new SnappyPostData(this.postLink) : null;
       this.snappy.navigateTo('/fediverse/post/' + this.postLinkId!, wrapper);
