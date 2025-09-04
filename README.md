@@ -23,6 +23,7 @@ The "main" wafrn app is located at [app.wafrn.net](https://app.wafrn.net).
 - [Deployment documentation](./docs/deployment.md)
 - [Wafrn Management](./docs/management.md)
 - [Importing external backups](./docs/import.md)
+- [Theming](./docs/theming.md)
 
 If you need support you can also always find the latest Discord invite [on our website](https://wafrn.net)
 
