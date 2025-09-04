@@ -228,6 +228,7 @@ body {
 
 #splash-text {
   margin: 0;
+  margin-inline: 1rem;
   height: 0; // Do not shift image based on text height
   max-width: 40ch;
   text-align: center;
