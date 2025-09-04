@@ -293,7 +293,6 @@ export class HotkeyListComponent {
         const keyIsModifier = modifierKeys.includes(e.key)
         if (keyIsModifier) return
 
-        console.log(e)
         const unbind = e.code === 'Escape'
         if (unbind) {
           this.mapping[id] = undefined
