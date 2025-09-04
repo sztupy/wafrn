@@ -13,10 +13,12 @@ async function getallBlockedServers(): Promise<string[]> {
         blocked: true
       }
     })
-    if (blockedServers) {
+    if (blockedServers && blockedServers.length > 0) {
       res = blockedServers.map((elem: any) => elem.id)
-      await redisCache.set('allBlockedServers', JSON.stringify(res), 'EX', 300)
+    } else {
+      res = ['00000000-0000-0000-0000-000000000000']
     }
+    await redisCache.set('allBlockedServers', JSON.stringify(res), 'EX', 300)
   }
   return res
 }
