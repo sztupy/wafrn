@@ -137,7 +137,8 @@ export class BottomReplyBarComponent implements OnChanges {
   }
 
   async toggleLike(postToLike: ProcessedPost) {
-    if (this.loadingAction) return
+    if (this.loadingAction || postToLike.userId === this.myId) return
+
     const hasLikedPost = postToLike.userLikesPostRelations.includes(this.myId)
     if (!hasLikedPost) {
       this.likePost(postToLike)
