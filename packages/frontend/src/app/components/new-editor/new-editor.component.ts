@@ -411,7 +411,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     let tagsToSend = ''
     this.tags
       .split(',')
-      .map((elem) => elem.trim())
+      .map(this.tagMap)
       .filter((t) => t !== '')
       .forEach((elem) => {
         tagsToSend = `${tagsToSend}${elem.trim()},`
@@ -476,6 +476,13 @@ export class NewEditorComponent implements OnInit, OnDestroy {
 
   closeEditor() {
     this.location.back()
+  }
+
+  tagMap(tags: string): string {
+    const trimmed = tags.trim()
+    const prefixRemoved = trimmed.startsWith('#') ? trimmed.slice(1) : trimmed
+
+    return prefixRemoved
   }
 
   // things for calculating position
