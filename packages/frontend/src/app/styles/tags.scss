@@ -89,6 +89,10 @@
   @include gradient-text(#ff8abd, #cdf5fe, #74dfff, #cdf5fe, #ff8abd);
 }
 
+[data-tag='genderfluid'] {
+  @include gradient-text(#ff76a2, #ffffff, #bf12d8, #000000, #303cbe);
+}
+
 [data-tag='bisexual'],
 [data-tag='bi'] {
   @include gradient-text(#d60270, #9b4f96, #0038a8);
