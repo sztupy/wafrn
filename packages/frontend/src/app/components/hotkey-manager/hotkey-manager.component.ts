@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common'
 import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -14,9 +13,12 @@ import { JwtService } from 'src/app/services/jwt.service'
 import { LoginService } from 'src/app/services/login.service'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { ThemeService } from 'src/app/services/theme.service'
-import { HotkeyService, HotkeyType } from 'src/app/services/hotkey.service'
+import { HotkeyAction, HotkeyService } from 'src/app/services/hotkey.service'
+import { KeyValueTypedPipe } from 'src/app/pipes/keyvaluetyped.pipe'
 
-type HotkeyConfig = Record<string, string | undefined>
+type HotkeyConfig = {
+  [key in HotkeyAction]: string | undefined
+}
 type ShortcutFunctionMap = Record<string, Function>
 
 type ScrollInput = 'up' | 'down' | 'upPage' | 'downPage' | null
@@ -28,6 +30,10 @@ const defaultKeybinds: HotkeyConfig = {
   scrollUpPage: 'u',
   nextPost: 'n',
   previousPost: 'p',
+  likePost: 'l',
+  rewootPost: 'R',
+  replyPost: 'r',
+  quotePost: 'q',
   openEditor: 'e',
   viewKeyboardShortcuts: '?'
 }
@@ -60,8 +66,12 @@ export class HotkeyManagerComponent {
     scrollUp: () => this.scrollUp(),
     scrollDownPage: () => this.scrollDownPage(),
     scrollUpPage: () => this.scrollUpPage(),
-    nextPost: () => this.hotkeyService.hotkeySubscription.next(HotkeyType.nextPost),
-    previousPost: () => this.hotkeyService.hotkeySubscription.next(HotkeyType.previousPost),
+    nextPost: () => this.broadcastHotkey('nextPost'),
+    previousPost: () => this.broadcastHotkey('previousPost'),
+    likePost: () => this.broadcastHotkey('likePost'),
+    rewootPost: () => this.broadcastHotkey('rewootPost'),
+    replyPost: () => this.broadcastHotkey('replyPost'),
+    quotePost: () => this.broadcastHotkey('quotePost'),
     openEditor: () => this.openEditor(),
     viewKeyboardShortcuts: () => this.openHotkeyListDialog(),
     no_op: () => {}
@@ -94,6 +104,10 @@ export class HotkeyManagerComponent {
     const horizontalMenu = themeService.additionalStyleModes.horizontalMenu
     const topToolbar = themeService.additionalStyleModes.topToolbar
     this.offsetDialogButton = computed(() => horizontalMenu() && !topToolbar())
+  }
+
+  broadcastHotkey(action: HotkeyAction) {
+    this.hotkeyService.hotkeySubscription.next(action)
   }
 
   saveHotkeys() {
@@ -161,9 +175,8 @@ export class HotkeyManagerComponent {
     if (this.continueScrolling) return
     this.continueScrolling = true
 
-    const otherKey = ['scrollUp', 'scrollDown', 'scrollUpPage', 'scrollDownPage']
-      .map((key) => this.userMapping[key])
-      .filter((k) => k !== key)
+    const otherKey: HotkeyAction[] = ['scrollUp', 'scrollDown', 'scrollUpPage', 'scrollDownPage']
+    const otherKeyMapped = otherKey.map((key) => this.userMapping[key]).filter((k) => k !== key)
 
     const terminate = new Subject()
 
@@ -175,7 +188,7 @@ export class HotkeyManagerComponent {
       ),
       fromEvent(document, 'keydown').pipe(
         takeUntil(terminate),
-        filter((e) => otherKey.includes((<KeyboardEvent>e).key))
+        filter((e) => otherKeyMapped.includes((<KeyboardEvent>e).key))
       )
     ).subscribe(() => {
       this.continueScrolling = false
@@ -239,7 +252,7 @@ interface DialogData {
 
 @Component({
   selector: 'app-hotkey-list-dialog',
-  imports: [MatButtonModule, FontAwesomeModule, TranslateModule, KeyValuePipe, MatCheckboxModule],
+  imports: [MatButtonModule, FontAwesomeModule, TranslateModule, KeyValueTypedPipe, MatCheckboxModule],
   templateUrl: './hotkey-list-dialog.component.html',
   styleUrl: './hotkey-manager.component.scss'
 })
@@ -261,7 +274,7 @@ export class HotkeyListComponent {
     })
   }
 
-  getKeybind(id: string) {
+  getKeybind(id: HotkeyAction) {
     const key = this.mapping[id] || this.translateService.instant(_('keyboard-shortcuts.unbound'))
 
     if (this.changingKey === id) {
@@ -278,7 +291,7 @@ export class HotkeyListComponent {
     return allKeys.indexOf(key) !== allKeys.lastIndexOf(key)
   }
 
-  setKeybind(id: string) {
+  setKeybind(id: HotkeyAction) {
     if (!hotkeysEnabled) return
     hotkeysEnabled = false
     this.changingKey = id
@@ -304,7 +317,7 @@ export class HotkeyListComponent {
       })
   }
 
-  resetKeybind(id: string) {
+  resetKeybind(id: HotkeyAction) {
     this.mapping[id] = defaultKeybinds[id]
     this.cancelSetKeybind.next('')
   }

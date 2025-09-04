@@ -2,8 +2,8 @@ import { afterRenderEffect, Component, computed, ElementRef, input, output, sign
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { PostModule } from '../post/post.module'
 import { LoaderComponent } from '../loader/loader.component'
-import { HotkeyService, HotkeyType } from 'src/app/services/hotkey.service'
-import { fromEvent, take } from 'rxjs'
+import { HotkeyAction, HotkeyService } from 'src/app/services/hotkey.service'
+import { fromEvent, Subject, take } from 'rxjs'
 
 @Component({
   selector: 'app-post-list',
@@ -26,6 +26,8 @@ export class PostListComponent {
   highlightPost = signal<boolean>(false)
 
   selectedPost: number = 0
+
+  postActionSubject = new Subject<HotkeyAction>()
 
   constructor(hotkeyService: HotkeyService) {
     hotkeyService.hotkeySubscription.subscribe((type) => this.handleHotkeys(type))
@@ -91,20 +93,34 @@ export class PostListComponent {
     return document.getElementById('post-element-' + this.posts().at(index)?.at(-1)?.id)
   }
 
-  handleHotkeys(type: HotkeyType) {
+  observeSelectedPost() {
+    this.currentPostObserver.disconnect()
+    const postElem = this.postElementAt(this.selectedPost)
+    if (postElem) {
+      this.currentPostObserver.observe(postElem)
+    }
+  }
+
+  handleHotkeys(action: HotkeyAction) {
     if (!this.visible()) return
 
-    switch (type) {
-      case HotkeyType.nextPost:
+    switch (action) {
+      case 'nextPost':
         this.nextPost()
         break
-      case HotkeyType.previousPost:
+      case 'previousPost':
         this.previousPost()
         break
       default:
+        // Send other actions to bottom reply bar
+        this.postActionSubject.next(action)
         break
     }
   }
+
+  //
+  // Hotkey functions
+  //
 
   previousPost() {
     if (this.selectedPost > 0) {
@@ -147,13 +163,5 @@ export class PostListComponent {
   afterPostScroll() {
     this.observeSelectedPost()
     this.highlightPost.set(true)
-  }
-
-  observeSelectedPost() {
-    this.currentPostObserver.disconnect()
-    const postElem = this.postElementAt(this.selectedPost)
-    if (postElem) {
-      this.currentPostObserver.observe(postElem)
-    }
   }
 }

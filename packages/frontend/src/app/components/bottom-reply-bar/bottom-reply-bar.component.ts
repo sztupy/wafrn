@@ -136,6 +136,16 @@ export class BottomReplyBarComponent implements OnChanges {
     this.loadingAction = false
   }
 
+  async toggleLike(postToLike: ProcessedPost) {
+    if (this.loadingAction) return
+    const hasLikedPost = postToLike.userLikesPostRelations.includes(this.myId)
+    if (!hasLikedPost) {
+      this.likePost(postToLike)
+    } else {
+      this.unlikePost(postToLike)
+    }
+  }
+
   async likePost(postToLike: ProcessedPost) {
     this.loadingAction = true
     if (await this.postService.likePost(postToLike.id)) {
@@ -202,6 +212,14 @@ export class BottomReplyBarComponent implements OnChanges {
         severity: 'error',
         summary: 'Something went wrong. Please try again'
       })
+    }
+  }
+
+  async toggleReblog(postToBeReblogged: ProcessedPost) {
+    if (!this.myRewootsIncludePost) {
+      this.quickReblog(postToBeReblogged)
+    } else {
+      this.deleteRewoots(postToBeReblogged.id)
     }
   }
 
