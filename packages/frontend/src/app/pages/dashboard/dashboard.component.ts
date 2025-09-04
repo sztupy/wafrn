@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser'
 import { NavigationSkipped, Router } from '@angular/router'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
+import { GlobalData } from 'src/app/services/global-data.service'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import { SnappyCreate, SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
@@ -49,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     private themeService: ThemeService,
     private readonly viewportScroller: ViewportScroller
   ) {
-    this.titleService.setTitle('Wafrn - the social network that respects you')
+    this.titleService.setTitle(GlobalData.appDefaultTitle)
     this.metaTagService.addTags([
       {
         name: 'description',

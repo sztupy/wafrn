@@ -4,7 +4,8 @@ import { LoginService } from './services/login.service'
 import { EnvironmentService } from './services/environment.service'
 import { TranslateService } from '@ngx-translate/core'
 import { SwPush } from '@angular/service-worker'
-
+import { Title } from '@angular/platform-browser'
+import { GlobalData } from './services/global-data.service'
 import { WebsocketService } from './services/websocket.service'
 import { NavigationError, Router } from '@angular/router'
 import { filter, map } from 'rxjs'
@@ -29,8 +30,12 @@ export class AppComponent implements OnInit {
     private translateService: TranslateService,
     private websocketService: WebsocketService,
     private router: Router,
-    private messages: MessageService
+    private messages: MessageService,
+    private titleService: Title,
   ) {
+    this.title = this.titleService.getTitle()
+    GlobalData.appDefaultTitle = this.title
+
     this.translateService.addLangs(['en', 'pl', 'es'])
     this.translateService.setDefaultLang('en')
 
