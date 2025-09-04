@@ -1,6 +1,6 @@
 <h1 class="shortcut-list-title">{{ 'keyboard-shortcuts.keyboardShortcuts' | translate }}</h1>
 <dl class="shortcut-list">
-  @for (shortcut of defaultKeybinds | keyvalue: null; track $index) {
+  @for (shortcut of defaultKeybinds | KeyValue; track $index) {
     <div>
       <dt>{{ 'keyboard-shortcuts.' + shortcut.key | translate }}</dt>
       <dd>
