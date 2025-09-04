@@ -270,7 +270,12 @@
     "smoothScroll": "Smooth scroll"
   },
   "post-fragment": {
+    "mutedWords": "Post contains muted words:",
     "replyingTo": "mentions: "
+  },
+  "media": {
+    "noAltText": "Media does not have alt text",
+    "sensitiveContent": "This media contains sensitive content"
   },
   "page-not-found": {
     "title": "404: page not found",

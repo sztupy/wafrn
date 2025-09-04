@@ -52,6 +52,8 @@ video {
   overflow-y: auto;
   max-height: 75%;
 
+  z-index: 4;
+
   background: var(--mat-sys-surface-container-high);
 
   &.visible {
@@ -84,11 +86,14 @@ video {
   z-index: 3;
 }
 
+.toggle-description {
+  z-index: 4;
+}
+
 @media screen and (max-width: 992px) {
   .toggle-description,
   .toggle-nsfw {
     align-self: end;
-    z-index: 2;
   }
 
   .image-description {

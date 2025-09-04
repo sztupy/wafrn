@@ -24,6 +24,7 @@ import Vlitejs from 'vlitejs'
 })
 export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   data = input.required<WafrnMedia>()
+  filteredWords = input<string>()
 
   @ViewChild('videoelement') videoElement: ElementRef<HTMLVideoElement> | undefined
   @ViewChild('audioelement') audioElement: ElementRef<HTMLAudioElement> | undefined
@@ -71,7 +72,9 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(): void {
-    this.nsfw = this.data().NSFW && !this.disableNSFWFilter
+    this.nsfw =
+      (this.data().NSFW || this.data().description === null || this.filteredWords() !== undefined) &&
+      !this.disableNSFWFilter
     this.cdr.markForCheck()
   }
 

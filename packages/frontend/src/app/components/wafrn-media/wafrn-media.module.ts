@@ -5,10 +5,11 @@ import { MatCardModule } from '@angular/material/card'
 import { MatButtonModule } from '@angular/material/button'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { LinkPreviewComponent } from '../link-preview/link-preview.component'
+import { TranslateModule } from '@ngx-translate/core'
 
 @NgModule({
   declarations: [WafrnMediaComponent],
-  imports: [CommonModule, MatCardModule, MatButtonModule, FontAwesomeModule, LinkPreviewComponent],
+  imports: [CommonModule, MatCardModule, MatButtonModule, FontAwesomeModule, LinkPreviewComponent, TranslateModule],
   exports: [WafrnMediaComponent]
 })
-export class WafrnMediaModule { }
+export class WafrnMediaModule {}
