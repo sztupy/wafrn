@@ -3,7 +3,9 @@
     <h1 [innerText]="fragment().title"></h1>
   }
   @if (fragment().content_warning || fragment().muted_words_cw) {
-    <div class="content-warning-text">{{ 'post-fragment.mutedWords' | translate }} {{ fragment().muted_words_cw }}</div>
+    <div class="muted-words content-warning-text">
+      {{ 'post-fragment.mutedWords' | translate }} {{ fragment().muted_words_cw }}
+    </div>
     <div class="content-warning-text" [innerHTML]="fragment().content_warning"></div>
     <button class="toggle-cw-button" mat-raised-button color="primary" (click)="cwClick()" class="w-full my-2">
       @if (showSensitiveContent()) {
