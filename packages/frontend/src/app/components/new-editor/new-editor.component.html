@@ -166,6 +166,7 @@
           (drop)="handleDrop($event)"
           (dragenter)="handleDrag($event)"
           (dragleave)="handleDrag($event)"
+          (dragover)="$event.preventDefault()"
           rows="4"
           placeholder="{{ 'editor.wootTextPlaceholder' | translate }}"
           matNativeControl
