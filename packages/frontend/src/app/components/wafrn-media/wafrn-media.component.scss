@@ -10,10 +10,6 @@
   }
 }
 
-.image-description {
-  background: var(--mat-sys-surface-container-high);
-}
-
 img,
 video {
   margin-inline: auto;
@@ -44,12 +40,6 @@ video {
   }
 }
 
-.toggle-description {
-  .always-show-alt & {
-    display: none;
-  }
-}
-
 // Has to be absolute to get height correctly
 .image-description {
   position: absolute;
@@ -61,6 +51,8 @@ video {
   visibility: hidden;
   overflow-y: auto;
   max-height: 75%;
+
+  background: var(--mat-sys-surface-container-high);
 
   &.visible {
     opacity: 0.75;
@@ -87,8 +79,9 @@ video {
 .image-cw-text {
   width: 100%;
   padding: 0 2rem;
-  background-color: #0c0c0c;
-  z-index: 1;
+  background-color: var(--mat-sys-outline);
+  color: var(--mat-sys-on-outline);
+  z-index: 3;
 }
 
 @media screen and (max-width: 992px) {
@@ -117,4 +110,8 @@ video {
     height: auto;
     object-fit: contain;
   }
+}
+
+audio {
+  width: 100%;
 }

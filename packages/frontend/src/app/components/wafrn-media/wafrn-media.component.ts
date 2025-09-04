@@ -28,7 +28,9 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   @ViewChild('videoelement') videoElement: ElementRef<HTMLVideoElement> | undefined
   @ViewChild('audioelement') audioElement: ElementRef<HTMLAudioElement> | undefined
 
-  readonly extensionsToHideImgTag = ['mp4', 'aac', 'mp3', 'ogg', 'webm', 'weba', 'svg', 'ogg', 'oga']
+  vlitePlayer: { play: Function; pause: Function } | undefined
+
+  readonly extensionsToHideImgTag = ['mp4', 'aac', 'mp3', 'wav', 'ogg', 'webm', 'weba', 'svg', 'ogg', 'oga']
   readonly tmpUrl = computed<string>(() =>
     this.data().external
       ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(this.data().url)
@@ -43,10 +45,10 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   readonly enableVideoControls = computed<boolean | ''>(() => this.mediaService.checkForceClassicVideoPlayer() ?? false)
   readonly enableAudioControls = computed<boolean | ''>(() => this.mediaService.checkForceClassicAudioPlayer() ?? false)
 
-  private readonly alwaysAltMedia = ['audio', 'video']
+  private readonly alwaysAltMedia = ['audio']
   readonly alwaysShowAlt = computed<boolean>(() => this.alwaysAltMedia.includes(this.mimeType()?.split('/')[0]))
 
-  private readonly nonsentitiveMedia = ['audio', 'video']
+  private readonly nonsentitiveMedia = ['audio']
   readonly hideSensitiveButton = computed<boolean>(() =>
     this.nonsentitiveMedia.includes(this.mimeType()?.split('/')[0])
   )
@@ -76,16 +78,16 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   ngAfterViewInit(): void {
     const videoElement = this.videoElement?.nativeElement
     if (videoElement && !this.mediaService.checkForceClassicVideoPlayer()) {
-      new Vlitejs(videoElement, {
+      this.vlitePlayer = new Vlitejs(videoElement, {
         options: {
           autoHide: true,
           autoHideDelay: 500
         }
-      })
+      }).player
     }
     const audioElement = this.audioElement?.nativeElement
     if (audioElement && !this.mediaService.checkForceClassicAudioPlayer()) {
-      new Vlitejs(audioElement, {})
+      this.vlitePlayer = new Vlitejs(audioElement, {}).player
     }
   }
 
@@ -140,5 +142,13 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
 
   handleError() {
     this.errorMode = true
+  }
+
+  toggleNsfw(event: MouseEvent) {
+    if (!this.nsfw) {
+      this.vlitePlayer?.pause() || this.videoElement?.nativeElement.pause()
+    }
+
+    this.nsfw = !this.nsfw
   }
 }

@@ -3,22 +3,20 @@
     <app-link-preview [link]="displayUrl()"></app-link-preview>
   }
 } @else {
-  <div class="media-container" [ngClass]="{ 'always-show-alt': alwaysShowAlt() }">
+  <div class="media-container" [class.always-show-alt]="alwaysShowAlt()">
     <div class="media-content-container">
       @if (
         (!extensionsToHideImgTag.includes(extension()) || mimeType() === 'UNKNOWN') && !mimeType().startsWith('video')
-        ) {
+      ) {
         @let forceImg = displayUrl();
         <img
           [src]="forceImg"
           [alt]="data().description"
           [width]="width()"
           [height]="height()"
-          [ngClass]="{
-            'displayed-image': true,
-            nsfw: nsfw
-          }"
-          />
+          class="displayed-image"
+          [class.nsfw]="nsfw"
+        />
       }
 
       @if (mimeType().startsWith('video')) {
@@ -26,16 +24,20 @@
           #videoelement
           (play)="showPicture()"
           preload="metadata"
-          [ngClass]="{
-            nsfw: nsfw,
-            'displayed-image': !nsfw
-          }"
+          class="displayed-image"
+          [class.nsfw]="nsfw"
           width="{{ width() }}"
           height="{{ height() }}"
           [controls]="enableVideoControls()"
-          >
+        >
           <source [src]="displayUrl()" [type]="mimeType()" />
         </video>
+      }
+
+      @if (mimeType().startsWith('audio')) {
+        <audio #audioelement [controls]="enableAudioControls()">
+          <source [src]="displayUrl()" [type]="mimeType()" />
+        </audio>
       }
     </div>
 
@@ -48,11 +50,6 @@
       @if (mimeType().startsWith('pdf')) {
         <a [href]="displayUrl()" target="_blank">Click here to see the PDF file that is embedded in this post</a>
       }
-      @if (mimeType().startsWith('audio')) {
-        <audio #audioelement [controls]="enableAudioControls()">
-          <source [src]="displayUrl()" [type]="mimeType()" />
-        </audio>
-      }
 
       @if (data().description) {
         @if (!alwaysShowAlt() && !mimeType().startsWith('text/html')) {
@@ -62,12 +59,12 @@
             (click)="descriptionVisible = !descriptionVisible"
             title="Show alt text"
             [ariaDescription]="'Show alt text'"
-            >
+          >
             ALT
           </button>
         }
-        <div class="px-2 py-1 image-description" [ngClass]="{ visible: descriptionVisible }">
-          <p class="m-0" [innerText]="data().description"></p>
+        <div class="px-2 py-1 image-description" [class.visible]="descriptionVisible">
+          <p class="m-0">{{ data().description }}</p>
         </div>
       }
 
@@ -75,10 +72,10 @@
         <button
           class="m-2 toggle-button toggle-nsfw"
           mat-raised-button
-          (click)="$event.stopPropagation(); nsfw = !nsfw"
+          (click)="toggleNsfw($event)"
           title="Hide image"
           [ariaDescription]="'Hide image'"
-          >
+        >
           <fa-icon [icon]="hideIcon"></fa-icon>
         </button>
       }
