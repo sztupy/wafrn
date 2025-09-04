@@ -16,6 +16,7 @@
 
 .reply-list {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.2rem 0.75ch;
   width: fit-content;
   border-bottom: 1px solid var(--mat-sys-surface-container-highest);
