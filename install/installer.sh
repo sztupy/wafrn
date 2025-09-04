@@ -7,6 +7,8 @@ if [ "$EUID" -eq 0 ]; then
   exit
 fi
 
+export ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )"/.. &> /dev/null && pwd )
+
 if [ "$1" == "--unattended" ]; then
   # This will be put there by cloud-init. We only need it to load up the variables then we can discard
   if [ -f /wafrn-cloud-config ]; then
@@ -15,6 +17,8 @@ if [ "$1" == "--unattended" ]; then
     sudo rm /wafrn-cloud-config
   fi
 else
+  cat $ROOT_DIR/docs/assets/logo.ansi.txt || true
+  echo
   echo "Remember, this script is made for Debian/Ubuntu based systems. It will install Docker, and then set up wafrn under it. Make sure you don't have anything running under ports 80 and 443"
   echo
   echo "Please make sure to read the docs before continuing. Or don't. You have been warned"
