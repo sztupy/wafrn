@@ -198,7 +198,7 @@
     }
 
     @if (uploadedMedias.length > 0) {
-      <section id="uploaded-media" [class.mb-3]="allDescriptionsFilled()">
+      <section class="mt-3" id="uploaded-media" [class.mb-3]="allDescriptionsFilled()">
         <div class="grid gap-3">
           @for (media of uploadedMedias; track media; let i = $index) {
             <div class="col-12 md:col relative">
