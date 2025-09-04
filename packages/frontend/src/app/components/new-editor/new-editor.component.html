@@ -259,7 +259,7 @@
         @for (tag of tags.split(','); track $index) {
           @if (tag && tag !== '' && tag.trim() !== '') {
             <span class="tag" [attr.data-tag]="tag.trim()"
-              ><span class="tag-text">#{{ tag.trim() }}</span></span
+              ><span class="tag-text">#{{ tagMap(tag) }}</span></span
             >
           }
         }
