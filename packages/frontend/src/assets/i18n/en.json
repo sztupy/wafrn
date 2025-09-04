@@ -109,6 +109,7 @@
     "wootQuoteConfirmButton": "Add woot as quote",
     "wootTextLabel": "Woot text",
     "wootTextPlaceholder": "Start writing...",
+    "uploadMediaIndicator": "Drop to upload media",
     "bskyLengthWarning": "Text above 300 characters will be cut off and instead a link to wafrn will be shown",
     "bskyLengthNotice": "This only affects Bluesky, currently only an approximation!",
     "altTextFieldLabel": "Image Description",
