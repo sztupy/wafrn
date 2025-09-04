@@ -1,7 +1,7 @@
 import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faKeyboard, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
@@ -68,6 +68,7 @@ export class HotkeyManagerComponent {
   lockedScrollingDirection: ScrollInput = null
   scrollDirection: ScrollInput = null
   offsetDialogButton: Signal<boolean>
+  dialogRef: MatDialogRef<HotkeyListComponent, DialogData> | undefined
 
   // Loaded and mapped from user profile
   shortcutListLookup: ShortcutFunctionMap = {
@@ -140,15 +141,19 @@ export class HotkeyManagerComponent {
   }
 
   openHotkeyListDialog() {
-    this.dialogService.closeAll()
-    const dialogRef = this.dialogService.open(HotkeyListComponent, {
+    if (this.dialogRef?.getState() === MatDialogState.OPEN) {
+      this.dialogRef.close()
+      return
+    }
+
+    this.dialogRef = this.dialogService.open<HotkeyListComponent, DialogData>(HotkeyListComponent, {
       width: '400px',
       data: {
         currentHotkeys: this.userMapping
       },
       closePredicate: () => hotkeysEnabled
     })
-    dialogRef.afterClosed().subscribe(() => {
+    this.dialogRef.afterClosed().subscribe(() => {
       this.shortcutList.set(this.mapHotkeys(this.userMapping))
       this.saveHotkeys()
     })
