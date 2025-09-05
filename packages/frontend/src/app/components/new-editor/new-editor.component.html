@@ -121,7 +121,7 @@
     }
 
     @if (showMentionedUsersList) {
-      <mat-chip-grid #chipGrid aria-label="Enter fruits">
+      <mat-chip-grid *ngIf="mentionedUsers.length >= 1" #chipGrid aria-label="Mentioned users" class="mb-2 mention-chip-grid">
         @for (user of mentionedUsers; track $index) {
           <mat-chip-row [editable]="true" (removed)="removeMention($index)">
             {{ user.url }}
