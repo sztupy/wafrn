@@ -179,7 +179,8 @@
       "notRecommendedOptions": "Not recommended options",
       "disableNSFWFilter": "Disable NSFW images filter",
       "automaticallyExpandAllPosts": "Automatically expand all posts",
-      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users"
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users",
+      "hideNoDescriptionMedia": "Automatically CW media with no alt text"
     },
     "privacy": {
       "defaultPostPrivacy": "Default post privacy",
