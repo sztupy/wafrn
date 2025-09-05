@@ -40,7 +40,7 @@ import { EditorService } from 'src/app/services/editor.service'
 import { LoginService } from 'src/app/services/login.service'
 import { PostsService } from 'src/app/services/posts.service'
 import { EmojiCollection } from 'src/app/interfaces/emoji-collection'
-import { from, debounceTime, Subscription } from 'rxjs'
+import { from, debounceTime, Subscription, Subject } from 'rxjs'
 import { JwtService } from 'src/app/services/jwt.service'
 import { AvatarSmallComponent } from '../avatar-small/avatar-small.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
@@ -637,12 +637,30 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   }
 
   handlePaste(event: ClipboardEvent) {
-    const item = event.clipboardData?.items[0]
-    if (item === undefined) return
+    const items = event.clipboardData?.items
+    const files = event.clipboardData?.files
+    console.log(files)
+    if (items === undefined) return
 
+    // Choose first matching media format
+    // Has to be a for loop because of evil APIs
     const mediaFormats = ['image', 'video', 'audio']
-    const itemIsMedia = mediaFormats.some((format) => item.type.includes(format))
-    if (!itemIsMedia) return
+    let item = undefined
+    for (let i = 0; i < items.length; i++) {
+      const element = items[i]
+      const itemIsMedia = mediaFormats.some((format) => element.type.includes(format))
+      if (element.type === 'application/x-moz-file') {
+        this.messages.add({
+          severity: 'warn',
+          summary: 'Firefox does not allow reading the clipboard from file explorers, try dragging the file in'
+        })
+      }
+      if (itemIsMedia) {
+        item = items[i]
+        break
+      }
+    }
+    if (item === undefined) return
 
     const image = item.getAsFile()
     if (!image) return
@@ -654,6 +672,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     event.preventDefault()
     this.draggingOverTextarea = false
 
+    const items = event.dataTransfer?.items
+
+    // Handle Firefox jank and guard for if we had to resort to dark arts
+    if (items && this.handleFirefoxJank(items)) return
+
     const item = event.dataTransfer?.files[0]
     if (item === undefined) return
 
@@ -662,6 +685,26 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     if (!itemIsMedia) return
 
     this.fileUploadComponent?.uploadFile(item)
+  }
+
+  // Returns true if we had to do it the evil way
+  handleFirefoxJank(items: DataTransferItemList): boolean {
+    for (let i = 0; i < items.length; i++) {
+      const element = items[i]
+
+      // we got a dragged file from the DOM so now we have to go to callback hell
+      // there's no way to await this, by the way
+      if (element.type === 'application/x-moz-file-promise-url') {
+        element.getAsString(async (url) => {
+          const blob = await fetch(url).then((res) => res.blob())
+          if (blob === null) return
+          const file = new File([blob], 'image.' + blob.type.split('/')[1], { type: blob.type })
+          this.fileUploadComponent?.uploadFile(file)
+        })
+        return true
+      }
+    }
+    return false
   }
 
   handleDrag(event: DragEvent) {
