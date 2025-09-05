@@ -34,7 +34,7 @@
   text-align: right;
   gap: 0.5rem;
   margin-top: 0.25rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: calc(1.25rem + 0.75rem);
 
   p {
     margin: 0;
@@ -179,4 +179,8 @@ svg {
 
 #tags .mat-mdc-text-field-wrapper {
   background-color: var(--mat-sys-surface-container-high) !important;
+}
+
+.menu-hr {
+  margin-top: -1rem;
 }
