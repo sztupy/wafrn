@@ -59,8 +59,8 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       if (post.bskyDid) {
         // we do same check for all parents
 
-        const parentsUserUrls = ancestors.map((elem) => elem.user.url)
-        if (parentsUserUrls.some((elem) => elem.split('@').length == 2)) {
+        const parentsUsers = ancestors.map((elem) => elem.user)
+        if (parentsUsers.some((elem) => elem.isBlueskyUser)) {
           return undefined
         }
       }
@@ -96,9 +96,8 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
   // we remove the wafrnmedia from the post for the outside world, as they get this on the attachments
   processedContent = processedContent.replaceAll(wafrnMediaRegex, '')
   if (ask) {
-    processedContent = `<p>${getUserName(userAsker)} <a href="${
-      completeEnvironment.frontendUrl + '/fediverse/post/' + post.id
-    }">asked</a> </p> <blockquote>${ask.question}</blockquote> ${processedContent}`
+    processedContent = `<p>${getUserName(userAsker)} <a href="${completeEnvironment.frontendUrl + '/fediverse/post/' + post.id
+      }">asked</a> </p> <blockquote>${ask.question}</blockquote> ${processedContent}`
   }
   const mentions: string[] = post.mentionPost.map((elem: any) => elem.id)
   const fediMentions: fediverseTag[] = []
@@ -140,10 +139,8 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
     const user =
       (await User.findOne({ where: { id: userId } })) ||
       ((await User.findOne({ where: { url: completeEnvironment.deletedUser } })) as User)
-    const url = user.url.startsWith('@') ? user.url : `@${user.url}@${completeEnvironment.instanceUrl}`
-    const remoteId = user.url.startsWith('@')
-      ? user.remoteId
-      : `${completeEnvironment.frontendUrl}/fediverse/blog/${user.url}`
+    const url = user.fullHandle
+    const remoteId = user.fullFediverseUrl
     if (remoteId) {
       fediMentions.push({
         type: 'Mention',
@@ -264,8 +261,8 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
         post.privacy / 1 === Privacy.DirectMessage
           ? mentionedUsers
           : post.privacy / 1 === Privacy.Public
-          ? ['https://www.w3.org/ns/activitystreams#Public']
-          : [stringMyFollowers],
+            ? ['https://www.w3.org/ns/activitystreams#Public']
+            : [stringMyFollowers],
       cc: [`${completeEnvironment.frontendUrl}/fediverse/blog/${localUser.url.toLowerCase()}`, stringMyFollowers],
       object: parentPostString
     }
@@ -298,7 +295,7 @@ function getToAndCC(
       break
     }
     default: {
-      ;(to = mentionedUsers), (cc = [])
+      ; (to = mentionedUsers), (cc = [])
     }
   }
   return {
@@ -324,10 +321,9 @@ function getUserName(user?: { url: string }): string {
 }
 
 function getPostUrlForQuote(post: any): string {
-  const isPostFromBsky = !!post.bskyUri
   const isPostFromFedi = !!post.remotePostId
   let res = `${completeEnvironment.frontendUrl}/fediverse/post/${post.id}`
-  if (isPostFromBsky && post.user.url.startsWith('@')) {
+  if (post.isRemoteBlueskyPost) {
     const parts = post.bskyUri.split('/app.bsky.feed.post/')
     const userDid = parts[0].split('at://')[1]
     res = `https://bsky.app/profile/${userDid}/post/${parts[1]}`

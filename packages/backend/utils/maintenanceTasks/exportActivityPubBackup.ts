@@ -181,7 +181,7 @@ async function exportBackup(userUrl: string, exportType: string): Promise<string
               if (postUser.remoteId) {
                 postData.object.attributedTo = postUser.remoteId
               }
-              if (postUser.url.startsWith('@')) {
+              if (postUser.isRemoteUser) {
                 // local posts also have bskyUri so this is to determine if this is a remote bluesky post&user
                 if (post.bskyUri) {
                   postData.object.id = post.bskyUri
@@ -193,7 +193,7 @@ async function exportBackup(userUrl: string, exportType: string): Promise<string
 
               const postParent = post.parentId && (await post.getParent({ include: 'user' }))
               if (postParent) {
-                if (postParent.user.url.startsWith('@') && postParent.bskyUri) {
+                if (postParent.isRemoteBlueskyPost) {
                   postData.object.inReplyTo = postParent.bskyUri
                 }
               }
@@ -228,12 +228,7 @@ async function exportBackup(userUrl: string, exportType: string): Promise<string
 
     for (const like of await user.getUserLikesPostRelations({ include: Post })) {
       if (like.post) {
-        const postUser = await like.post.getUser()
-        const postRemoteId =
-          like.post.remotePostId ||
-          (postUser.url.startsWith('@') && like.post.bskyUri
-            ? like.post.bskyUri
-            : `${completeEnvironment.frontendUrl}/fediverse/post/${like.post.id}`)
+        const postRemoteId = await like.post.fullUrlIncludingBsky()
         likes.orderedItems.push(postRemoteId)
       }
     }
@@ -251,12 +246,7 @@ async function exportBackup(userUrl: string, exportType: string): Promise<string
 
     for (const bookmark of await user.getUserBookmarkedPosts({ include: Post })) {
       if (bookmark.post) {
-        const postUser = await bookmark.post.getUser()
-        const postRemoteId =
-          bookmark.post.remotePostId ||
-          (postUser.url.startsWith('@') && bookmark.post.bskyUri
-            ? bookmark.post.bskyUri
-            : `${completeEnvironment.frontendUrl}/fediverse/post/${bookmark.post.id}`)
+        const postRemoteId = await bookmark.post.fullUrlIncludingBsky()
         bookmarks.orderedItems.push(postRemoteId)
       }
     }

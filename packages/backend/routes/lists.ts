@@ -20,6 +20,10 @@ export default function listRoutes(app: Application) {
       if (req.file) {
         try {
           const petitionBy = await User.findByPk(req.jwtData?.userId)
+          if (!petitionBy) {
+            res.sendStatus(401)
+            return
+          }
           const lines: string[] = (await fs.readFile(req.file.path, 'utf8'))
             .split('\n')
             .map((elem) => elem.split(',')[0])

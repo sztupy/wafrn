@@ -91,7 +91,7 @@ async function postToAtproto(post: Post, agent: BskyAgent) {
       if (user.remoteMentionUrl) {
         // A Fedi user url already has an @ in the start
         mentionRegex = new RegExp(`(?<=\\s|^)(${escapedUrl})(?=\\s|$)`, 'gm')
-        postText = postText.replaceAll(mentionRegex, `[@${user.url.split('@')[1]}](${user.remoteMentionUrl})`)
+        postText = postText.replaceAll(mentionRegex, `[@${user.shortHandle}](${user.remoteMentionUrl})`)
         continue
       }
 
