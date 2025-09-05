@@ -327,7 +327,8 @@ export class LoginService {
       replaceAIWithCocaine: 'wafrn.replaceAIWithCocaine',
       replaceAIWord: 'wafrn.replaceAIWord',
       hideQuotes: 'wafrn.hideQuotes',
-      displayMentionsOfBlockedUsersFromOtherUsers: 'wafrn.displayMentionsOfBlockedUsersFromOtherUsers'
+      displayMentionsOfBlockedUsersFromOtherUsers: 'wafrn.displayMentionsOfBlockedUsersFromOtherUsers',
+      hideNoDescriptionMedia: 'wafrn.hideNoDescriptionMedia'
     }
 
     try {

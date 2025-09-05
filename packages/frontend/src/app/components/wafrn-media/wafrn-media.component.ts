@@ -54,7 +54,8 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
     this.nonsentitiveMedia.includes(this.mimeType()?.split('/')[0])
   )
 
-  disableNSFWFilter = true
+  disableNSFWFilter: boolean
+  hideNoDescriptionMedia: boolean
 
   originallyNsfw = true
   nsfw = true
@@ -70,11 +71,14 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
     private cdr: ChangeDetectorRef
   ) {
     this.disableNSFWFilter = mediaService.checkNSFWFilterDisabled()
+    this.hideNoDescriptionMedia = (localStorage.getItem('hideNoDescriptionMedia') ?? 'false') === 'true'
   }
 
   ngOnChanges(): void {
+    const noDescription = this.data().description === null
+    const hasFilteredWords = this.filteredWords() !== undefined
     this.nsfw =
-      (this.data().NSFW || this.data().description === null || this.filteredWords() !== undefined) &&
+      (this.data().NSFW || (noDescription && this.hideNoDescriptionMedia) || hasFilteredWords) &&
       !this.disableNSFWFilter
     this.originallyNsfw = this.nsfw
 
