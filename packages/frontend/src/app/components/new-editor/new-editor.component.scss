@@ -1,3 +1,15 @@
+@use '@angular/material' as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+.wafrn-post-editor {
+  @include mat.form-field-overrides((
+    outlined-outline-width: 0px,
+    outlined-focus-outline-width: 0px,
+    outlined-outline-color: 0px,
+    outlined-container-shape: 0px 0px
+  ));
+}
+
 .taglist {
   margin-top: -8px;
   margin-bottom: 8px;
@@ -163,4 +175,8 @@ app-media-preview {
 
 svg {
   display: block;
+}
+
+#tags .mat-mdc-text-field-wrapper {
+  background-color: var(--mat-sys-surface-container-high) !important;
 }
