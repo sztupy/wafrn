@@ -1,5 +1,5 @@
 import { User } from '../../models/index.js'
-import { completeEnvironment } from '../backendOptions.js'
+import { getLocalUsernameFromRemoteId } from '../../models/user.js'
 import { redisCache } from '../redis.js'
 
 async function getUserIdFromRemoteId(remoteId: string): Promise<string> {
@@ -8,19 +8,12 @@ async function getUserIdFromRemoteId(remoteId: string): Promise<string> {
   if (cacheResult) {
     res = cacheResult
   } else {
-    const user = remoteId.startsWith(completeEnvironment.frontendUrl)
-      ? await User.findOne({
-          attributes: ['id'],
-          where: {
-            url: remoteId.split(`${completeEnvironment.instanceUrl}/fediverse/blog/`)[1].split('@')[0]
-          }
-        })
-      : await User.findOne({
-          attributes: ['id'],
-          where: {
-            remoteId: remoteId
-          }
-        })
+    const user = await User.findOne({
+      attributes: ['id'],
+      where: {
+        url: getLocalUsernameFromRemoteId(remoteId)
+      }
+    })
     if (user) {
       res = user.id
       await redisCache.set('userRemoteId:' + remoteId.toLocaleLowerCase(), res, 'EX', 1000)

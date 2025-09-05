@@ -364,4 +364,17 @@ export class Post extends Model<PostAttributes, PostAttributes> implements PostA
   get fullUrl() {
     return this.remotePostId || `${completeEnvironment.frontendUrl}/fediverse/post/${this.id}`
   }
+
+  // only use if the user is already loaded into the object, otherwise use `await isRemoteBlueskyPost()`
+  isRemoteBlueskyPostSync() {
+    return this.bskyUri && this.user.isRemoteUser
+  }
+
+  async isRemoteBlueskyPost() {
+    return this.bskyUri && (await this.getUser()).isRemoteUser
+  }
+
+  async fullUrlIncludingBsky() {
+    return this.remotePostId || ((await this.isRemoteBlueskyPost()) ? this.bskyUri : `${completeEnvironment.frontendUrl}/fediverse/post/${this.id}`)
+  }
 }

@@ -44,6 +44,7 @@ import { getAtProtoThread } from '../atproto/utils/getAtProtoThread.js'
 import dompurify from 'isomorphic-dompurify'
 import { Privacy, PrivacyType } from '../models/post.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { addHandlePrefix } from '../models/user.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -219,7 +220,7 @@ export default function postsRoutes(app: Application) {
         return
       }
 
-      if (blog.url.startsWith('@') && !req.jwtData?.userId) {
+      if (blog.isRemoteUser && !req.jwtData?.userId) {
         // require auth to see external user blog
         return res.sendStatus(403)
       }
@@ -296,7 +297,7 @@ export default function postsRoutes(app: Application) {
         if (!posterUser?.enableBsky && parent) {
           if (parent.bskyUri) {
             const parentPoster = await User.findByPk(parent.userId)
-            if (parentPoster?.url.startsWith('@')) {
+            if (parentPoster?.isRemoteUser) {
               return res.status(403).send({ success: false, message: 'You need to enable bluesky' })
             } else {
               // we do same check for all parents
@@ -319,8 +320,8 @@ export default function postsRoutes(app: Application) {
                     }
                   }
                 })
-                const parentsUserUrls = ancestors.map((elem) => elem.user.url)
-                if (parentsUserUrls.some((elem) => elem.split('@').length == 2)) {
+                const parentsUser = ancestors.map((elem) => elem.user)
+                if (parentsUser.some((elem) => elem.isBlueskyUser)) {
                   return res.status(403).send({ success: false, message: 'You need to enable bluesky' })
                 }
               }
@@ -399,19 +400,19 @@ export default function postsRoutes(app: Application) {
           // only count on reblogs
           const blocksExistingOnParents = parent
             ? await Blocks.count({
-                where: {
-                  [Op.or]: [
-                    {
-                      blockerId: posterId,
-                      blockedId: parent.userId
-                    },
-                    {
-                      blockedId: posterId,
-                      blockerId: parent.userId
-                    }
-                  ]
-                }
-              })
+              where: {
+                [Op.or]: [
+                  {
+                    blockerId: posterId,
+                    blockedId: parent.userId
+                  },
+                  {
+                    blockedId: posterId,
+                    blockerId: parent.userId
+                  }
+                ]
+              }
+            })
             : 0
           if (blocksExistingOnParents + bannedUsers > 0) {
             success = false
@@ -425,8 +426,8 @@ export default function postsRoutes(app: Application) {
         const content_warning = req.body.content_warning
           ? req.body.content_warning.trim()
           : posterUser?.NSFW
-          ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
-          : ''
+            ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+            : ''
         let mediaToAdd: any[] = []
         const avaiableEmojis = await getAvaiableEmojis()
         // we parse the content and we search emojis:
@@ -463,7 +464,7 @@ export default function postsRoutes(app: Application) {
         }
         content = content.replaceAll(mentionRegex, (userUrl: string) => userUrl.toLowerCase())
 
-        let dbFoundMentions: any[] = []
+        let dbFoundMentions: User[] = []
         const newMentionedUsers = req.body.mentionedUserIds || req.body.mentionedUsersIds || []
         if (postToBeQuoted) {
           newMentionedUsers.push(postToBeQuoted.userId)
@@ -493,7 +494,7 @@ export default function postsRoutes(app: Application) {
         }
 
         if (dbFoundMentions.length > 0) {
-          mentionsToAdd = mentionsToAdd.concat(dbFoundMentions.map((usr: any) => usr.id))
+          mentionsToAdd = mentionsToAdd.concat(dbFoundMentions.map((usr) => usr.id))
 
           // we check if user federates with threads and if not we check they are not mentioning anyone from threads
           const options = await getUserOptions(posterId)
@@ -501,7 +502,7 @@ export default function postsRoutes(app: Application) {
             (elem) => elem.optionName === 'wafrn.federateWithThreads' && elem.optionValue === 'true'
           )
           if (userFederatesWithThreads.length === 0) {
-            if (dbFoundMentions.some((usr: any) => usr.url.toLowerCase().endsWith('.threads.net'))) {
+            if (dbFoundMentions.some((usr) => usr.url.toLowerCase().endsWith('.threads.net'))) {
               success = false
               res.status(403)
               res.send({
@@ -545,20 +546,12 @@ export default function postsRoutes(app: Application) {
             return null
           }
 
-          const sortedMentions = dbFoundMentions.sort((a: any, b: any) => a.url.length - b.url.length)
+          const sortedMentions = dbFoundMentions.sort((a, b) => a.url.length - b.url.length)
           for (let userMentioned of sortedMentions) {
-            const url =
-              !userMentioned.url.trim().startsWith('@') && userMentioned.url.split('.').length == 1
-                ? `${userMentioned.url.trim()}`
-                : userMentioned.url.split('@')[1].trim()
-            const remoteId =
-              userMentioned.url.split('@').length > 2
-                ? userMentioned.remoteId
-                : `${completeEnvironment.frontendUrl}/fediverse/blog/${userMentioned.url}`
+            const url = userMentioned.shortHandle
+            const remoteId = userMentioned.fullFediverseUrl
             const remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
-            const stringToReplace = userMentioned.url.startsWith('@')
-              ? userMentioned.url.toLowerCase()
-              : `@${userMentioned.url.toLowerCase()}`
+            const stringToReplace = addHandlePrefix(userMentioned.url.toLowerCase())
             const targetString = `<span class="h-card" translate="no"><a href="${remoteUrl}" class="u-url mention">@<span>${url}</span></a></span>`
             content = content.replace(`${stringToReplace}`, `${targetString}`).trim()
           }

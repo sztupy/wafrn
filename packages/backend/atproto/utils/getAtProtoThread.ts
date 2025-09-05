@@ -56,7 +56,7 @@ async function getAtProtoThread(
         indexedAt: new Date().toISOString(),
         author: {
           did: operation.remoteUser.bskyDid as string,
-          handle: operation.remoteUser.url.split('@')[1],
+          handle: operation.remoteUser.shortHandle,
           displayName: operation.remoteUser.name
         }
       }

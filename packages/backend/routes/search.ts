@@ -22,6 +22,7 @@ import { getAtProtoThread } from '../atproto/utils/getAtProtoThread.js'
 import { logger } from '../utils/logger.js'
 import { Privacy } from '../models/post.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { addHandlePrefix, splitHandle } from '../models/user.js'
 export default function searchRoutes(app: Application) {
   app.get('/api/userSearch/:term', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     const posterId = req.jwtData?.userId ? req.jwtData.userId : '00000000-0000-0000-0000-000000000000'
@@ -252,18 +253,19 @@ export default function searchRoutes(app: Application) {
     // WILL ALWAYS ADD INITIAL @ SO WE CAN AUTOCOMPLETE ON POST EDITOR
     // search exact url match and forces update in local db.
     // only search in bsky if user has enabed bsky
-    const searchTerm = searchTermIncomplete.startsWith('@') ? searchTermIncomplete : `@${searchTermIncomplete}`
-    const searchTermSplitted = searchTerm.split('@')
+    const searchTerm = addHandlePrefix(searchTermIncomplete)
+
+    const searchData = splitHandle(searchTerm)
+
     let result: User | null = null
 
     if (
       completeEnvironment.enableBsky &&
       usr.enableBsky &&
-      searchTermSplitted.length === 2 &&
-      searchTermSplitted[0] == ''
+      searchData.type === "bluesky"
     ) {
       try {
-        const bskySearchResult = await getAtprotoUser(searchTerm.split('@')[1], usr)
+        const bskySearchResult = await getAtprotoUser(searchData.username, usr)
         if (bskySearchResult && bskySearchResult.url != completeEnvironment.deletedUser) {
           result = bskySearchResult
         }
@@ -276,7 +278,7 @@ export default function searchRoutes(app: Application) {
     }
 
     // we have a full @fediUser@fediServer url. Time to search!
-    if (!result && searchTermSplitted.length === 3) {
+    if (!result && searchData.type === "fediverse") {
       result = await searchRemoteUser(searchTerm, usr)
     }
     return result

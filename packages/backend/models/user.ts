@@ -544,6 +544,14 @@ export class User extends Model<UserAttributes, UserAttributes> implements UserA
   })
   declare userMigratedTo: string
 
+  get isRemoteUser() {
+    return !!this.url.startsWith('@')
+  }
+
+  get isLocalUser() {
+    return !this.isRemoteUser
+  }
+
   get isBlueskyUser() {
     return !!(this.url.split('@').length == 2 && this.bskyDid)
   }
@@ -552,15 +560,86 @@ export class User extends Model<UserAttributes, UserAttributes> implements UserA
     return !!(this.url.split('@').length == 3 && this.remoteId)
   }
 
+  get shortHandle() {
+    if (this.isBlueskyUser)
+      return this.url.split('@')[1].split('.')[0];
+
+    if (this.isFediverseUser)
+      return this.url.split('@')[1]
+
+    return this.url
+  }
+
+  get fullHandle() {
+    return this.isRemoteUser ? this.url : `@${this.url}@${completeEnvironment.instanceUrl}`
+  }
+
   get fullUrl() {
     return this.remoteId || `${completeEnvironment.frontendUrl}/blog/${this.url}`
   }
 
+  get fullFediverseUrl() {
+    return this.isRemoteUser ? this.remoteId : `${completeEnvironment.frontendUrl}/fediverse/blog/${this.url}`
+  }
+
   get avatarFullUrl() {
-    return this.url.startsWith('@') ? this.avatar : `${completeEnvironment.mediaUrl}${this.avatar}`
+    return this.isRemoteUser ? this.avatar : `${completeEnvironment.mediaUrl}${this.avatar}`
   }
 
   get headerImageFullUrl() {
-    return this.url.startsWith('@') ? this.headerImage : `${completeEnvironment.mediaUrl}${this.headerImage}`
+    return this.isRemoteUser ? this.headerImage : `${completeEnvironment.mediaUrl}${this.headerImage}`
   }
+}
+
+export function getLocalUsernameFromLocalRemoteId(remoteId: string) {
+  return remoteId.split(`${completeEnvironment.instanceUrl}/fediverse/blog/`)[1].split('@')[0]
+}
+
+export function getLocalUsernameFromRemoteId(remoteId: string) {
+  return remoteId.startsWith(completeEnvironment.frontendUrl) ? getLocalUsernameFromLocalRemoteId(remoteId) : remoteId
+}
+
+export interface HandleData {
+  username: string
+  handle: string
+  domain: string
+  type: "fediverse" | "bluesky" | "local"
+}
+
+export function splitHandle(handleString: string): HandleData {
+  handleString = handleString.trim()
+  if (handleString.startsWith('@') && handleString.length > 3) {
+    const userData = handleString.split('@')
+    if (userData.length === 3 && userData[0] == '') {
+      const username = userData[1]
+      const domain = userData[2]
+      return {
+        handle: handleString,
+        username: username,
+        domain: domain,
+        type: "fediverse"
+      }
+    } else if (userData.length === 2 && userData[0] == '') {
+      const handle = userData[1]
+      const elements = handle.split('.')
+      const username = elements.shift() as string
+      const domain = elements.join('.')
+      return {
+        handle: handle,
+        username: username,
+        domain: domain,
+        type: "bluesky"
+      }
+    }
+  }
+  return {
+    username: handleString,
+    handle: handleString,
+    domain: completeEnvironment.instanceUrl,
+    type: "local"
+  }
+}
+
+export function addHandlePrefix(handle: string) {
+  return handle.startsWith('@') ? handle : `@${handle}`
 }
