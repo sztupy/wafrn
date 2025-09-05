@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'fs'
 
 /**
  * Options for patchObjects()
@@ -99,6 +99,10 @@ function main(): void {
 function patchFile(sourceFileName: string, patchFileName: string): void {
   const sourceFile = cliOpts.folderPath + sourceFileName
   const patchFile = cliOpts.folderPath + patchFileName
+  if (!fs.existsSync(patchFile)) {
+    console.log("File to patch did not exist, creating file", patchFile);
+    fs.copyFileSync(sourceFile, patchFile)
+  }
 
   console.log('Patching', sourceFile, 'to', patchFile)
 
@@ -106,5 +110,5 @@ function patchFile(sourceFileName: string, patchFileName: string): void {
   const patchLang = <Object>require(patchFile)
 
   const patched = patchObjects(defaultLang, patchLang)
-  fs.writeFile(patchFile, JSON.stringify(patched))
+  fs.writeFileSync(patchFile, JSON.stringify(patched))
 }
