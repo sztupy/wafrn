@@ -219,16 +219,16 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
 
     switch (action) {
       case 'likePost':
-        await this.bottomReplyBar()?.toggleLike(this.finalPost)
+        await this.bottomReplyBar()?.toggleLike()
         break
       case 'rewootPost':
-        await this.bottomReplyBar()?.toggleReblog(this.finalPost)
+        await this.bottomReplyBar()?.toggleReblog()
         break
       case 'replyPost':
-        await this.bottomReplyBar()?.replyPost(this.finalPost)
+        await this.bottomReplyBar()?.replyPost()
         break
       case 'quotePost':
-        await this.bottomReplyBar()?.quotePost(this.finalPost)
+        await this.bottomReplyBar()?.quotePost()
         break
       case 'bookmarkPost':
         await this.bottomReplyBar()?.toggleBookmark()
