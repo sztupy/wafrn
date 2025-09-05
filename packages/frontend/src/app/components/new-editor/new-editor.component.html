@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <hr class="mt-1" />
+  <hr class="mt-1 evil-hr" />
 
   <div class="post-editor-data">
     @if (editing) {
@@ -158,7 +158,7 @@
     }
 
     <form class="relative" [formGroup]="postCreatorForm">
-      <mat-form-field class="w-full mat-form-field-no-padding" appearance="outline">
+      <mat-form-field class="w-full mat-form-field-no-padding woot-textfield" appearance="outline">
         <mat-label>{{ 'editor.wootTextLabel' | translate }}</mat-label>
         <textarea
           id="postCreatorContent"
@@ -186,6 +186,7 @@
     <mat-progress-bar
       *ngIf="postService.enableBluesky && (!data?.post || data?.post?.bskyUri) && privacy === 0"
       mode="determinate"
+      class="bsky-progress-bar"
       [class.length-overflow]="calculateBskyPostLengthPercent() > 1"
       [value]="calculateBskyPostLengthPercent() * 100"
     >

@@ -181,6 +181,20 @@ svg {
   background-color: var(--mat-sys-surface-container-high) !important;
 }
 
+.woot-textfield {
+  margin-top: 0.25rem;
+}
+
 .menu-hr {
   margin-top: -1rem;
+}
+
+.evil-hr {
+  border: none;
+  border-bottom: 2px dashed var(--mat-sys-outline-variant);
+  margin-inline: -1rem;
+}
+
+.bsky-progress-bar {
+  margin-inline: -1rem; width: calc(100% + 2rem);
 }
