@@ -6,6 +6,11 @@
   --mat-button-protected-container-color: var(--mat-sys-surface-container-high);
 }
 
+.muted-words {
+  color: var(--mat-sys-outline);
+  font-size: 0.9rem;
+}
+
 .post-content.hidden {
   display: none !important;
 }
