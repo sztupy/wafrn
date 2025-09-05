@@ -33,8 +33,7 @@
   justify-content: right;
   text-align: right;
   gap: 0.5rem;
-  margin-top: 0.25rem;
-  margin-bottom: calc(1.25rem + 0.75rem);
+  margin-bottom: 1.25rem;
 
   p {
     margin: 0;
@@ -196,5 +195,6 @@ svg {
 }
 
 .bsky-progress-bar {
-  margin-inline: -1rem; width: calc(100% + 2rem);
+  margin-inline: -1rem; 
+  width: calc(100% + 2rem);
 }
