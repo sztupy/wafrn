@@ -9,6 +9,7 @@ import sendActivationEmail from '../utils/sendActivationEmail.js'
 import { UserAttributes } from '../models/user.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
 import { logger } from '../utils/logger.js'
+import { getAllLocalUserIds } from '../utils/cacheGetters/getAllLocalUserIds.js'
 
 export default function adminRoutes(app: Application) {
   app.get('/api/admin/server-list', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
@@ -92,7 +93,21 @@ export default function adminRoutes(app: Application) {
             as: 'blocked',
             attributes: ['url', 'avatar']
           }
-        ]
+        ],
+        where: {
+          [Op.or]: [
+            {
+              blockedId: {
+                [Op.in]: await getAllLocalUserIds()
+              }
+            },
+            {
+              blockerId: {
+                [Op.in]: await getAllLocalUserIds()
+              }
+            }
+          ]
+        }
       }),
       userServerBlocks: await ServerBlock.findAll({
         include: [
