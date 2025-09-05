@@ -193,6 +193,7 @@ export class BottomReplyBarComponent implements OnChanges {
   }
 
   async bookmarkPost() {
+    this.loadingAction = true
     if (await this.postService.bookmarkPost(this.fragment.id)) {
       this.fragment.bookmarkers.push(this.myId)
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
@@ -208,9 +209,11 @@ export class BottomReplyBarComponent implements OnChanges {
         summary: 'Something went wrong. Please try again'
       })
     }
+    this.loadingAction = false
   }
 
   async unbookmarkPost() {
+    this.loadingAction = true
     if (await this.postService.unbookmarkPost(this.fragment.id)) {
       this.fragment.bookmarkers = this.fragment.bookmarkers.filter((elem) => elem != this.myId)
       this.messages.add({
@@ -224,6 +227,7 @@ export class BottomReplyBarComponent implements OnChanges {
         summary: 'Something went wrong. Please try again'
       })
     }
+    this.loadingAction = false
   }
 
   async toggleReblog() {

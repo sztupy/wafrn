@@ -68,6 +68,7 @@
           color="accent"
           (click)="unbookmarkPost()"
           class="cursor-pointer unlike-icon"
+          [disabled]="loadingAction"
         >
           <fa-icon size="lg" [icon]="unbookmarkIcon" matTooltip="Unbookmark woot"></fa-icon>
         </button>
@@ -78,6 +79,7 @@
           color="accent"
           (click)="bookmarkPost()"
           class="cursor-pointer unlike-icon"
+          [disabled]="loadingAction"
         >
           <fa-icon size="lg" [icon]="bookmarkIcon" matTooltip="Bookmark woot"></fa-icon>
         </button>
@@ -90,6 +92,7 @@
             color="accent"
             (click)="unlikePost()"
             class="cursor-pointer unlike-icon"
+            [disabled]="loadingAction"
           >
             <fa-icon size="lg" [icon]="clearHeartIcon" matTooltip="Remove like"></fa-icon>
           </button>
@@ -101,6 +104,7 @@
             color="accent"
             (click)="likePost()"
             class="cursor-pointer like-icon"
+            [disabled]="loadingAction"
           >
             <fa-icon size="lg" [icon]="solidHeartIcon" matTooltip="Like woot"></fa-icon>
           </button>
