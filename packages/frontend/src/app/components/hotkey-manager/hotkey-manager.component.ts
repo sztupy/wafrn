@@ -40,8 +40,8 @@ const defaultKeybinds: HotkeyConfig = {
   previousPost: 'p',
   likePost: 'l',
   rewootPost: 'R',
-  replyPost: 'r',
-  quotePost: 'q',
+  replyPost: 'E',
+  quotePost: 'Q',
   bookmarkPost: 'b',
   openEditor: 'e',
   viewKeyboardShortcuts: '?'
