@@ -56,6 +56,7 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
 
   disableNSFWFilter = true
 
+  originallyNsfw = true
   nsfw = true
   viewLongImage = false
   descriptionVisible = false
@@ -75,6 +76,8 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
     this.nsfw =
       (this.data().NSFW || this.data().description === null || this.filteredWords() !== undefined) &&
       !this.disableNSFWFilter
+    this.originallyNsfw = this.nsfw
+
     this.cdr.markForCheck()
   }
 

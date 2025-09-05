@@ -63,8 +63,10 @@
           <p>{{ 'media.noAltText' | translate }}</p>
         } @else if (filteredWords()) {
           <p>{{ 'post-fragment.mutedWords' | translate }} {{ filteredWords() }}</p>
-        } @else {
+        } @else if (originallyNsfw) {
           <p>{{ 'media.sensitiveContent' | translate }}</p>
+        } @else {
+          <p>{{ 'media.manuallyHidden' | translate }}</p>
         }
         <button mat-raised-button (click)="showPicture()">Show media</button>
       </div>

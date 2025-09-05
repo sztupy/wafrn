@@ -275,7 +275,8 @@
   },
   "media": {
     "noAltText": "Media does not have alt text",
-    "sensitiveContent": "This media contains sensitive content"
+    "sensitiveContent": "This media contains sensitive content",
+    "manuallyHidden": "Media manually hidden"
   },
   "page-not-found": {
     "title": "404: page not found",
