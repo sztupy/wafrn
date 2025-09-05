@@ -82,6 +82,8 @@
     </div>
   </div>
 
+  <hr class="mt-1 evil-hr" />
+
   <div class="post-editor-data">
     @if (editing) {
       <h4 class="mt-3">You are editing your woot</h4>
@@ -115,6 +117,7 @@
           matNativeControl
         />
       </mat-form-field>
+      <hr class="menu-hr" />
     }
 
     @if (showMentionedUsersList) {
@@ -151,10 +154,11 @@
           </button>
         </mat-card>
       }
+      <hr class="menu-hr" />
     }
 
     <form class="relative" [formGroup]="postCreatorForm">
-      <mat-form-field class="w-full mat-form-field-no-padding" appearance="outline">
+      <mat-form-field class="w-full mat-form-field-no-padding woot-textfield" appearance="outline" floatLabel="always">
         <mat-label>{{ 'editor.wootTextLabel' | translate }}</mat-label>
         <textarea
           id="postCreatorContent"
@@ -170,6 +174,8 @@
           rows="4"
           placeholder="{{ 'editor.wootTextPlaceholder' | translate }}"
           matNativeControl
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="7"
           autofocus
         ></textarea>
       </mat-form-field>
@@ -180,6 +186,7 @@
     <mat-progress-bar
       *ngIf="postService.enableBluesky && (!data?.post || data?.post?.bskyUri) && privacy === 0"
       mode="determinate"
+      class="bsky-progress-bar"
       [class.length-overflow]="calculateBskyPostLengthPercent() > 1"
       [value]="calculateBskyPostLengthPercent() * 100"
     >
