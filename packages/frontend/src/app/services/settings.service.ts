@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
+import { debounceTime, Subject } from 'rxjs'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -89,6 +90,8 @@ export class SettingsService {
   // Transform the data into the groups
   public groupsTransformed = this.transformSettingGroups(this.groups)
 
+  public settingsUpdatedSubject = new Subject<void>()
+
   constructor(
     private dashboardService: DashboardService,
     private jwtService: JwtService
@@ -104,6 +107,12 @@ export class SettingsService {
     this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
       this.values.avatar = blogDetails.avatar
       this.values.name = blogDetails.name
+    })
+
+    // Listen for and save updated settings
+    // Debounced so we don't spam the server
+    this.settingsUpdatedSubject.pipe(debounceTime(2000)).subscribe(() => {
+      this.saveSettings()
     })
   }
 
@@ -136,5 +145,9 @@ export class SettingsService {
         value: this.data[key]
       }))
     }))
+  }
+
+  saveSettings() {
+    console.log('saved settings')
   }
 }

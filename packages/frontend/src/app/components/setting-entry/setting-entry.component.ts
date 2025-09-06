@@ -24,22 +24,25 @@ export class SettingEntryComponent {
 
   matFormFieldElements = viewChildren('formSelect')
 
-  constructor(settingsService: SettingsService) {
+  constructor(private settingsService: SettingsService) {
     this.data = settingsService.data
   }
 
   updateCheckbox(key: SettingKey, event: MatCheckboxChange) {
     this.values()[key] = event.checked
+    this.settingsService.settingsUpdatedSubject.next()
   }
 
   updateSelect(key: SettingKey, event: MatSelectChange) {
     this.values()[key] = event.value
+    this.settingsService.settingsUpdatedSubject.next()
   }
 
   updateInput(key: SettingKey, event: Event) {
     const target = event.target
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       this.values()[key] = target.value
+      this.settingsService.settingsUpdatedSubject.next()
     }
   }
 }
