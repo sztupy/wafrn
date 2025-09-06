@@ -72,10 +72,22 @@ export class HotkeyManagerComponent {
 
   // Loaded and mapped from user profile
   shortcutListLookup: ShortcutFunctionMap = {
-    scrollDown: () => this.scrollDown(),
-    scrollUp: () => this.scrollUp(),
-    scrollDownPage: () => this.scrollDownPage(),
-    scrollUpPage: () => this.scrollUpPage(),
+    scrollDown: () => {
+      this.broadcastHotkey('scrollDown')
+      this.scrollDown()
+    },
+    scrollUp: () => {
+      this.broadcastHotkey('scrollUp')
+      this.scrollUp()
+    },
+    scrollDownPage: () => {
+      this.broadcastHotkey('scrollUpPage')
+      this.scrollDownPage()
+    },
+    scrollUpPage: () => {
+      this.broadcastHotkey('scrollDownPage')
+      this.scrollUpPage()
+    },
     nextPost: () => this.broadcastHotkey('nextPost'),
     previousPost: () => this.broadcastHotkey('previousPost'),
     likePost: () => this.broadcastHotkey('likePost'),
@@ -83,8 +95,14 @@ export class HotkeyManagerComponent {
     replyPost: () => this.broadcastHotkey('replyPost'),
     quotePost: () => this.broadcastHotkey('quotePost'),
     bookmarkPost: () => this.broadcastHotkey('bookmarkPost'),
-    openEditor: () => this.openEditor(),
-    viewKeyboardShortcuts: () => this.openHotkeyListDialog(),
+    openEditor: () => {
+      this.broadcastHotkey('openEditor')
+      this.openEditor()
+    },
+    viewKeyboardShortcuts: () => {
+      this.broadcastHotkey('viewKeyboardShortcuts')
+      this.openHotkeyListDialog()
+    },
     no_op: () => {}
   }
   userMapping: HotkeyConfig
