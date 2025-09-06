@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core'
+import { DashboardService } from './dashboard.service'
+import { JwtService } from './jwt.service'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -19,6 +21,7 @@ export type SettingValueType = string | boolean
 export interface SettingDataEntry<T> {
   translationKey: string
   serverKey?: string
+  localStorageKey?: string
   type: SettingFormTypes
   default: T
   variants?: Record<string, T>
@@ -51,25 +54,27 @@ export class SettingsService {
   data: SettingData = {
     avatar: {
       translationKey: 'settings.avatar',
-      serverKey: 'wafrn.coolName',
+      serverKey: 'avatar',
       type: 'input',
       default: ''
     },
     name: {
       translationKey: 'settings.name',
-      serverKey: 'wafrn.coolName',
+      serverKey: 'name',
       type: 'input',
       default: ''
     },
     disableNSFWFilter: {
       translationKey: 'settings.disableNSFWFilter',
-      serverKey: 'wafrn.cool',
+      serverKey: 'wafrn.disableNSFWFilter',
+      localStorageKey: 'disableNSFWFilter',
       type: 'checkbox',
       default: false
     },
     mutedWords: {
       translationKey: 'settings.mutedWords',
       serverKey: 'wafrn.mutedWords',
+      localStorageKey: 'mutedWords',
       type: 'textarea',
       default: ''
     }
@@ -84,8 +89,38 @@ export class SettingsService {
   // Transform the data into the groups
   groupsTransformed = this.transformSettingGroups(this.groups)
 
-  constructor() {
-    this.values = this.getDefaultSettings()
+  constructor(
+    private dashboardService: DashboardService,
+    private jwtService: JwtService
+  ) {
+    const localStorageValues = this.getLocalStorageValues()
+    this.values = Object.assign(this.getDefaultSettings(), localStorageValues)
+
+    const userBlog = this.jwtService.getTokenData()
+    console.log(userBlog)
+    if (userBlog === null) return
+
+    // Load blog details
+    this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
+      this.values.avatar = blogDetails.avatar
+      this.values.name = blogDetails.name
+    })
+  }
+
+  getLocalStorageValues(): SettingValues {
+    const storedValues: SettingValues = {}
+
+    const dataEntries = Object.entries(this.data)
+    dataEntries.forEach(([key, dataEntry]) => {
+      if (!dataEntry.localStorageKey) return
+
+      const retrievedValue = localStorage.getItem(dataEntry.localStorageKey)
+      if (retrievedValue) {
+        storedValues[key as keyof SettingValues] = JSON.parse(retrievedValue)
+      }
+    })
+
+    return storedValues
   }
 
   getDefaultSettings(): SettingValues {
