@@ -1,6 +1,6 @@
-<section class="p-3">
-  @if (group) {
+@if (group) {
+  <section class="p-3">
     <h2>{{ group.title | translate }}</h2>
     <app-setting-entry [group]="group" [values]="values"></app-setting-entry>
-  }
-</section>
+  </section>
+}

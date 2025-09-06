@@ -1,9 +1,7 @@
 import { JsonPipe } from '@angular/common'
 import { Component } from '@angular/core'
-import { MatCardModule } from '@angular/material/card'
 import { RouterModule } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
-import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-entry.component'
 import {
   GroupedSettingDataTransformed,
   SettingData,
@@ -13,7 +11,7 @@ import {
 
 @Component({
   selector: 'app-settings',
-  imports: [RouterModule, TranslateModule, JsonPipe, SettingEntryComponent, MatCardModule],
+  imports: [RouterModule, TranslateModule, JsonPipe],
   templateUrl: './settings.component.html'
 })
 export class SettingsComponent {
