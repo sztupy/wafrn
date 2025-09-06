@@ -173,15 +173,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
         }
       }
     )
-
-    this.loadPosts(this.currentPage).then(() => {
-      setTimeout(() => {
-        const element = document.querySelector('#if-you-see-this-load-more-posts')
-        if (element) {
-          this.intersectionObserverForLoadPosts.observe(element)
-        }
-      })
-    })
   }
 
   handleTheme(blogDetails: BlogDetails) {

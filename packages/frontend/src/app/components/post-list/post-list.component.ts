@@ -1,9 +1,10 @@
-import { afterRenderEffect, Component, computed, ElementRef, input, output, signal, viewChild } from '@angular/core'
+import { Component, computed, ElementRef, input, output, signal, viewChild, viewChildren } from '@angular/core'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { PostModule } from '../post/post.module'
 import { LoaderComponent } from '../loader/loader.component'
-import { HotkeyService, HotkeyType } from 'src/app/services/hotkey.service'
-import { fromEvent, take } from 'rxjs'
+import { HotkeyAction, HotkeyService } from 'src/app/services/hotkey.service'
+import { fromEvent, Subject } from 'rxjs'
+import { PostComponent } from '../post/post.component'
 
 @Component({
   selector: 'app-post-list',
@@ -20,37 +21,21 @@ export class PostListComponent {
   bottomPageElementRef = viewChild<ElementRef<HTMLElement>>('bottom')
   bottomPageElement = computed(() => this.bottomPageElementRef()?.nativeElement)
   bottomPageObserver: IntersectionObserver | undefined
-  currentPostObserver: IntersectionObserver
+  postListRef = viewChildren<PostComponent, ElementRef<HTMLElement>>(PostComponent, { read: ElementRef })
+  postListElements = computed(() => this.postListRef()?.map((post) => post.nativeElement))
 
-  hasScrolled = signal<boolean>(false)
-  highlightPost = signal<boolean>(false)
+  postIsActive = signal<boolean>(false)
 
   selectedPost: number = 0
 
+  postActionSubject = new Subject<HotkeyAction>()
+
   constructor(hotkeyService: HotkeyService) {
     hotkeyService.hotkeySubscription.subscribe((type) => this.handleHotkeys(type))
-    this.currentPostObserver = new IntersectionObserver((entries) => this.handleCurrentPostObserver(entries[0]))
-
-    // Observe the first post after loading
-    const firstLoadEffect = afterRenderEffect(() => {
-      if (this.loading()) return
-      const firstPost = this.postElementAt(0)
-      if (firstPost) {
-        this.currentPostObserver.observe(firstPost)
-        firstLoadEffect.destroy()
-      }
-    })
-
-    // If the user scrolls manually we don't pick first post on Next Post key
-    fromEvent(document, 'scroll')
-      .pipe(take(1))
-      .subscribe(() => {
-        this.hasScrolled.set(true)
-      })
 
     // Stop highlighting if the user manually scrolls with the mouse
     fromEvent(document, 'wheel').subscribe(() => {
-      this.highlightPost.set(false)
+      this.postIsActive.set(false)
     })
   }
 
@@ -66,47 +51,55 @@ export class PostListComponent {
     this.bottomPageObserver.observe(this.bottomPageElement()!)
   }
 
-  handleCurrentPostObserver(entry: IntersectionObserverEntry) {
-    if (entry.isIntersecting) return
-    const before = this.selectedPost
-
-    // Observe next post
-    const scrolledBelowPost = entry.boundingClientRect.top < 0
-    if (scrolledBelowPost) {
-      if (this.selectedPost < this.posts().length - 1) {
-        this.selectedPost += 1
-      }
-    } else {
-      if (this.selectedPost > 0) {
-        this.selectedPost -= 1
-      }
-    }
-    // Ignore non-moving observations
-    if (this.selectedPost === before) return
-
-    this.observeSelectedPost()
-  }
-
   postElementAt(index: number): HTMLElement | null {
     return document.getElementById('post-element-' + this.posts().at(index)?.at(-1)?.id)
   }
 
-  handleHotkeys(type: HotkeyType) {
+  selectMiddlePost() {
+    // Find the post whose top is closest to the top of the screen
+    const windowCenter = window.scrollY
+    const postDistances = this.postListElements().map((elem) => Math.abs(elem.offsetTop - windowCenter))
+    const smallestDistance = Math.min(...postDistances)
+    const closestPostIndex = postDistances.findIndex((elem) => elem === smallestDistance)
+
+    this.selectedPost = closestPostIndex
+    this.scrollToSelectedPost(true) // Smooth scroll to initial highlighted post (UX!!)
+  }
+
+  handleHotkeys(action: HotkeyAction) {
     if (!this.visible()) return
 
-    switch (type) {
-      case HotkeyType.nextPost:
+    switch (action) {
+      // Stop highlighting if screen-based scroll is used
+      case 'scrollDown':
+      case 'scrollUp':
+      case 'scrollUpPage':
+      case 'scrollDownPage':
+        this.postIsActive.set(false)
+        break
+      case 'nextPost':
         this.nextPost()
         break
-      case HotkeyType.previousPost:
+      case 'previousPost':
         this.previousPost()
         break
       default:
+        // Send other actions to bottom reply bar
+        this.postActionSubject.next(action)
         break
     }
   }
 
+  //
+  // Hotkey functions
+  //
+
   previousPost() {
+    if (!this.postIsActive()) {
+      this.selectMiddlePost()
+      return
+    }
+
     if (this.selectedPost > 0) {
       this.selectedPost -= 1
     }
@@ -114,9 +107,8 @@ export class PostListComponent {
   }
 
   nextPost() {
-    // Has not scrolled so we use the first post
-    if (!this.hasScrolled()) {
-      this.scrollToSelectedPost()
+    if (!this.postIsActive()) {
+      this.selectMiddlePost()
       return
     }
 
@@ -132,28 +124,19 @@ export class PostListComponent {
     this.scrollToSelectedPost()
   }
 
-  scrollToLoader() {
-    this.bottomPageElement()?.scrollIntoView()
+  scrollToLoader(smooth: boolean = false) {
+    this.bottomPageElement()?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' })
     this.afterPostScroll()
   }
 
-  scrollToSelectedPost() {
+  scrollToSelectedPost(smooth: boolean = false) {
     const nextPost = this.postElementAt(this.selectedPost ?? 0)
     if (nextPost === null) return
-    nextPost?.scrollIntoView({ behavior: 'instant' })
+    nextPost?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' })
     this.afterPostScroll()
   }
 
   afterPostScroll() {
-    this.observeSelectedPost()
-    this.highlightPost.set(true)
-  }
-
-  observeSelectedPost() {
-    this.currentPostObserver.disconnect()
-    const postElem = this.postElementAt(this.selectedPost)
-    if (postElem) {
-      this.currentPostObserver.observe(postElem)
-    }
+    this.postIsActive.set(true)
   }
 }
