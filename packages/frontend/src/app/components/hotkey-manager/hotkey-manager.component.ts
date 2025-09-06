@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core'
+import { Component, computed, inject, NgZone, Signal, signal, WritableSignal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog'
@@ -115,6 +115,7 @@ export class HotkeyManagerComponent {
     private dialogService: MatDialog,
     private loginService: LoginService,
     private hotkeyService: HotkeyService,
+    private zone: NgZone,
     themeService: ThemeService
   ) {
     const cachedMap = localStorage.getItem('customHotKeyMapping')
@@ -237,35 +238,37 @@ export class HotkeyManagerComponent {
     if (this.currentlyScrolling && this.lockedScrollingDirection === currentDirection) return
     this.lockedScrollingDirection = currentDirection
 
-    animationFrames()
-      .pipe(
-        map((val) => {
-          const deltaTime = val.elapsed - (previousTimestamp ?? val.elapsed)
-          previousTimestamp = val.elapsed
-          return Object.assign(val, { deltaTime })
-        }),
-        takeWhile(() => currentDirection === this.scrollDirection && !cancel)
-      )
-      .subscribe(({ elapsed, deltaTime }) => {
-        // Ensure exact minimum scroll distance
-        const cancelScrolling = elapsed > this.scrollRate && !this.continueScrolling
-        if (cancelScrolling) {
-          this.currentlyScrolling = false
-          cancel = true
+    this.zone.runOutsideAngular(() => {
+      animationFrames()
+        .pipe(
+          map((val) => {
+            const deltaTime = val.elapsed - (previousTimestamp ?? val.elapsed)
+            previousTimestamp = val.elapsed
+            return Object.assign(val, { deltaTime })
+          }),
+          takeWhile(() => currentDirection === this.scrollDirection && !cancel)
+        )
+        .subscribe(({ elapsed, deltaTime }) => {
+          // Ensure exact minimum scroll distance
+          const cancelScrolling = elapsed > this.scrollRate && !this.continueScrolling
+          if (cancelScrolling) {
+            this.currentlyScrolling = false
+            cancel = true
 
-          const currentTop = document.documentElement.scrollTop
-          if (Math.abs(startTop - currentTop) < Math.abs(amount)) {
-            const distance = amount - (currentTop - startTop)
-            this.performScroll(distance)
+            const currentTop = document.documentElement.scrollTop
+            if (Math.abs(startTop - currentTop) < Math.abs(amount)) {
+              const distance = amount - (currentTop - startTop)
+              this.performScroll(distance)
+            }
+            return
           }
-          return
-        }
 
-        this.currentlyScrolling = true
+          this.currentlyScrolling = true
 
-        const distance = amount * (deltaTime / this.scrollRate)
-        this.performScroll(distance)
-      })
+          const distance = amount * (deltaTime / this.scrollRate)
+          this.performScroll(distance)
+        })
+    })
   }
 
   performScroll(amount: number) {
