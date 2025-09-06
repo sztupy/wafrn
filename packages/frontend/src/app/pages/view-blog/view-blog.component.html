@@ -12,7 +12,7 @@
   @if (noMorePosts) {
     <div>
       <p class="mb-4 text-lg">No more posts...</p>
-      @if (blogDetails()!.url.startsWith('@')) {
+      @if (blogDetails()?.url?.startsWith('@')) {
         <app-info-card [type]="loggedIn() ? 'info' : 'caution'">
           {{
             loggedIn()
