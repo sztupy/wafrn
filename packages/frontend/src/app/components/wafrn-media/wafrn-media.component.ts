@@ -67,7 +67,6 @@ export class WafrnMediaComponent implements OnInit, AfterViewInit {
       (this.data().NSFW || (noDescription && this.hideNoDescriptionMedia) || hasFilteredWords) &&
       !this.disableNSFWFilter
     this.originallyNsfw = this.nsfw
-    console.log('hi')
   }
 
   ngAfterViewInit(): void {
