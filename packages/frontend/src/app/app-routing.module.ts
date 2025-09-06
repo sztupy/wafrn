@@ -93,6 +93,11 @@ const routes: Routes = [
         canActivate: [loginRequiredGuard]
       },
       {
+        path: 'settings',
+        loadChildren: () => import('./pages/settings/settings.module').then((m) => m.SettingsModule),
+        canActivate: [loginRequiredGuard]
+      },
+      {
         path: 'login',
         loadChildren: () => import('./pages/login/login.module').then((m) => m.LoginModule)
       },
