@@ -51,7 +51,7 @@ export type GroupedSettingDataTransformed = {
   providedIn: 'root'
 })
 export class SettingsService {
-  data: SettingData = {
+  public data: SettingData = {
     avatar: {
       translationKey: 'settings.avatar',
       serverKey: 'avatar',
@@ -79,15 +79,15 @@ export class SettingsService {
       default: ''
     }
   }
-  groups: GroupedSettingData[] = [
+  public groups: GroupedSettingData[] = [
     { key: 'profile', title: 'settings.profile', values: ['avatar', 'name'] },
     { key: 'preferences', title: 'settings.preferences', values: ['disableNSFWFilter'] },
     { key: 'mutesAndBlocks', title: 'settings.mutesAndBlocks', values: ['mutedWords'] }
   ]
-  values: SettingValues
+  public values: SettingValues
 
   // Transform the data into the groups
-  groupsTransformed = this.transformSettingGroups(this.groups)
+  public groupsTransformed = this.transformSettingGroups(this.groups)
 
   constructor(
     private dashboardService: DashboardService,
