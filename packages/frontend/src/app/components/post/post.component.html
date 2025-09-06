@@ -44,15 +44,8 @@
         content.quotes.length > 0 ||
         content.questionPoll
       ) {
-        <div id="fragment">
-          <app-post-header
-            [post]="this.post"
-            class="w-full"
-            [fragment]="content"
-            [simplified]="false"
-          ></app-post-header>
-          <app-post-fragment (forceExpand)="expandPost()" [fragment]="content"></app-post-fragment>
-        </div>
+        <app-post-header [post]="this.post" class="w-full" [fragment]="content" [simplified]="false"></app-post-header>
+        <app-post-fragment (forceExpand)="expandPost()" [fragment]="content"></app-post-fragment>
       }
     }
   </div>
@@ -79,11 +72,9 @@
         content.quotes.length > 0 ||
         content.questionPoll
       ) {
-        <div id="fragment">
-          <hr />
-          <app-post-header class="w-full" [fragment]="content" [simplified]="false"></app-post-header>
-          <app-post-fragment [fragment]="content"></app-post-fragment>
-        </div>
+        <hr />
+        <app-post-header class="w-full" [fragment]="content" [simplified]="false"></app-post-header>
+        <app-post-fragment [fragment]="content"></app-post-fragment>
       }
     }
   }
