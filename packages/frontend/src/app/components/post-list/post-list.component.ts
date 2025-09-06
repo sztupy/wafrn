@@ -3,7 +3,7 @@ import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { PostModule } from '../post/post.module'
 import { LoaderComponent } from '../loader/loader.component'
 import { HotkeyAction, HotkeyService } from 'src/app/services/hotkey.service'
-import { fromEvent, Subject } from 'rxjs'
+import { fromEvent, Subject, throttleTime } from 'rxjs'
 import { PostComponent } from '../post/post.component'
 
 @Component({
@@ -34,9 +34,11 @@ export class PostListComponent {
     hotkeyService.hotkeySubscription.subscribe((type) => this.handleHotkeys(type))
 
     // Stop highlighting if the user manually scrolls with the mouse
-    fromEvent(document, 'wheel').subscribe(() => {
-      this.postIsActive.set(false)
-    })
+    fromEvent(document, 'wheel')
+      .pipe(throttleTime(100))
+      .subscribe(() => {
+        this.postIsActive.set(false)
+      })
   }
 
   ngOnInit() {
