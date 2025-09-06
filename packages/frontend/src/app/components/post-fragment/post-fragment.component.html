@@ -3,8 +3,14 @@
     <h1 [innerText]="fragment().title"></h1>
   }
   @if (fragment().content_warning || fragment().muted_words_cw) {
-    <div class="content-warning-text" [innerHTML]="fragment().muted_words_cw"></div>
-    <div class="content-warning-text" [innerHTML]="fragment().content_warning"></div>
+    @if (fragment().muted_words_cw) {
+      <div class="muted-words content-warning-text">
+        {{ 'post-fragment.mutedWords' | translate }} {{ fragment().muted_words_cw }}
+      </div>
+    }
+    @if (fragment().content_warning) {
+      <div class="content-warning-text" [innerHTML]="fragment().content_warning"></div>
+    }
     <button class="toggle-cw-button" mat-raised-button color="primary" (click)="cwClick()" class="w-full my-2">
       @if (showSensitiveContent()) {
         Hide
@@ -41,7 +47,7 @@
         <div #mediaInline class="fragment-content overflow-hidden">
           <div [injectHTML]="block" class="post-text"></div>
           @if (typeof block !== 'string') {
-            <app-wafrn-media [data]="$any(block)"></app-wafrn-media>
+            <app-wafrn-media [data]="$any(block)" [filteredWords]="fragment().muted_words_cw"></app-wafrn-media>
           }
         </div>
       }
@@ -64,6 +70,7 @@
                 'carousel-media': !forceOldMediaStyle && nonLinkMediaCount > 1
               }"
               [data]="media"
+              [filteredWords]="fragment().muted_words_cw"
             ></app-wafrn-media>
           }
         }

@@ -490,7 +490,7 @@ export class PostsService {
       )
     ]
     if (cwedWords.length > 0) {
-      newPost.muted_words_cw = `Post includes muted words: ${cwedWords}`
+      newPost.muted_words_cw = cwedWords.join(', ')
     }
     const hideQuotesLevel = localStorage.getItem('hideQuotes')
       ? parseInt(localStorage.getItem('hideQuotes') as string)

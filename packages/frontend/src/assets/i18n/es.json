@@ -101,7 +101,7 @@
   "profile": {
     "profile": {
       "chooseAvatar": "Elegir otro avatar",
-      "chooseHeader":  "Elegir imágen de cabecera",
+      "chooseHeader": "Elegir imágen de cabecera",
       "changeDisplayName": "Nombre para mostrar (puede contener códigos de emoji)",
       "changeBio": "Tu bio/descripción. También podés poner códigos de emoji acá. Podés usar markdown acá",
       "extraInfoHead": "Información extra (exclusiva para Fediverse)",

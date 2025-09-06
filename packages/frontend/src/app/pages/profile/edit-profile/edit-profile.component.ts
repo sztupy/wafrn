@@ -98,7 +98,8 @@ export class EditProfileComponent implements OnInit {
     replaceAIWithCocaine: new FormControl(false),
     replaceAIWord: new FormControl('cocaine'),
     hideQuotes: new FormControl(1),
-    displayMentionsOfBlockedUsersFromOtherUsers: new FormControl(false)
+    displayMentionsOfBlockedUsersFromOtherUsers: new FormControl(false),
+    hideNoDescriptionMedia: new FormControl(false)
   })
 
   password = ''
@@ -308,6 +309,10 @@ export class EditProfileComponent implements OnInit {
       const localStorageHideQuotes = localStorage.getItem('hideQuotes')
       if (localStorageHideQuotes) {
         this.editProfileForm.controls['hideQuotes'].patchValue(parseInt(localStorageHideQuotes))
+      }
+      const hideNoDescriptionMedia = localStorage.getItem('hideNoDescriptionMedia') == 'true'
+      if (hideNoDescriptionMedia) {
+        this.editProfileForm.controls['hideNoDescriptionMedia'].patchValue(hideNoDescriptionMedia)
       }
 
       this.loading = false

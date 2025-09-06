@@ -312,7 +312,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: '',
+        label: 'divider',
         visible: () => !this.loggedIn(),
         divider: true
       },
@@ -406,12 +406,12 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        label: '',
+        label: 'divider',
         visible: () => this.loggedIn(),
         divider: true
       },
       {
-        label: '',
+        label: 'user',
         labelDynamic: computed(() => this.currentAccount()?.name ?? 'No one will believe you'),
         image:
           this.currentAccount() !== undefined
@@ -431,7 +431,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: '',
+            label: 'divider',
             visible: () => this.loggedIn(),
             divider: true
           },
@@ -699,7 +699,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: '',
+          label: 'mobileDivider',
           visible: () => !this.loggedIn(),
           divider: true
         },

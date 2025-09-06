@@ -179,7 +179,8 @@
       "notRecommendedOptions": "Not recommended options",
       "disableNSFWFilter": "Disable NSFW images filter",
       "automaticallyExpandAllPosts": "Automatically expand all posts",
-      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users"
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users",
+      "hideNoDescriptionMedia": "Automatically CW media with no alt text"
     },
     "privacy": {
       "defaultPostPrivacy": "Default post privacy",
@@ -278,7 +279,13 @@
     "smoothScroll": "Smooth scroll"
   },
   "post-fragment": {
+    "mutedWords": "Post contains muted words:",
     "replyingTo": "mentions: "
+  },
+  "media": {
+    "noAltText": "Media does not have alt text",
+    "sensitiveContent": "This media contains sensitive content",
+    "manuallyHidden": "Media manually hidden"
   },
   "page-not-found": {
     "title": "404: page not found",
