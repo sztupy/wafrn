@@ -36,7 +36,7 @@ async function handlePostRequest(req: SignedRequest, res: Response) {
         valid: boolean
       }
       const user = post.user
-      if (user.url.startsWith('@')) {
+      if (user.isRemoteUser) {
         // EXTERNAL USER
         if (post.remotePostId) {
           res.redirect(post.remotePostId)

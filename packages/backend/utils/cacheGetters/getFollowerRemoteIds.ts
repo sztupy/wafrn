@@ -21,11 +21,7 @@ async function getFollowerRemoteIds(id: string) {
         accepted: true
       }
     })
-    const res = follows.map((follow: any) =>
-      follow.followed.url.startsWith('@')
-        ? follow.followed.remoteId
-        : `${completeEnvironment.frontendUrl}/fediverse/blog/${follow.followed.url}`
-    )
+    const res = follows.map((follow) => follow.followed.fullFediverseUrl)
     await redisCache.set('remoteFollower:' + id, JSON.stringify(res), 'EX', 300)
     return res
   }

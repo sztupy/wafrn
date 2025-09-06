@@ -56,9 +56,7 @@ async function follow(
       const follow = await Follows.create({
         followerId: followerId,
         followedId: userFollowed.id,
-        accepted:
-          (!!userFollowed.bskyDid && userFollowed.url.startsWith('@')) ||
-          (userFollowed.url.startsWith('@') ? false : !userFollowed.manuallyAcceptsFollows),
+        accepted: userFollowed.isBlueskyUser || (userFollowed.isRemoteUser ? false : !userFollowed.manuallyAcceptsFollows),
         bskyUri: bskyResult?.uri,
         muteQuotes: false,
         muteRewoots: false

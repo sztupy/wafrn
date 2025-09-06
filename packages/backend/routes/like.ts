@@ -53,7 +53,7 @@ export default function likeRoutes(app: Application) {
         }
         if (!user.enableBsky && post.bskyUri) {
           const userPosterOfPostToBeLiked = await User.findByPk(post.userId) as User
-          if (userPosterOfPostToBeLiked.url.startsWith('@')) {
+          if (userPosterOfPostToBeLiked.isRemoteUser) {
             res.status(403)
             res.send({ error: true, message: 'You do not have bluesky federation enabled' })
             return
@@ -72,7 +72,7 @@ export default function likeRoutes(app: Application) {
                 error: error
               })
             }
-            
+
           }
         }
         const likedPost = await UserLikesPostRelations.create({

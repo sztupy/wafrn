@@ -858,7 +858,7 @@ function userRoutes(app: Application) {
         res.sendStatus(404)
         return
       }
-      let followed = blog.url.startsWith('@')
+      let followed = blog.isRemoteUser
         ? blog.followingCount
         : Follows.count({
             where: {
@@ -866,7 +866,7 @@ function userRoutes(app: Application) {
               accepted: true
             }
           })
-      let followers = blog.url.startsWith('@')
+      let followers = blog.isRemoteUser
         ? blog.followerCount
         : Follows.count({
             where: {

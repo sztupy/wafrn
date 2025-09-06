@@ -40,12 +40,12 @@ export default function followsRoutes(app: Application) {
         }
       }
       // bsky user
-      if (userToBeFollowed?.url.split('@').length === 2 && userToBeFollowed.bskyDid) {
+      if (userToBeFollowed && userToBeFollowed.isBlueskyUser) {
         const localUser = await User.findByPk(posterId)
         if (localUser?.enableBsky) {
           // follow on bsk
           const agent = await getAtProtoSession(localUser)
-          const followResult = (await agent.follow(userToBeFollowed.bskyDid)) as any
+          const followResult = (await agent.follow(userToBeFollowed.bskyDid as string)) as any
           if (followResult.validationStatus == 'valid') {
             await follow(posterId, req.body.userId, res, followResult)
             await forceUpdateCacheDidsAtThread()

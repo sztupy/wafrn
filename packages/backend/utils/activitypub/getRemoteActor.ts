@@ -61,7 +61,7 @@ async function getRemoteActor(actorUrl: string, user: User | null, forceUpdate =
     let userId = await getUserIdFromRemoteId(actorUrl)
     if (userId === '') {
       const job = await queue.add('getRemoteActorId', { actorUrl: actorUrl, userId: user.id, forceUpdate: forceUpdate })
-      userId = await job.waitUntilFinished(queueEvents).catch((error) => {
+      const result = await job.waitUntilFinished(queueEvents).catch((error) => {
         logger.debug({
           message: `Error while geting user`,
           user: actorUrl,
@@ -69,13 +69,18 @@ async function getRemoteActor(actorUrl: string, user: User | null, forceUpdate =
           error: error
         })
       })
+      if (result && result.id) {
+        userId = result.id
+      } else {
+        userId = result
+      }
     }
     userId = userId == '' ? '00000000-0000-0000-0000-000000000000' : userId
     remoteUser = await User.findByPk(userId)
     if (
       !remoteUser ||
       (remoteUser && remoteUser.banned) ||
-      (remoteUser && (await remoteUser.getFederatedHost()).blocked)
+      (remoteUser && (await remoteUser.getFederatedHost())?.blocked)
     ) {
       remoteUser = await getDeletedUser()
     }
