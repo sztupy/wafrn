@@ -5,7 +5,7 @@
 <app-post-list
   [posts]="posts"
   [visible]="postsVisible"
-  [loading]="loading()"
+  [loading]="loading() && !noMorePosts"
   (loadPosts)="loadPosts(currentPage)"
 ></app-post-list>
 <footer class="p-4 text-center wafrn-container">
