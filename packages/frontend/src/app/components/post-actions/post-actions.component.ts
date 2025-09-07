@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, Signal, signal, SimpleChanges } from '@angular/core'
+import { Component, Input, OnChanges, Signal, signal, viewChild } from '@angular/core'
 import { ProcessedPost } from '../../interfaces/processed-post'
 import { MessageService } from '../../services/message.service'
 
@@ -22,7 +22,7 @@ import {
   faBookBookmark
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
-import { MatMenuModule } from '@angular/material/menu'
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { EditorService } from '../../services/editor.service'
 import { LoginService } from '../../services/login.service'
@@ -47,6 +47,10 @@ export class PostActionsComponent implements OnChanges {
   postSilenced = false
   myRewootsIncludePost = false
   bookmarked = signal<boolean>(false)
+
+  // Evil optimizations
+  menuOpen = signal<boolean>(false)
+  menuRef = viewChild<MatMenuTrigger>(MatMenuTrigger)
 
   // icons
   shareIcon = faShareNodes
@@ -88,9 +92,21 @@ export class PostActionsComponent implements OnChanges {
     this.bookmarked.set(this.content.bookmarkers.includes(this.myId))
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.myRewootsIncludePost = this.postService.rewootedPosts.includes(this.content.id)
     this.checkPostSilenced()
+  }
+
+  openMenu() {
+    this.menuOpen.set(true)
+    requestAnimationFrame(() => {
+      console.log(this.menuOpen(), this.menuRef())
+      this.menuRef()?.openMenu()
+    })
+  }
+
+  handleClose() {
+    this.menuOpen.set(false)
   }
 
   sharePost() {
