@@ -88,6 +88,7 @@ export class AppComponent implements OnInit {
     if (this.swUpdate.isEnabled) {
       console.log('SOFTWARE UPDATES ACTIVE - This is a PWA')
       this.swUpdate.checkForUpdate().then((updateAvaiable) => {
+        console.log(updateAvaiable)
         if (EnvironmentService.environment.disablePWA) {
           if ('caches' in window) {
             caches.keys().then(function (keyList) {
@@ -120,6 +121,25 @@ export class AppComponent implements OnInit {
           }
         }
       })
+    }
+
+    if (EnvironmentService.environment.disablePWA) {
+      if ('caches' in window) {
+        caches.keys().then(function (keyList) {
+          return Promise.all(
+            keyList.map(function (key) {
+              return caches.delete(key)
+            })
+          )
+        })
+      }
+      if (window.navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+          for (const registration of registrations) {
+            registration.unregister()
+          }
+        })
+      }
     }
     // TODO lets keep with this later
     /*
