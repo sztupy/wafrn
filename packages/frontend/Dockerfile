@@ -15,6 +15,9 @@ COPY . .
 # Override frontend files with files put here. Allows easy overriding of assets, and potentially actual code as well
 RUN cp -af /app/packages/frontend/overrides/* /app/packages/frontend/src || true
 
+# ngsw config
+RUN cp /app/packages/frontend/ngsw-config.json.example /app/packages/frontend/ngsw-config.json
+
 # angular.json expects this to be two levels up, so we put it there
 RUN ln -s /app/packages/frontend/node_modules /app/node_modules
 
@@ -47,6 +50,9 @@ RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/Caddyfile && 
 
 RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/frontend/index.html && \
   perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/frontend/index.html
+
+RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/packages/frontend/ngsw-config.json && \
+  perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/packages/frontend/ngsw-config.json
 
 FROM caddy:2
 
