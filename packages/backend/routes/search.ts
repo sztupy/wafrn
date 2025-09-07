@@ -264,7 +264,7 @@ export default function searchRoutes(app: Application) {
       searchData.type === "bluesky"
     ) {
       try {
-        const bskySearchResult = await getAtprotoUser(searchData.username, usr)
+        const bskySearchResult = await getAtprotoUser(searchData.handle, usr)
         if (bskySearchResult && bskySearchResult.url != completeEnvironment.deletedUser) {
           result = bskySearchResult
         }
