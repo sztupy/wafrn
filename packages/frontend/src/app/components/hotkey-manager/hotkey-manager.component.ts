@@ -272,7 +272,9 @@ export class HotkeyManagerComponent {
   }
 
   performScroll(amount: number) {
-    document.documentElement.scrollBy({ behavior: 'instant', top: amount })
+    this.zone.runOutsideAngular(() => {
+      document.documentElement.scrollBy({ behavior: 'instant', top: amount })
+    })
   }
 
   openEditor() {

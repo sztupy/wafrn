@@ -1,17 +1,7 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  computed,
-  ElementRef,
-  input,
-  OnChanges,
-  ViewChild
-} from '@angular/core'
+import { AfterViewInit, Component, computed, ElementRef, input, OnInit, ViewChild } from '@angular/core'
 import { WafrnMedia } from '../../interfaces/wafrn-media'
 import { EnvironmentService } from '../../services/environment.service'
 import { MediaService } from '../../services/media.service'
-import { MessageService } from '../../services/message.service'
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 //@ts-ignore
 import Vlitejs from 'vlitejs'
@@ -22,7 +12,7 @@ import Vlitejs from 'vlitejs'
   styleUrls: ['./wafrn-media.component.scss'],
   standalone: false
 })
-export class WafrnMediaComponent implements OnChanges, AfterViewInit {
+export class WafrnMediaComponent implements OnInit, AfterViewInit {
   data = input.required<WafrnMedia>()
   filteredWords = input<string>()
 
@@ -65,24 +55,18 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   readonly hideIcon = faEyeSlash
 
   errorMode = false
-  constructor(
-    private mediaService: MediaService,
-    private messagesService: MessageService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor(private mediaService: MediaService) {
     this.disableNSFWFilter = mediaService.checkNSFWFilterDisabled()
     this.hideNoDescriptionMedia = (localStorage.getItem('hideNoDescriptionMedia') ?? 'false') === 'true'
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     const noDescription = this.data().description === null
     const hasFilteredWords = this.filteredWords() !== undefined
     this.nsfw =
       (this.data().NSFW || (noDescription && this.hideNoDescriptionMedia) || hasFilteredWords) &&
       !this.disableNSFWFilter
     this.originallyNsfw = this.nsfw
-
-    this.cdr.markForCheck()
   }
 
   ngAfterViewInit(): void {
@@ -154,7 +138,7 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
     this.errorMode = true
   }
 
-  toggleNsfw(event: MouseEvent) {
+  toggleNsfw() {
     if (!this.nsfw) {
       this.vlitePlayer?.pause() || this.videoElement?.nativeElement.pause()
     }
