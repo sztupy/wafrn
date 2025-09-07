@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
     private websocketService: WebsocketService,
     private router: Router,
     private messages: MessageService,
-    private titleService: Title,
+    private titleService: Title
   ) {
     this.title = this.titleService.getTitle()
     GlobalData.appDefaultTitle = this.title
@@ -86,6 +86,7 @@ export class AppComponent implements OnInit {
       this.messages.add({ severity: 'success', summary: 'Wafrn has been updated!' })
     }
     if (this.swUpdate.isEnabled) {
+      console.log('SOFTWARE UPDATES ACTIVE - This is a PWA')
       this.swUpdate.checkForUpdate().then((updateAvaiable) => {
         if (EnvironmentService.environment.disablePWA) {
           if ('caches' in window) {
