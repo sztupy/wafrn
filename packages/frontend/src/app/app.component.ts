@@ -122,7 +122,8 @@ export class AppComponent implements OnInit {
       })
     }
     // TODO lets keep with this later
-    if (false && this.swPush.isEnabled && EnvironmentService.environment.webpushPublicKey) {
+    /*
+    if (this.swPush.isEnabled && EnvironmentService.environment.webpushPublicKey) {
       this.swPush
         .requestSubscription({
           serverPublicKey: EnvironmentService.environment.webpushPublicKey
@@ -131,5 +132,6 @@ export class AppComponent implements OnInit {
           console.log(notificationSubscription)
         })
     }
+    */
   }
 }
