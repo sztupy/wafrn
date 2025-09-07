@@ -133,7 +133,7 @@ This small management script can also backup and restore your instance. For exam
 ./install/manage.sh update
 ```
 
-By default the installation will create a backup every day and keep it for 10 days. You can also [add post-backup scripts](https://codeberg.org/wafrn/wafrn-opentofu/blob/main/scripts/post_backup.template.sh) that you can configure to copy the backups to an off-site location, like any S3 compatible bucket.
+By default the installation will create a backup every day and keep it for 10 days. You can also [add post-backup scripts](https://codeberg.org/wafrn/wafrn-opentofu/src/branch/main/scripts/post_backup.template.sh) that you can configure to copy the backups to an off-site location, like any S3 compatible bucket.
 
 You can also restore a backup if needed:
 
