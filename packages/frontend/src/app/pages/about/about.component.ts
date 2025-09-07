@@ -1,0 +1,40 @@
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
+import { EnvironmentService } from 'src/app/services/environment.service'
+import { SimpleSeoService } from 'src/app/services/simple-seo.service'
+import { UtilsService } from 'src/app/services/utils.service'
+
+@Component({
+    selector: 'app-about',
+    templateUrl: './about.component.html',
+    styleUrls: ['./about.component.scss'],
+    standalone: false
+})
+export class AboutComponent implements OnInit {
+    logo = EnvironmentService.environment.logo
+    blockedServers: string[] = []
+    loaded = false
+    loading = false
+
+    constructor(
+        private seo: SimpleSeoService,
+        private utilsService: UtilsService,
+        private cdr: ChangeDetectorRef
+    ) { }
+
+    ngOnInit(): void {
+        this.seo.setSEOTags(
+            'WAFRN About, rules and blocked servers',
+            'The wafrn about, rules, credits and blocked servers',
+            'The wafrn team',
+            '/assets/linkpreview.png'
+        )
+    }
+
+    async loadBlockedServers() {
+        this.loading = true
+        this.blockedServers = await this.utilsService.getBlockedServers()
+        this.loaded = true
+        this.loading = false
+        this.cdr.markForCheck()
+    }
+}

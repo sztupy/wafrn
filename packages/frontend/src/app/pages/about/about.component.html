@@ -1,0 +1,44 @@
+<mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">
+    <div class="mb-5 font-medium">
+        <img loading="lazy" [src]="logo" alt="Image" height="50" class="mx-auto block mb-3" />
+        <h2>About WAFRN</h2>
+        <p>
+            WAFRN is a tumblr-inspired social media that conntects both to the Fediverse and to Bluesky.
+            Come give it a try!
+        </p>
+        <h2>Rules</h2>
+        <p class="mb-3">
+            Don't be a Nazi asshole. Don't harass other people. Put CW on adult things and go nuts, make nuts, show
+            nuts. This
+            project is a hobby project. Do not get the police on my doorstep.
+        </p>
+        <p class="mb-3">
+            You can upload spicy art. Just mark it as such. Regarding "adult like characters and child like characters
+            in
+            spicy art" the answer is no.
+        </p>
+        <p class="mb-3">Do not give me a huge headache repeatedly</p>
+    </div>
+
+    @if (!loaded && !loading) {
+    <button (click)="loadBlockedServers()" color="primary" mat-stroked-button class="w-full">
+        Show list of blocked servers
+    </button>
+    }
+
+    @if (loading) {
+    <app-loader>blocked servers</app-loader>
+    }
+
+    @if (loaded) {
+    <div>
+        <h2>Blocked servers</h2>
+        <p class="mb-3">In case of possible error, please contact the admin team by email</p>
+        <ul>
+            @for (server of blockedServers; track $index) {
+            <li class="mb-3">{{ server }}</li>
+            }
+        </ul>
+    </div>
+    }
+</mat-card>
