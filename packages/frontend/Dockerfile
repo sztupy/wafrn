@@ -1,6 +1,19 @@
 # Build stage
 FROM node:24-alpine AS builder
 
+ARG DOMAIN_NAME
+ARG PDS_DOMAIN_NAME
+ARG CACHE_DOMAIN
+ARG MEDIA_DOMAIN
+ARG ACME_EMAIL
+ARG DOMAIN_NAME
+
+ARG FRONTEND_SHORT_TITLE
+ARG FRONTEND_LONG_TITLE
+ARG FRONTEND_DESCRIPTION
+
+ARG CACHE_HOST
+
 RUN apk add --no-cache perl curl tini bash
 
 WORKDIR /app/packages/frontend
@@ -18,6 +31,9 @@ RUN cp -af /app/packages/frontend/overrides/* /app/packages/frontend/src || true
 # ngsw config
 RUN cp /app/packages/frontend/ngsw-config.json.example /app/packages/frontend/ngsw-config.json
 
+RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/packages/frontend/ngsw-config.json && \
+  perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/packages/frontend/ngsw-config.json
+
 # angular.json expects this to be two levels up, so we put it there
 RUN ln -s /app/packages/frontend/node_modules /app/node_modules
 
@@ -30,18 +46,6 @@ RUN npm run build
 
 RUN mv dist/wafrn/browser /app/frontend
 
-ARG DOMAIN_NAME
-ARG PDS_DOMAIN_NAME
-ARG CACHE_DOMAIN
-ARG MEDIA_DOMAIN
-ARG ACME_EMAIL
-ARG DOMAIN_NAME
-
-ARG FRONTEND_SHORT_TITLE
-ARG FRONTEND_LONG_TITLE
-ARG FRONTEND_DESCRIPTION
-
-ARG CACHE_HOST
 
 COPY Caddyfile.example /app/Caddyfile
 
@@ -50,9 +54,6 @@ RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/Caddyfile && 
 
 RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/frontend/index.html && \
   perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/frontend/index.html
-
-RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' /app/packages/frontend/ngsw-config.json && \
-  perl -pi -e 's/\$\{\{([_A-Z]+)\}\}/$ENV{$1}/g' /app/packages/frontend/ngsw-config.json
 
 FROM caddy:2
 
