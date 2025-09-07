@@ -809,8 +809,12 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
     this.menuLinks = [
       {
-        label: 'menu.privacy',
+        label: 'menu.about',
         routerLink: '/about'
+      },
+      {
+        label: 'menu.privacy',
+        routerLink: '/privacy'
       },
       {
         label: 'menu.faq',

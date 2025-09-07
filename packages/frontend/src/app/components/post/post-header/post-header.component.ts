@@ -20,7 +20,8 @@ import {
   faShareNodes,
   faTrash,
   faUnlock,
-  faUser
+  faUser,
+  faNewspaper
 } from '@fortawesome/free-solid-svg-icons'
 import { DateTime } from 'luxon'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
@@ -93,6 +94,7 @@ export class PostHeaderComponent implements OnChanges {
   ) {
     // its an array
     this.privacyOptions[10] = { level: 10, name: 'Direct Message', icon: faEnvelope }
+    this.privacyOptions[20] = { level: 20, name: 'Link only', icon: faNewspaper }
     this.loggedIn = loginService.loggedIn
   }
   ngOnChanges(changes: SimpleChanges): void {

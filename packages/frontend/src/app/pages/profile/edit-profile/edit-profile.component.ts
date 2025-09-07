@@ -211,7 +211,7 @@ export class EditProfileComponent implements OnInit {
       const alsoKnownAs = publicOptions.find((elem) => elem.optionName == 'fediverse.public.alsoKnownAs')
       try {
         this.editProfileForm.controls['alsoKnownAs'].patchValue(JSON.parse(alsoKnownAs?.optionValue || ''))
-      } catch (_) {}
+      } catch (_) { }
       const askLevel = publicOptions.find((elem) => elem.optionName == 'wafrn.public.asks')
       this.editProfileForm.controls['asksLevel'].patchValue(askLevel ? parseInt(askLevel.optionValue) : 2)
       this.editProfileForm.controls['forceClassicAudioPlayer'].patchValue(
@@ -269,7 +269,7 @@ export class EditProfileComponent implements OnInit {
       if (fediAttachments) {
         try {
           this.fediAttachments = JSON.parse(fediAttachments.optionValue)
-        } catch (error) {}
+        } catch (error) { }
       }
       const localStorageNotificationsFrom = localStorage.getItem('notificationsFrom')
       if (localStorageNotificationsFrom) {

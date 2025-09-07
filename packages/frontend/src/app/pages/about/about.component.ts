@@ -4,12 +4,12 @@ import { SimpleSeoService } from 'src/app/services/simple-seo.service'
 import { UtilsService } from 'src/app/services/utils.service'
 
 @Component({
-  selector: 'app-privacy',
-  templateUrl: './privacy.component.html',
-  styleUrls: ['./privacy.component.scss'],
+  selector: 'app-about',
+  templateUrl: './about.component.html',
+  styleUrls: ['./about.component.scss'],
   standalone: false
 })
-export class PrivacyComponent implements OnInit {
+export class AboutComponent implements OnInit {
   logo = EnvironmentService.environment.logo
   blockedServers: string[] = []
   loaded = false
@@ -19,12 +19,12 @@ export class PrivacyComponent implements OnInit {
     private seo: SimpleSeoService,
     private utilsService: UtilsService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.seo.setSEOTags(
-      'Wafrn Privacy Policy, rules and blocked servers',
-      'The wafrn privacy policy, rules and blocked servers',
+      'About this instance',
+      'About this instance, privacy policy, rules and blocked servers',
       'The wafrn team',
       '/assets/linkpreview.png'
     )

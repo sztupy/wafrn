@@ -20,6 +20,7 @@ import {
   faUnlock,
   faUser,
   faPaperPlane,
+  faNewspaper,
   faAt
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
@@ -91,7 +92,8 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     { level: 3, name: 'Unlisted', icon: faUnlock },
     { level: 2, name: 'This instance only', icon: faServer },
     { level: 1, name: 'Followers only', icon: faUser },
-    { level: 10, name: 'Direct Message', icon: faEnvelope }
+    { level: 10, name: 'Direct Message', icon: faEnvelope },
+    { level: 20, name: 'Link Only', icon: faNewspaper },
   ]
   quoteOpen = false
   data: EditorData | undefined
@@ -494,19 +496,19 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     var copy = document.createElement('div')
     copy.textContent = textArea.value
     var style = getComputedStyle(textArea)
-    ;[
-      'fontFamily',
-      'fontSize',
-      'fontWeight',
-      'wordWrap',
-      'whiteSpace',
-      'borderLeftWidth',
-      'borderTopWidth',
-      'borderRightWidth',
-      'borderBottomWidth'
-    ].forEach(function (key: any) {
-      copy.style[key] = style[key]
-    })
+      ;[
+        'fontFamily',
+        'fontSize',
+        'fontWeight',
+        'wordWrap',
+        'whiteSpace',
+        'borderLeftWidth',
+        'borderTopWidth',
+        'borderRightWidth',
+        'borderBottomWidth'
+      ].forEach(function (key: any) {
+        copy.style[key] = style[key]
+      })
     copy.style.overflow = 'auto'
     copy.style.width = textArea.offsetWidth + 'px'
     copy.style.height = textArea.offsetHeight + 'px'
@@ -592,9 +594,9 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     const tagText =
       this.tags.length > 0
         ? `\n${this.tags
-            .split(',')
-            .map((elem) => '#' + elem)
-            .join(' ')}`
+          .split(',')
+          .map((elem) => '#' + elem)
+          .join(' ')}`
         : ''
     const askText = this.data?.ask
       ? (this.data.ask.user ? this.data.ask.user.url : 'anonymous') + ' asked ' + this.data.ask.question + '\n'
