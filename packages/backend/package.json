@@ -51,8 +51,8 @@
     "@types/uuid": "^10.0.0",
     "@types/validator": "^13.12.0",
     "@types/web-push": "^3.6.4",
-    "@typescript-eslint/eslint-plugin": "^5.9.0",
-    "@typescript-eslint/parser": "^5.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
     "archiver": "^7.0.1",
     "atproto-firehose": "^0.2.2",
     "axios": "^1.8.2",
@@ -116,10 +116,10 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "eslint": "^8.6.0",
+    "eslint": "^9.13.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.8"
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.4.2"
   }
 }
