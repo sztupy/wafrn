@@ -74,13 +74,14 @@ export const up: Migration = async (params) => {
     })
 
     content = `<h1>Privacy Policy</h1>
-<p>This privacy policy describes how this website ("this website", "we", "us") collects,
+<p>This privacy policy describes how ${completeEnvironment.instanceUrl}
+("${completeEnvironment.instanceUrl}", "we", "us") collects,
 protects and uses the personally identifiable information you may provide
-through this website or its API. The policy also describes the choices
+through ${completeEnvironment.instanceUrl} or its API. The policy also describes the choices
 available to you regarding our use of your personal information and how you can
 access and update this information. This policy does not apply to the practices
-of companies that this website does not own or control, or to individuals that
-this website does not employ or manage.</p>
+of companies that ${completeEnvironment.instanceUrl} does not own or control, or to individuals that
+${completeEnvironment.instanceUrl} does not employ or manage.</p>
 <h2>What information do we collect?</h2>
 <ul>
 <li><strong>Basic account information</strong>: If you register on this server, you may be
@@ -88,7 +89,8 @@ asked to enter a username, an e-mail address and a password. You may also
 enter additional profile information such as a display name and biography, and
 upload a profile picture and header image. The username, display name,
 biography, profile picture and header image are always listed publicly.</li>
-<li><strong>Personal details</strong>: During registration we ask about your birthday, to verify that you comply with our "Site usage by children" policies set below.</li>
+<li><strong>Personal details</strong>: During registration we ask about your birthday,
+to verify that you comply with our "Site usage by children" policies set below.</li>
 <li><strong>Posts, following and other public information</strong>: The list of people you
 follow is listed publicly, the same is true for your followers. When you
 submit a message, the date and time is stored as well as the application you
@@ -99,9 +101,9 @@ information. Your posts are delivered to your followers, in some cases it
 means they are delivered to different servers and copies are stored there.
 When you delete posts, this is likewise delivered to your followers. The
 action of reblogging or favouriting another post is always public.</li>
-<li><strong>Direct and followers-only posts</strong>: All posts are stored and processed on the
-server. Followers-only posts are delivered to your followers and users who are
-mentioned in them, and direct posts are delivered only to users mentioned in
+<li><strong>Direct and followers-only posts</strong>: All posts are stored and
+processed on the server. Followers-only posts are delivered to your followers and users
+who are mentioned in them, and direct posts are delivered only to users mentioned in
 them. In some cases it means they are delivered to different servers and
 copies are stored there. We make a good faith effort to limit the access to
 those posts only to authorized persons, but other servers may fail to do so.
@@ -150,7 +152,8 @@ in so far as such logs are kept, no more than 90 days.</li>
 months.</li>
 </ul>
 <p>You can request and download an archive of your content, including your posts,
-media attachments, profile picture, and header image by sending a request to the site administrator.</p>
+media attachments, profile picture, and header image by sending a request to the
+site administrator.</p>
 <p>You may irreversibly delete your account at any time.</p>
 <h2>Do we use cookies?</h2>
 <p>Yes. Cookies are small files that a site or its service provider transfers to
@@ -182,7 +185,9 @@ requirements of COPPA (Children's Online Privacy Protection Act) do not use this
 site.</p>
 <p>Law requirements can be different if this server is in another jurisdiction.</p>
 <hr>
-<p>This document is CC-BY-SA. Originally adapted from the <a href="https://github.com/discourse/discourse">Discourse</a> and <a href="https://mastodon.scot/privacy-policy">Mastodon</a> privacy policies.</p>`
+<p>This document is CC-BY-SA. Originally adapted from the
+<a href="https://github.com/discourse/discourse">Discourse</a> and
+<a href="https://mastodon.scot/privacy-policy">Mastodon</a> privacy policies.</p>`
 
     await Post.upsert({
       userId: adminUser.id,
