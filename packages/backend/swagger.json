@@ -546,20 +546,20 @@
         }
       }
     },
-    "/api/article/{user}/{title}": {
+    "/api/article/{user}/{slug}": {
       "get": {
-        "description": "",
+        "description": "Returns the post with the associated id. If no user is proved this defaults to the admin user",
         "parameters": [
           {
             "name": "user",
             "in": "path",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "title",
+            "name": "slug",
             "in": "path",
             "required": true,
             "schema": {

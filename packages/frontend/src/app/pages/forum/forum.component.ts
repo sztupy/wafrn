@@ -117,24 +117,41 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
 
     this.navigationStart = this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {})
+      .subscribe(() => { })
 
     if (this.loggedIn()) {
       this.myId = this.loginService.getLoggedUserUUID()
     }
 
     this.subscription = this.route.params.subscribe(async (data: any) => {
+      if (!data.id && !data.title)
+        data = this.route.snapshot.data;
+
       this.loading = true
       if (this.hasPost && !this.postId()) {
         this.postId.set(this.post()[0].id)
       }
-      if (data.id && this.postId() != data.id) {
-        this.postId.set(data.id)
-        const tmpTmpPost = this.dashboardService.getPostV2(this.postId())
-        const tmpPost = await tmpTmpPost
+
+      let title = data.title;
+
+      if (!title && data.id) {
+        const UUIDRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gm
+        const matches = data.id.match(UUIDRegex)
+        if (!matches) {
+          title = data.id
+        }
+      }
+
+      if (title) {
+        const tmpPost = await this.dashboardService.getArticle(title, data.blog)
         this.post.set(tmpPost ?? [])
-      } else if (data.blog && data.title) {
-        // TODO article petition
+        if (tmpPost) {
+          this.postId.set(this.post()[0].id)
+        }
+      } else if (data.id && this.postId() != data.id) {
+        this.postId.set(data.id)
+        const tmpPost = await this.dashboardService.getPostV2(this.postId())
+        this.post.set(tmpPost ?? [])
       }
       const tmpForumPosts = this.forumService.getForumThread(this.postId())
       this.forumPosts.set(await tmpForumPosts)
@@ -146,9 +163,9 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
     this.updateFollowsSubscription.unsubscribe()
   }
 
-  followUser(id: string) {}
+  followUser(id: string) { }
 
-  unfollowUser(id: string) {}
+  unfollowUser(id: string) { }
 
   scrollTo(id: string) {
     document.getElementById(id)?.scrollIntoView({

@@ -45,6 +45,7 @@ import dompurify from 'isomorphic-dompurify'
 import { Privacy, PrivacyType } from '../models/post.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
 import { addHandlePrefix } from '../models/user.js'
+import { getAdminUser } from '../utils/getAdminAndDeletedUser.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -70,21 +71,21 @@ const prepareSendPostQueue = new Queue('prepareSendPost', {
 })
 export default function postsRoutes(app: Application) {
   app.get(
-    '/api/article/:user/:title',
+    '/api/article/:user?/:slug',
     optionalAuthentication,
     navigationRateLimiter,
     async (req: AuthorizedRequest, res: Response) => {
       const userUrl = req.params?.user
-      const postTitle = req.params?.title.replaceAll('-', ' ')
-      const user = await User.findOne({
+      const postSlug = req.params?.slug
+      const user = userUrl ? await User.findOne({
         where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
-      })
+      }) : await getAdminUser()
       if (!user) {
         res.sendStatus(404)
       } else {
         const postFound = await Post.findOne({
           where: sequelize.and(
-            sequelize.where(sequelize.fn('lower', sequelize.col('title')), postTitle.toLowerCase()),
+            sequelize.where(sequelize.fn('lower', sequelize.col('slug')), postSlug.toLowerCase()),
             sequelize.where(sequelize.col('userId'), user.id)
           )
         })
