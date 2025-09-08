@@ -127,7 +127,6 @@ app-media-preview {
 
 .bottom-information-bar {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-end;
   gap: 0.25rem;
@@ -160,6 +159,10 @@ app-media-preview {
 }
 
 .user-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   ::ng-deep img {
     vertical-align: top;
   }
@@ -188,6 +191,7 @@ app-media-preview {
 }
 
 .post-length-note {
+  min-width: max-content;
   display: flex;
   flex-direction: column;
   text-align: right;
