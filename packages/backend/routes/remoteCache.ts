@@ -11,6 +11,9 @@ import { getLinkPreview } from 'link-preview-js'
 import { linkPreviewRateLimiter } from '../utils/rateLimiters.js'
 import { getMimeType } from 'stream-mime-type'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { Media } from '../models/media.js'
+import { Op } from 'sequelize'
+import { spawn } from 'child_process'
 
 function sendWithCache(res: Response, localFileName: string) {
   // Does the .mime file exist?
@@ -25,13 +28,28 @@ function sendWithCache(res: Response, localFileName: string) {
 }
 
 // converting the stream parsing to a promise to be able to use async/await and catch the errors with the try/catch blocks
-function writeStream(stream: NodeJS.ReadableStream, localFileName: string, mime: string) {
+function writeStream(stream: NodeJS.ReadableStream, localFileName: string, mime: string, altText: string) {
   const writeStream = fs.createWriteStream(localFileName)
   fs.writeFileSync(localFileName + '.mime', mime)
   return new Promise((resolve, reject) => {
     writeStream.on('finish', async () => {
       writeStream.close()
-      return resolve(localFileName)
+      if (altText != '') {
+        try {
+          const updateAltText = spawn('exiftool', [
+            '-overwrite_original',
+            `-UserComment="${altText.replaceAll('"', '').replaceAll("'", '')}"`,
+            localFileName
+          ])
+          updateAltText.on('close', () => {
+            return resolve(localFileName)
+          })
+        } catch (error) {
+          return resolve(localFileName)
+        }
+      } else {
+        return resolve(localFileName)
+      }
     })
     writeStream.on('error', (error) => {
       return reject(error)
@@ -92,10 +110,25 @@ export default function cacheRoutes(app: Application) {
           responseType: 'stream',
           headers: { 'User-Agent': 'wafrnCacher' }
         })
+        let altText = ''
+        let dbMediaUrl = String(req.query?.media).startsWith(completeEnvironment.mediaUrl)
+          ? String(req.query?.media).split(completeEnvironment.mediaUrl)[1]
+          : String(req.query?.media)
+        let media = await Media.findOne({
+          where: {
+            url: dbMediaUrl,
+            description: {
+              [Op.ne]: ''
+            }
+          }
+        })
+        if (media) {
+          altText = media.description
+        }
         const { stream, mime } = await getMimeType(response.data)
         res.contentType(mime)
-        stream.pipe(res)
-        await writeStream(stream, localFileName, mime)
+        await writeStream(stream, localFileName, mime, altText)
+        return await sendWithCache(res, localFileName)
       } catch (error) {
         return res.sendStatus(500)
       }

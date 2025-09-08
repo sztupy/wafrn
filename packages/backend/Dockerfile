@@ -2,7 +2,7 @@
 FROM node:24-alpine AS build
 
 # include important binaries
-RUN apk add --no-cache perl curl tini bash ffmpeg
+RUN apk add --no-cache perl curl tini bash ffmpeg exiftool
 
 # set working directory
 WORKDIR /wafrn
