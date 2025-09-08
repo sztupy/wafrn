@@ -123,6 +123,7 @@ export class SettingsService {
     this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
       this.values.avatar = blogDetails.avatar
       this.values.name = blogDetails.name
+      this.values.description = blogDetails.descriptionMarkdown
     })
 
     // Listen for and save updated settings
