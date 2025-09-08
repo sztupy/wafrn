@@ -1,14 +1,24 @@
-<section class="mx-3 lg:mx-4 wafrn-container">
+<div class="mx-3 lg:mx-4 wafrn-container">
   <h2 class="my-3 text-3xl">{{ 'menu.settings.title' | translate }}</h2>
-  <p>Routes</p>
-  <ul>
-    @for (group of groups; track $index) {
-      <li>
-        <a [routerLink]="group.key">{{ group.title | translate }}</a>
-      </li>
-    }
-  </ul>
-  <p>The data:</p>
-  <pre>{{ values | json }}</pre>
-</section>
-<router-outlet></router-outlet>
+</div>
+<div class="mx-3 lg:mx-4 grid wafrn-container-wide">
+  <section class="col-12 md:col-4">
+    <p>Routes</p>
+    <mat-nav-list>
+      @for (group of groups; track $index) {
+        <a mat-list-item [routerLink]="group.key" routerLinkActive="page-active" class="">
+          @if (group.icon) {
+            <fa-icon matListItemIcon [icon]="group.icon" size="sm" [fixedWidth]="true"></fa-icon>
+          }
+          <div matListItemTitle>{{ group.title | translate }}</div>
+        </a>
+      }
+    </mat-nav-list>
+    <hr />
+    <p>[DEBUGGING] The data:</p>
+    <pre>{{ values | json }}</pre>
+  </section>
+  <section class="col">
+    <router-outlet></router-outlet>
+  </section>
+</div>

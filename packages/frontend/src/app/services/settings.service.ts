@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
 import { debounceTime, Subject } from 'rxjs'
+import { faUser, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -38,12 +39,14 @@ export type SettingValues = {
 
 export type GroupedSettingData = {
   key: string // From router
+  icon?: IconDefinition
   title: string
   values: SettingKey[]
 }
 
 export type GroupedSettingDataTransformed = {
   key: string // From router
+  icon?: IconDefinition
   title: string
   values: Array<{ key: SettingKey; value: SettingDataEntry<SettingValueType> }>
 }
@@ -81,7 +84,7 @@ export class SettingsService {
     }
   }
   public groups: GroupedSettingData[] = [
-    { key: 'profile', title: 'settings.profile', values: ['avatar', 'name'] },
+    { key: 'profile', icon: faUser, title: 'settings.profile', values: ['avatar', 'name'] },
     { key: 'preferences', title: 'settings.preferences', values: ['disableNSFWFilter'] },
     { key: 'mutesAndBlocks', title: 'settings.mutesAndBlocks', values: ['mutedWords'] }
   ]
@@ -138,8 +141,7 @@ export class SettingsService {
 
   transformSettingGroups(groups: GroupedSettingData[]): GroupedSettingDataTransformed[] {
     return groups.map((entry) => ({
-      key: entry.key,
-      title: entry.title,
+      ...entry,
       values: entry.values.map((key) => ({
         key: key,
         value: this.data[key]
