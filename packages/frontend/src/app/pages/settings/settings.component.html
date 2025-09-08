@@ -3,7 +3,6 @@
 </div>
 <div class="mx-3 lg:mx-4 grid wafrn-container-wide">
   <section class="col-12 md:col-4 md:max-w-20rem">
-    <p>Routes</p>
     <mat-nav-list>
       @for (group of groups; track $index) {
         <a mat-list-item [routerLink]="group.key" routerLinkActive="page-active" class="">
