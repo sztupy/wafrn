@@ -33,9 +33,8 @@ const routes: Routes = [
       },
       {
         path: 'about',
-        loadChildren: () => import('./pages/privacy/privacy.module').then((m) => m.PrivacyModule)
+        loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule)
       },
-      // TODO delete this route in the future I guess
       {
         path: 'privacy',
         loadChildren: () => import('./pages/privacy/privacy.module').then((m) => m.PrivacyModule)
@@ -140,4 +139,4 @@ const routes: Routes = [
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
