@@ -28,6 +28,21 @@
   content: unset !important;
 }
 
+// Allow empty background filled forms
+.mat-form-field-no-background {
+  --mat-form-field-filled-container-color: transparent;
+  --mat-form-field-hover-state-layer-opacity: 0;
+  --mat-form-field-filled-with-label-container-padding-bottom: 0;
+
+  .mdc-line-ripple {
+    display: none;
+  }
+}
+.mat-form-field-no-outline {
+  --mat-form-field-outlined-outline-width: 0;
+  --mat-form-field-outlined-focus-outline-width: 0;
+}
+
 // Add higher height card option
 .mat-card-higher {
   --mat-card-elevated-container-elevation: var(--mat-sys-level2);
