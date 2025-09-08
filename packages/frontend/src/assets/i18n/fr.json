@@ -1,8 +1,10 @@
 {
   "common": {
-    "commaSeparation": "Séparés avec des virgules"
+    "commaSeparation": "Séparés par virgules",
+    "characters": "caractères"
   },
   "login": {
+    "title": "Connexion",
     "welcomeBack": "Heureux de te revoir !",
     "exploreWithoutAccount": "Clique ici pour jeter un coup d'œil sans avoir de compte !",
     "dontHaveAccount": "Pas de compte ?",
@@ -10,6 +12,7 @@
     "checkSpam": "Vérifie tes spams en cas de problème !",
     "email": "Email",
     "password": "Mot de passe",
+    "mfaNextStep": "Encore une étape...",
     "mfaToken": "Jeton d'authentification",
     "mfaTokenEnter": "Entre ton jeton d'authentification",
     "forgottenPassword": "Mot de passe oublié ? Clique ici !",
@@ -18,9 +21,17 @@
     "loginButton": "Connexion",
     "checkEmail": "Checke tes mails",
     "checkEmailLine1": "WAFRN T'as envoyé un mail. Vérifie tes mails et ton dossier de spam",
-    "checkEmailLine2": "Tu peux envoyer un mail à l'administrateur·ice de cette instance en cas de problème. Son adresse mail se trouve <a href=\"/about\">ici</a>"
+    "checkEmailLine2": "Tu peux envoyer un mail à l'administrateur·ice de cette instance en cas de problème. Son adresse mail se trouve <a href=\"/about\">ici</a>",
+    "alreadyLoggedIn": "Tu es déjà connecté à ce compte"
+  },
+  "register": {
+    "title": "Inscription",
+    "welcome": "Bienvenue sur Wafrn !",
+    "manualReviewInfo": "Un·e administrateur·ice va vérifier ton compte. Ce processus peut prendre quelque heures.",
+    "registerButton": "Inscription"
   },
   "notifications": {
+    "title": "Notifications",
     "loadingMore": "Charger plus de notifications",
     "refresh": "Rafraîchir"
   },
@@ -37,14 +48,20 @@
     "unansweredAsks": "Questions non répondues",
     "privateMessages": "Messages privés",
     "search": "Recherche",
+    "profile": "Profil",
     "myBlog": "Mon blog",
     "about": "À propos de nous",
-    "privacy": "Politique de confidentialité",
+    "privacy": "Confidentialité",
     "source": "Code source",
     "patreon": "Patreon",
     "kofi": "Ko-fi",
+    "inbox": "Boîte de réception",
+    "otherAccounts": "Autres comptes",
+    "addAccount": "Ajouter un compte",
     "logout": "Déconnexion",
-    "faq": "Foire Aux Questions",
+    "viewBlog": "Voir le blog",
+    "switchToAlt": "Changer de compte",
+    "faq": "FAQ",
     "settings": {
       "title": "Paramètres",
       "follows": "Gérer les abonné·e·s",
@@ -52,8 +69,9 @@
       "editProfile": "Préférences et Profil",
       "themeEditor": "Éditeur de thème",
       "mutedUsers": "Utilisateur·ice·s masqué·e·s",
-      "mutedPosts": "Post masqués",
+      "mutedPosts": "Billets masqués",
       "bookmarkedPosts": "Signets",
+      "followedHashtags": "Hashtags suivis",
       "myBlockedUsers": "Utilisateur·ice·s bloqué·e·s",
       "myBlockedServers": "Serveurs bloqués",
       "importFollows": "Importer des abonné·e·s",
@@ -70,12 +88,20 @@
       "awaitingAproval": "En attente d'approbation"
     }
   },
+  "theme-editor": {
+    "title": "Éditeur de Thème",
+    "templateNote": "Si tu as besoin d'aide, un modèle de base et quelque conseils sont disponibles dans le ",
+    "themeTextLabel": "Édite ton thème CSS",
+    "themeTextPlaceholder": "Écrit ton propre CSS...",
+    "themeGuideName": "guide des thèmes",
+    "updateButton": "Enregistrer le Thème"
+  },
   "editor": {
     "inReplyTo": "En réponse à: ",
     "quoteButton": "Cite un woot",
     "publishWoot": "Publie ce woot",
     "directMessageWarning": "Les administrateur·ice·s de ce serveur et du serveur distant peuvent lire ces messages.",
-    "unlistedWarning": "Les posts non listés seront ignorés par la recherche (TAGS COMPRIS), et ne s'afficheront pas dans le fil local, mais tes followers pourront les voir. Et si quelqu'un envoie un lien vers ces posts, ils seront visibles, contrairement à abonné·e·s uniquement. En gros, quand tu veux poster beaucoup mais ne veux pas remplir le fil local.",
+    "unlistedWarning": "Les billets non listés seront ignorés par la recherche (TAGS COMPRIS), et ne s'afficheront pas dans le fil local, mais tes followers pourront les voir. Et si quelqu'un envoie un lien vers ces billets, ils seront visibles, contrairement à abonné·e·s uniquement. En gros, quand tu veux billeter beaucoup mais ne veux pas remplir le fil local.",
     "directMessageWithQuoteWarning": "Les utilisateur·ice·s cité·e·s seront notifié·e·s de cette citation",
     "sensitivePlaceholder": "Quel sujet sensible est abordé dans ce woot ?",
     "wootQuoteBoxLabel": "Colle l'URL d'un woot pour le citer. L'URL peut être une URL externe ou une URL provenant de WAFRN.",
@@ -83,7 +109,11 @@
     "wootQuoteConfirmButton": "Citer ce woot",
     "wootTextLabel": "Texte du woot",
     "wootTextPlaceholder": "Commence à écrire...",
+    "uploadMediaIndicator": "Glisser-déposer pour téléverser un fichier",
+    "bskyLengthWarning": "Les woots dépassant 300 caractères seroint coupés, et un lien vers WAFRN sera inséré à la place",
+    "bskyLengthNotice": "Cela affecte Bluesky uniquement. Cette fonctionnalité est actuellement approximative !",
     "altTextFieldLabel": "Description d'image",
+    "altTextFieldLabelVideo": "Description de vidéo",
     "altTextFieldPlaceholder": "Description. REMPLIS-LA stp",
     "isNSFWToggle": "NSFW",
     "mediaCountMastodonWarning": "ATTENTION ! TOUT MÉDIA SUPPLÉMENTAIRE NE SERA PAS AFFICHÉ SUR MASTODON",
@@ -106,10 +136,17 @@
       "changeDisplayName": "Nom d'affichage (peut contenir des codes émoji)",
       "changeBio": "Ta bio/description. Tu peux mettre des codes émoji ici aussi. Tu peux aussi utiliser markdown",
       "extraInfoHead": "Infos en plus (exclusif au Fédivers)",
+      "addAttachment": "Ajoute un attachement",
       "fieldPropertyName": "Nom",
       "fieldPropertyValue": "Valeur"
     },
     "preferences": {
+      "appearance": "Apparence",
+      "colorScheme": "Jeu de Couleurs",
+      "theme": "Thème",
+      "additionalStyleModes": "Autres Options",
+      "language": "Language",
+      "appLanguage": "App language",
       "notificationFilters": "Filtrer les notifications",
       "showNotificationsFrom": "Montrer les notifications",
       "notifyFrom": {
@@ -132,7 +169,7 @@
       "forceClassicAudioPlayer": "Force l'utilisation du lecteur audio classique",
       "forceClassicMediaView": "Force l'utilisation du carousel classique (vertical)",
       "dontCollapseQuotes": "Ne pas tronquer les citations",
-      "disableCwExceptMuted": "Désactive les avertissements de contenu sauf si le post contient des mots masqués",
+      "disableCwExceptMuted": "Désactive les avertissements de contenu sauf si le billet contient des mots masqués",
       "disableConfetti": "Désactive les confetti qui s'affichent lors de certaines actions",
       "enableConfettiRecivingLike": "Active les confetti quand tu reçois un like",
       "disableUiSounds": "Désactive les effets sonore",
@@ -141,14 +178,16 @@
       "customCocAIne": "Nouveau mot remplaçant l'IA",
       "notRecommendedOptions": "Options non recommendées",
       "disableNSFWFilter": "Désactive le filtre d'images NSFW",
-      "automaticallyExpandAllPosts": "Développe tous les posts automatiquement"
+      "automaticallyExpandAllPosts": "Développe tous les billets automatiquement",
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Ne pas cacher les billets mentionnant des utilisateurs bloqués",
+      "hideNoDescriptionMedia": "Ajoute un avertissement de contenu automatiquement sur tous les billets ne contenant pas description d'image"
     },
     "privacy": {
-      "defaultPostPrivacy": "Visibilité des posts par défaut",
+      "defaultPostPrivacy": "Visibilité des billets par défaut",
       "asks": "Questions",
       "disableEmailNotifications": "Désactiver les notifications par email",
       "hideFollows": "Cacher mes abonnements et abonné·e·s",
-      "hideProfileNotLoggedInDescription": "Cacher mon profil aux utilisateur·ice·s non connecté·e·s et dans la recherche (cela s'appliquera uniquement à ton profil DANS ce WAFRN, \ntes posts et ton profil dans d'autres instances fedi et sur bluesky seront toujours visibles)",
+      "hideProfileNotLoggedInDescription": "Cacher mon profil aux utilisateur·ice·s non connecté·e·s et dans la recherche (cela s'appliquera uniquement à ton profil DANS ce WAFRN, \ntes billets et ton profil dans d'autres instances fedi et sur bluesky seront toujours visibles)",
       "rssOptions": "Activer le flux RSS et le microfront sur mon blog"
     },
     "security": {
@@ -181,8 +220,8 @@
     },
     "other": {
       "movingFromAccount": "'Migrer depuis un compte différent (sans le @)'",
-      "wordsThatWillAutoCwPosts": "Ces mots ajoutent un avertissement de contenu aux posts qui les contiennent",
-      "superMutedWords": "Ces phrases cachent les posts qui les contiennent (FAIT GAFFE)",
+      "wordsThatWillAutoCwPosts": "Ces mots ajoutent un avertissement de contenu aux billets qui les contiennent",
+      "superMutedWords": "Ces phrases cachent les billets qui les contiennent (FAIT GAFFE)",
       "availableEmoji": "Émojis disponibles"
     },
     "bsky": {
@@ -214,7 +253,40 @@
     "askFormLabel": "Question",
     "askButtonText": "Demander"
   },
+  "keyboard-shortcuts": {
+    "keyboardShortcuts": "Raccourcis Clavier",
+    "groupNavigation": "Navigation",
+    "scrollDown": "Défiler vers le bas",
+    "scrollUp": "Défiler vers le haut",
+    "scrollDownPage": "Défiler tout en bas de la page",
+    "scrollUpPage": "Défiler tout en haut de la page",
+    "nextPost": "Billet suivant",
+    "previousPost": "Billet précédent",
+    "groupPostAction": "Interaction avec les Billets",
+    "likePost": "Liker le billet",
+    "rewootPost": "Rewooter le billet",
+    "replyPost": "Répondre au billet",
+    "quotePost": "Citer le billet",
+    "groupMisc": "Autre",
+    "openEditor": "Ouvrir l'éditeur",
+    "viewKeyboardShortcuts": "Consulter les Raccourcis Clavier",
+    "unbound": "unbound",
+    "additionalOptions": "Option",
+    "smoothScroll": "Défilement doux"
+  },
   "post-fragment": {
+    "mutedWords": "Billets contenant des mots masqués",
     "replyingTo": "en réponse à: "
+  },
+  "media": {
+    "noAltText": "Ce média ne possède pas de description d'image",
+    "sensitiveContent": "Ce média contient du contenu sensible",
+    "manuallyHidden": "Média caché manuellement"
+  },
+  "page-not-found": {
+    "title": "404: page not found",
+    "subtitle": "Il semblerait qu'il n'y ait rien ici",
+    "couldNotFind": "ne redirige pas vers une page",
+    "returnHome": "Retourner à l'Accueil"
   }
 }
