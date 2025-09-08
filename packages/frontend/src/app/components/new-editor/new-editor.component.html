@@ -319,19 +319,17 @@
         </div>
       </div>
       @if (showBlueskyOptions) {
-        <div class="ml-auto post-length-note">
-          <div
-            class="post-length-text"
-            [class.warning-text]="calculateBskyPostLengthPercent() > 1"
-            [matTooltip]="
-              (calculateBskyPostLength() > 300 ? 'editor.bskyLengthWarning' : 'editor.bskyLengthNotice') | translate
-            "
-          >
-            <p>{{ calculateBskyPostLength() }}/300 {{ 'common.characters' | translate }}</p>
-            <p class="post-length-warning">
-              {{ 'editor.bskyLengthLabel' | translate }} <fa-icon [icon]="infoIcon"></fa-icon>
-            </p>
-          </div>
+        <div
+          class="ml-auto post-length-note"
+          [class.warning-text]="calculateBskyPostLengthPercent() > 1"
+          [matTooltip]="
+            (calculateBskyPostLength() > 300 ? 'editor.bskyLengthWarning' : 'editor.bskyLengthNotice') | translate
+          "
+        >
+          <p>{{ calculateBskyPostLength() }}/300 {{ 'common.characters' | translate }}</p>
+          <p class="post-length-warning">
+            {{ 'editor.bskyLengthLabel' | translate }} <fa-icon [icon]="infoIcon"></fa-icon>
+          </p>
         </div>
       }
     </div>
