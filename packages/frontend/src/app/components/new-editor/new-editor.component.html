@@ -310,16 +310,27 @@
       }
     </section>
 
-    <div class="px-3 pt-2 bottom-information-bar">
+    <div class="px-3 pt-3 bottom-information-bar">
+      <div>
+        <div class="posting-label">{{ 'editor.usernameLabel' | translate }}</div>
+        <div class="user-info">
+          <img [src]="currentUserAvatar()" class="user-avatar" />
+          <span [innerHTML]="currentUser()?.url ?? 'No one?!'" class="user-name"></span>
+        </div>
+      </div>
       @if (showBlueskyOptions) {
         <div class="ml-auto post-length-note">
-          <div class="post-length-text">
+          <div
+            class="post-length-text"
+            [class.warning-text]="calculateBskyPostLengthPercent() > 1"
+            [matTooltip]="
+              (calculateBskyPostLength() > 300 ? 'editor.bskyLengthWarning' : 'editor.bskyLengthNotice') | translate
+            "
+          >
             <p>{{ calculateBskyPostLength() }}/300 {{ 'common.characters' | translate }}</p>
-            @if (calculateBskyPostLength() > 300) {
-              <p class="post-length-warning">{{ 'editor.bskyLengthWarning' | translate }}</p>
-            } @else {
-              <p class="post-length-warning">{{ 'editor.bskyLengthNotice' | translate }}</p>
-            }
+            <p class="post-length-warning">
+              {{ 'editor.bskyLengthLabel' | translate }} <fa-icon [icon]="infoIcon"></fa-icon>
+            </p>
           </div>
         </div>
       }

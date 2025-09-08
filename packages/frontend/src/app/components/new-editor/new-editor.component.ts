@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common'
-import { Component, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, computed, HostListener, inject, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -13,14 +13,16 @@ import {
   faExclamationTriangle,
   faGlobe,
   faLandMineOn,
-  faQuestionCircle,
   faQuoteLeft,
   faServer,
   faSkullCrossbones,
   faUnlock,
   faUser,
   faPaperPlane,
-  faAt
+  faAt,
+  faAsterisk,
+  faInfo,
+  faCircleInfo
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
 import { PostHeaderComponent } from '../post/post-header/post-header.component'
@@ -55,6 +57,7 @@ import { Emoji } from 'src/app/interfaces/emoji'
 import { Dialog } from '@angular/cdk/dialog'
 import { Router } from '@angular/router'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { BlogDetails } from 'src/app/interfaces/blogDetails'
 @Component({
   selector: 'app-new-editor',
   imports: [
@@ -80,7 +83,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
     TranslateModule,
     MatBadgeModule,
     MatChipsModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTooltipModule
   ],
   templateUrl: './new-editor.component.html',
   styleUrl: './new-editor.component.scss'
@@ -129,12 +133,15 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   postBeingSubmitted = false
   draggingOverTextarea = false
 
+  currentUser: Signal<BlogDetails | undefined>
+  currentUserAvatar: Signal<string>
+
   closeIcon = faClose
   quoteIcon = faQuoteLeft
   contentWarningIcon = faExclamationTriangle
   landMineIcon = faLandMineOn
   skull = faSkullCrossbones
-  infoIcon = faQuestionCircle
+  infoIcon = faCircleInfo
   alertIcon = faExclamationTriangle
   postIcon = faPaperPlane
   atIcon = faAt
@@ -190,6 +197,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.uploadedMedias = this.data.post.medias ? this.data.post.medias.filter((elem) => elem.mediaOrder < 9999) : []
       this.privacy = this.data.post.privacy
     }
+
+    this.currentUser = loginService.currentAccount
+    this.currentUserAvatar = computed(
+      () => (this.currentUser() && dashboardService.getAvatarUrl(<BlogDetails>this.currentUser())) || ''
+    )
   }
 
   ngOnInit() {

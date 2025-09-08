@@ -129,8 +129,40 @@ app-media-preview {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  gap: 0.25rem;
 }
+
+.posting-label {
+  color: var(--mat-sys-outline);
+  font-size: 0.7em;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+
+.user-avatar {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  img {
+    background-color: var(--mat-sys-surface-container-highest);
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.user-name {
+  ::ng-deep img {
+    vertical-align: top;
+  }
+}
+
 .woot-tagfield {
   background-color: var(--mat-sys-surface-variant);
 
@@ -167,8 +199,12 @@ app-media-preview {
 
 .post-length-warning {
   font-size: 0.7em;
-  line-height: 1.1;
+  line-height: 1;
   color: var(--mat-sys-outline);
+}
+
+.warning-text {
+  color: var(--mat-sys-error);
 }
 
 .length-overflow {
