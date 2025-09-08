@@ -5,10 +5,12 @@ FROM node:24-alpine AS build
 RUN apk add --no-cache perl curl tini bash ffmpeg exiv2
 
 # set working directory
-WORKDIR /wafrn
+WORKDIR /app/packages/backend
 
 # copy package.json and package-lock.json
-COPY package*.json ./
+COPY package.json /app
+COPY package-lock.json /app
+COPY packages/backend/package.json .
 
 # set node_env as production for the npm install command
 ENV NODE_ENV=production
@@ -17,7 +19,7 @@ ENV NODE_ENV=production
 RUN npm install
 
 # copy the rest of the files
-COPY . .
+COPY packages/backend .
 
 # create log folder early to prevent node err: cannot open logs/*.log
 RUN mkdir -p logs
@@ -88,7 +90,7 @@ ARG PORT=9000
 ARG LOG_DESTINATION=1
 
 
-COPY environment.example.ts environment.ts
+COPY packages/backend/environment.example.ts environment.ts
 
 # use sed to replace the environment variables in the environment.ts file
 RUN perl -pi -e 's/\$\{\{([_A-Z]+):-(.*)\}\}/$ENV{$1}||$2/ge' environment.ts && \

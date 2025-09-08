@@ -6,3 +6,13 @@ node_modules
 public/build
 build
 .angular
+
+packages/backend/cache
+packages/backend/uploads
+packages/backend/environment.ts
+packages/backend/build
+packages/backend/node_modules
+
+packages/frontend/node_modules
+packages/frontend/dist
+packages/frontend/.angular
