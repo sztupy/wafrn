@@ -1,5 +1,5 @@
 @if (group) {
-  @for (setting of group.values; track $index) {
-    <app-setting-entry [setting]="setting" [values]="values"></app-setting-entry>
+  @for (setting of group.values | KeyValue; track $index) {
+    <app-setting-entry [setting]="setting.value"></app-setting-entry>
   }
 }

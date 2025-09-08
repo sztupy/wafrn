@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { KeyValueTypedPipe } from 'src/app/pipes/keyvaluetyped.pipe'
 import {
   SettingData,
-  SettingEntry,
+  SettingDataEntry,
   SettingKey,
   SettingsService,
   SettingValues
@@ -19,29 +19,30 @@ import {
 })
 export class SettingEntryComponent {
   data: SettingData
-  values = input.required<SettingValues>()
-  setting = input.required<SettingEntry>()
+  values: SettingValues
+  setting = input.required<SettingDataEntry>()
 
   matFormFieldElements = viewChildren('formSelect')
 
   constructor(private settingsService: SettingsService) {
     this.data = settingsService.data
+    this.values = settingsService.values
   }
 
   updateCheckbox(key: SettingKey, event: MatCheckboxChange) {
-    this.values()[key] = event.checked
+    this.values[key] = event.checked
     this.settingsService.settingsUpdatedSubject.next()
   }
 
   updateSelect(key: SettingKey, event: MatSelectChange) {
-    this.values()[key] = event.value
+    this.values[key] = event.value
     this.settingsService.settingsUpdatedSubject.next()
   }
 
   updateInput(key: SettingKey, event: Event) {
     const target = event.target
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      this.values()[key] = target.value
+      this.values[key] = target.value
       this.settingsService.settingsUpdatedSubject.next()
     }
   }

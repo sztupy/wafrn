@@ -3,10 +3,15 @@
     <div class="h-8rem mb-3 settings-blog-header-image" [style.background-image]="'url(' + headerUrl() + ')'"></div>
     <div><img [src]="avatarUrl()" alt="user avatar" class="settings-blog-avatar-image" /></div>
   </mat-card>
-  <p>TEMP: show all</p>
-  @for (setting of group.values; track $index) {
-    <app-setting-entry [setting]="setting" [values]="values"></app-setting-entry>
-  }
-} @else {
-  <p>This should never happen</p>
+  <app-setting-entry [setting]="group.values.name"></app-setting-entry>
+  <app-setting-entry [setting]="group.values.description"></app-setting-entry>
+  <hr />
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>[DEBUG]: all given values</mat-panel-title>
+    </mat-expansion-panel-header>
+    @for (setting of group.values | KeyValue; track $index) {
+      <app-setting-entry [setting]="setting.value"></app-setting-entry>
+    }
+  </mat-expansion-panel>
 }

@@ -21,17 +21,18 @@ export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea'
 // Setting type cannot be numbers because of a bug with mat-select
 // Simply write your numbers as strings (agony)
 export type SettingValueType = string | boolean
-export interface SettingDataEntry<T> {
+export interface SettingDataEntry {
+  key: SettingKey // Copy of key for components to use
   translationKey: string
   serverKey?: string
   localStorageKey?: string
   type: SettingFormTypes
-  default: T
-  variants?: Record<string, T>
+  default: SettingValueType
+  variants?: Record<string, SettingValueType>
 }
 
 // Data on each setting to generate form controls
-export type SettingData = Record<SettingKey, SettingDataEntry<SettingValueType>>
+export type SettingData = Record<SettingKey, SettingDataEntry>
 
 // Values to store user data
 export type SettingValues = {
@@ -45,13 +46,11 @@ export type GroupedSettingData = {
   values: SettingKey[]
 }
 
-export type SettingEntry = { key: SettingKey; value: SettingDataEntry<SettingValueType> }
-
 export type GroupedSettingDataTransformed = {
   key: string // From router
   icon?: IconDefinition
   title: string
-  values: SettingEntry[]
+  values: SettingData
 }
 
 @Injectable({
@@ -60,24 +59,28 @@ export type GroupedSettingDataTransformed = {
 export class SettingsService {
   public data: SettingData = {
     avatar: {
+      key: 'avatar',
       translationKey: 'settings.avatar',
       serverKey: 'avatar',
       type: 'input',
       default: ''
     },
     name: {
+      key: 'name',
       translationKey: 'settings.name',
       serverKey: 'name',
       type: 'input',
       default: ''
     },
     description: {
+      key: 'description',
       translationKey: 'settings.description',
       serverKey: 'description',
       type: 'textarea',
       default: ''
     },
     disableNSFWFilter: {
+      key: 'disableNSFWFilter',
       translationKey: 'settings.disableNSFWFilter',
       serverKey: 'wafrn.disableNSFWFilter',
       localStorageKey: 'disableNSFWFilter',
@@ -85,6 +88,7 @@ export class SettingsService {
       default: false
     },
     mutedWords: {
+      key: 'mutedWords',
       translationKey: 'settings.mutedWords',
       serverKey: 'wafrn.mutedWords',
       localStorageKey: 'mutedWords',
@@ -151,10 +155,7 @@ export class SettingsService {
   transformSettingGroups(groups: GroupedSettingData[]): GroupedSettingDataTransformed[] {
     return groups.map((entry) => ({
       ...entry,
-      values: entry.values.map((key) => ({
-        key: key,
-        value: this.data[key]
-      }))
+      values: <SettingData>Object.fromEntries(entry.values.map((key) => [key, this.data[key]]))
     }))
   }
 
