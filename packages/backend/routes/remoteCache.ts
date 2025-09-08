@@ -114,7 +114,7 @@ export default function cacheRoutes(app: Application) {
         let dbMediaUrl = String(req.query?.media).startsWith(completeEnvironment.mediaUrl)
           ? String(req.query?.media).split(completeEnvironment.mediaUrl)[1]
           : String(req.query?.media)
-        let media = await Media.findOne({
+        let media = undefined /*await Media.findOne({
           where: {
             url: dbMediaUrl,
             description: {
@@ -124,7 +124,7 @@ export default function cacheRoutes(app: Application) {
         })
         if (media) {
           altText = media.description
-        }
+        } */
         const { stream, mime } = await getMimeType(response.data)
         res.contentType(mime)
         await writeStream(stream, localFileName, mime, altText)
