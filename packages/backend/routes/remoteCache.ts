@@ -36,9 +36,8 @@ function writeStream(stream: NodeJS.ReadableStream, localFileName: string, mime:
       writeStream.close()
       if (altText != '') {
         try {
-          const updateAltText = spawn('exiftool', [
-            '-overwrite_original',
-            `-Comment="${altText.replaceAll('"', '').replaceAll("'", '')}"`,
+          const updateAltText = spawn('exiv2', [
+            `-M"set Exif.Photo.UserComment charset=Ascii ${altText.replaceAll('"', '').replaceAll("'", '')}`,
             localFileName
           ])
           updateAltText.on('close', () => {
