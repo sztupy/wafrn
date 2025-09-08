@@ -446,25 +446,3 @@ mat-tab-header {
 .vertical-rule {
   border-right: 1px solid var(--mat-sys-outline-variant);
 }
-
-// evil overrides
-.wafrn-post-editor label {
-  left: 0px !important;
-}
-
-#tags .mat-mdc-text-field-wrapper {
-  background-color: var(--mat-sys-surface-container-high) !important;
-  box-shadow:
-    0px 0px 0px 1rem var(--mat-sys-surface-container-high);
-  border-radius: 0px;
-  min-height: fit-content !important;
-}
-
-#tags .mat-mdc-floating-label {
-  top: 0.75rem;
-}
-
-#tags .mat-mdc-form-field-infix {
-  padding-block: 0px !important;
-  min-height: fit-content !important;
-}
