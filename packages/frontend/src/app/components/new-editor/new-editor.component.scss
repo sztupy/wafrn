@@ -1,23 +1,6 @@
-@use '@angular/material' as mat;
-
-// Customize the entire app. Change :root to your selector if you want to scope the styles.
-.wafrn-post-editor {
-  @include mat.form-field-overrides((
-    outlined-outline-width: 0px,
-    outlined-focus-outline-width: 0px,
-    outlined-outline-color: 0px,
-    outlined-container-shape: 0px 0px
-  ));
+.editor-separator {
+  border-top-width: 3px;
 }
-
-.taglist {
-  margin-top: -8px;
-  margin-bottom: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
 .grid {
   margin: 0;
 }
@@ -25,30 +8,6 @@
 .grid > div {
   border: 1px solid var(--mat-sys-outline);
   border-radius: 8px;
-}
-
-.post-length-note {
-  display: flex;
-  align-items: center;
-  justify-content: right;
-  text-align: right;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-
-  p {
-    margin: 0;
-  }
-}
-
-.post-length-warning {
-  font-size: 0.7em;
-  line-height: 1.1;
-  color: var(--mat-sys-outline);
-}
-
-.length-overflow {
-  --mat-progress-bar-active-indicator-color: var(--mat-sys-error);
-  --mat-progress-spinner-active-indicator-color: var(--mat-sys-error);
 }
 
 .below-editor-toolbar {
@@ -115,12 +74,6 @@ app-media-preview {
   transform: translateY(-5px);
 }
 
-.fucked-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 @media screen and (max-width: 380px) {
   .post-text {
     display: none;
@@ -172,29 +125,57 @@ app-media-preview {
   pointer-events: none;
 }
 
+.bottom-information-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.woot-tagfield {
+  background-color: var(--mat-sys-surface-variant);
+
+  ::ng-deep .mat-mdc-floating-label {
+    overflow: unset;
+  }
+
+  mat-label {
+    display: inline-block;
+    background-color: var(--mat-sys-surface-variant);
+    outline: 4px solid var(--mat-sys-surface-variant);
+  }
+}
+
+.taglist {
+  margin-top: -8px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.post-length-note {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  text-align: right;
+  gap: 0.5rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+.post-length-warning {
+  font-size: 0.7em;
+  line-height: 1.1;
+  color: var(--mat-sys-outline);
+}
+
+.length-overflow {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-error);
+  --mat-progress-spinner-active-indicator-color: var(--mat-sys-error);
+}
+
 svg {
   display: block;
-}
-
-#tags .mat-mdc-text-field-wrapper {
-  background-color: var(--mat-sys-surface-container-high) !important;
-}
-
-.woot-textfield {
-  margin-top: 0.25rem;
-}
-
-.menu-hr {
-  margin-top: -1rem;
-}
-
-.evil-hr {
-  border: none;
-  border-bottom: 2px dashed var(--mat-sys-outline-variant);
-  margin-inline: -1rem;
-}
-
-.bsky-progress-bar {
-  margin-inline: -1rem; 
-  width: calc(100% + 2rem);
 }
