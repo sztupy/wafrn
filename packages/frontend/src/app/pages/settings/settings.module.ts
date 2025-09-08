@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Route, RouterModule } from '@angular/router'
 import { SettingsComponent } from './settings.component'
-import { SettingsLoaderComponent } from './settings-loader.component'
+import { SettingsLoaderComponent } from './settings-loader/settings-loader.component'
+import { SettingsProfileComponent } from './settings-profile/settings-profile.component'
 
 const routes: Route[] = [
   {
@@ -19,7 +20,7 @@ const routes: Route[] = [
       },
       {
         path: 'profile',
-        component: SettingsLoaderComponent,
+        component: SettingsProfileComponent,
         data: { group: 'profile' }
       },
       {

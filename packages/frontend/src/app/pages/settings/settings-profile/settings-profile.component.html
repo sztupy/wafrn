@@ -1,0 +1,12 @@
+@if (group) {
+  <mat-card class="mb-4 overflow-hidden settings-blog-header">
+    <div class="h-8rem mb-3 settings-blog-header-image" [style.background-image]="'url(' + headerUrl() + ')'"></div>
+    <div><img [src]="avatarUrl()" alt="user avatar" class="settings-blog-avatar-image" /></div>
+  </mat-card>
+  <p>TEMP: show all</p>
+  @for (setting of group.values; track $index) {
+    <app-setting-entry [setting]="setting" [values]="values"></app-setting-entry>
+  }
+} @else {
+  <p>This should never happen</p>
+}

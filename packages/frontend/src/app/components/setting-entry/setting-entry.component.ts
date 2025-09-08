@@ -5,8 +5,8 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select'
 import { TranslateModule } from '@ngx-translate/core'
 import { KeyValueTypedPipe } from 'src/app/pipes/keyvaluetyped.pipe'
 import {
-  GroupedSettingDataTransformed,
   SettingData,
+  SettingEntry,
   SettingKey,
   SettingsService,
   SettingValues
@@ -20,7 +20,7 @@ import {
 export class SettingEntryComponent {
   data: SettingData
   values = input.required<SettingValues>()
-  group = input.required<GroupedSettingDataTransformed>()
+  setting = input.required<SettingEntry>()
 
   matFormFieldElements = viewChildren('formSelect')
 

@@ -1,42 +1,40 @@
-@for (setting of group().values; track $index) {
-  @let settingData = data[setting.key];
-  @if (settingData.type === 'checkbox') {
-    @let settingValues = values()[setting.key];
-    <mat-checkbox (change)="updateCheckbox(setting.key, $event)" [checked]="settingValues === true">{{
-      setting.value.translationKey | translate
-    }}</mat-checkbox>
-  } @else if (settingData.type === 'select' && settingData.variants) {
-    <mat-form-field class="w-full" floatLabel="always">
-      <mat-label>{{ setting.value.translationKey | translate }}</mat-label>
-      <mat-select [(value)]="values()[setting.key]" (selectionChange)="updateSelect(setting.key, $event)">
-        @for (variant of settingData.variants | KeyValue; track $index) {
-          <mat-option [value]="variant.key">{{ variant.value.toString() | translate }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  } @else if (settingData.type === 'input') {
-    <mat-form-field class="w-full" floatLabel="always">
-      <mat-label>{{ setting.value.translationKey | translate }}</mat-label>
-      <input
-        matNativeControl
-        [value]="values()[setting.key]"
-        (input)="updateInput(setting.key, $event)"
-        spellcheck="false"
-      />
-    </mat-form-field>
-  } @else if (settingData.type === 'textarea') {
-    <mat-form-field class="w-full" floatLabel="always">
-      <mat-label>{{ setting.value.translationKey | translate }}</mat-label>
-      <textarea
-        matNativeControl
-        [value]="values()[setting.key]"
-        (input)="updateInput(setting.key, $event)"
-        spellcheck="false"
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="5"
-      ></textarea>
-    </mat-form-field>
-  } @else {
-    <p>There was an error in processing settings.</p>
-  }
+@let settingData = data[setting().key];
+@if (settingData.type === 'checkbox') {
+  @let settingValues = values()[setting().key];
+  <mat-checkbox (change)="updateCheckbox(setting().key, $event)" [checked]="settingValues === true">{{
+    setting().value.translationKey | translate
+  }}</mat-checkbox>
+} @else if (settingData.type === 'select' && settingData.variants) {
+  <mat-form-field class="w-full" floatLabel="always">
+    <mat-label>{{ setting().value.translationKey | translate }}</mat-label>
+    <mat-select [(value)]="values()[setting().key]" (selectionChange)="updateSelect(setting().key, $event)">
+      @for (variant of settingData.variants | KeyValue; track $index) {
+        <mat-option [value]="variant.key">{{ variant.value.toString() | translate }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+} @else if (settingData.type === 'input') {
+  <mat-form-field class="w-full" floatLabel="always">
+    <mat-label>{{ setting().value.translationKey | translate }}</mat-label>
+    <input
+      matNativeControl
+      [value]="values()[setting().key]"
+      (input)="updateInput(setting().key, $event)"
+      spellcheck="false"
+    />
+  </mat-form-field>
+} @else if (settingData.type === 'textarea') {
+  <mat-form-field class="w-full" floatLabel="always">
+    <mat-label>{{ setting().value.translationKey | translate }}</mat-label>
+    <textarea
+      matNativeControl
+      [value]="values()[setting().key]"
+      (input)="updateInput(setting().key, $event)"
+      spellcheck="false"
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="5"
+    ></textarea>
+  </mat-form-field>
+} @else {
+  <p>There was an error in processing settings.</p>
 }

@@ -9,6 +9,7 @@ const settingKeyVariants = [
   //
   'avatar',
   'name',
+  'description',
   'disableNSFWFilter',
   'mutedWords'
 ] as const
@@ -44,11 +45,13 @@ export type GroupedSettingData = {
   values: SettingKey[]
 }
 
+export type SettingEntry = { key: SettingKey; value: SettingDataEntry<SettingValueType> }
+
 export type GroupedSettingDataTransformed = {
   key: string // From router
   icon?: IconDefinition
   title: string
-  values: Array<{ key: SettingKey; value: SettingDataEntry<SettingValueType> }>
+  values: SettingEntry[]
 }
 
 @Injectable({
@@ -68,6 +71,12 @@ export class SettingsService {
       type: 'input',
       default: ''
     },
+    description: {
+      translationKey: 'settings.description',
+      serverKey: 'description',
+      type: 'textarea',
+      default: ''
+    },
     disableNSFWFilter: {
       translationKey: 'settings.disableNSFWFilter',
       serverKey: 'wafrn.disableNSFWFilter',
@@ -84,7 +93,7 @@ export class SettingsService {
     }
   }
   public groups: GroupedSettingData[] = [
-    { key: 'profile', icon: faUser, title: 'settings.profile', values: ['avatar', 'name'] },
+    { key: 'profile', icon: faUser, title: 'settings.profile', values: ['avatar', 'name', 'description'] },
     { key: 'preferences', title: 'settings.preferences', values: ['disableNSFWFilter'] },
     { key: 'mutesAndBlocks', title: 'settings.mutesAndBlocks', values: ['mutedWords'] }
   ]
