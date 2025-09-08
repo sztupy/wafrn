@@ -14,8 +14,12 @@
       }
     </mat-nav-list>
     <hr />
-    <p>[DEBUGGING] The data:</p>
-    <pre>{{ values | json }}</pre>
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>[DEBUGGING] The data:</mat-panel-title>
+      </mat-expansion-panel-header>
+      <pre>{{ values | json }}</pre>
+    </mat-expansion-panel>
   </section>
   <section class="col">
     <router-outlet></router-outlet>

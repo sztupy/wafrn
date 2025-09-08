@@ -1,5 +1,6 @@
 import { JsonPipe } from '@angular/common'
 import { Component } from '@angular/core'
+import { MatExpansionModule } from '@angular/material/expansion'
 import { MatListModule } from '@angular/material/list'
 import { RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
@@ -13,7 +14,7 @@ import {
 
 @Component({
   selector: 'app-settings',
-  imports: [MatListModule, FontAwesomeModule, RouterModule, TranslateModule, JsonPipe],
+  imports: [MatListModule, MatExpansionModule, FontAwesomeModule, RouterModule, TranslateModule, JsonPipe],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
