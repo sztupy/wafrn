@@ -271,8 +271,8 @@
       "deleteAccount": "Delete Account",
       "classicOptions": "Classic Options",
       "animationsAndSounds": "Animations and Sounds",
-      "words": "Words",
-      "users": "Users"
+      "mutedBlockedWords": "Muted and Blocked Words",
+      "mutedBlockedUsers": "Muted and Blocked Users"
     },
     "name": "Name",
     "description": "Description"

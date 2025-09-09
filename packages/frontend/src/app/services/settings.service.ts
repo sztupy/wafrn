@@ -78,6 +78,7 @@ export interface SettingDataEntry {
 // Data on each setting to generate form controls
 export type SettingData = Record<SettingKey, SettingDataEntry>
 export type SettingRenderList =
+  | { type: 'separator' }
   | { type: 'key'; value: SettingKey }
   | { type: 'header'; value: string }
   | { type: 'description'; value: string }
@@ -366,18 +367,18 @@ export class SettingsService {
       icon: faKey,
       title: 'settings.sidebar.account',
       values: [
-        { type: 'description', value: 'CHANGE EMAIL FIELD' },
+        { type: 'description', value: 'CHANGE EMAIL FIELD HERE' },
         { type: 'key', value: 'disableEmailNotifications' },
-        { type: 'description', value: 'CHANGE PASSWORD FIELD' },
-        { type: 'description', value: '2FA FIELD' },
+        { type: 'description', value: 'CHANGE PASSWORD FIELD HERE' },
+        { type: 'description', value: '2FA FIELD HERE' },
         { type: 'header', value: 'settings.header.integrations' },
-        { type: 'description', value: 'ENABLE BLUESKY FIELD' },
-        { type: 'description', value: 'RSS MICROFRONT FIELD' },
-        { type: 'header', value: 'settings.header.migration' },
-        { type: 'description', value: 'MIGRATE FROM AN OLD ACCOUNT FIELD' },
-        { type: 'description', value: 'IMPORT FOLLOWERS FIELD' },
+        { type: 'description', value: 'ENABLE BLUESKY FIELD HERE' },
+        { type: 'description', value: 'RSS MICROFRONT FIELD HERE' },
+        { type: 'header', value: 'settings.header.migration HERE' },
+        { type: 'description', value: 'MIGRATE FROM AN OLD ACCOUNT FIELD HERE' },
+        { type: 'description', value: 'IMPORT FOLLOWERS FIELD HERE' },
         { type: 'header', value: 'settings.header.deleteAccount' },
-        { type: 'description', value: 'DELETE ACCOUNT BUTTON' }
+        { type: 'description', value: 'DELETE ACCOUNT BUTTON HERE' }
       ]
     },
     {
@@ -426,7 +427,7 @@ export class SettingsService {
         { type: 'key', value: 'hideProfileNotLoggedIn' },
         { type: 'key', value: 'hideFollows' },
         { type: 'key', value: 'displayMentionsOfBlockedUsersFromOtherUsers' },
-        { type: 'description', value: 'MANAGE FOLLOWERS MENU' }
+        { type: 'description', value: 'MANAGE FOLLOWERS MENU BUTTON' }
       ]
     },
     {
@@ -435,13 +436,15 @@ export class SettingsService {
       title: 'settings.sidebar.mutesAndBlocks',
       values: [
         { type: 'description', value: 'MAKE A DESCRIPTION VALUE AND PUT IT ON ALL OF THESE' },
-        { type: 'header', value: 'settings.header.words' },
+        { type: 'header', value: 'settings.header.mutedBlockedWords' },
         { type: 'key', value: 'mutedWords' },
         { type: 'key', value: 'superMutedWords' },
-        { type: 'header', value: 'settings.header.users' },
-        { type: 'description', value: 'MAKE A HORIZONTAL RULE AND PUT IT HERE' },
+        { type: 'header', value: 'settings.header.mutedBlockedUsers' },
+        { type: 'description', value: 'MUTED USERS HERE' },
+        { type: 'description', value: 'BLOCKED USERS HERE' },
+        { type: 'separator' },
         { type: 'description', value: 'MUTED POSTS HERE' },
-        { type: 'description', value: 'BLOCKED SERVERS HER' },
+        { type: 'description', value: 'BLOCKED SERVERS HERE' },
         { type: 'key', value: 'hideQuotes' }
       ]
     },

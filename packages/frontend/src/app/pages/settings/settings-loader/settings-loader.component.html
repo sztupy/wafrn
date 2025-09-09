@@ -7,6 +7,8 @@
       <h3 class="mt-1 setting-header">{{ setting.value | translate }}</h3>
     } @else if (setting.type === 'description') {
       <p class="m-0 setting-description">{{ setting.value | translate }}</p>
+    } @else if (setting.type === 'separator') {
+      <hr />
     }
   }
 }
