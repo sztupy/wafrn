@@ -63,6 +63,7 @@ export type SettingValueType = string | boolean
 export interface SettingDataEntry {
   key: SettingKey // Copy of key for components to use
   translationKey: string
+  translationDescriptionKey?: string
   serverKey?: string
   localStorageKey?: string
   profileOption?: boolean // Whether it is stored on the User server side. Leave unset if you don't know
@@ -138,6 +139,7 @@ export class SettingsService {
     hideProfileNotLoggedIn: {
       key: 'hideProfileNotLoggedIn',
       translationKey: 'settings.hideProfileNotLoggedIn',
+      translationDescriptionKey: 'settings.hideProfileNotLoggedInDescription',
       serverKey: 'hideProfileNotLoggedIn',
       profileOption: true,
       type: 'checkbox',
@@ -187,6 +189,7 @@ export class SettingsService {
     disableConfetti: {
       key: 'disableConfetti',
       translationKey: 'settings.disableConfetti',
+      translationDescriptionKey: 'settings.disableConfettiDescription',
       serverKey: 'wafrn.disableConfetti',
       localStorageKey: 'disableConfetti',
       type: 'checkbox',
@@ -203,6 +206,7 @@ export class SettingsService {
     disableSounds: {
       key: 'disableSounds',
       translationKey: 'settings.disableSounds',
+      translationDescriptionKey: 'settings.disableSoundsDescription',
       serverKey: 'wafrn.disableSounds',
       localStorageKey: 'disableSounds',
       type: 'checkbox',
@@ -235,6 +239,7 @@ export class SettingsService {
     disableForceAltText: {
       key: 'disableForceAltText',
       translationKey: 'settings.disableForceAltText',
+      translationDescriptionKey: 'settings.disableForceAltTextDescription',
       serverKey: 'wafrn.disableForceAltText',
       localStorageKey: 'disableForceAltText',
       type: 'checkbox',
@@ -299,6 +304,7 @@ export class SettingsService {
     mutedWords: {
       key: 'mutedWords',
       translationKey: 'settings.mutedWords',
+      translationDescriptionKey: 'settings.mutedWordsDescription',
       serverKey: 'wafrn.mutedWords',
       localStorageKey: 'mutedWords',
       type: 'textarea',
@@ -309,6 +315,7 @@ export class SettingsService {
     superMutedWords: {
       key: 'superMutedWords',
       translationKey: 'settings.superMutedWords',
+      translationDescriptionKey: 'settings.superMutedWordsDescription',
       serverKey: 'wafrn.superMutedWords',
       localStorageKey: 'superMutedWords',
       type: 'textarea',
@@ -439,7 +446,6 @@ export class SettingsService {
       icon: faBan,
       title: 'settings.sidebar.mutesAndBlocks',
       values: [
-        { type: 'description', value: 'MAKE A DESCRIPTION VALUE AND PUT IT ON ALL OF THESE' },
         { type: 'header', value: 'settings.header.mutedBlockedWords' },
         { type: 'key', value: 'mutedWords' },
         { type: 'key', value: 'superMutedWords' },

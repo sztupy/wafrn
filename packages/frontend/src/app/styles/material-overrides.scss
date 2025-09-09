@@ -28,6 +28,11 @@
   content: unset !important;
 }
 
+// Allows top aligned checkboxes to their labels
+.mat-checkbox-top .mat-internal-form-field {
+  align-items: flex-start;
+}
+
 // Allow empty background filled forms
 .mat-form-field-no-background {
   --mat-form-field-filled-container-color: transparent;
