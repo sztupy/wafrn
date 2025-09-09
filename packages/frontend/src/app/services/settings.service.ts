@@ -273,18 +273,20 @@ export class SettingsService {
     enableAsks: {
       key: 'enableAsks',
       translationKey: 'settings.enableAsks',
-      serverKey: 'wafrn.enableAsks',
-      localStorageKey: 'enableAsks',
+      serverKey: 'wafrn.public.asks',
+      localStorageKey: 'public.asks',
       type: 'checkbox',
-      default: false
+      default: true,
+      convertFromStorage: (val) => val === '1' || val === '2',
+      convertToStorage: () => this.convertAsksTo()
     },
     enableAnonymousAsks: {
       key: 'enableAnonymousAsks',
       translationKey: 'settings.enableAnonymousAsks',
-      serverKey: 'wafrn.enableAnonymousAsks',
-      localStorageKey: 'enableAnonymousAsks',
+      localStorageKey: 'public.asks',
       type: 'checkbox',
-      default: false
+      default: false,
+      convertFromStorage: (val) => val === '2'
     },
     displayMentionsOfBlockedUsersFromOtherUsers: {
       key: 'displayMentionsOfBlockedUsersFromOtherUsers',
@@ -635,5 +637,15 @@ export class SettingsService {
   convertListTo(list: SettingValueType): string {
     if (typeof list !== 'string') return ''
     return `"${list.replaceAll('\n', ',')}"`
+  }
+
+  convertAsksTo(): string {
+    if (this.values.enableAsks && this.values.enableAnonymousAsks) {
+      return '1'
+    } else if (this.values.enableAsks) {
+      return '2'
+    } else {
+      return '3'
+    }
   }
 }
