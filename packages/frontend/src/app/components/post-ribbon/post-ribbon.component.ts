@@ -1,16 +1,16 @@
-import { Component, input, OnInit, SimpleChanges } from '@angular/core'
+import { Component, input, OnInit } from '@angular/core'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { AvatarSmallComponent } from '../avatar-small/avatar-small.component'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { MatCardModule } from '@angular/material/card'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
-import { NgClass, NgTemplateOutlet } from '@angular/common'
+import { NgTemplateOutlet } from '@angular/common'
 import { DateTime } from 'luxon'
-import { faArrowLeft, faEllipsisV, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-post-ribbon',
-  imports: [MatCardModule, AvatarSmallComponent, FontAwesomeModule, NgTemplateOutlet, NgClass],
+  imports: [MatCardModule, AvatarSmallComponent, FontAwesomeModule, NgTemplateOutlet],
   templateUrl: './post-ribbon.component.html',
   styleUrl: './post-ribbon.component.scss'
 })
@@ -30,6 +30,4 @@ export class PostRibbonComponent implements OnInit {
     const relative = DateTime.fromJSDate(this.time()).setLocale('en').toRelative()
     this.timeAgo = relative ? relative : 'ERROR GETING TIME'
   }
-
-  ngOnChanges(changes: SimpleChanges): void {}
 }

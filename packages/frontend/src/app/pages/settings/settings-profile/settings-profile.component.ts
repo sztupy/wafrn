@@ -7,12 +7,11 @@ import { MatCardModule } from '@angular/material/card'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import { LoginService } from 'src/app/services/login.service'
 import { EnvironmentService } from 'src/app/services/environment.service'
-import { KeyValueTypedPipe } from 'src/app/pipes/keyvaluetyped.pipe'
 import { MatExpansionModule } from '@angular/material/expansion'
 
 @Component({
   selector: 'app-setting-loader',
-  imports: [MatCardModule, MatExpansionModule, TranslateModule, SettingEntryComponent, KeyValueTypedPipe],
+  imports: [MatCardModule, MatExpansionModule, TranslateModule, SettingEntryComponent],
   templateUrl: './settings-profile.component.html',
   styleUrl: './settings-profile.component.scss'
 })
