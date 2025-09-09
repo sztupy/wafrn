@@ -10,4 +10,5 @@ export interface SimplifiedUser {
   emojis?: Emoji[]
   email?: string
   registerIp?: string
+  bskyDid?: string
 }
