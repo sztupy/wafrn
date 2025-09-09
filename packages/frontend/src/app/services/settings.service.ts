@@ -502,7 +502,6 @@ export class SettingsService {
         const rawAttachments = blogDetails.publicOptions?.find(
           (elem) => elem.optionName === 'fediverse.public.attachment'
         )
-        console.log(blogDetails.publicOptions)
         if (rawAttachments) {
           try {
             this.fediAttachments.length = 0
