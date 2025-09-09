@@ -367,7 +367,7 @@ export class SettingsService {
         { type: 'header', value: 'settings.header.integrations' },
         { type: 'description', value: 'ENABLE BLUESKY FIELD HERE' },
         { type: 'description', value: 'RSS MICROFRONT FIELD HERE' },
-        { type: 'header', value: 'settings.header.migration HERE' },
+        { type: 'header', value: 'settings.header.migration' },
         { type: 'description', value: 'MIGRATE FROM AN OLD ACCOUNT FIELD HERE' },
         { type: 'description', value: 'IMPORT FOLLOWERS FIELD HERE' },
         { type: 'header', value: 'settings.header.deleteAccount' },
