@@ -57,7 +57,7 @@ Pre-requisites: A linux based system with bash, git, build essentials and docker
 You'll need to get the project files ready in a directory of your choice:
 
 ```bash
-git clone git@github.com:gabboman/wafrn.git
+git clone https://codeberg.org/wafrn/wafrn.git
 cd wafrn
 ```
 
@@ -99,7 +99,7 @@ You'll also need to fill in the `SMTP` settings for emails to work.
 
 Next to run the setup just call
 
-```
+```bash
 docker compose up --build -d
 ```
 
@@ -112,19 +112,10 @@ Before you update please check the [CHANGELOG.md](../CHANGELOG.md) for any break
 Go to your `wafrn` directory and enter:
 
 ```bash
-git pull origin main
-docker compose pull
-docker compose build
-rm -rf packages/backend/cache
-mkdir packages/backend/cache
-docker compose up --build -d
-```
-
-Or if you don't like to type these out every time then simply do
-
-```bash
 ./install/manage.sh update
 ```
+
+This will check if there are any known breaking changes with the files and if not will update your local setup to the latest version.
 
 This small management script can also backup and restore your instance. For example you can backup before an update:
 
@@ -202,6 +193,16 @@ Or as another example to override the registration page and change the list of g
 Do note these overrides will persist any update you do on Wafrn, and - especially if you change the source code files - you'll need to manually make sure your updated code doesn't break with the updated source material.
 
 You can find an example override repository that replaces the logo files and hides the registration functionality at https://codeberg.org/sztupy/wafrn-personal-overrides
+
+### Default articles
+
+Wafrn will create three posts for you for the following pages:
+
+* `https://wafrn.example.com/article/system.welcome` is the short welcome message on top that logged out users will see
+* `https://wafrn.example.com/article/system.about` is the contents of the About page, including site rules, and the list of banned server
+* `https://wafrn.example.com/article/system.privacy-policy` is the privacy policy
+
+When logged in as the admin user you can update each of the above to customize it to your instance's need
 
 ## Running on servers with other web applications
 
