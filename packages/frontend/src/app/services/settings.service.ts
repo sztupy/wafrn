@@ -97,9 +97,9 @@ export class SettingsService {
     }
   }
   public groups: GroupedSettingData[] = [
-    { key: 'profile', icon: faUser, title: 'settings.profile', values: ['avatar', 'name', 'description'] },
-    { key: 'preferences', title: 'settings.preferences', values: ['disableNSFWFilter'] },
-    { key: 'mutesAndBlocks', title: 'settings.mutesAndBlocks', values: ['mutedWords'] }
+    { key: 'profile', icon: faUser, title: 'settings.sidebar.profile', values: ['avatar', 'name', 'description'] },
+    { key: 'preferences', title: 'settings.sidebar.preferences', values: ['disableNSFWFilter'] },
+    { key: 'mutesAndBlocks', title: 'settings.sidebar.mutesAndBlocks', values: ['mutedWords'] }
   ]
   public values: SettingValues
 

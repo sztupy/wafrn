@@ -255,6 +255,15 @@
     },
     "updateButton": "Update profile"
   },
+  "settings": {
+    "sidebar": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "mutesAndBlocks": "Mutes and Blocks"
+    },
+    "name": "Name",
+    "description": "Description"
+  },
   "ask-dialog-content": {
     "askAnonymously": "Make question anonymous",
     "askFormLabel": "Question",
