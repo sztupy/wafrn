@@ -1,0 +1,299 @@
+{
+  "common": {
+    "commaSeparation": "Separated with commas",
+    "characters": "characters"
+  },
+  "login": {
+    "title": "Log in",
+    "welcomeBack": "Welcome back!",
+    "exploreWithoutAccount": "Click here to take a look without an account!",
+    "dontHaveAccount": "Don't have an account?",
+    "register": "Register now!",
+    "checkSpam": "If you have any issues logging in, please check your spam folder!",
+    "email": "Email",
+    "password": "Password",
+    "mfaNextStep": "One more step...",
+    "mfaToken": "Token",
+    "mfaTokenEnter": "Enter your token from your Authenticator application",
+    "forgottenPassword": "Forgot password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "loginButton": "Log in",
+    "checkEmail": "Please check your email",
+    "checkEmailLine1": "We have sent you an email. Please do check your email and the spam folder",
+    "checkEmailLine2": "If you have any problem, write to the instance admin, whose email can be found <a href=\"/about\">here</a>",
+    "alreadyLoggedIn": "You are already logged in on with that account"
+  },
+  "register": {
+    "title": "Register",
+    "welcome": "Welcome to Wafrn!",
+    "manualReviewInfo": "An administrator will review your profile before you can join. This process can take a few hours.",
+    "registerButton": "Register"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loadingMore": "Loading more notifications",
+    "refresh": "Refresh"
+  },
+  "menu": {
+    "login": "Log in",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "dashboardHover": "View dashboard",
+    "writeWoot": "Woot",
+    "notifications": "Notifications",
+    "explore": "Explore",
+    "exploreWafrn": "Explore WAFRN",
+    "exploreFediverse": "WAFRN & friends",
+    "unansweredAsks": "Unanswered Asks",
+    "privateMessages": "Private messages",
+    "search": "Search",
+    "profile": "Profile",
+    "myBlog": "My blog",
+    "about": "About",
+    "privacy": "Privacy",
+    "source": "Source",
+    "patreon": "Patreon",
+    "kofi": "Ko-fi",
+    "inbox": "Inbox",
+    "otherAccounts": "Other accounts",
+    "addAccount": "Add account",
+    "logout": "Log out",
+    "viewBlog": "View blog",
+    "switchToAlt": "Switch to account",
+    "faq": "FAQ",
+    "more": "More",
+    "settings": {
+      "title": "Settings",
+      "follows": "Manage followers",
+      "enableBluesky": "Enable Bluesky",
+      "editProfile": "Preferences and Profile",
+      "themeEditor": "Theme editor",
+      "mutedUsers": "Muted users",
+      "mutedPosts": "Muted posts",
+      "bookmarkedPosts": "Bookmarked posts",
+      "followedHashtags": "Followed hashtags",
+      "myBlockedUsers": "Blocked users",
+      "myBlockedServers": "Blocked servers",
+      "importFollows": "Import followers",
+      "superSecretMenu": "Super Secret Menu"
+    },
+    "admin": {
+      "title": "Admin",
+      "serverList": "Server list",
+      "addEmojis": "Add emojis",
+      "reports": "Reports",
+      "bans": "Banned users",
+      "blocklist": "Blocked users",
+      "stats": "Stats",
+      "awaitingAproval": "Awaiting approval"
+    }
+  },
+  "theme-editor": {
+    "title": "Theme Editor",
+    "templateNote": "You can see a base template and some advice in the",
+    "themeTextLabel": "Edit your CSS theme",
+    "themeTextPlaceholder": "Write down your own css...",
+    "themeGuideName": "Theme Guide",
+    "updateButton": "Update Theme"
+  },
+  "editor": {
+    "inReplyTo": "In reply to:",
+    "quoteButton": "Quote a woot",
+    "publishWoot": "Publish this woot",
+    "directMessageWarning": "Admins of both your server and the external server can read these messages.",
+    "unlistedWarning": "Unlisted posts will get ignored by searches (TAGS INCLUDED), and will not show on explore local, but they will be shown to your followers. And if someone sends a link they will be visible, unlike followers only. Basically, for when you want to post a lot but dont want to fill explore local.",
+    "directMessageWithQuoteWarning": "Quoted user will be notified of this as a mention too",
+    "sensitivePlaceholder": "What is sensitive about this woot?",
+    "wootQuoteBoxLabel": "Paste the URL of a woot to quote it. Can be the external url or the wafrn url",
+    "wootQuoteBoxPlaceholder": "Just paste the woot url",
+    "wootQuoteConfirmButton": "Add woot as quote",
+    "wootTextLabel": "Woot text",
+    "wootTextPlaceholder": "Start writing...",
+    "uploadMediaIndicator": "Drop to upload media",
+    "bskyLengthWarning": "Text above 300 characters will be cut off and instead a link to wafrn will be shown",
+    "bskyLengthNotice": "This only affects Bluesky, currently only an approximation!",
+    "bskyLengthLabel": "Bluesky character limit",
+    "altTextFieldLabel": "Image Description",
+    "altTextFieldLabelVideo": "Video Description",
+    "altTextFieldPlaceholder": "Description. Please FILL THIS",
+    "isNSFWToggle": "NSFW",
+    "mediaCountMastodonWarning": "ATTENTION! ANY FURTHER MEDIA UPLOADED WILL NOT BE DISPLAYED ON MASTODON",
+    "altTextWarning": "Please fill in the media descriptions. If you want to disable this check, you can do so in the settings.",
+    "quoteTitle": "Quoting:",
+    "tagFieldLabel": "Tags",
+    "tagSeparationNotice": "Separated by commas",
+    "ariaLabelWootPrivacy": "Edit privacy of woot",
+    "ariaLabelQuoteSetter": "Enable the quote setter",
+    "uploadMediaTooltip": "Upload Media",
+    "contentWarningTooltip": "Content Warning",
+    "insertEmojiTooltip": "Insert emoji",
+    "hiddenMentionsTooltip": "Other mentioned users",
+    "editorGuide": "Doubts on how to format the text or how to start? Check <a target=\"_blank\" href=\"https://wafrn.net/faq/user\">the guide</a>",
+    "usernameLabel": "Posting as"
+  },
+  "profile": {
+    "profile": {
+      "chooseAvatar": "Choose another avatar",
+      "chooseHeader": "Choose header image",
+      "changeDisplayName": "Display name (can contain emoji codes)",
+      "changeBio": "Your bio/description. You can put emoji codes here too. You can use markdown here",
+      "extraInfoHead": "Extra information (Fediverse exclusive)",
+      "addAttachment": "Add attachment",
+      "fieldPropertyName": "Property name",
+      "fieldPropertyValue": "Property value"
+    },
+    "preferences": {
+      "appearance": "Appearance",
+      "colorScheme": "Color Scheme",
+      "theme": "Theme",
+      "additionalStyleModes": "Additional Style Modes",
+      "language": "Language",
+      "appLanguage": "App language",
+      "notificationFilters": "Notification filtering",
+      "showNotificationsFrom": "Show notifications from",
+      "notifyFrom": {
+        "everyone": "Everyone",
+        "followers": "Followers",
+        "following": "People I follow",
+        "mutual": "Mutuals"
+      },
+      "notifyWhen": {
+        "mentioned": "Mentions",
+        "followed": "Follows",
+        "likesEmojiReacts": "Likes and EmojiReactions",
+        "quoted": "Quotes",
+        "rewooted": "Rewoots"
+      },
+      "manuallyAcceptFollows": "Manually accept follows",
+      "disableForceAltText": "Allow uploading media without alt text (enable this only if you're evil)",
+      "forceClassicLogo": "Force classic logo",
+      "forceClassicVideoPlayer": "Force classic video player",
+      "forceClassicAudioPlayer": "Force classic audio player",
+      "forceClassicMediaView": "Force classic media carousel (vertical)",
+      "dontCollapseQuotes": "Do not collapse quotes",
+      "disableCwExceptMuted": "Disable CW unless post contains muted words",
+      "disableConfetti": "Disable confetti effects when performing some actions",
+      "enableConfettiRecivingLike": "Enable confetti when you receive a like",
+      "disableUiSounds": "Disable sound effects when performing some actions",
+      "dashboardIsExploreLocal": "Default dashboard is explore local instead of following",
+      "cocAIne": "Replace the word artificial intelligence with custom word (cocaine?)",
+      "customCocAIne": "Custom word for AI replacement",
+      "notRecommendedOptions": "Not recommended options",
+      "disableNSFWFilter": "Disable NSFW images filter",
+      "automaticallyExpandAllPosts": "Automatically expand all posts",
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users",
+      "hideNoDescriptionMedia": "Automatically CW media with no alt text"
+    },
+    "privacy": {
+      "defaultPostPrivacy": "Default post privacy",
+      "asks": "Asks",
+      "disableEmailNotifications": "Disable email notifications",
+      "hideFollows": "Hide my follows and followers",
+      "hideProfileNotLoggedInDescription": "Hide profile to not logged in users and search (this will only apply to your profile IN this wafrn, not to\nyour posts nor other fedi instances or bluesky)",
+      "rssOptions": "Enable RSS and microfront for my blog page"
+    },
+    "security": {
+      "header": "Security Settings",
+      "passwordChange": "Reset Password",
+      "mfa": {
+        "header": "Two Factor Authentication",
+        "setup": "Setup Two Factor Authentication",
+        "addNew": "Add new Two Factor Authenticator",
+        "friendlyNameLabel": "Friendly name, e.g. 'Work Phone' or 'Aegis'",
+        "typeLabel": "Two factor type",
+        "setupNewButton": "Set up new authenticator",
+        "tokenLabel": "Token",
+        "deleteLabel": "Delete",
+        "scanInstructions": "Scan the code below in your Authenticator application, and enter the code shown",
+        "installInstructions": "If you don't have an Authenticator app yet we suggest <a href=\"https://getaegis.app/\" target=\"_blank\">Aegis</a> (Android) or <a href=\"https://2fas.com/\" target=\"_blank\">2FAS</a> (iOS/Android)",
+        "imageAltSecret": "Authentication secret is '{{ secret }}'",
+        "secretFallback": "If you cannot read the QR code you can use code '{{ secret }}' manually in your app",
+        "confirmDeleteMessage": "Are you sure you want to delete this MFA provider? Note: deleting all MFA providers will disable MFA on your account",
+        "deleteSuccess": "MFA provider successfully removed",
+        "verifySuccess": "Success, your MFA is now enabled",
+        "verifyFailed": "Verification failed. Check your token, or if the problem persists ask an Administrator",
+        "errorMessageGeneric": "There was an issue with your request. Try again, or ask an Administrator for help",
+        "noMfa": "You do not have MFA enabled on your account",
+        "mfaList": "You have the following MFA providers set up",
+        "type": {
+          "totpLabel": "Authenticator App"
+        }
+      }
+    },
+    "other": {
+      "movingFromAccount": "'Moving from a different account (without the @)'",
+      "wordsThatWillAutoCwPosts": "Words that will add cw to post",
+      "superMutedWords": "Phrases that will not show a post with them (BE CAREFUL WITH THESE)",
+      "availableEmoji": "Available emojis",
+      "rollToCrash": "Roll a dice to crash your browser",
+      "rollSurvived": "Survived!",
+      "rollDied": "YOU FUCKEN DIED",
+      "rollDiedCountPrefix": "Roll count:"
+    },
+    "bsky": {
+      "psa1": "Bluesky integration is still very experimental! Things will absolutely break!",
+      "psa2_1": "Please refer to",
+      "psa2_2": "the FAQ",
+      "psa2_3": "to find out what does/doesn't work generally speaking.",
+      "psa3": "In the future, we aim to have Bluesky-Specific settings in here, like the ability to change the Bluesky username."
+    },
+    "migrate": {
+      "psa1": "To migrate to another server please create an alias and click",
+      "psa2": "here"
+    },
+    "delete": {
+      "psa1": "We will mark your account as deactivated and after 30 days it will be IRREVERSIBLY DELETED.",
+      "psa2": "To confirm it's you, please fill your password",
+      "button": "DELETE ACCOUNT"
+    },
+    "tabHeaders": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "privacySecurity": "Privacy and Security",
+      "misc": "Miscellaneous"
+    },
+    "updateButton": "Update profile"
+  },
+  "ask-dialog-content": {
+    "askAnonymously": "Make question anonymous",
+    "askFormLabel": "Question",
+    "askButtonText": "Ask"
+  },
+  "keyboard-shortcuts": {
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "groupNavigation": "Navigation",
+    "scrollDown": "Scroll down",
+    "scrollUp": "Scroll up",
+    "scrollDownPage": "Scroll a page down",
+    "scrollUpPage": "Scroll a page up",
+    "nextPost": "Next post",
+    "previousPost": "Previous post",
+    "groupPostAction": "Post Actions",
+    "likePost": "Like post",
+    "rewootPost": "Rewoot post",
+    "replyPost": "Reply to post",
+    "quotePost": "Quote post",
+    "groupMisc": "Miscellaneous",
+    "openEditor": "Open editor",
+    "viewKeyboardShortcuts": "View keyboard shortcuts",
+    "unbound": "unbound",
+    "additionalOptions": "Additional Options",
+    "smoothScroll": "Smooth scroll"
+  },
+  "post-fragment": {
+    "mutedWords": "Post contains muted words:",
+    "replyingTo": "mentions: "
+  },
+  "media": {
+    "noAltText": "Media does not have alt text",
+    "sensitiveContent": "This media contains sensitive content",
+    "manuallyHidden": "Media manually hidden"
+  },
+  "page-not-found": {
+    "title": "404: page not found",
+    "subtitle": "Looks like there isn't anything here.",
+    "couldNotFind": "does not lead to a page",
+    "returnHome": "Go Home"
+  }
+}
