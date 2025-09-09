@@ -95,6 +95,11 @@ export type SettingValues = {
   [key in SettingKey]?: SettingValueType
 }
 
+export type FediAttachment = {
+  name: string
+  value: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -463,6 +468,8 @@ export class SettingsService {
   ]
   public values: SettingValues
 
+  public fediAttachments: FediAttachment[] = [{ name: '', value: '' }] // Only shown before load completes
+
   public settingsModified = signal(false)
   public settingsLoading = signal(false)
 
@@ -484,7 +491,22 @@ export class SettingsService {
       this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
         this.values.avatar = blogDetails.avatar
         this.values.name = blogDetails.name
-        this.values.description = blogDetails.descriptionMarkdown
+
+        // Fediverse Attachments
+        const rawAttachments = blogDetails.publicOptions?.find(
+          (elem) => elem.optionName === 'fediverse.public.attachment'
+        )
+        console.log(blogDetails.publicOptions)
+        if (rawAttachments) {
+          try {
+            this.fediAttachments.length = 0
+            this.fediAttachments.push(...JSON.parse(rawAttachments.optionValue))
+          } catch (error) {}
+
+          if (this.fediAttachments.length === 0) {
+            this.fediAttachments.push({ name: '', value: '' })
+          }
+        }
       })
     }
   }
@@ -529,6 +551,7 @@ export class SettingsService {
   }
 
   async updateProfile(): Promise<boolean> {
+    // Map the non-required options into a specific key of the payload
     const options: { name: string; value: string }[] = Object.entries(this.data)
       .filter(([_key, entry]) => entry.profileOption !== true && entry.serverKey !== undefined)
       .map(([_key, entry]) => {
@@ -542,6 +565,14 @@ export class SettingsService {
 
         return { name: entry.serverKey!, value: convertedValue }
       })
+
+    // Add Fediverse attachments
+    // Ignore attachment if it doesn't have both fields
+    options.push({
+      name: 'fediverse.public.attachment',
+      value: JSON.stringify(this.fediAttachments.filter((attachment) => attachment.name && attachment.value))
+    })
+
     const payload = {
       avatar: undefined,
       headerImage: undefined,
@@ -553,7 +584,7 @@ export class SettingsService {
       disableEmailNotifications: this.values.disableEmailNotifications,
       options: JSON.stringify(options)
     }
-    console.log(payload)
+
     const formData = this.utils.objectToFormData(payload)
 
     const res = await lastValueFrom(

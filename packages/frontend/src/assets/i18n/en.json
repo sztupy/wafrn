@@ -266,6 +266,7 @@
       "miscellaneous": "Miscellaneous"
     },
     "header": {
+      "fediAttachments": "Fediverse Attachments",
       "integrations": "Integrations",
       "migration": "Account Migration",
       "deleteAccount": "Delete Account",
@@ -274,6 +275,9 @@
       "mutedBlockedWords": "Muted and Blocked Words",
       "mutedBlockedUsers": "Muted and Blocked Users"
     },
+    "fediPropertyKey": "Property Name",
+    "fediPropertyValue": "Property Value",
+    "addFediAttachment": "Add Attachment",
     "name": "Name",
     "description": "Description"
   },

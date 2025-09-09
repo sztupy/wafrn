@@ -13,6 +13,37 @@
 <app-setting-entry [setting]="data.name"></app-setting-entry>
 <app-setting-entry [setting]="data.description"></app-setting-entry>
 
-<p>FEDIVERSE ATTACHMENTS HERE</p>
-<p>FEDIVERSE ATTACHMENTS HERE</p>
-<p>FEDIVERSE ATTACHMENTS HERE</p>
+<h2 class="setting-header">{{ 'settings.header.fediAttachments' | translate }}</h2>
+<section>
+  @for (attachment of fediAttachments; track $index) {
+    <div class="flex align-items-center gap-3 fedi-attachment-list">
+      <mat-form-field class="fedi-attachment" floatLabel="always">
+        <mat-label>{{ 'settings.fediPropertyKey' | translate }}</mat-label>
+        <input
+          matNativeControl
+          required
+          spellcheck="false"
+          [value]="fediAttachments[$index].name"
+          (input)="updateFediAttachment($index, 'name', $event)"
+        />
+      </mat-form-field>
+      <mat-form-field class="fedi-attachment" floatLabel="always">
+        <mat-label>{{ 'settings.fediPropertyValue' | translate }}</mat-label>
+        <input
+          matNativeControl
+          required
+          spellcheck="false"
+          [value]="fediAttachments[$index].value"
+          (input)="updateFediAttachment($index, 'value', $event)"
+        />
+      </mat-form-field>
+      <button (click)="removeFediAttachment($index)" mat-button class="mb-4 mat-circle-button remove-fedi-attachment">
+        <fa-icon [icon]="removeIcon" class="m-1"></fa-icon>
+      </button>
+    </div>
+  }
+  <button (click)="addFediAttachment()" mat-stroked-button class="fedi-attachment-add-button">
+    {{ 'settings.addFediAttachment' | translate }}
+    <fa-icon [icon]="addIcon" [fixedWidth]="true"></fa-icon>
+  </button>
+</section>
