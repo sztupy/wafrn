@@ -261,6 +261,10 @@
       "preferences": "Preferences",
       "mutesAndBlocks": "Mutes and Blocks"
     },
+    "header": {
+      "appearance": "Appearance",
+      "sus": "Among Us"
+    },
     "name": "Name",
     "description": "Description"
   },

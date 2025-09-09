@@ -20,6 +20,8 @@
       </mat-expansion-panel-header>
       <pre>{{ values | json }}</pre>
     </mat-expansion-panel>
+    <p>Debug buttons</p>
+    <div><button mat-stroked-button (click)="test()">test</button></div>
   </section>
   <section class="col">
     <router-outlet></router-outlet>

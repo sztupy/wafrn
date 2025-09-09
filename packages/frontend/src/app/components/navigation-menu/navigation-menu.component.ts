@@ -10,7 +10,7 @@ import {
   ViewEncapsulation,
   WritableSignal
 } from '@angular/core'
-import { NavigationEnd, Router } from '@angular/router'
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
 import { fromEvent, merge, Subscription } from 'rxjs'
 import { Action } from 'src/app/interfaces/editor-launcher-data'
 import { DashboardService } from 'src/app/services/dashboard.service'
@@ -470,110 +470,9 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         label: 'menu.settings.title',
         icon: faCog,
         visible: () => this.loggedIn(),
-        highlightRoute: false,
         badge: this.followsAwaitingApproval,
-        items: [
-          {
-            label: 'menu.settings.follows',
-            icon: faUsers,
-            visible: () => true,
-            badge: this.followsAwaitingApproval,
-            routerLinkDynamic: computed(() => '/blog/' + this.currentAccount()?.url + '/followers'),
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          // {
-          //   label: 'menu.settings.enableBluesky',
-          //   icon: faBluesky,
-          //   visible:()=> true,
-          //   routerLink: '/profile/enable-bluesky',
-          //   command: () => {
-          //     this.hideMenu()
-          //   }
-          // },
-          {
-            label: 'menu.settings.editProfile',
-            icon: faUserEdit,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/edit',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.themeEditor',
-            icon: faPaintbrush,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/css',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.mutedUsers',
-            icon: faVolumeMute,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/mutes',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.mutedPosts',
-            icon: faBellSlash,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/silencedPosts',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.followedHashtags',
-            icon: faHashtag,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/manageFollowedHashtags',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.bookmarkedPosts',
-            icon: faBookmark,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/bookmarkedPosts',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.myBlockedUsers',
-            icon: faBan,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/blocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.myBlockedServers',
-            icon: faServer,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/serverBlocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.importFollows',
-            icon: faUserEdit,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/importFollows',
-            command: () => {
-              this.hideMenu()
-            }
-          }
-        ]
+        routerLink: '/settings',
+        highlightRoute: false
       },
       {
         label: 'menu.more',

@@ -2,7 +2,7 @@ import { Component, computed, Signal } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-entry.component'
 import { ActivatedRoute } from '@angular/router'
-import { GroupedSettingDataTransformed, SettingsService, SettingValues } from 'src/app/services/settings.service'
+import { SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
 import { MatCardModule } from '@angular/material/card'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import { LoginService } from 'src/app/services/login.service'
@@ -17,7 +17,7 @@ import { MatExpansionModule } from '@angular/material/expansion'
   styleUrl: './settings-profile.component.scss'
 })
 export class SettingsProfileComponent {
-  group: GroupedSettingDataTransformed | undefined
+  data: SettingData
   values: SettingValues
 
   blog: Signal<BlogDetails | undefined>
@@ -35,10 +35,8 @@ export class SettingsProfileComponent {
   )
 
   constructor(loginService: LoginService, settingsService: SettingsService, activatedRoute: ActivatedRoute) {
+    this.data = settingsService.data
     this.blog = loginService.currentAccount
     this.values = settingsService.values
-    activatedRoute.data.subscribe((data) => {
-      this.group = settingsService.groupsTransformed.find((val) => val.key === data['group'])
-    })
   }
 }

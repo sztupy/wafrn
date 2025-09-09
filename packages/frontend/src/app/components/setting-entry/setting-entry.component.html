@@ -32,9 +32,9 @@
       (input)="updateInput(setting().key, $event)"
       spellcheck="false"
       cdkTextareaAutosize
-      cdkAutosizeMinRows="12"
+      cdkAutosizeMinRows="5"
     ></textarea>
   </mat-form-field>
 } @else {
-  <p>There was an error in processing settings.</p>
+  <p>Something went very wrong</p>
 }

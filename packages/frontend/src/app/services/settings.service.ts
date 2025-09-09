@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
 import { debounceTime, Subject } from 'rxjs'
-import { faUser, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { faBarcode, faCake, faUser, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -33,24 +33,18 @@ export interface SettingDataEntry {
 
 // Data on each setting to generate form controls
 export type SettingData = Record<SettingKey, SettingDataEntry>
-
-// Values to store user data
-export type SettingValues = {
-  [key in SettingKey]?: SettingValueType
-}
+export type SettingRenderList = { type: 'key'; value: SettingKey } | { type: 'header'; value: string }
 
 export type GroupedSettingData = {
   key: string // From router
   icon?: IconDefinition
   title: string
-  values: SettingKey[]
+  values: SettingRenderList[] // For setting-loader to auto-display. Use an empty list for custom pages
 }
 
-export type GroupedSettingDataTransformed = {
-  key: string // From router
-  icon?: IconDefinition
-  title: string
-  values: SettingData
+// Values to store user data
+export type SettingValues = {
+  [key in SettingKey]?: SettingValueType
 }
 
 @Injectable({
@@ -97,14 +91,34 @@ export class SettingsService {
     }
   }
   public groups: GroupedSettingData[] = [
-    { key: 'profile', icon: faUser, title: 'settings.sidebar.profile', values: ['avatar', 'name', 'description'] },
-    { key: 'preferences', title: 'settings.sidebar.preferences', values: ['disableNSFWFilter'] },
-    { key: 'mutesAndBlocks', title: 'settings.sidebar.mutesAndBlocks', values: ['mutedWords'] }
+    {
+      key: 'profile',
+      icon: faUser,
+      title: 'settings.sidebar.profile',
+      values: []
+    },
+    {
+      key: 'preferences',
+      icon: faBarcode,
+      title: 'settings.sidebar.preferences',
+      values: [
+        { type: 'header', value: 'settings.header.appearance' },
+        { type: 'key', value: 'disableNSFWFilter' },
+        { type: 'header', value: 'settings.header.appearance' },
+        { type: 'key', value: 'disableNSFWFilter' }
+      ]
+    },
+    {
+      key: 'mutesAndBlocks',
+      icon: faCake,
+      title: 'settings.sidebar.mutesAndBlocks',
+      values: [
+        { type: 'header', value: 'settings.header.sus' },
+        { type: 'key', value: 'mutedWords' }
+      ]
+    }
   ]
   public values: SettingValues
-
-  // Transform the data into the groups
-  public groupsTransformed = this.transformSettingGroups(this.groups)
 
   public settingsUpdatedSubject = new Subject<void>()
 
@@ -112,19 +126,19 @@ export class SettingsService {
     private dashboardService: DashboardService,
     private jwtService: JwtService
   ) {
+    // Set defaults from local storage
     const localStorageValues = this.getLocalStorageValues()
     this.values = Object.assign(this.getDefaultSettings(), localStorageValues)
 
-    const userBlog = this.jwtService.getTokenData()
-    console.log(userBlog)
-    if (userBlog === null) return
-
     // Load blog details
-    this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
-      this.values.avatar = blogDetails.avatar
-      this.values.name = blogDetails.name
-      this.values.description = blogDetails.descriptionMarkdown
-    })
+    const userBlog = this.jwtService.getTokenData()
+    if (userBlog) {
+      this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
+        this.values.avatar = blogDetails.avatar
+        this.values.name = blogDetails.name
+        this.values.description = blogDetails.descriptionMarkdown
+      })
+    }
 
     // Listen for and save updated settings
     // Debounced so we don't spam the server
@@ -151,13 +165,6 @@ export class SettingsService {
 
   getDefaultSettings(): SettingValues {
     return Object.fromEntries(Object.entries(this.data).map(([key, dataEntry]) => [key, dataEntry.default]))
-  }
-
-  transformSettingGroups(groups: GroupedSettingData[]): GroupedSettingDataTransformed[] {
-    return groups.map((entry) => ({
-      ...entry,
-      values: <SettingData>Object.fromEntries(entry.values.map((key) => [key, this.data[key]]))
-    }))
   }
 
   saveSettings() {

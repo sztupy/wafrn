@@ -1,17 +1,14 @@
-@if (group) {
-  <mat-card class="mb-4 overflow-hidden settings-blog-header">
-    <div class="h-8rem mb-3 settings-blog-header-image" [style.background-image]="'url(' + headerUrl() + ')'"></div>
-    <div><img [src]="avatarUrl()" alt="user avatar" class="settings-blog-avatar-image" /></div>
-  </mat-card>
-  <app-setting-entry [setting]="group.values.name"></app-setting-entry>
-  <app-setting-entry [setting]="group.values.description"></app-setting-entry>
-  <hr />
-  <mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title>[DEBUG]: all given values</mat-panel-title>
-    </mat-expansion-panel-header>
-    @for (setting of group.values | KeyValue; track $index) {
-      <app-setting-entry [setting]="setting.value"></app-setting-entry>
-    }
-  </mat-expansion-panel>
-}
+<mat-card class="mb-4 overflow-hidden settings-blog-header">
+  <div
+    class="h-8rem mb-3 p-3 flex justify-content-end settings-blog-header-image"
+    [style.background-image]="'url(' + headerUrl() + ')'"
+  >
+    <div style="color: red; background: aliceblue">change header image button</div>
+  </div>
+  <div class="flex gap-3 justify-content-between">
+    <img [src]="avatarUrl()" alt="user avatar" class="settings-blog-avatar-image" />
+    <div style="color: red; background: aliceblue">change avatar button</div>
+  </div>
+</mat-card>
+<app-setting-entry [setting]="data.name"></app-setting-entry>
+<app-setting-entry [setting]="data.description"></app-setting-entry>
