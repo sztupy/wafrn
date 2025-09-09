@@ -14,6 +14,7 @@ import { completeEnvironment } from '../utils/backendOptions.js'
 import { Media } from '../models/media.js'
 import { Op } from 'sequelize'
 import { spawn } from 'child_process'
+import sequelize from 'sequelize/lib/sequelize'
 
 function sendWithCache(res: Response, localFileName: string) {
   // Does the .mime file exist?
@@ -38,7 +39,12 @@ function writeStream(stream: NodeJS.ReadableStream, localFileName: string, mime:
         try {
           const updateAltText = spawn('exiv2', [
             '-M',
-            `set Exif.Photo.UserComment charset=Ascii ${altText.replaceAll('"', '').replaceAll("'", '')}`,
+            `set Exif.Photo.UserComment charset=Ascii ${altText
+              .replaceAll('"', '')
+              .replaceAll("'", '')
+              .replaceAll('\\', '')
+              .replaceAll('$', '')
+              .replaceAll('@', '')}`,
             localFileName
           ])
           updateAltText.on('close', () => {
@@ -114,17 +120,15 @@ export default function cacheRoutes(app: Application) {
         let dbMediaUrl = String(req.query?.media).startsWith(completeEnvironment.mediaUrl)
           ? String(req.query?.media).split(completeEnvironment.mediaUrl)[1]
           : String(req.query?.media)
-        let media = undefined /*await Media.findOne({
-          where: {
-            url: dbMediaUrl,
-            description: {
-              [Op.ne]: ''
-            }
-          }
+        let media = await Media.findOne({
+          where: sequelize.where(
+            sequelize.fn('md5', sequelize.col('url')),
+            crypto.createHash('md5').update(dbMediaUrl).digest('hex')
+          )
         })
         if (media) {
           altText = media.description
-        } */
+        }
         const { stream, mime } = await getMimeType(response.data)
         res.contentType(mime)
         await writeStream(stream, localFileName, mime, altText)
