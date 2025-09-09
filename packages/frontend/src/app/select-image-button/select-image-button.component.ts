@@ -1,8 +1,9 @@
-import { Component, output, signal } from '@angular/core'
+import { Component, effect, output, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faImage, faUpload } from '@fortawesome/free-solid-svg-icons'
+import { SettingsService } from '../services/settings.service'
 
 // yes, I am rewriting file-upload just so it can have text and emit a different type
 
@@ -19,6 +20,14 @@ export class SelectImageButtonComponent {
   setIcon = faImage
   uploadIcon = faUpload
   fileName = ''
+
+  constructor(settingsService: SettingsService) {
+    effect(() => {
+      if (!settingsService.settingsModified()) {
+        this.fileSelected.set(false)
+      }
+    })
+  }
 
   selectImage(event: Event) {
     const elem = event.target as HTMLInputElement
