@@ -3,6 +3,10 @@
   --mat-list-list-item-container-color: var(--mat-sys-primary-container);
 }
 
+.settings-save-button {
+  border-radius: var(--mat-sys-corner-small);
+}
+
 mat-list-item {
   text-decoration: none;
 }

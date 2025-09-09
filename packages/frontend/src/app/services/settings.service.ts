@@ -1,15 +1,27 @@
-import { Injectable } from '@angular/core'
+import { Injectable, signal } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
-import { debounceTime, Subject } from 'rxjs'
 import { faBarcode, faCake, faUser, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { UtilsService } from './utils.service'
+import { HttpClient } from '@angular/common/http'
+import { EnvironmentService } from './environment.service'
+import { catchError, lastValueFrom, of, timeout } from 'rxjs'
+import { PostsService } from './posts.service'
+import { MessageService } from './message.service'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
-  //
+  // images
   'avatar',
+  'headerImage',
+  // required parts of the user profile
   'name',
   'description',
+  'manuallyAcceptsFollows',
+  'hideFollows',
+  'hideProfileNotLoggedIn',
+  'disableEmailNotifications',
+  // everything else - stored in the options table
   'disableNSFWFilter',
   'mutedWords'
 ] as const
@@ -26,6 +38,7 @@ export interface SettingDataEntry {
   translationKey: string
   serverKey?: string
   localStorageKey?: string
+  profileOption?: boolean // Whether it is stored on the User server side. Leave unset if you don't know
   type: SettingFormTypes
   default: SettingValueType
   variants?: Record<string, SettingValueType>
@@ -56,13 +69,23 @@ export class SettingsService {
       key: 'avatar',
       translationKey: 'settings.avatar',
       serverKey: 'avatar',
+      profileOption: true,
       type: 'input',
-      default: ''
+      default: '' // TODO: set as file
+    },
+    headerImage: {
+      key: 'headerImage',
+      translationKey: 'settings.headerImage',
+      serverKey: 'headerImage',
+      profileOption: true,
+      type: 'input',
+      default: '' // TODO: set as file
     },
     name: {
       key: 'name',
       translationKey: 'settings.name',
       serverKey: 'name',
+      profileOption: true,
       type: 'input',
       default: ''
     },
@@ -70,9 +93,43 @@ export class SettingsService {
       key: 'description',
       translationKey: 'settings.description',
       serverKey: 'description',
+      profileOption: true,
       type: 'textarea',
       default: ''
     },
+    manuallyAcceptsFollows: {
+      key: 'manuallyAcceptsFollows',
+      translationKey: 'settings.manuallyAcceptsFollows',
+      serverKey: 'manuallyAcceptsFollows',
+      profileOption: true,
+      type: 'checkbox',
+      default: false
+    },
+    hideFollows: {
+      key: 'hideFollows',
+      translationKey: 'settings.hideFollows',
+      serverKey: 'hideFollows',
+      profileOption: true,
+      type: 'checkbox',
+      default: false
+    },
+    hideProfileNotLoggedIn: {
+      key: 'hideProfileNotLoggedIn',
+      translationKey: 'settings.hideProfileNotLoggedIn',
+      serverKey: 'hideProfileNotLoggedIn',
+      profileOption: true,
+      type: 'checkbox',
+      default: false
+    },
+    disableEmailNotifications: {
+      key: 'disableEmailNotifications',
+      translationKey: 'settings.disableEmailNotifications',
+      serverKey: 'disableEmailNotifications',
+      profileOption: true,
+      type: 'checkbox',
+      default: false
+    },
+    // For new options, add below here.
     disableNSFWFilter: {
       key: 'disableNSFWFilter',
       translationKey: 'settings.disableNSFWFilter',
@@ -90,6 +147,8 @@ export class SettingsService {
       default: ''
     }
   }
+  // Generates settings sidebar links and gives the settings-loader pages their data through values
+  // For manual pages like Profile, values can be skipped.
   public groups: GroupedSettingData[] = [
     {
       key: 'profile',
@@ -102,8 +161,6 @@ export class SettingsService {
       icon: faBarcode,
       title: 'settings.sidebar.preferences',
       values: [
-        { type: 'header', value: 'settings.header.appearance' },
-        { type: 'key', value: 'disableNSFWFilter' },
         { type: 'header', value: 'settings.header.appearance' },
         { type: 'key', value: 'disableNSFWFilter' }
       ]
@@ -120,10 +177,15 @@ export class SettingsService {
   ]
   public values: SettingValues
 
-  public settingsUpdatedSubject = new Subject<void>()
+  public settingsModified = signal(false)
+  public settingsLoading = signal(false)
 
   constructor(
     private dashboardService: DashboardService,
+    private postsService: PostsService,
+    private messages: MessageService,
+    private http: HttpClient,
+    private utils: UtilsService,
     private jwtService: JwtService
   ) {
     // Set defaults from local storage
@@ -139,15 +201,9 @@ export class SettingsService {
         this.values.description = blogDetails.descriptionMarkdown
       })
     }
-
-    // Listen for and save updated settings
-    // Debounced so we don't spam the server
-    this.settingsUpdatedSubject.pipe(debounceTime(2000)).subscribe(() => {
-      this.saveSettings()
-    })
   }
 
-  getLocalStorageValues(): SettingValues {
+  private getLocalStorageValues(): SettingValues {
     const storedValues: SettingValues = {}
 
     const dataEntries = Object.entries(this.data)
@@ -156,18 +212,71 @@ export class SettingsService {
 
       const retrievedValue = localStorage.getItem(dataEntry.localStorageKey)
       if (retrievedValue) {
-        storedValues[key as keyof SettingValues] = JSON.parse(retrievedValue)
+        const inputType = this.data[key as keyof SettingValues].type
+        if (inputType === 'checkbox') {
+          storedValues[key as keyof SettingValues] = retrievedValue === 'true'
+        } else {
+          storedValues[key as keyof SettingValues] = retrievedValue
+        }
       }
     })
 
     return storedValues
   }
 
-  getDefaultSettings(): SettingValues {
+  private getDefaultSettings(): SettingValues {
     return Object.fromEntries(Object.entries(this.data).map(([key, dataEntry]) => [key, dataEntry.default]))
   }
 
-  saveSettings() {
-    console.log('saved settings')
+  public async saveSettings() {
+    this.settingsLoading.set(true)
+
+    this.settingsModified.set(false)
+    const success = await this.updateProfile()
+    if (!success) {
+      this.settingsModified.set(true)
+    }
+
+    this.settingsLoading.set(false)
+  }
+
+  async updateProfile(): Promise<boolean> {
+    const options: { name: string; value: string }[] = Object.entries(this.data)
+      .filter(([_key, entry]) => entry.profileOption !== true && entry.serverKey !== undefined)
+      .map(([_key, entry]) => ({ name: entry.serverKey!, value: this.values[entry.key]!.toString() }))
+    const payload = {
+      avatar: undefined,
+      headerImage: undefined,
+      name: this.values.name,
+      description: this.values.description,
+      manuallyAcceptsFollows: this.values.manuallyAcceptsFollows,
+      hideFollows: this.values.hideFollows,
+      hideProfileNotLoggedIn: this.values.hideProfileNotLoggedIn,
+      disableEmailNotifications: this.values.disableEmailNotifications,
+      options: JSON.stringify(options)
+    }
+    console.log(payload)
+    const formData = this.utils.objectToFormData(payload)
+
+    const res = await lastValueFrom(
+      this.http.post<{ success: boolean }>(`${EnvironmentService.environment.baseUrl}/editProfile`, formData).pipe(
+        timeout(60000), // If it doesn't return in a full minute you've got problems
+        catchError((_err) => of({ success: false }))
+      )
+    )
+    if (res.success) {
+      await this.postsService.loadFollowers()
+      this.messages.add({
+        severity: 'success',
+        summary: 'Your profile was updated!'
+      })
+      return true
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'Something went wrong'
+      })
+      return false
+    }
   }
 }

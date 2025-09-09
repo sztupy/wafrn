@@ -20,8 +20,7 @@ const routes: Route[] = [
       },
       {
         path: 'profile',
-        component: SettingsProfileComponent,
-        data: { group: 'profile' }
+        component: SettingsProfileComponent
       },
       {
         path: 'preferences',

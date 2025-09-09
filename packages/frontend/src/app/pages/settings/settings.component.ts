@@ -1,24 +1,16 @@
-import { JsonPipe } from '@angular/common'
-import { Component } from '@angular/core'
+import { Component, Signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
-import { MatExpansionModule } from '@angular/material/expansion'
 import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons'
 import { TranslateModule } from '@ngx-translate/core'
 import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
 
 @Component({
   selector: 'app-settings',
-  imports: [
-    MatListModule,
-    MatExpansionModule,
-    MatButtonModule,
-    FontAwesomeModule,
-    RouterModule,
-    TranslateModule,
-    JsonPipe
-  ],
+  imports: [MatListModule, MatButtonModule, MatProgressSpinnerModule, FontAwesomeModule, RouterModule, TranslateModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
@@ -27,13 +19,20 @@ export class SettingsComponent {
   values: SettingValues = {}
   groups: GroupedSettingData[]
 
-  constructor(settingsService: SettingsService) {
+  settingsModified: Signal<boolean>
+  settingsLoading: Signal<boolean>
+
+  saveIcon = faFloppyDisk
+
+  constructor(private settingsService: SettingsService) {
     this.data = settingsService.data
     this.values = settingsService.values
     this.groups = settingsService.groups
+    this.settingsModified = settingsService.settingsModified
+    this.settingsLoading = settingsService.settingsLoading
   }
 
-  test() {
-    console.log('hi')
+  saveSettings() {
+    this.settingsService.saveSettings()
   }
 }

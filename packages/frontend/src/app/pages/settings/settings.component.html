@@ -1,4 +1,4 @@
-<div class="mx-3 lg:mx-4 wafrn-container">
+<div class="mx-3 mb-4 px-2 lg:mx-4 wafrn-container-wide">
   <h2 class="my-3 text-3xl">{{ 'menu.settings.title' | translate }}</h2>
 </div>
 <div class="mx-3 lg:mx-4 grid wafrn-container-wide">
@@ -14,14 +14,21 @@
       }
     </mat-nav-list>
     <hr />
-    <mat-expansion-panel hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>[DEBUGGING] The data:</mat-panel-title>
-      </mat-expansion-panel-header>
-      <pre>{{ values | json }}</pre>
-    </mat-expansion-panel>
-    <p>Debug buttons</p>
-    <div><button mat-stroked-button (click)="test()">test</button></div>
+    <section class="flex justify-content-center gap-3">
+      <button
+        mat-flat-button
+        class="w-full settings-save-button"
+        [disabled]="!settingsModified()"
+        (click)="saveSettings()"
+      >
+        Save Settings
+        @if (settingsLoading()) {
+          <mat-spinner diameter="20" class="inline-block vertical-align-middle"></mat-spinner>
+        } @else {
+          <fa-icon [icon]="saveIcon" [fixedWidth]="true"></fa-icon>
+        }
+      </button>
+    </section>
   </section>
   <section class="col">
     <router-outlet></router-outlet>

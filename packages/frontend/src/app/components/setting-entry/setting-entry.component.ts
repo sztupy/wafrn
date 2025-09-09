@@ -31,19 +31,19 @@ export class SettingEntryComponent {
 
   updateCheckbox(key: SettingKey, event: MatCheckboxChange) {
     this.values[key] = event.checked
-    this.settingsService.settingsUpdatedSubject.next()
+    this.settingsService.settingsModified.set(true)
   }
 
   updateSelect(key: SettingKey, event: MatSelectChange) {
     this.values[key] = event.value
-    this.settingsService.settingsUpdatedSubject.next()
+    this.settingsService.settingsModified.set(true)
   }
 
   updateInput(key: SettingKey, event: Event) {
     const target = event.target
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       this.values[key] = target.value
-      this.settingsService.settingsUpdatedSubject.next()
+      this.settingsService.settingsModified.set(true)
     }
   }
 }
