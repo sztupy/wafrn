@@ -65,7 +65,14 @@ export class SettingsProfileComponent {
     this.fediAttachments.push({ name: '', value: '' })
   }
   removeFediAttachment(index: number) {
+    const entry = this.fediAttachments[index]
+    const entryEmpty = entry.name === '' && entry.value === ''
+
     this.fediAttachments.splice(index, 1)
+
+    if (!entryEmpty) {
+      this.settingsService.settingsModified.set(true)
+    }
   }
   updateFediAttachment(index: number, key: keyof FediAttachment, event: Event) {
     const target = event.target
