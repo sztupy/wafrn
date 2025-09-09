@@ -1,21 +1,27 @@
-<mat-card class="mb-4 overflow-hidden settings-blog-header">
+<mat-card class="mb-5 overflow-hidden settings-blog-header">
   <div
     class="h-8rem mb-3 p-3 flex justify-content-end settings-blog-header-image"
     [style.background-image]="'url(' + headerUrl() + ')'"
   >
-    <div style="color: red; background: aliceblue">change header image button</div>
+    <app-select-image-button (fileEvent)="attachFile('header', $event)">
+      {{ 'settings.changeHeaderImage' | translate }}
+    </app-select-image-button>
   </div>
-  <div class="flex gap-3 justify-content-between">
+  <div class="flex align-items-end gap-3">
     <img [src]="avatarUrl()" alt="user avatar" class="settings-blog-avatar-image" />
-    <div style="color: red; background: aliceblue">change avatar button</div>
+    <app-select-image-button (fileEvent)="attachFile('avatar', $event)">
+      {{ 'settings.changeAvatar' | translate }}
+    </app-select-image-button>
   </div>
 </mat-card>
+<p>a: {{ headerUrl() }}</p>
+<p>b: {{ blog()?.headerImage }}</p>
 <app-setting-entry [setting]="data.name"></app-setting-entry>
 <app-setting-entry [setting]="data.description"></app-setting-entry>
 <h2 class="setting-header">{{ 'settings.header.fediAttachments' | translate }}</h2>
 <section>
   @for (attachment of fediAttachments; track $index) {
-    <div class="mb-3 flex align-items-center gap-2 fedi-attachment-list">
+    <div class="mb-3 flex flex-wrap align-items-center gap-2 fedi-attachment-list">
       <mat-form-field class="mat-form-field-no-padding fedi-attachment" floatLabel="always">
         <mat-label>{{ 'settings.fediPropertyKey' | translate }}</mat-label>
         <input
@@ -38,7 +44,7 @@
       </mat-form-field>
       <button
         (click)="removeFediAttachment($index)"
-        mat-stroked-button
+        mat-button
         class="ml-2 mat-circle-button fedi-attachment-remove-button"
       >
         <fa-icon [icon]="removeIcon" class="m-1"></fa-icon>

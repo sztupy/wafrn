@@ -278,6 +278,8 @@
     "fediPropertyKey": "Property Name",
     "fediPropertyValue": "Property Value",
     "addFediAttachment": "Add Attachment",
+    "changeAvatar": "Change Avatar",
+    "changeHeaderImage": "Change Banner",
     "name": "Name",
     "description": "Description"
   },

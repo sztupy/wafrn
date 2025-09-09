@@ -7,13 +7,24 @@ import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import { LoginService } from 'src/app/services/login.service'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { MatInputModule } from '@angular/material/input'
-import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faImage, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MatButtonModule } from '@angular/material/button'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { SelectImageButtonComponent } from 'src/app/select-image-button/select-image-button.component'
 
 @Component({
   selector: 'app-setting-loader',
-  imports: [MatCardModule, MatInputModule, MatButtonModule, FontAwesomeModule, TranslateModule, SettingEntryComponent],
+  imports: [
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    FontAwesomeModule,
+    TranslateModule,
+    SettingEntryComponent,
+    SelectImageButtonComponent
+  ],
   templateUrl: './settings-profile.component.html',
   styleUrl: './settings-profile.component.scss'
 })
@@ -36,6 +47,7 @@ export class SettingsProfileComponent {
       : ''
   )
 
+  imageIcon = faImage
   addIcon = faPlus
   removeIcon = faXmark
 
@@ -59,6 +71,16 @@ export class SettingsProfileComponent {
     const target = event.target
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
       this.fediAttachments[index][key] = target.value
+    }
+    this.settingsService.settingsModified.set(true)
+  }
+
+  attachFile(type: 'avatar' | 'header', file: File) {
+    if (type === 'avatar') {
+      this.settingsService.avatar = file
+    }
+    if (type === 'header') {
+      this.settingsService.headerImage = file
     }
     this.settingsService.settingsModified.set(true)
   }

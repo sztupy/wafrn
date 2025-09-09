@@ -17,12 +17,10 @@ import { EnvironmentService } from './environment.service'
 import { catchError, lastValueFrom, of, timeout } from 'rxjs'
 import { PostsService } from './posts.service'
 import { MessageService } from './message.service'
+import { LoginService } from './login.service'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
-  // images
-  'avatar',
-  'headerImage',
   // required parts of the user profile
   'name',
   'description',
@@ -105,22 +103,6 @@ export type FediAttachment = {
 })
 export class SettingsService {
   public data: SettingData = {
-    avatar: {
-      key: 'avatar',
-      translationKey: 'settings.avatar',
-      serverKey: 'avatar',
-      profileOption: true,
-      type: 'input',
-      default: '' // TODO: set as file
-    },
-    headerImage: {
-      key: 'headerImage',
-      translationKey: 'settings.headerImage',
-      serverKey: 'headerImage',
-      profileOption: true,
-      type: 'input',
-      default: '' // TODO: set as file
-    },
     name: {
       key: 'name',
       translationKey: 'settings.name',
@@ -475,12 +457,15 @@ export class SettingsService {
   public values: SettingValues
 
   public fediAttachments: FediAttachment[] = [{ name: '', value: '' }] // Only shown before load completes
+  public avatar: File | undefined // Only set when updating
+  public headerImage: File | undefined // Only set when updating
 
   public settingsModified = signal(false)
   public settingsLoading = signal(false)
 
   constructor(
     private dashboardService: DashboardService,
+    private loginService: LoginService,
     private postsService: PostsService,
     private messages: MessageService,
     private http: HttpClient,
@@ -495,8 +480,8 @@ export class SettingsService {
     const userBlog = this.jwtService.getTokenData()
     if (userBlog) {
       this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
-        this.values.avatar = blogDetails.avatar
         this.values.name = blogDetails.name
+        this.values.description = blogDetails.descriptionMarkdown
 
         // Fediverse Attachments
         const rawAttachments = blogDetails.publicOptions?.find(
@@ -579,8 +564,8 @@ export class SettingsService {
     })
 
     const payload = {
-      avatar: undefined,
-      headerImage: undefined,
+      avatar: this.avatar,
+      headerImage: this.headerImage,
       name: this.values.name,
       description: this.values.description,
       manuallyAcceptsFollows: this.values.manuallyAcceptsFollows,
@@ -600,6 +585,7 @@ export class SettingsService {
     )
     if (res.success) {
       await this.postsService.loadFollowers()
+      await this.updateMultipleAccountData()
       this.messages.add({
         severity: 'success',
         summary: 'Your profile was updated!'
@@ -611,6 +597,19 @@ export class SettingsService {
         summary: 'Something went wrong'
       })
       return false
+    }
+  }
+
+  async updateMultipleAccountData() {
+    // Update multiple account saved data
+    const currentBlog = this.loginService.currentAccount()
+    if (currentBlog) {
+      const newBlog = await this.dashboardService.getBlogDetails(currentBlog.url)
+      this.loginService.accountList.update((list) => {
+        list[0].blog = newBlog
+        return [...list]
+      })
+      localStorage.setItem('accountList', JSON.stringify(this.loginService.accountList()))
     }
   }
 
