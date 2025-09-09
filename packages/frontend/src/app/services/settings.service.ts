@@ -279,8 +279,14 @@ export class SettingsService {
       translationKey: 'settings.defaultPostEditorPrivacy',
       serverKey: 'wafrn.defaultPostEditorPrivacy',
       localStorageKey: 'defaultPostEditorPrivacy',
-      type: 'checkbox',
-      default: false
+      type: 'select',
+      default: '0',
+      variants: {
+        '0': 'settings.postEditorPrivacyOptions.public',
+        '1': 'settings.postEditorPrivacyOptions.followersOnly',
+        '2': 'settings.postEditorPrivacyOptions.instanceOnly',
+        '3': 'settings.postEditorPrivacyOptions.unlisted'
+      }
     },
     enableAsks: {
       key: 'enableAsks',
