@@ -258,12 +258,21 @@
   "settings": {
     "sidebar": {
       "profile": "Profile",
-      "preferences": "Preferences",
-      "mutesAndBlocks": "Mutes and Blocks"
+      "account": "Account",
+      "appearance": "Appearance and UI",
+      "behavior": "Behavior",
+      "privacy": "Privacy",
+      "mutesAndBlocks": "Mutes and Blocks",
+      "miscellaneous": "Miscellaneous"
     },
     "header": {
-      "appearance": "Appearance",
-      "sus": "Among Us"
+      "integrations": "Integrations",
+      "migration": "Account Migration",
+      "deleteAccount": "Delete Account",
+      "classicOptions": "Classic Options",
+      "animationsAndSounds": "Animations and Sounds",
+      "words": "Words",
+      "users": "Users"
     },
     "name": "Name",
     "description": "Description"

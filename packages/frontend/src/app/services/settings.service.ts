@@ -1,7 +1,16 @@
 import { Injectable, signal } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
-import { faBarcode, faCake, faUser, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import {
+  faBan,
+  faEllipsis,
+  faKey,
+  faPaintbrush,
+  faSliders,
+  faUser,
+  faUserSecret,
+  IconDefinition
+} from '@fortawesome/free-solid-svg-icons'
 import { UtilsService } from './utils.service'
 import { HttpClient } from '@angular/common/http'
 import { EnvironmentService } from './environment.service'
@@ -22,8 +31,28 @@ const settingKeyVariants = [
   'hideProfileNotLoggedIn',
   'disableEmailNotifications',
   // everything else - stored in the options table
+  'forceClassicLogo',
+  'forceClassicVideoPlayer',
+  'forceClassicAudioPlayer',
+  'forceClassicMediaView',
+  'disableConfetti',
+  'enableConfettiReceivingLike', // misspelled key
+  'disableSounds',
+  'disableCW',
+  'hideNoDescriptionMedia',
+  'expandQuotes',
+  'disableForceAltText',
   'disableNSFWFilter',
-  'mutedWords'
+  'automaticallyExpandPosts', // misspelled key
+  'defaultPostEditorPrivacy',
+  'enableAsks',
+  'enableAnonymousAsks',
+  'displayMentionsOfBlockedUsersFromOtherUsers', // lmao
+  'mutedWords',
+  'superMutedWords',
+  'hideQuotes',
+  'replaceAIWithCocaine',
+  'replaceAIWord'
 ] as const
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
@@ -41,12 +70,17 @@ export interface SettingDataEntry {
   profileOption?: boolean // Whether it is stored on the User server side. Leave unset if you don't know
   type: SettingFormTypes
   default: SettingValueType
-  variants?: Record<string, SettingValueType>
+  variants?: Record<string, string> // For type 'select'
+  convertFromStorage?: (stored: string) => SettingValueType
+  convertToStorage?: (value: SettingValueType) => string
 }
 
 // Data on each setting to generate form controls
 export type SettingData = Record<SettingKey, SettingDataEntry>
-export type SettingRenderList = { type: 'key'; value: SettingKey } | { type: 'header'; value: string }
+export type SettingRenderList =
+  | { type: 'key'; value: SettingKey }
+  | { type: 'header'; value: string }
+  | { type: 'description'; value: string }
 
 export type GroupedSettingData = {
   key: string // From router
@@ -130,11 +164,139 @@ export class SettingsService {
       default: false
     },
     // For new options, add below here.
+    forceClassicLogo: {
+      key: 'forceClassicLogo',
+      translationKey: 'settings.forceClassicLogo',
+      serverKey: 'wafrn.forceClassicLogo',
+      localStorageKey: 'forceClassicLogo',
+      type: 'checkbox',
+      default: false
+    },
+    forceClassicVideoPlayer: {
+      key: 'forceClassicVideoPlayer',
+      translationKey: 'settings.forceClassicVideoPlayer',
+      serverKey: 'wafrn.forceClassicVideoPlayer',
+      localStorageKey: 'forceClassicVideoPlayer',
+      type: 'checkbox',
+      default: false
+    },
+    forceClassicAudioPlayer: {
+      key: 'forceClassicAudioPlayer',
+      translationKey: 'settings.forceClassicAudioPlayer',
+      serverKey: 'wafrn.forceClassicAudioPlayer',
+      localStorageKey: 'forceClassicAudioPlayer',
+      type: 'checkbox',
+      default: false
+    },
+    forceClassicMediaView: {
+      key: 'forceClassicMediaView',
+      translationKey: 'settings.forceClassicMediaView',
+      serverKey: 'wafrn.forceClassicMediaView',
+      localStorageKey: 'forceClassicMediaView',
+      type: 'checkbox',
+      default: false
+    },
+    disableConfetti: {
+      key: 'disableConfetti',
+      translationKey: 'settings.disableConfetti',
+      serverKey: 'wafrn.disableConfetti',
+      localStorageKey: 'disableConfetti',
+      type: 'checkbox',
+      default: false
+    },
+    enableConfettiReceivingLike: {
+      key: 'enableConfettiReceivingLike',
+      translationKey: 'settings.enableConfettiRecivingLike', // legacy misspelling
+      serverKey: 'wafrn.enableConfettiRecivingLike',
+      localStorageKey: 'enableConfettiRecivingLike',
+      type: 'checkbox',
+      default: false
+    },
+    disableSounds: {
+      key: 'disableSounds',
+      translationKey: 'settings.disableSounds',
+      serverKey: 'wafrn.disableSounds',
+      localStorageKey: 'disableSounds',
+      type: 'checkbox',
+      default: false
+    },
+    disableCW: {
+      key: 'disableCW',
+      translationKey: 'settings.disableCW',
+      serverKey: 'wafrn.disableCW',
+      localStorageKey: 'disableCW',
+      type: 'checkbox',
+      default: false
+    },
+    hideNoDescriptionMedia: {
+      key: 'hideNoDescriptionMedia',
+      translationKey: 'settings.hideNoDescriptionMedia',
+      serverKey: 'wafrn.hideNoDescriptionMedia',
+      localStorageKey: 'hideNoDescriptionMedia',
+      type: 'checkbox',
+      default: false
+    },
+    expandQuotes: {
+      key: 'expandQuotes',
+      translationKey: 'settings.expandQuotes',
+      serverKey: 'wafrn.expandQuotes',
+      localStorageKey: 'expandQuotes',
+      type: 'checkbox',
+      default: false
+    },
+    disableForceAltText: {
+      key: 'disableForceAltText',
+      translationKey: 'settings.disableForceAltText',
+      serverKey: 'wafrn.disableForceAltText',
+      localStorageKey: 'disableForceAltText',
+      type: 'checkbox',
+      default: false
+    },
     disableNSFWFilter: {
       key: 'disableNSFWFilter',
       translationKey: 'settings.disableNSFWFilter',
       serverKey: 'wafrn.disableNSFWFilter',
       localStorageKey: 'disableNSFWFilter',
+      type: 'checkbox',
+      default: false
+    },
+    automaticallyExpandPosts: {
+      key: 'automaticallyExpandPosts',
+      translationKey: 'settings.automaticalyExpandPosts', // legacy misspelling
+      serverKey: 'wafrn.automaticalyExpandPosts',
+      localStorageKey: 'automaticalyExpandPosts',
+      type: 'checkbox',
+      default: false
+    },
+    defaultPostEditorPrivacy: {
+      key: 'defaultPostEditorPrivacy',
+      translationKey: 'settings.defaultPostEditorPrivacy',
+      serverKey: 'wafrn.defaultPostEditorPrivacy',
+      localStorageKey: 'defaultPostEditorPrivacy',
+      type: 'checkbox',
+      default: false
+    },
+    enableAsks: {
+      key: 'enableAsks',
+      translationKey: 'settings.enableAsks',
+      serverKey: 'wafrn.enableAsks',
+      localStorageKey: 'enableAsks',
+      type: 'checkbox',
+      default: false
+    },
+    enableAnonymousAsks: {
+      key: 'enableAnonymousAsks',
+      translationKey: 'settings.enableAnonymousAsks',
+      serverKey: 'wafrn.enableAnonymousAsks',
+      localStorageKey: 'enableAnonymousAsks',
+      type: 'checkbox',
+      default: false
+    },
+    displayMentionsOfBlockedUsersFromOtherUsers: {
+      key: 'displayMentionsOfBlockedUsersFromOtherUsers',
+      translationKey: 'settings.displayMentionsOfBlockedUsersFromOtherUsers',
+      serverKey: 'wafrn.displayMentionsOfBlockedUsersFromOtherUsers',
+      localStorageKey: 'displayMentionsOfBlockedUsersFromOtherUsers',
       type: 'checkbox',
       default: false
     },
@@ -144,7 +306,50 @@ export class SettingsService {
       serverKey: 'wafrn.mutedWords',
       localStorageKey: 'mutedWords',
       type: 'textarea',
-      default: ''
+      default: '""',
+      convertFromStorage: this.convertListFrom,
+      convertToStorage: this.convertListTo
+    },
+    superMutedWords: {
+      key: 'superMutedWords',
+      translationKey: 'settings.superMutedWords',
+      serverKey: 'wafrn.superMutedWords',
+      localStorageKey: 'superMutedWords',
+      type: 'textarea',
+      default: '""',
+      convertFromStorage: this.convertListFrom,
+      convertToStorage: this.convertListTo
+    },
+    hideQuotes: {
+      key: 'hideQuotes',
+      translationKey: 'settings.hideQuotes',
+      serverKey: 'wafrn.hideQuotes',
+      localStorageKey: 'hideQuotes',
+      type: 'select',
+      default: '1',
+      variants: {
+        '1': 'settings.hideQuotesOptions.cwDisabledQuotesUsers',
+        '2': 'settings.hideQuotesOptions.cwUnfollowedOrDisabledQuotesUsers',
+        '3': 'settings.hideQuotesOptions.hidePostsDisabledQuotesUsers'
+      }
+    },
+    replaceAIWithCocaine: {
+      key: 'replaceAIWithCocaine',
+      translationKey: 'settings.replaceAIWithCocaine',
+      serverKey: 'wafrn.replaceAIWithCocaine',
+      localStorageKey: 'replaceAIWithCocaine',
+      type: 'checkbox',
+      default: false
+    },
+    replaceAIWord: {
+      key: 'replaceAIWord',
+      translationKey: 'settings.replaceAIWord',
+      serverKey: 'wafrn.replaceAIWord',
+      localStorageKey: 'replaceAIWord',
+      type: 'input',
+      default: '"cocaine"',
+      convertFromStorage: this.convertStringFrom,
+      convertToStorage: this.convertStringTo
     }
   }
   // Generates settings sidebar links and gives the settings-loader pages their data through values
@@ -157,21 +362,99 @@ export class SettingsService {
       values: []
     },
     {
-      key: 'preferences',
-      icon: faBarcode,
-      title: 'settings.sidebar.preferences',
+      key: 'account',
+      icon: faKey,
+      title: 'settings.sidebar.account',
       values: [
-        { type: 'header', value: 'settings.header.appearance' },
-        { type: 'key', value: 'disableNSFWFilter' }
+        { type: 'description', value: 'CHANGE EMAIL FIELD' },
+        { type: 'key', value: 'disableEmailNotifications' },
+        { type: 'description', value: 'CHANGE PASSWORD FIELD' },
+        { type: 'description', value: '2FA FIELD' },
+        { type: 'description', value: 'settings.header.integrations' },
+        { type: 'description', value: 'ENABLE BLUESKY FIELD' },
+        { type: 'description', value: 'RSS MICROFRONT FIELD' },
+        { type: 'description', value: 'settings.header.migration' },
+        { type: 'description', value: 'MIGRATE FROM AN OLD ACCOUNT FIELD' },
+        { type: 'description', value: 'IMPORT FOLLOWERS FIELD' },
+        { type: 'header', value: 'settings.header.deleteAccount' },
+        { type: 'description', value: 'DELETE ACCOUNT BUTTON' }
+      ]
+    },
+    {
+      key: 'appearance',
+      icon: faPaintbrush,
+      title: 'settings.sidebar.appearance',
+      values: [
+        { type: 'description', value: 'THEME FIELD HERE' },
+        { type: 'description', value: 'COLOR SCHEME FIELD HERE' },
+        { type: 'description', value: 'ADDITIONAL STYLE MODES FIELD HERE' },
+        { type: 'description', value: 'LANGUAGE HERE' },
+        { type: 'header', value: 'settings.header.classicOptions' },
+        { type: 'key', value: 'forceClassicLogo' },
+        { type: 'key', value: 'forceClassicVideoPlayer' },
+        { type: 'key', value: 'forceClassicAudioPlayer' },
+        { type: 'key', value: 'forceClassicMediaView' },
+        { type: 'header', value: 'settings.header.animationsAndSounds' },
+        { type: 'key', value: 'disableConfetti' },
+        { type: 'key', value: 'enableConfettiReceivingLike' },
+        { type: 'key', value: 'disableSounds' }
+      ]
+    },
+    {
+      key: 'behavior',
+      icon: faSliders,
+      title: 'settings.sidebar.behavior',
+      values: [
+        { type: 'description', value: 'DEFAULT DASHBOARD FIELD HERE' },
+        { type: 'key', value: 'disableCW' },
+        { type: 'key', value: 'hideNoDescriptionMedia' },
+        { type: 'key', value: 'expandQuotes' },
+        { type: 'key', value: 'disableForceAltText' },
+        { type: 'key', value: 'disableNSFWFilter' },
+        { type: 'key', value: 'automaticallyExpandPosts' }
+      ]
+    },
+    {
+      key: 'privacy',
+      icon: faUserSecret,
+      title: 'settings.sidebar.privacy',
+      values: [
+        { type: 'key', value: 'manuallyAcceptsFollows' },
+        { type: 'key', value: 'defaultPostEditorPrivacy' },
+        { type: 'key', value: 'enableAsks' },
+        { type: 'key', value: 'enableAnonymousAsks' },
+        { type: 'key', value: 'hideProfileNotLoggedIn' },
+        { type: 'key', value: 'hideFollows' },
+        { type: 'key', value: 'displayMentionsOfBlockedUsersFromOtherUsers' },
+        { type: 'description', value: 'MANAGE FOLLOWERS MENU' }
       ]
     },
     {
       key: 'mutesAndBlocks',
-      icon: faCake,
+      icon: faBan,
       title: 'settings.sidebar.mutesAndBlocks',
       values: [
-        { type: 'header', value: 'settings.header.sus' },
-        { type: 'key', value: 'mutedWords' }
+        { type: 'description', value: 'MAKE A DESCRIPTION VALUE AND PUT IT ON ALL OF THESE' },
+        { type: 'header', value: 'settings.header.words' },
+        { type: 'key', value: 'mutedWords' },
+        { type: 'key', value: 'superMutedWords' },
+        { type: 'header', value: 'settings.header.users' },
+        { type: 'description', value: 'MAKE A HORIZONTAL RULE AND PUT IT HERE' },
+        { type: 'description', value: 'MUTED POSTS HERE' },
+        { type: 'description', value: 'BLOCKED SERVERS HER' },
+        { type: 'key', value: 'hideQuotes' }
+      ]
+    },
+    {
+      key: 'miscellaneous',
+      icon: faEllipsis,
+      title: 'settings.sidebar.miscellaneous',
+      values: [
+        { type: 'description', value: 'EMOJI LIST HERE' },
+        { type: 'key', value: 'replaceAIWithCocaine' },
+        { type: 'key', value: 'replaceAIWord' },
+        { type: 'description', value: 'CRASH BUTTON HERE' },
+        { type: 'description', value: 'DOOM HERE' }
       ]
     }
   ]
@@ -213,10 +496,12 @@ export class SettingsService {
       const retrievedValue = localStorage.getItem(dataEntry.localStorageKey)
       if (retrievedValue) {
         const inputType = this.data[key as keyof SettingValues].type
-        if (inputType === 'checkbox') {
+        if (dataEntry.convertFromStorage) {
+          storedValues[key as keyof SettingValues] = dataEntry.convertFromStorage(retrievedValue)
+        } else if (inputType === 'checkbox') {
           storedValues[key as keyof SettingValues] = retrievedValue === 'true'
         } else {
-          storedValues[key as keyof SettingValues] = retrievedValue
+          storedValues[key as keyof SettingValues] = JSON.parse(retrievedValue).toString()
         }
       }
     })
@@ -243,7 +528,17 @@ export class SettingsService {
   async updateProfile(): Promise<boolean> {
     const options: { name: string; value: string }[] = Object.entries(this.data)
       .filter(([_key, entry]) => entry.profileOption !== true && entry.serverKey !== undefined)
-      .map(([_key, entry]) => ({ name: entry.serverKey!, value: this.values[entry.key]!.toString() }))
+      .map(([_key, entry]) => {
+        const rawValue = this.values[entry.key] ?? ''
+        let convertedValue: string = ''
+        if (entry.convertToStorage) {
+          convertedValue = entry.convertToStorage(rawValue)
+        } else {
+          convertedValue = this.values[entry.key]!.toString()
+        }
+
+        return { name: entry.serverKey!, value: convertedValue }
+      })
     const payload = {
       avatar: undefined,
       headerImage: undefined,
@@ -278,5 +573,29 @@ export class SettingsService {
       })
       return false
     }
+  }
+
+  // Various conversions for annoying edge cases
+  convertStringFrom(list: string): string {
+    try {
+      return JSON.parse(list)
+    } catch (error) {
+      return ''
+    }
+  }
+  convertStringTo(list: SettingValueType): string {
+    return `"${list}"`
+  }
+
+  convertListFrom(list: string): string {
+    try {
+      return JSON.parse(list).replaceAll(',', '\n')
+    } catch (error) {
+      return ''
+    }
+  }
+  convertListTo(list: SettingValueType): string {
+    if (typeof list !== 'string') return ''
+    return `"${list.replaceAll('\n', ',')}"`
   }
 }

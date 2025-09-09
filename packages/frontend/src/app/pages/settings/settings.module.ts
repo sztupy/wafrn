@@ -23,14 +23,34 @@ const routes: Route[] = [
         component: SettingsProfileComponent
       },
       {
-        path: 'preferences',
+        path: 'account',
         component: SettingsLoaderComponent,
-        data: { group: 'preferences' }
+        data: { group: 'account' }
+      },
+      {
+        path: 'appearance',
+        component: SettingsLoaderComponent,
+        data: { group: 'appearance' }
+      },
+      {
+        path: 'behavior',
+        component: SettingsLoaderComponent,
+        data: { group: 'behavior' }
+      },
+      {
+        path: 'privacy',
+        component: SettingsLoaderComponent,
+        data: { group: 'privacy' }
       },
       {
         path: 'mutesAndBlocks',
         component: SettingsLoaderComponent,
         data: { group: 'mutesAndBlocks' }
+      },
+      {
+        path: 'miscellaneous',
+        component: SettingsLoaderComponent,
+        data: { group: 'miscellaneous' }
       }
     ]
   }

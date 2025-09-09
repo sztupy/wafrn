@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common'
 import { Component, Signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatListModule } from '@angular/material/list'
@@ -10,7 +11,15 @@ import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 
 
 @Component({
   selector: 'app-settings',
-  imports: [MatListModule, MatButtonModule, MatProgressSpinnerModule, FontAwesomeModule, RouterModule, TranslateModule],
+  imports: [
+    MatListModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    FontAwesomeModule,
+    RouterModule,
+    TranslateModule,
+    JsonPipe
+  ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })

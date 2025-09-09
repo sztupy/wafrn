@@ -9,7 +9,8 @@ import {
   SettingDataEntry,
   SettingKey,
   SettingsService,
-  SettingValues
+  SettingValues,
+  SettingValueType
 } from 'src/app/services/settings.service'
 
 @Component({

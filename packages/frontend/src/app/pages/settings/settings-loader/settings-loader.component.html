@@ -1,10 +1,12 @@
 @let group = this.group();
 @if (group) {
   @for (setting of group.values; track $index) {
-    @if (setting.type === 'header') {
-      <h3>{{ setting.value | translate }}</h3>
-    } @else if (setting.type === 'key') {
+    @if (setting.type === 'key') {
       <app-setting-entry [setting]="data[setting.value]"></app-setting-entry>
+    } @else if (setting.type === 'header') {
+      <h3 class="m-0 setting-header">{{ setting.value | translate }}</h3>
+    } @else if (setting.type === 'description') {
+      <p class="m-0 setting-description">{{ setting.value | translate }}</p>
     }
   }
 }

@@ -1,15 +1,17 @@
 @let settingData = data[setting().key];
 @if (settingData.type === 'checkbox') {
   @let settingValues = values[setting().key];
-  <mat-checkbox (change)="updateCheckbox(setting().key, $event)" [checked]="settingValues === true">{{
-    setting().translationKey | translate
-  }}</mat-checkbox>
+  <div>
+    <mat-checkbox (change)="updateCheckbox(setting().key, $event)" [checked]="settingValues === true">{{
+      setting().translationKey | translate
+    }}</mat-checkbox>
+  </div>
 } @else if (settingData.type === 'select' && settingData.variants) {
   <mat-form-field class="w-full" floatLabel="always">
     <mat-label>{{ setting().translationKey | translate }}</mat-label>
     <mat-select [(value)]="values[setting().key]" (selectionChange)="updateSelect(setting().key, $event)">
       @for (variant of settingData.variants | KeyValue; track $index) {
-        <mat-option [value]="variant.key">{{ variant.toString() | translate }}</mat-option>
+        <mat-option [value]="variant.key">{{ variant.value | translate }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
