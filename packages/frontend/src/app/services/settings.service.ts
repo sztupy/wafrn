@@ -194,8 +194,8 @@ export class SettingsService {
     },
     enableConfettiReceivingLike: {
       key: 'enableConfettiReceivingLike',
-      translationKey: 'settings.enableConfettiRecivingLike', // legacy misspelling
-      serverKey: 'wafrn.enableConfettiRecivingLike',
+      translationKey: 'settings.enableConfettiReceivingLike',
+      serverKey: 'wafrn.enableConfettiRecivingLike', // legacy misspelling
       localStorageKey: 'enableConfettiRecivingLike',
       type: 'checkbox',
       default: false
@@ -250,8 +250,8 @@ export class SettingsService {
     },
     automaticallyExpandPosts: {
       key: 'automaticallyExpandPosts',
-      translationKey: 'settings.automaticalyExpandPosts', // legacy misspelling
-      serverKey: 'wafrn.automaticalyExpandPosts',
+      translationKey: 'settings.automaticallyExpandPosts',
+      serverKey: 'wafrn.automaticalyExpandPosts', // legacy misspelling
       localStorageKey: 'automaticalyExpandPosts',
       type: 'checkbox',
       default: false
@@ -366,12 +366,15 @@ export class SettingsService {
         { type: 'key', value: 'disableEmailNotifications' },
         { type: 'description', value: 'CHANGE PASSWORD FIELD HERE' },
         { type: 'description', value: '2FA FIELD HERE' },
+        { type: 'separator' },
         { type: 'header', value: 'settings.header.integrations' },
         { type: 'description', value: 'ENABLE BLUESKY FIELD HERE' },
         { type: 'description', value: 'RSS MICROFRONT FIELD HERE' },
+        { type: 'separator' },
         { type: 'header', value: 'settings.header.migration' },
         { type: 'description', value: 'MIGRATE FROM AN OLD ACCOUNT FIELD HERE' },
         { type: 'description', value: 'IMPORT FOLLOWERS FIELD HERE' },
+        { type: 'separator' },
         { type: 'header', value: 'settings.header.deleteAccount' },
         { type: 'description', value: 'DELETE ACCOUNT BUTTON HERE' }
       ]
@@ -385,11 +388,13 @@ export class SettingsService {
         { type: 'description', value: 'COLOR SCHEME FIELD HERE' },
         { type: 'description', value: 'ADDITIONAL STYLE MODES FIELD HERE' },
         { type: 'description', value: 'LANGUAGE HERE' },
+        { type: 'separator' },
         { type: 'header', value: 'settings.header.classicOptions' },
         { type: 'key', value: 'forceClassicLogo' },
         { type: 'key', value: 'forceClassicVideoPlayer' },
         { type: 'key', value: 'forceClassicAudioPlayer' },
         { type: 'key', value: 'forceClassicMediaView' },
+        { type: 'separator' },
         { type: 'header', value: 'settings.header.animationsAndSounds' },
         { type: 'key', value: 'disableConfetti' },
         { type: 'key', value: 'enableConfettiReceivingLike' },
@@ -402,12 +407,12 @@ export class SettingsService {
       title: 'settings.sidebar.behavior',
       values: [
         { type: 'description', value: 'DEFAULT DASHBOARD FIELD HERE' },
-        { type: 'key', value: 'disableCW' },
-        { type: 'key', value: 'hideNoDescriptionMedia' },
+        { type: 'key', value: 'automaticallyExpandPosts' },
         { type: 'key', value: 'expandQuotes' },
-        { type: 'key', value: 'disableForceAltText' },
+        { type: 'key', value: 'disableCW' },
         { type: 'key', value: 'disableNSFWFilter' },
-        { type: 'key', value: 'automaticallyExpandPosts' }
+        { type: 'key', value: 'hideNoDescriptionMedia' },
+        { type: 'key', value: 'disableForceAltText' }
       ]
     },
     {
@@ -416,12 +421,16 @@ export class SettingsService {
       title: 'settings.sidebar.privacy',
       values: [
         { type: 'key', value: 'manuallyAcceptsFollows' },
-        { type: 'key', value: 'defaultPostEditorPrivacy' },
         { type: 'key', value: 'enableAsks' },
         { type: 'key', value: 'enableAnonymousAsks' },
         { type: 'key', value: 'hideProfileNotLoggedIn' },
         { type: 'key', value: 'hideFollows' },
         { type: 'key', value: 'displayMentionsOfBlockedUsersFromOtherUsers' },
+        { type: 'separator' },
+        { type: 'header', value: 'settings.header.editor' },
+        { type: 'key', value: 'defaultPostEditorPrivacy' },
+        { type: 'separator' },
+        { type: 'header', value: 'settings.header.followers' },
         { type: 'description', value: 'MANAGE FOLLOWERS MENU BUTTON' }
       ]
     },
@@ -434,6 +443,7 @@ export class SettingsService {
         { type: 'header', value: 'settings.header.mutedBlockedWords' },
         { type: 'key', value: 'mutedWords' },
         { type: 'key', value: 'superMutedWords' },
+        { type: 'separator' },
         { type: 'header', value: 'settings.header.mutedBlockedUsers' },
         { type: 'description', value: 'MUTED USERS HERE' },
         { type: 'description', value: 'BLOCKED USERS HERE' },
@@ -452,7 +462,7 @@ export class SettingsService {
         { type: 'key', value: 'replaceAIWithCocaine' },
         { type: 'key', value: 'replaceAIWord' },
         { type: 'description', value: 'CRASH BUTTON HERE' },
-        { type: 'description', value: 'DOOM HERE' }
+        { type: 'description', value: 'DOOM LINK HERE' }
       ]
     }
   ]
@@ -486,6 +496,8 @@ export class SettingsService {
         this.values.description = blogDetails.descriptionMarkdown
 
         // Fediverse Attachments
+        console.log(blogDetails.publicOptions.map((val) => ({ name: val.optionName, value: val.optionValue })))
+
         const rawAttachments = blogDetails.publicOptions?.find(
           (elem) => elem.optionName === 'fediverse.public.attachment'
         )
