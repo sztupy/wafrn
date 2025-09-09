@@ -77,9 +77,11 @@ export default function postsRoutes(app: Application) {
     async (req: AuthorizedRequest, res: Response) => {
       const userUrl = req.params?.user
       const postSlug = req.params?.slug
-      const user = userUrl ? await User.findOne({
-        where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
-      }) : await getAdminUser()
+      const user = userUrl
+        ? await User.findOne({
+            where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
+          })
+        : await getAdminUser()
       if (!user) {
         res.sendStatus(404)
       } else {
@@ -401,19 +403,19 @@ export default function postsRoutes(app: Application) {
           // only count on reblogs
           const blocksExistingOnParents = parent
             ? await Blocks.count({
-              where: {
-                [Op.or]: [
-                  {
-                    blockerId: posterId,
-                    blockedId: parent.userId
-                  },
-                  {
-                    blockedId: posterId,
-                    blockerId: parent.userId
-                  }
-                ]
-              }
-            })
+                where: {
+                  [Op.or]: [
+                    {
+                      blockerId: posterId,
+                      blockedId: parent.userId
+                    },
+                    {
+                      blockedId: posterId,
+                      blockerId: parent.userId
+                    }
+                  ]
+                }
+              })
             : 0
           if (blocksExistingOnParents + bannedUsers > 0) {
             success = false
@@ -427,8 +429,8 @@ export default function postsRoutes(app: Application) {
         const content_warning = req.body.content_warning
           ? req.body.content_warning.trim()
           : posterUser?.NSFW
-            ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
-            : ''
+          ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+          : ''
         let mediaToAdd: any[] = []
         const avaiableEmojis = await getAvaiableEmojis()
         // we parse the content and we search emojis:
@@ -551,7 +553,10 @@ export default function postsRoutes(app: Application) {
           for (let userMentioned of sortedMentions) {
             const url = userMentioned.longHandle
             const remoteId = userMentioned.fullFediverseUrl
-            const remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
+            let remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
+            if (userMentioned.url.startsWith('@') && !remoteUrl && userMentioned.bskyDid) {
+              remoteUrl = 'https://bsky.app/profile/' + userMentioned.bskyDid
+            }
             const stringToReplace = addHandlePrefix(userMentioned.url.toLowerCase())
             const targetString = `<span class="h-card" translate="no"><a href="${remoteUrl}" class="u-url mention">@<span>${url}</span></a></span>`
             content = content.replace(`${stringToReplace}`, `${targetString}`).trim()
