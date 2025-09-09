@@ -1,7 +1,6 @@
 import { Component, computed, Signal } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-entry.component'
-import { ActivatedRoute } from '@angular/router'
 import { FediAttachment, SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
 import { MatCardModule } from '@angular/material/card'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
@@ -11,19 +10,10 @@ import { MatInputModule } from '@angular/material/input'
 import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MatButtonModule } from '@angular/material/button'
-import { JsonPipe } from '@angular/common'
 
 @Component({
   selector: 'app-setting-loader',
-  imports: [
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    FontAwesomeModule,
-    TranslateModule,
-    SettingEntryComponent,
-    JsonPipe
-  ],
+  imports: [MatCardModule, MatInputModule, MatButtonModule, FontAwesomeModule, TranslateModule, SettingEntryComponent],
   templateUrl: './settings-profile.component.html',
   styleUrl: './settings-profile.component.scss'
 })
