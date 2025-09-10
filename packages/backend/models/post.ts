@@ -46,7 +46,8 @@ export const Privacy = {
   FollowersOnly: 1,
   LocalOnly: 2,
   Unlisted: 3,
-  DirectMessage: 10
+  DirectMessage: 10,
+  LinkOnly: 20
 } as const
 
 export const InteractionControl = {
@@ -74,6 +75,7 @@ export interface PostAttributes {
   content?: string
   markdownContent?: string
   title?: string
+  slug?: string
   remotePostId?: string | null
   bskyUri?: string | null
   bskyCid?: string | null
@@ -126,6 +128,12 @@ export class Post extends Model<PostAttributes, PostAttributes> implements PostA
     type: DataType.STRING(256)
   })
   declare title: string
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(256)
+  })
+  declare slug: string
 
   @Column({
     allowNull: true,

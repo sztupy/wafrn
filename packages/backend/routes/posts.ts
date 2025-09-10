@@ -45,6 +45,7 @@ import dompurify from 'isomorphic-dompurify'
 import { Privacy, PrivacyType } from '../models/post.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
 import { addHandlePrefix } from '../models/user.js'
+import { getAdminUser } from '../utils/getAdminAndDeletedUser.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -70,21 +71,23 @@ const prepareSendPostQueue = new Queue('prepareSendPost', {
 })
 export default function postsRoutes(app: Application) {
   app.get(
-    '/api/article/:user/:title',
+    '/api/article/:user?/:slug',
     optionalAuthentication,
     navigationRateLimiter,
     async (req: AuthorizedRequest, res: Response) => {
       const userUrl = req.params?.user
-      const postTitle = req.params?.title.replaceAll('-', ' ')
-      const user = await User.findOne({
-        where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
-      })
+      const postSlug = req.params?.slug
+      const user = userUrl
+        ? await User.findOne({
+            where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
+          })
+        : await getAdminUser()
       if (!user) {
         res.sendStatus(404)
       } else {
         const postFound = await Post.findOne({
           where: sequelize.and(
-            sequelize.where(sequelize.fn('lower', sequelize.col('title')), postTitle.toLowerCase()),
+            sequelize.where(sequelize.fn('lower', sequelize.col('slug')), postSlug.toLowerCase()),
             sequelize.where(sequelize.col('userId'), user.id)
           )
         })
@@ -400,19 +403,19 @@ export default function postsRoutes(app: Application) {
           // only count on reblogs
           const blocksExistingOnParents = parent
             ? await Blocks.count({
-              where: {
-                [Op.or]: [
-                  {
-                    blockerId: posterId,
-                    blockedId: parent.userId
-                  },
-                  {
-                    blockedId: posterId,
-                    blockerId: parent.userId
-                  }
-                ]
-              }
-            })
+                where: {
+                  [Op.or]: [
+                    {
+                      blockerId: posterId,
+                      blockedId: parent.userId
+                    },
+                    {
+                      blockedId: posterId,
+                      blockerId: parent.userId
+                    }
+                  ]
+                }
+              })
             : 0
           if (blocksExistingOnParents + bannedUsers > 0) {
             success = false
@@ -426,8 +429,8 @@ export default function postsRoutes(app: Application) {
         const content_warning = req.body.content_warning
           ? req.body.content_warning.trim()
           : posterUser?.NSFW
-            ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
-            : ''
+          ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+          : ''
         let mediaToAdd: any[] = []
         const avaiableEmojis = await getAvaiableEmojis()
         // we parse the content and we search emojis:
@@ -550,7 +553,10 @@ export default function postsRoutes(app: Application) {
           for (let userMentioned of sortedMentions) {
             const url = userMentioned.longHandle
             const remoteId = userMentioned.fullFediverseUrl
-            const remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
+            let remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
+            if (userMentioned.url.startsWith('@') && !remoteUrl && userMentioned.bskyDid) {
+              remoteUrl = 'https://bsky.app/profile/' + userMentioned.bskyDid
+            }
             const stringToReplace = addHandlePrefix(userMentioned.url.toLowerCase())
             const targetString = `<span class="h-card" translate="no"><a href="${remoteUrl}" class="u-url mention">@<span>${url}</span></a></span>`
             content = content.replace(`${stringToReplace}`, `${targetString}`).trim()

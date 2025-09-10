@@ -337,10 +337,12 @@
     <!-- Popup Menus -->
     <mat-menu #menu="matMenu">
       @for (option of privacyOptions; track $index) {
-        <button (click)="this.privacy = option.level" mat-menu-item>
-          <fa-icon [icon]="option.icon"></fa-icon>
-          {{ option.name }}
-        </button>
+        @if (option.level != 20) {
+          <button (click)="this.privacy = option.level" mat-menu-item>
+            <fa-icon [icon]="option.icon"></fa-icon>
+            {{ option.name }}
+          </button>
+        }
       }
     </mat-menu>
     <div

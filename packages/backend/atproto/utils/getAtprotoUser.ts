@@ -19,41 +19,9 @@ async function forcePopulateUsers(dids: string[], localUser: User) {
   const foundUsersDids = userFounds.map((elem) => elem.bskyDid)
   const notFoundUsers = dids.filter((elem) => !foundUsersDids.includes(elem))
   if (notFoundUsers.length > 0) {
-    const agent = await getAtProtoSession(localUser)
-    const usersToGet = _.chunk(notFoundUsers, 25)
-    let petitionsResult = []
-    for await (const group of usersToGet) {
-      const petition = await agent.getProfiles({ actors: group })
-      if (petition.data.profiles && petition.data.profiles.length > 0) {
-        await User.bulkCreate(
-          petition.data.profiles.map((data) => {
-            let avatarString = ``
-            if (data.avatar) {
-              let avatarCID = data.avatar.split('/')[7]
-              if (avatarCID) {
-                avatarString = `?cid=${avatarCID.split('@jpeg')[0]}&did=${data.did}`
-              }
-            }
-            return {
-              hideFollows: false,
-              // TODO hey you should check this
-              hideProfileNotLoggedIn: false,
-              bskyDid: data.did,
-              url: '@' + (data.handle === 'handle.invalid' ? `handle.invalid${data.did}` : data.handle),
-              name: data.displayName ? data.displayName : data.handle,
-              avatar: avatarString,
-              description: data.description,
-              followingCount: data.followsCount,
-              followerCount: data.followersCount,
-              headerImage: data.banner,
-              // bsky does not has this function lol
-              manuallyAcceptsFollows: false,
-              updatedAt: new Date(),
-              activated: true
-            }
-          })
-        )
-      }
+    for await (const did of notFoundUsers) {
+      await getAtprotoUser(did, localUser)
+      await wait(100)
     }
   }
 }

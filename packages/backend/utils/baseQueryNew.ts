@@ -401,7 +401,7 @@ async function getUnjointedPosts(postIdsInput: string[], posterId: string, doNot
       post.content === '' &&
       !tagsAwaited.some((tag: any) => tag.postId === post.id) &&
       !mediasAwaited.some((media: any) => media.postId === post.id)
-    const validPrivacy = [Privacy.Public, Privacy.LocalOnly, Privacy.Unlisted].includes(post.privacy)
+    const validPrivacy = [Privacy.Public, Privacy.LocalOnly, Privacy.Unlisted, Privacy.LinkOnly].includes(post.privacy)
     const userFollowsPoster = usersFollowedByPoster.includes(post.userId) && post.privacy === Privacy.FollowersOnly
     const userIsMentioned = postsMentioningUser.includes(post.id)
     const posterIsInBlockedServer = blockedServers.includes(usersMap.get(post.userId)?.federatedHostId as string)
@@ -482,8 +482,8 @@ async function canInteract(
   let userFollowers = userFollowersInput
     ? userFollowersInput
     : getFollowedsIds(userId, false, {
-        getFollowersInstead: true
-      })
+      getFollowersInstead: true
+    })
   let mentions = mentionsInput ? mentionsInput : getMentionedUserIds([postId])
   let post: Promise<Post | null> | Post | null = Post.findByPk(postId)
   await Promise.all([usersFollowing, userFollowers, mentions, post])

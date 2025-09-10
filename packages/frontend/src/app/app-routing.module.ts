@@ -37,7 +37,7 @@ const routes: Routes = [
       },
       {
         path: 'privacy',
-        loadChildren: () => import('./pages/privacy/privacy.module').then((m) => m.PrivacyModule)
+        redirectTo: '/article/system.privacy-policy'
       },
       {
         path: 'recoverPassword',

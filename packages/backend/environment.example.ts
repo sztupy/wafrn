@@ -52,7 +52,7 @@ export const baseEnvironment: Environment = {
   // There is a script that loads the file from this url and blocks the servers
   blocklistUrl: ${{BLOCKLIST_URI:-''}},
   // In some cases we serve the frontend with the backend with a small preprocessing. We need the location of the frontend
-  frontedLocation: '${{FRONTEND_PATH:-/wafrn/packages/frontend}}',
+  frontedLocation: '${{FRONTEND_PATH:-/app/packages/frontend}}',
   // oh yes, you need TWO redis connections, one for queues other for cache
   bullmqConnection: {
     host: '${{REDIS_HOST:-localhost}}',
