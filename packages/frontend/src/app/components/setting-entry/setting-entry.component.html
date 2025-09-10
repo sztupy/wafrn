@@ -15,7 +15,7 @@
     </mat-checkbox>
   </div>
 } @else if (settingData.type === 'select' && settingData.variants) {
-  <mat-form-field class="block mb-3 w-full mat-form-field-no-padding" floatLabel="always">
+  <mat-form-field class="block mb-3 w-full mat-form-field-no-padding">
     <mat-label>{{ settingTranslation | translate }}</mat-label>
     <mat-select [(value)]="values[setting().key]" (selectionChange)="updateSelect(setting().key, $event)">
       @for (variant of settingData.variants | KeyValue; track $index) {
@@ -28,7 +28,7 @@
   }
 } @else if (settingData.type === 'input') {
   <div class="mb-3">
-    <mat-form-field class="w-full mat-form-field-no-padding" floatLabel="always">
+    <mat-form-field class="w-full mat-form-field-no-padding">
       <mat-label>{{ settingTranslation | translate }}</mat-label>
       <input
         matNativeControl
@@ -38,12 +38,12 @@
       />
     </mat-form-field>
     @if (settingTranslationDescription) {
-      <div class="mt-1 setting-description">{{ settingTranslationDescription | translate }}</div>
+      <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
     }
   </div>
 } @else if (settingData.type === 'textarea') {
   <div class="mb-3">
-    <mat-form-field class="w-full mat-form-field-no-padding" floatLabel="always">
+    <mat-form-field class="w-full mat-form-field-no-padding">
       <mat-label>{{ settingTranslation | translate }}</mat-label>
       <textarea
         matNativeControl
@@ -55,7 +55,7 @@
       ></textarea>
     </mat-form-field>
     @if (settingTranslationDescription) {
-      <div class="mt-1 setting-description">{{ settingTranslationDescription | translate }}</div>
+      <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
     }
   </div>
 } @else {

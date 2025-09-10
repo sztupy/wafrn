@@ -1,6 +1,11 @@
 .setting-header {
 }
+
 .setting-description {
   color: var(--mat-sys-outline);
   font-size: 0.9rem;
+}
+
+.mat-mdc-form-field + .setting-description {
+  margin-top: 0.25rem;
 }

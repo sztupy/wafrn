@@ -428,6 +428,7 @@ export class SettingsService {
       title: 'settings.sidebar.account',
       type: 'generic',
       values: [
+        { type: 'header', value: 'settings.header.emailAndPassword' },
         { type: 'description', value: '[Email Change] (not currently available, sorry!)' },
         { type: 'key', value: 'disableEmailNotifications' },
         { type: 'description', value: '[Password Change] (not currently available, sorry!)' },
@@ -451,8 +452,10 @@ export class SettingsService {
       title: 'settings.sidebar.appearance',
       type: 'generic',
       values: [
+        { type: 'header', value: 'settings.header.appearance' },
         { type: 'component', value: new ComponentPortal(SettingThemeSwitcherComponent) },
         { type: 'separator' },
+        { type: 'header', value: 'settings.header.uiLanguage' },
         { type: 'component', value: new ComponentPortal(SettingLanguageSwitcherComponent) },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.classicOptions' },
@@ -473,10 +476,12 @@ export class SettingsService {
       title: 'settings.sidebar.behavior',
       type: 'generic',
       values: [
+        { type: 'header', value: 'settings.header.dashboardBehavior' },
         { type: 'key', value: 'defaultDashboard' },
         { type: 'key', value: 'automaticallyExpandPosts' },
         { type: 'key', value: 'expandQuotes' },
         { type: 'separator' },
+        { type: 'header', value: 'settings.header.cwBehavior' },
         { type: 'key', value: 'disableCW' },
         { type: 'key', value: 'disableNSFWFilter' },
         { type: 'key', value: 'hideNoDescriptionMedia' },
@@ -489,12 +494,12 @@ export class SettingsService {
       title: 'settings.sidebar.privacy',
       type: 'generic',
       values: [
+        { type: 'header', value: 'settings.header.profilePrivacy' },
         { type: 'key', value: 'manuallyAcceptsFollows' },
         { type: 'key', value: 'enableAsks' },
         { type: 'key', value: 'enableAnonymousAsks' },
         { type: 'key', value: 'hideProfileNotLoggedIn' },
         { type: 'key', value: 'hideFollows' },
-        { type: 'key', value: 'displayMentionsOfBlockedUsersFromOtherUsers' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.editor' },
         { type: 'key', value: 'defaultPostEditorPrivacy' },
@@ -514,6 +519,8 @@ export class SettingsService {
         { type: 'key', value: 'mutedWords' },
         { type: 'key', value: 'superMutedWords' },
         { type: 'separator' },
+        { type: 'header', value: 'settings.header.blockBehavior' },
+        { type: 'key', value: 'displayMentionsOfBlockedUsersFromOtherUsers' },
         { type: 'key', value: 'hideQuotes' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.mutedBlockedUsers' },
@@ -535,7 +542,15 @@ export class SettingsService {
         { type: 'separator' },
         { type: 'header', value: 'settings.header.fun' },
         { type: 'component', value: new ComponentPortal(CrashButtonComponent) },
-        { type: 'link', value: 'menu.settings.superSecretMenu', route: '/doom' }
+        { type: 'link', value: 'menu.settings.superSecretMenu', route: '/doom' },
+        { type: 'separator' },
+        { type: 'header', value: 'Old Settings' },
+        { type: 'link', value: 'Old Settings (deprecated!!)', route: '/profile/edit' },
+        {
+          type: 'description',
+          value:
+            'Old settings are being deprecated but they are still accessible in case the new settings are broken in some way'
+        }
       ]
     }
   ]

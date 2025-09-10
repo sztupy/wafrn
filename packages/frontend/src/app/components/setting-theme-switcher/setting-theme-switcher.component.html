@@ -1,5 +1,5 @@
-<mat-form-field class="block mb-3 w-full mat-form-field-no-padding" floatLabel="always">
-  <mat-label>{{ 'profile.preferences.colorScheme' | translate }}</mat-label>
+<mat-form-field class="block w-full mat-form-field-no-padding" floatLabel="always">
+  <mat-label>{{ 'settings.theme' | translate }}</mat-label>
   <mat-select [value]="colorScheme()" (selectionChange)="setColorScheme($event)">
     @for (group of colorSchemeGroupList | KeyValue; track $index) {
       <mat-optgroup [label]="group.value.name" class="theme-group">
@@ -10,19 +10,22 @@
     }
   </mat-select>
 </mat-form-field>
-<mat-form-field class="block mb-3 w-full mat-form-field-no-padding" floatLabel="always">
-  <mat-label>{{ 'profile.preferences.theme' | translate }}</mat-label>
+<p class="setting-description">{{ 'settings.themeDescription' | translate }}</p>
+<mat-form-field class="block w-full mat-form-field-no-padding" floatLabel="always">
+  <mat-label>{{ 'settings.lightDarkMode' | translate }}</mat-label>
   <mat-select [value]="colorTheme()" (selectionChange)="setColorTheme($event)">
     @for (entry of colorThemeData | KeyValue; track $index) {
       <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
     }
   </mat-select>
 </mat-form-field>
-<mat-form-field class="block mb-3 w-full mat-form-field-no-padding" floatLabel="always">
-  <mat-label>{{ 'profile.preferences.additionalStyleModes' | translate }}</mat-label>
+<p class="setting-description">{{ 'settings.lightDarkModeDescription' | translate }}</p>
+<mat-form-field class="block w-full mat-form-field-no-padding" floatLabel="always">
+  <mat-label>{{ 'settings.additionalStyleModes' | translate }}</mat-label>
   <mat-select [(value)]="additionalStyleModesSelect" (selectionChange)="setAdditionalStyleModes($event)" multiple>
     @for (entry of additionalStyleModesData | KeyValue; track $index) {
       <mat-option [value]="entry.key">{{ entry.value.name }}</mat-option>
     }
   </mat-select>
 </mat-form-field>
+<p class="setting-description">{{ 'settings.additionalStyleModesDescription' | translate }}</p>
