@@ -12,5 +12,5 @@ export const languageMap: Record<SupportedLanguage, LanguageData> = {
   en: { name: 'English' },
   pl: { name: 'Polski' },
   es: { name: 'Español' },
-  fr: { name: 'français' }
+  fr: { name: 'Français' }
 }
