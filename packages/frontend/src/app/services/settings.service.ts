@@ -22,6 +22,7 @@ import { SettingsProfileComponent } from '../pages/settings/settings-profile/set
 import { CrashButtonComponent } from '../components/crash-button/crash-button.component'
 import { ComponentPortal, Portal } from '@angular/cdk/portal'
 import { SettingThemeSwitcherComponent } from '../components/setting-theme-switcher/setting-theme-switcher.component'
+import { SettingLanguageSwitcherComponent } from '../components/setting-language-switcher/setting-language-switcher.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -450,7 +451,8 @@ export class SettingsService {
       type: 'generic',
       values: [
         { type: 'component', value: new ComponentPortal(SettingThemeSwitcherComponent) },
-        { type: 'description', value: 'LANGUAGE HERE' },
+        { type: 'separator' },
+        { type: 'component', value: new ComponentPortal(SettingLanguageSwitcherComponent) },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.classicOptions' },
         { type: 'key', value: 'forceClassicLogo' },

@@ -1,0 +1,8 @@
+<mat-form-field class="block mb-3 w-full mat-form-field-no-padding" floatLabel="always">
+  <mat-label>{{ 'profile.preferences.appLanguage' | translate }}</mat-label>
+  <mat-select [value]="appLanguage" (selectionChange)="setLanguage($event)">
+    @for (entry of allLanguages; track $index) {
+      <mat-option [value]="entry">{{ languageMap[entry].name }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>

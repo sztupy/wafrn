@@ -10,6 +10,7 @@ import { WebsocketService } from './services/websocket.service'
 import { NavigationError, Router } from '@angular/router'
 import { filter, map } from 'rxjs'
 import { MessageService } from './services/message.service'
+import { supportedLanguages } from './lists/languages'
 
 @Component({
   selector: 'app-root',
@@ -36,7 +37,7 @@ export class AppComponent implements OnInit {
     this.title = this.titleService.getTitle()
     GlobalData.appDefaultTitle = this.title
 
-    this.translateService.addLangs(['en', 'pl', 'es', 'fr'])
+    this.translateService.addLangs(supportedLanguages)
     this.translateService.setDefaultLang('en')
 
     // User specified language
