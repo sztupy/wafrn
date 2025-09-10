@@ -45,7 +45,7 @@ enum EmojiRenderType {
 })
 export class EmojiCollectionsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('emojiContainer')
-  emojiElement!: ElementRef<HTMLElement>
+  emojiElement: ElementRef<HTMLElement> | undefined
 
   readonly emojiWidth = 55
   readonly rowMargin = 16
@@ -129,6 +129,7 @@ export class EmojiCollectionsComponent implements AfterViewInit, OnDestroy {
   constructor(private postService: PostsService) {
     this.subscription = this.postService.updateFollowers.subscribe(() => {
       this.emojiCollections = this.postService.emojiCollections
+      this.updateDimensions() // Must be called to update the computed signal vcRows (JANK AND EVIL)
     })
   }
   ngAfterViewInit(): void {
@@ -200,8 +201,10 @@ export class EmojiCollectionsComponent implements AfterViewInit, OnDestroy {
   }
 
   updateDimensions() {
-    const emojiFreeWidth = this.emojiElement.nativeElement.offsetWidth - 2 * this.rowMargin
-    this.emojiPerRow.set(Math.max(Math.floor(emojiFreeWidth / this.emojiWidth) - 1, 1))
+    if (this.emojiElement) {
+      const emojiFreeWidth = this.emojiElement.nativeElement.offsetWidth - 2 * this.rowMargin
+      this.emojiPerRow.set(Math.max(Math.floor(emojiFreeWidth / this.emojiWidth) - 1, 1))
+    }
     this.virtualHeight.set(window.innerWidth < this.narrow ? 700 : 400)
   }
 

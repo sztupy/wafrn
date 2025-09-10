@@ -35,4 +35,4 @@ You should now have a JSON file with up-to-date keys which you can start to tran
 
 ## Enabling a language on the frontend
 
-Currently we manually add languages based on a list in `packages/frontend/src/app/app.component.ts` under the constructor function. To add a language, add the name of the language to the list.
+Languages are enabled in `packages/frontend/src/app/lists/languages.ts` by adding them to the variable `supportedLanguages` and then filling out the variable `languageMap` with its native name.

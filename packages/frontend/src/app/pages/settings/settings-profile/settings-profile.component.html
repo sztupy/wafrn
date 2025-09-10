@@ -1,0 +1,63 @@
+<mat-card class="mb-5 overflow-hidden settings-blog-header">
+  <div
+    class="h-8rem mb-3 p-3 flex justify-content-end settings-blog-header-image"
+    [style.background-image]="'url(' + headerUrl() + ')'"
+  >
+    <app-select-image-button (fileEvent)="attachFile('header', $event)">
+      {{ 'settings.changeHeaderImage' | translate }}
+    </app-select-image-button>
+  </div>
+  <div class="flex align-items-end gap-3">
+    <img [src]="avatarUrl()" alt="user avatar" class="settings-blog-avatar-image" />
+    <app-select-image-button (fileEvent)="attachFile('avatar', $event)">
+      {{ 'settings.changeAvatar' | translate }}
+    </app-select-image-button>
+  </div>
+</mat-card>
+<app-setting-entry [setting]="data.name"></app-setting-entry>
+<app-setting-entry [setting]="data.description"></app-setting-entry>
+<h2 class="setting-header">{{ 'settings.header.fediAttachments' | translate }}</h2>
+<section>
+  @for (attachment of fediAttachments; track $index) {
+    <div class="mb-3 flex flex-wrap align-items-center gap-2 fedi-attachment-list">
+      <mat-form-field class="mat-form-field-no-padding fedi-attachment" floatLabel="always">
+        <mat-label>{{ 'settings.fediPropertyKey' | translate }}</mat-label>
+        <input
+          matNativeControl
+          required
+          spellcheck="false"
+          [value]="fediAttachments[$index].name"
+          (input)="updateFediAttachment($index, 'name', $event)"
+        />
+      </mat-form-field>
+      <mat-form-field class="mat-form-field-no-padding fedi-attachment" floatLabel="always">
+        <mat-label>{{ 'settings.fediPropertyValue' | translate }}</mat-label>
+        <input
+          matNativeControl
+          required
+          spellcheck="false"
+          [value]="fediAttachments[$index].value"
+          (input)="updateFediAttachment($index, 'value', $event)"
+        />
+      </mat-form-field>
+      <button
+        (click)="removeFediAttachment($index)"
+        mat-button
+        class="ml-2 mat-circle-button fedi-attachment-remove-button"
+      >
+        <fa-icon [icon]="removeIcon" class="m-1"></fa-icon>
+      </button>
+    </div>
+  }
+  <button (click)="addFediAttachment()" mat-stroked-button class="fedi-attachment-add-button">
+    {{ 'settings.addFediAttachment' | translate }}
+    <fa-icon [icon]="addIcon" [fixedWidth]="true"></fa-icon>
+  </button>
+</section>
+<hr />
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>Emoji List</mat-panel-title>
+  </mat-expansion-panel-header>
+  <app-emoji-collections (emoji)="copyEmoji($event)"></app-emoji-collections>
+</mat-expansion-panel>
