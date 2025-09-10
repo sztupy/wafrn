@@ -505,8 +505,11 @@ export class SettingsService {
         { type: 'key', value: 'defaultPostEditorPrivacy' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.followers' },
-        { type: 'link', value: 'menu.settings.follows', route: '/profile' }, // FIXME: make this on the page itself?
-        { type: 'description', value: 'Due to jank, you will have to click on your follower count yourself.' }
+        {
+          type: 'description',
+          value:
+            'Due to jank, you will have to click on your profile and then your follower count yourself. (sorry or something)'
+        }
       ]
     },
     {
