@@ -20,7 +20,6 @@ import { MessageService } from './message.service'
 import { LoginService } from './login.service'
 import { SettingsProfileComponent } from '../pages/settings/settings-profile/settings-profile.component'
 import { CrashButtonComponent } from '../components/crash-button/crash-button.component'
-import { EmojiCollectionsComponent } from '../components/emoji-collections/emoji-collections.component'
 import { ComponentPortal, Portal } from '@angular/cdk/portal'
 
 // All setting keys for use throughout the app
