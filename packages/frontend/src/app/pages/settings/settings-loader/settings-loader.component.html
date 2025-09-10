@@ -12,6 +12,10 @@
       <p>
         <a [routerLink]="setting.route">{{ setting.value | translate }}</a>
       </p>
+    } @else if (setting.type === 'linkDynamic') {
+      <p>
+        <a [routerLink]="setting.route()">{{ setting.value | translate }}</a>
+      </p>
     } @else if (setting.type === 'component') {
       <div class="mb-3">
         <ng-template [cdkPortalOutlet]="setting.value"></ng-template>

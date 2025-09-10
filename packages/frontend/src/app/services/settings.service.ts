@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core'
+import { computed, Injectable, signal } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
 import {
@@ -91,6 +91,7 @@ export type SettingRenderList =
   | { type: 'header'; value: string }
   | { type: 'description'; value: string }
   | { type: 'link'; value: string; route: string }
+  | { type: 'linkDynamic'; value: string; route: () => string }
   | { type: 'component'; value: Portal<any> }
 
 export type GroupedSettingData = ComponentSettingData | GenericSettingData
@@ -506,10 +507,10 @@ export class SettingsService {
         { type: 'separator' },
         { type: 'header', value: 'settings.header.followers' },
         {
-          type: 'description',
-          value:
-            'Due to jank, you will have to click on your profile and then your follower count yourself. (sorry or something)'
-        }
+          type: 'linkDynamic',
+          value: 'menu.settings.follows',
+          route: computed(() => '/blog/' + this.loginService.currentAccount()?.url + '/followers')
+        } // FIXME: make this on the page itself?
       ]
     },
     {
