@@ -21,6 +21,7 @@ import { LoginService } from './login.service'
 import { SettingsProfileComponent } from '../pages/settings/settings-profile/settings-profile.component'
 import { CrashButtonComponent } from '../components/crash-button/crash-button.component'
 import { EmojiCollectionsComponent } from '../components/emoji-collections/emoji-collections.component'
+import { ComponentPortal, Portal } from '@angular/cdk/portal'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -85,7 +86,7 @@ export type SettingRenderList =
   | { type: 'header'; value: string }
   | { type: 'description'; value: string }
   | { type: 'link'; value: string; route: string }
-  | { type: 'component'; value: unknown }
+  | { type: 'component'; value: Portal<any> }
 
 export type GroupedSettingData = ComponentSettingData | GenericSettingData
 export type ComponentSettingData = {
@@ -94,7 +95,7 @@ export type ComponentSettingData = {
   title: string
   default?: true
   type: 'component'
-  component: unknown
+  component: any
 }
 export type GenericSettingData = {
   key: string // From router
@@ -492,7 +493,7 @@ export class SettingsService {
         { type: 'key', value: 'replaceAIWord' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.fun' },
-        { type: 'component', value: CrashButtonComponent },
+        { type: 'component', value: new ComponentPortal(CrashButtonComponent) },
         { type: 'link', value: 'menu.settings.superSecretMenu', route: '/doom' }
       ]
     }

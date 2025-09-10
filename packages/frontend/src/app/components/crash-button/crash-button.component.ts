@@ -32,10 +32,9 @@ export class CrashButtonComponent {
       this.overlayService.createImageOverlay(
         'https://cdn.development.wafrn.net/api/cache?media=https%3A%2F%2Fmedia.development.wafrn.net%2F1757416602692_e04e6e24f9e8a4fd8a42c15e6c30039475a5c0a4_processed.webp'
       )
+      this.survivedCount = 0
       return
     }
-
-    this.clearTextTimeout.next()
 
     this.survivedTextList.push(this.survivedCount)
     this.survivedCount += 1

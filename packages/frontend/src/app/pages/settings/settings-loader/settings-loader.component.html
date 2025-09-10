@@ -14,7 +14,7 @@
       </p>
     } @else if (setting.type === 'component') {
       <div class="mb-3">
-        <ng-template [cdkPortalOutlet]="componentAsPortal(setting.value)"></ng-template>
+        <ng-template [cdkPortalOutlet]="setting.value"></ng-template>
       </div>
     }
   }
