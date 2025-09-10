@@ -1,10 +1,11 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay'
 import { ComponentPortal } from '@angular/cdk/portal'
 import { Injectable, InjectionToken, Injector } from '@angular/core'
-import { ImageOverlayComponent } from '../components/image-overlay/image-overlay.component'
+import { ImageOverlayComponent, KillscreenOverlayComponent } from '../components/image-overlay/overlay.component'
 
 export type ImageOverlayData = { url: string; backgroundSize: string }
-export type OverlayData = ImageOverlayData
+export type KillscreenOverlayData = { survivedCount: number }
+export type OverlayData = ImageOverlayData | KillscreenOverlayData | null
 
 export const DATA_TOKEN = new InjectionToken<string>('portal-data')
 
@@ -29,5 +30,9 @@ export class OverlayService {
     }, 2000)
 
     return imageOverlayRef
+  }
+
+  public createKillscreenOverlay(survivedCount: number) {
+    this.createOverlay({ survivedCount }, KillscreenOverlayComponent)
   }
 }
