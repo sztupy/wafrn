@@ -293,6 +293,7 @@
       "all": "All"
     },
     "alsoKnownAs": "Previous alias",
+    "requestAccountDeletion": "Request Account Deletion",
     "alsoKnownAsDescription": "Migrate from a different account (without the @)",
     "forceClassicLogo": "Force classic logo",
     "forceClassicVideoPlayer": "Force classic video player",

@@ -23,6 +23,7 @@ import { CrashButtonComponent } from '../components/crash-button/crash-button.co
 import { ComponentPortal, Portal } from '@angular/cdk/portal'
 import { SettingThemeSwitcherComponent } from '../components/setting-theme-switcher/setting-theme-switcher.component'
 import { SettingLanguageSwitcherComponent } from '../components/setting-language-switcher/setting-language-switcher.component'
+import { SettingDeleteAccountComponent } from '../components/setting-delete-account/setting-delete-account.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -427,9 +428,9 @@ export class SettingsService {
       title: 'settings.sidebar.account',
       type: 'generic',
       values: [
-        { type: 'description', value: 'CHANGE EMAIL FIELD HERE' },
+        { type: 'description', value: '[Email Change] (not currently available, sorry!)' },
         { type: 'key', value: 'disableEmailNotifications' },
-        { type: 'description', value: 'CHANGE PASSWORD FIELD HERE' },
+        { type: 'description', value: '[Password Change] (not currently available, sorry!)' },
         { type: 'link', value: 'profile.security.mfa.setup', route: '/mfa' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.integrations' },
@@ -441,7 +442,7 @@ export class SettingsService {
         { type: 'link', value: 'menu.settings.importFollows', route: '/profile/importFollows' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.deleteAccount' },
-        { type: 'description', value: 'DELETE ACCOUNT BUTTON HERE' }
+        { type: 'component', value: new ComponentPortal(SettingDeleteAccountComponent) }
       ]
     },
     {
