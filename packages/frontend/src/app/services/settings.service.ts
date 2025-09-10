@@ -82,6 +82,7 @@ export type SettingRenderList =
   | { type: 'key'; value: SettingKey }
   | { type: 'header'; value: string }
   | { type: 'description'; value: string }
+  | { type: 'link'; value: string; route: string }
 
 export type GroupedSettingData = ComponentSettingData | GenericSettingData
 export type ComponentSettingData = {
@@ -484,8 +485,10 @@ export class SettingsService {
         { type: 'description', value: 'EMOJI LIST HERE' },
         { type: 'key', value: 'replaceAIWithCocaine' },
         { type: 'key', value: 'replaceAIWord' },
+        { type: 'separator' },
+        { type: 'header', value: 'settings.header.fun' },
         { type: 'description', value: 'CRASH BUTTON HERE' },
-        { type: 'description', value: 'DOOM LINK HERE' }
+        { type: 'link', value: 'menu.settings.superSecretMenu', route: '/doom' }
       ]
     }
   ]

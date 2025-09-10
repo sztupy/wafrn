@@ -3,10 +3,11 @@ import { TranslateModule } from '@ngx-translate/core'
 import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-entry.component'
 import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
 import { SETTINGS_TOKEN } from '../settings.component'
+import { RouterModule } from '@angular/router'
 
 @Component({
   selector: 'app-setting-loader',
-  imports: [TranslateModule, SettingEntryComponent],
+  imports: [TranslateModule, SettingEntryComponent, RouterModule],
   templateUrl: './settings-loader.component.html'
 })
 export class SettingsLoaderComponent {

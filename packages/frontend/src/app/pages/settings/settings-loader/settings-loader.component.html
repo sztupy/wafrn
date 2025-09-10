@@ -8,6 +8,10 @@
       <p class="setting-description">{{ setting.value | translate }}</p>
     } @else if (setting.type === 'separator') {
       <hr />
+    } @else if (setting.type === 'link') {
+      <p>
+        <a [routerLink]="setting.route">{{ setting.value | translate }}</a>
+      </p>
     }
   }
 }

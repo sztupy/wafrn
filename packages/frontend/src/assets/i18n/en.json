@@ -275,7 +275,8 @@
       "editor": "Editor",
       "followers": "Followers",
       "mutedBlockedWords": "Muted and Blocked Words",
-      "mutedBlockedUsers": "Muted and Blocked Users"
+      "mutedBlockedUsers": "Muted and Blocked Users",
+      "fun": "Fun"
     },
     "fediPropertyKey": "Property Name",
     "fediPropertyValue": "Property Value",
