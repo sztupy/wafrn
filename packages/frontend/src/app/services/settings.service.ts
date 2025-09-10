@@ -64,7 +64,7 @@ const settingKeyVariants = [
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
 
-export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea'
+export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea' | 'user'
 
 // Setting type cannot be numbers because of a bug with mat-select
 // Simply write your numbers as strings (agony)
@@ -196,7 +196,7 @@ export class SettingsService {
       translationDescriptionKey: 'settings.alsoKnownAsDescription',
       serverKey: 'fediverse.public.alsoKnownAs',
       localStorageKey: 'public.alsoKnownAs',
-      type: 'input',
+      type: 'user',
       default: ''
     },
     forceClassicLogo: {
@@ -430,9 +430,9 @@ export class SettingsService {
       type: 'generic',
       values: [
         { type: 'header', value: 'settings.header.emailAndPassword' },
-        { type: 'description', value: '[Email Change] (not currently available, sorry!)' },
+        // { type: 'description', value: '[Email Change] (not currently available, sorry!)' },
         { type: 'key', value: 'disableEmailNotifications' },
-        { type: 'description', value: '[Password Change] (not currently available, sorry!)' },
+        { type: 'link', value: 'Change password', route: '/recoverPassword' },
         { type: 'link', value: 'profile.security.mfa.setup', route: '/mfa' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.integrations' },
@@ -440,7 +440,8 @@ export class SettingsService {
         { type: 'key', value: 'rssOptions' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.migration' },
-        { type: 'key', value: 'alsoKnownAs' },
+        { type: 'link', value: 'To migrate in and out use the old profile editor', route: '/profile/edit' },
+        // { type: 'key', value: 'alsoKnownAs' },
         { type: 'link', value: 'menu.settings.importFollows', route: '/profile/importFollows' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.deleteAccount' },
@@ -619,7 +620,12 @@ export class SettingsService {
         } else if (inputType === 'checkbox') {
           storedValues[key as keyof SettingValues] = retrievedValue === 'true'
         } else {
-          storedValues[key as keyof SettingValues] = JSON.parse(retrievedValue).toString()
+          let retrievedValueParsed = JSON.parse(retrievedValue)
+          if (retrievedValueParsed) {
+            storedValues[key as keyof SettingValues] = retrievedValueParsed.toString()
+          } else {
+            storedValues[key as keyof SettingValues] = '0'
+          }
         }
       }
     })

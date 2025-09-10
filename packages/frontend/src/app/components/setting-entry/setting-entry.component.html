@@ -1,63 +1,76 @@
 @let settingData = data[setting().key];
 @let settingTranslation = setting().translationKey;
 @let settingTranslationDescription = setting().translationDescriptionKey;
-@if (settingData.type === 'checkbox') {
-  @let settingValues = values[setting().key];
-  <div class="mb-2">
-    <mat-checkbox
-      [class.mat-checkbox-top]="settingTranslationDescription !== undefined"
-      (change)="updateCheckbox(setting().key, $event)"
-      [checked]="settingValues === true"
-      >{{ settingTranslation | translate }}
+@switch (settingData.type) {
+  @case ('checkbox') {
+    @let settingValues = values[setting().key];
+    <div class="mb-2">
+      <mat-checkbox
+        [class.mat-checkbox-top]="settingTranslationDescription !== undefined"
+        (change)="updateCheckbox(setting().key, $event)"
+        [checked]="settingValues === true"
+        >{{ settingTranslation | translate }}
+        @if (settingTranslationDescription) {
+          <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
+        }
+      </mat-checkbox>
+    </div>
+  }
+  @case ('select') {
+    @if (settingData.variants) {
+      <mat-form-field class="block mb-3 w-full mat-form-field-no-padding">
+        <mat-label>{{ settingTranslation | translate }}</mat-label>
+        <mat-select [(value)]="values[setting().key]" (selectionChange)="updateSelect(setting().key, $event)">
+          @for (variant of settingData.variants | KeyValue; track $index) {
+            <mat-option [value]="variant.key">{{ variant.value | translate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
       @if (settingTranslationDescription) {
         <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
       }
-    </mat-checkbox>
-  </div>
-} @else if (settingData.type === 'select' && settingData.variants) {
-  <mat-form-field class="block mb-3 w-full mat-form-field-no-padding">
-    <mat-label>{{ settingTranslation | translate }}</mat-label>
-    <mat-select [(value)]="values[setting().key]" (selectionChange)="updateSelect(setting().key, $event)">
-      @for (variant of settingData.variants | KeyValue; track $index) {
-        <mat-option [value]="variant.key">{{ variant.value | translate }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-  @if (settingTranslationDescription) {
-    <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
+    } @else {
+      No variants set
+    }
   }
-} @else if (settingData.type === 'input') {
-  <div class="mb-3">
-    <mat-form-field class="w-full mat-form-field-no-padding">
-      <mat-label>{{ settingTranslation | translate }}</mat-label>
-      <input
-        matNativeControl
-        [value]="values[setting().key]"
-        (input)="updateInput(setting().key, $event)"
-        spellcheck="false"
-      />
-    </mat-form-field>
-    @if (settingTranslationDescription) {
-      <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
-    }
-  </div>
-} @else if (settingData.type === 'textarea') {
-  <div class="mb-3">
-    <mat-form-field class="w-full mat-form-field-no-padding">
-      <mat-label>{{ settingTranslation | translate }}</mat-label>
-      <textarea
-        matNativeControl
-        [value]="values[setting().key]"
-        (input)="updateInput(setting().key, $event)"
-        spellcheck="false"
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="5"
-      ></textarea>
-    </mat-form-field>
-    @if (settingTranslationDescription) {
-      <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
-    }
-  </div>
-} @else {
-  <p>Something went very wrong</p>
+  @case ('input') {
+    <div class="mb-3">
+      <mat-form-field class="w-full mat-form-field-no-padding">
+        <mat-label>{{ settingTranslation | translate }}</mat-label>
+        <input
+          matNativeControl
+          [value]="values[setting().key]"
+          (input)="updateInput(setting().key, $event)"
+          spellcheck="false"
+        />
+      </mat-form-field>
+      @if (settingTranslationDescription) {
+        <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
+      }
+    </div>
+  }
+  @case ('textarea') {
+    <div class="mb-3">
+      <mat-form-field class="w-full mat-form-field-no-padding">
+        <mat-label>{{ settingTranslation | translate }}</mat-label>
+        <textarea
+          matNativeControl
+          [value]="values[setting().key]"
+          (input)="updateInput(setting().key, $event)"
+          spellcheck="false"
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="5"
+        ></textarea>
+      </mat-form-field>
+      @if (settingTranslationDescription) {
+        <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
+      }
+    </div>
+  }
+  @case ('user') {
+    <app-user-selector [controlText]="settingTranslation | translate"></app-user-selector>
+  }
+  @default {
+    <p>Something went very wrong</p>
+  }
 }

@@ -5,10 +5,11 @@ import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 
 import { SETTINGS_TOKEN } from '../settings.component'
 import { RouterModule } from '@angular/router'
 import { CdkPortalOutlet, ComponentPortal, Portal } from '@angular/cdk/portal'
+import { MatButtonModule } from '@angular/material/button'
 
 @Component({
   selector: 'app-setting-loader',
-  imports: [TranslateModule, SettingEntryComponent, RouterModule, CdkPortalOutlet],
+  imports: [TranslateModule, SettingEntryComponent, RouterModule, CdkPortalOutlet, MatButtonModule],
   templateUrl: './settings-loader.component.html'
 })
 export class SettingsLoaderComponent {

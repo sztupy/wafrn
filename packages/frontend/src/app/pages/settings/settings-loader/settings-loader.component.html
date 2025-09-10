@@ -10,7 +10,9 @@
       <hr />
     } @else if (setting.type === 'link') {
       <p>
-        <a [routerLink]="setting.route">{{ setting.value | translate }}</a>
+        <button mat-stroked-button color="primary" class="w-full" [routerLink]="setting.route">
+          {{ setting.value | translate }}
+        </button>
       </p>
     } @else if (setting.type === 'linkDynamic') {
       <p>

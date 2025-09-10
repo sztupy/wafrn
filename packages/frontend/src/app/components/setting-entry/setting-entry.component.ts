@@ -11,10 +11,18 @@ import {
   SettingsService,
   SettingValues
 } from 'src/app/services/settings.service'
+import { UserSelectorComponent } from '../user-selector/user-selector.component'
 
 @Component({
   selector: 'app-setting-entry',
-  imports: [TranslateModule, MatCheckboxModule, MatSelectModule, MatInputModule, KeyValueTypedPipe],
+  imports: [
+    TranslateModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatInputModule,
+    KeyValueTypedPipe,
+    UserSelectorComponent
+  ],
   templateUrl: './setting-entry.component.html'
 })
 export class SettingEntryComponent {
