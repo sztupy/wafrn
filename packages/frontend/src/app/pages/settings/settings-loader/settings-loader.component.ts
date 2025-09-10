@@ -1,8 +1,8 @@
-import { Component, signal } from '@angular/core'
+import { Component, Inject } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-entry.component'
-import { ActivatedRoute } from '@angular/router'
 import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
+import { SETTINGS_TOKEN } from '../settings.component'
 
 @Component({
   selector: 'app-setting-loader',
@@ -11,14 +11,12 @@ import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 
 })
 export class SettingsLoaderComponent {
   data: SettingData
-  group = signal<GroupedSettingData | undefined>(undefined)
   values: SettingValues
+  group: GroupedSettingData | undefined
 
-  constructor(settingsService: SettingsService, activatedRoute: ActivatedRoute) {
+  constructor(settingsService: SettingsService, @Inject(SETTINGS_TOKEN) groupKey: string) {
     this.data = settingsService.data
     this.values = settingsService.values
-    activatedRoute.data.subscribe((data) => {
-      this.group.set(settingsService.groups.find((val) => val.key === data['group']))
-    })
+    this.group = settingsService.groups.find((val) => val.key === groupKey)
   }
 }

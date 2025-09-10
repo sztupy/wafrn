@@ -18,6 +18,7 @@ import { catchError, lastValueFrom, of, timeout } from 'rxjs'
 import { PostsService } from './posts.service'
 import { MessageService } from './message.service'
 import { LoginService } from './login.service'
+import { SettingsProfileComponent } from '../pages/settings/settings-profile/settings-profile.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -82,10 +83,19 @@ export type SettingRenderList =
   | { type: 'header'; value: string }
   | { type: 'description'; value: string }
 
-export type GroupedSettingData = {
+export type GroupedSettingData = ComponentSettingData | GenericSettingData
+export type ComponentSettingData = {
   key: string // From router
   icon?: IconDefinition
   title: string
+  type: 'component'
+  component: unknown
+}
+export type GenericSettingData = {
+  key: string // From router
+  icon?: IconDefinition
+  title: string
+  type: 'generic'
   values: SettingRenderList[] // For setting-loader to auto-display. Use an empty list for custom pages
 }
 
@@ -362,12 +372,14 @@ export class SettingsService {
       key: 'profile',
       icon: faUser,
       title: 'settings.sidebar.profile',
-      values: []
+      type: 'component',
+      component: SettingsProfileComponent
     },
     {
       key: 'account',
       icon: faKey,
       title: 'settings.sidebar.account',
+      type: 'generic',
       values: [
         { type: 'description', value: 'CHANGE EMAIL FIELD HERE' },
         { type: 'key', value: 'disableEmailNotifications' },
@@ -390,6 +402,7 @@ export class SettingsService {
       key: 'appearance',
       icon: faPaintbrush,
       title: 'settings.sidebar.appearance',
+      type: 'generic',
       values: [
         { type: 'description', value: 'THEME FIELD HERE' },
         { type: 'description', value: 'COLOR SCHEME FIELD HERE' },
@@ -412,6 +425,7 @@ export class SettingsService {
       key: 'behavior',
       icon: faSliders,
       title: 'settings.sidebar.behavior',
+      type: 'generic',
       values: [
         { type: 'description', value: 'DEFAULT DASHBOARD FIELD HERE' },
         { type: 'key', value: 'automaticallyExpandPosts' },
@@ -426,6 +440,7 @@ export class SettingsService {
       key: 'privacy',
       icon: faUserSecret,
       title: 'settings.sidebar.privacy',
+      type: 'generic',
       values: [
         { type: 'key', value: 'manuallyAcceptsFollows' },
         { type: 'key', value: 'enableAsks' },
@@ -445,6 +460,7 @@ export class SettingsService {
       key: 'mutesAndBlocks',
       icon: faBan,
       title: 'settings.sidebar.mutesAndBlocks',
+      type: 'generic',
       values: [
         { type: 'header', value: 'settings.header.mutedBlockedWords' },
         { type: 'key', value: 'mutedWords' },
@@ -463,6 +479,7 @@ export class SettingsService {
       key: 'miscellaneous',
       icon: faEllipsis,
       title: 'settings.sidebar.miscellaneous',
+      type: 'generic',
       values: [
         { type: 'description', value: 'EMOJI LIST HERE' },
         { type: 'key', value: 'replaceAIWithCocaine' },

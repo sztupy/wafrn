@@ -1,5 +1,4 @@
-@let group = this.group();
-@if (group) {
+@if (group && group.type === 'generic') {
   @for (setting of group.values; track $index) {
     @if (setting.type === 'key') {
       <app-setting-entry [setting]="data[setting.value]"></app-setting-entry>

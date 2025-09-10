@@ -5,7 +5,7 @@
   <section class="col-12 md:col-4 md:max-w-20rem">
     <mat-nav-list>
       @for (group of groups; track $index) {
-        <a mat-list-item [routerLink]="group.key" routerLinkActive="page-active" class="">
+        <a mat-list-item [routerLink]="'/settings/' + group.key" routerLinkActive="page-active" class="">
           @if (group.icon) {
             <fa-icon matListItemIcon [icon]="group.icon" size="sm" [fixedWidth]="true"></fa-icon>
           }
@@ -31,12 +31,6 @@
     </section>
   </section>
   <section class="col">
-    <router-outlet></router-outlet>
+    <ng-template [cdkPortalOutlet]="portal"></ng-template>
   </section>
 </div>
-@if (false) {
-  <div class="mx-3 mb-4 px-2 lg:mx-4 wafrn-container-wide">
-    <p>Debug:</p>
-    <pre>{{ values | json }}</pre>
-  </div>
-}
