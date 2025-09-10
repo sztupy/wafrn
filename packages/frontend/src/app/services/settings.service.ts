@@ -537,10 +537,10 @@ export class SettingsService {
       title: 'settings.sidebar.miscellaneous',
       type: 'generic',
       values: [
+        { type: 'header', value: 'settings.header.fun' },
         { type: 'key', value: 'replaceAIWithCocaine' },
         { type: 'key', value: 'replaceAIWord' },
         { type: 'separator' },
-        { type: 'header', value: 'settings.header.fun' },
         { type: 'component', value: new ComponentPortal(CrashButtonComponent) },
         { type: 'link', value: 'menu.settings.superSecretMenu', route: '/doom' },
         { type: 'separator' },
