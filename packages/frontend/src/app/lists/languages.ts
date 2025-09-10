@@ -23,15 +23,15 @@ export type SupportedLanguage = SupportedLanguagesTuple[number]
 export type LanguageData = { name: string }
 export const languageMap: Record<SupportedLanguage, LanguageData> = {
   en: { name: 'English' },
-  de: { name: 'Nederlands' },
+  de: { name: 'Deutsch' },
   es: { name: 'Español' },
   fr: { name: 'Français' },
-  ga: { name: 'République Gabonaise Français' },
-  hu: { name: 'magyar nyelv' },
+  ga: { name: 'Gaeilge' },
+  hu: { name: 'Magyar' },
   nl: { name: 'Nederlands' },
   pl: { name: 'Polski' },
-  ru: { name: 'русский язык' },
-  'sr-Cyrl': { name: 'српски' },
-  'sr-Latn': { name: 'srpski' },
+  ru: { name: 'Русский язык' },
+  'sr-Cyrl': { name: 'Српски' },
+  'sr-Latn': { name: 'Srpski' },
   tok: { name: 'toki pona' }
 }
