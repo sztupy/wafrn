@@ -1,3 +1,8 @@
+.crash-button {
+  --mat-button-outlined-horizontal-padding: 18px;
+  border-radius: var(--mat-sys-corner-small);
+}
+
 .survived-text {
   position: absolute;
   animation: floatup 2000ms ease-out forwards;
