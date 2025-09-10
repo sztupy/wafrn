@@ -303,6 +303,11 @@
     "enableConfettiReceivingLike": "Enable confetti when you receive a like (PvP)",
     "disableSounds": "Disable sound effects when performing certain actions",
     "disableSoundsDescription": "By default, a sound is played on like, react, woot, edit, and rewoot",
+    "defaultDashboard": "Default dashboard",
+    "defaultDashboardOptions": {
+      "dashboard": "Dashboard",
+      "exploreLocal": "Explore Local"
+    },
     "automaticallyExpandPosts": "Automatically expand all posts",
     "expandQuotes": "Do not collapse quotes",
     "disableCW": "Disable CW unless post contains muted words",

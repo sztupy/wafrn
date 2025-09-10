@@ -15,7 +15,7 @@
     </mat-checkbox>
   </div>
 } @else if (settingData.type === 'select' && settingData.variants) {
-  <mat-form-field class="mb-3 w-full mat-form-field-no-padding" floatLabel="always">
+  <mat-form-field class="block mb-3 w-full mat-form-field-no-padding" floatLabel="always">
     <mat-label>{{ settingTranslation | translate }}</mat-label>
     <mat-select [(value)]="values[setting().key]" (selectionChange)="updateSelect(setting().key, $event)">
       @for (variant of settingData.variants | KeyValue; track $index) {

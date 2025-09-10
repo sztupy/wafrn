@@ -46,6 +46,7 @@ const settingKeyVariants = [
   'expandQuotes',
   'disableForceAltText',
   'disableNSFWFilter',
+  'defaultDashboard',
   'automaticallyExpandPosts', // misspelled key
   'defaultPostEditorPrivacy',
   'enableAsks',
@@ -293,6 +294,18 @@ export class SettingsService {
       type: 'checkbox',
       default: false
     },
+    defaultDashboard: {
+      key: 'defaultDashboard',
+      translationKey: 'settings.defaultDashboard',
+      serverKey: 'wafrn.defaultExploreLocal', // Currently a toggle, this is set so we can expand on it later
+      localStorageKey: 'defaultExploreLocal',
+      type: 'select',
+      default: 'false',
+      variants: {
+        false: 'settings.defaultDashboardOptions.dashboard',
+        true: 'settings.defaultDashboardOptions.exploreLocal'
+      }
+    },
     automaticallyExpandPosts: {
       key: 'automaticallyExpandPosts',
       translationKey: 'settings.automaticallyExpandPosts',
@@ -458,9 +471,10 @@ export class SettingsService {
       title: 'settings.sidebar.behavior',
       type: 'generic',
       values: [
-        { type: 'description', value: 'DEFAULT DASHBOARD FIELD HERE' },
+        { type: 'key', value: 'defaultDashboard' },
         { type: 'key', value: 'automaticallyExpandPosts' },
         { type: 'key', value: 'expandQuotes' },
+        { type: 'separator' },
         { type: 'key', value: 'disableCW' },
         { type: 'key', value: 'disableNSFWFilter' },
         { type: 'key', value: 'hideNoDescriptionMedia' },
@@ -484,7 +498,8 @@ export class SettingsService {
         { type: 'key', value: 'defaultPostEditorPrivacy' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.followers' },
-        { type: 'description', value: 'MANAGE FOLLOWERS MENU BUTTON' }
+        { type: 'link', value: 'menu.settings.follows', route: '/profile' }, // FIXME: make this on the page itself?
+        { type: 'description', value: 'Due to jank, you will have to click on your follower count yourself.' }
       ]
     },
     {
@@ -497,13 +512,14 @@ export class SettingsService {
         { type: 'key', value: 'mutedWords' },
         { type: 'key', value: 'superMutedWords' },
         { type: 'separator' },
-        { type: 'header', value: 'settings.header.mutedBlockedUsers' },
-        { type: 'description', value: 'MUTED USERS HERE' },
-        { type: 'description', value: 'BLOCKED USERS HERE' },
+        { type: 'key', value: 'hideQuotes' },
         { type: 'separator' },
-        { type: 'description', value: 'MUTED POSTS HERE' },
-        { type: 'description', value: 'BLOCKED SERVERS HERE' },
-        { type: 'key', value: 'hideQuotes' }
+        { type: 'header', value: 'settings.header.mutedBlockedUsers' },
+        { type: 'link', value: 'menu.settings.mutedUsers', route: '/profile/mutes' }, // FIXME: make this on the page itself?
+        { type: 'link', value: 'menu.settings.myBlockedUsers', route: '/profile/blocks' }, // FIXME: make this on the page itself?
+        { type: 'separator' },
+        { type: 'link', value: 'menu.settings.mutedPosts', route: '/profile/silencedPosts' }, // FIXME: make this on the page itself?
+        { type: 'link', value: 'menu.settings.myBlockedServers', route: '/profile/serverBlocks' } // FIXME: make this on the page itself?
       ]
     },
     {
