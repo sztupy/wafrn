@@ -440,8 +440,7 @@ export class SettingsService {
         { type: 'key', value: 'rssOptions' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.migration' },
-        { type: 'link', value: 'To migrate in and out use the old profile editor', route: '/profile/edit' },
-        // { type: 'key', value: 'alsoKnownAs' },
+        { type: 'key', value: 'alsoKnownAs' },
         { type: 'link', value: 'menu.settings.importFollows', route: '/profile/importFollows' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.deleteAccount' },

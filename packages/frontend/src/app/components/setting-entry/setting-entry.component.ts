@@ -54,4 +54,9 @@ export class SettingEntryComponent {
       this.settingsService.settingsModified.set(true)
     }
   }
+
+  updateUserInput(event: { remoteId: string; url: string }) {
+    this.values[this.setting().key] = event.remoteId
+    this.settingsService.settingsModified.set(true)
+  }
 }

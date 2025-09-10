@@ -68,7 +68,11 @@
     </div>
   }
   @case ('user') {
-    <app-user-selector [controlText]="settingTranslation | translate"></app-user-selector>
+    tank you
+    <app-user-selector
+      [controlText]="settingTranslation | translate"
+      (optionSelected)="updateUserInput($event)"
+    ></app-user-selector>
   }
   @default {
     <p>Something went very wrong</p>
