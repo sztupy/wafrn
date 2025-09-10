@@ -1,0 +1,37 @@
+<div class="mx-3 mb-4 lg:mx-4 wafrn-container-wide">
+  <h2 class="my-3 text-3xl">{{ 'menu.settings.title' | translate }}</h2>
+</div>
+<div class="mx-3 lg:mx-4 grid grid-nogutter column-gap-4 wafrn-container-wide">
+  <section class="col-12 md:col-4 md:max-w-20rem">
+    <mat-nav-list>
+      @for (group of groups; track $index) {
+        <a mat-list-item [routerLink]="'/settings/' + group.key" routerLinkActive="page-active" class="">
+          @if (group.icon) {
+            <fa-icon matListItemIcon [icon]="group.icon" size="sm" [fixedWidth]="true"></fa-icon>
+          }
+          <div matListItemTitle>{{ group.title | translate }}</div>
+        </a>
+      }
+    </mat-nav-list>
+    <hr class="hidden md:block" />
+    <section class="flex justify-content-center gap-3 mt-3 md:mt-0">
+      <button
+        mat-flat-button
+        class="w-full settings-save-button"
+        [disabled]="!settingsModified()"
+        (click)="saveSettings()"
+      >
+        Save Settings
+        @if (settingsLoading()) {
+          <mat-spinner diameter="20" class="inline-block vertical-align-middle"></mat-spinner>
+        } @else {
+          <fa-icon [icon]="saveIcon" [fixedWidth]="true"></fa-icon>
+        }
+      </button>
+    </section>
+    <hr class="my-6 md:hidden" />
+  </section>
+  <section class="col">
+    <ng-template [cdkPortalOutlet]="portal"></ng-template>
+  </section>
+</div>

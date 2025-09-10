@@ -1,0 +1,10 @@
+<div class="relative">
+  <button mat-stroked-button class="crash-button" (click)="rollToDie()">
+    {{ 'profile.other.rollToCrash' | translate }}
+  </button>
+  @for (text of survivedTextList; track $index) {
+    <div class="top-0 mx-4 text-xl pointer-events-none survived-text">
+      {{ 'profile.other.rollSurvived' | translate }}
+    </div>
+  }
+</div>

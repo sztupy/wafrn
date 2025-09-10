@@ -1,0 +1,24 @@
+.crash-button {
+  --mat-button-outlined-horizontal-padding: 18px;
+  border-radius: var(--mat-sys-corner-small);
+}
+
+.survived-text {
+  position: absolute;
+  animation: floatup 2000ms ease-out forwards;
+  font-weight: 800;
+  color: greenyellow;
+  text-shadow: 0 0 4px var(--mat-sys-on-surface);
+  z-index: 1;
+}
+
+@keyframes floatup {
+  from {
+    translate: 0 0;
+    opacity: 1;
+  }
+  to {
+    translate: 0 -80px;
+    opacity: 0;
+  }
+}

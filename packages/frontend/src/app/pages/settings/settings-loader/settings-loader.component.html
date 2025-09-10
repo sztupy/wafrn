@@ -1,0 +1,25 @@
+@if (group && group.type === 'generic') {
+  @for (setting of group.values; track $index) {
+    @if (setting.type === 'key') {
+      <app-setting-entry [setting]="data[setting.value]"></app-setting-entry>
+    } @else if (setting.type === 'header') {
+      <h2 class="setting-header">{{ setting.value | translate }}</h2>
+    } @else if (setting.type === 'description') {
+      <p class="setting-description">{{ setting.value | translate }}</p>
+    } @else if (setting.type === 'separator') {
+      <hr />
+    } @else if (setting.type === 'link') {
+      <p>
+        <a [routerLink]="setting.route">{{ setting.value | translate }}</a>
+      </p>
+    } @else if (setting.type === 'linkDynamic') {
+      <p>
+        <a [routerLink]="setting.route()">{{ setting.value | translate }}</a>
+      </p>
+    } @else if (setting.type === 'component') {
+      <div class="mb-3">
+        <ng-template [cdkPortalOutlet]="setting.value"></ng-template>
+      </div>
+    }
+  }
+}

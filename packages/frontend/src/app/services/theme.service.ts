@@ -119,7 +119,7 @@ const colorThemeVariants = ['light', 'dark', 'auto'] as const
 type ColorThemeTuple = typeof colorThemeVariants
 export type ColorTheme = ColorThemeTuple[number]
 
-type ColorThemeData = { [key in ColorTheme]: string }
+export type ColorThemeData = { [key in ColorTheme]: string }
 export const colorThemeData: ColorThemeData = {
   light: 'Light',
   dark: 'Dark',

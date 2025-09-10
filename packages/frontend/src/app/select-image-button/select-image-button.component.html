@@ -1,0 +1,16 @@
+<input
+  type="file"
+  accept="image/jpeg,image/png,image/webp,image/gif"
+  (change)="selectImage($event)"
+  #uploadInput
+  hidden
+/>
+<button (click)="uploadInput.click()" mat-flat-button class="upload-button">
+  @if (fileSelected()) {
+    {{ fileName }}
+    <fa-icon [icon]="setIcon" [fixedWidth]="true"></fa-icon>
+  } @else {
+    <ng-content></ng-content>
+    <fa-icon [icon]="uploadIcon" [fixedWidth]="true"></fa-icon>
+  }
+</button>
