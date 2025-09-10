@@ -19,6 +19,8 @@ import { PostsService } from './posts.service'
 import { MessageService } from './message.service'
 import { LoginService } from './login.service'
 import { SettingsProfileComponent } from '../pages/settings/settings-profile/settings-profile.component'
+import { CrashButtonComponent } from '../components/crash-button/crash-button.component'
+import { EmojiCollectionsComponent } from '../components/emoji-collections/emoji-collections.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -83,12 +85,14 @@ export type SettingRenderList =
   | { type: 'header'; value: string }
   | { type: 'description'; value: string }
   | { type: 'link'; value: string; route: string }
+  | { type: 'component'; value: unknown }
 
 export type GroupedSettingData = ComponentSettingData | GenericSettingData
 export type ComponentSettingData = {
   key: string // From router
   icon?: IconDefinition
   title: string
+  default?: true
   type: 'component'
   component: unknown
 }
@@ -96,6 +100,7 @@ export type GenericSettingData = {
   key: string // From router
   icon?: IconDefinition
   title: string
+  default?: true
   type: 'generic'
   values: SettingRenderList[] // For setting-loader to auto-display. Use an empty list for custom pages
 }
@@ -373,6 +378,7 @@ export class SettingsService {
       key: 'profile',
       icon: faUser,
       title: 'settings.sidebar.profile',
+      default: true,
       type: 'component',
       component: SettingsProfileComponent
     },
@@ -482,12 +488,12 @@ export class SettingsService {
       title: 'settings.sidebar.miscellaneous',
       type: 'generic',
       values: [
-        { type: 'description', value: 'EMOJI LIST HERE' },
+        { type: 'description', value: 'EMOJI COLLECTIONS HERE' },
         { type: 'key', value: 'replaceAIWithCocaine' },
         { type: 'key', value: 'replaceAIWord' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.fun' },
-        { type: 'description', value: 'CRASH BUTTON HERE' },
+        { type: 'component', value: CrashButtonComponent },
         { type: 'link', value: 'menu.settings.superSecretMenu', route: '/doom' }
       ]
     }

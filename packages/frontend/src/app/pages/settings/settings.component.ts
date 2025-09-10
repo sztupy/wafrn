@@ -52,8 +52,11 @@ export class SettingsComponent {
     this.settingsLoading = settingsService.settingsLoading
 
     activatedRoute.url.subscribe((data) => {
-      const groupKey = data[0].path
-      const groupEntry = settingsService.groups.find((val) => val.key === groupKey)
+      const groupKey = data[0]?.path
+      const groupEntry =
+        groupKey === undefined
+          ? settingsService.groups.find((val) => val.default === true) // If there is no matching key, find a default page
+          : settingsService.groups.find((val) => val.key === groupKey)
 
       const entryIsComponent = groupEntry && groupEntry.type === 'component' && groupEntry.component
       if (entryIsComponent) {
