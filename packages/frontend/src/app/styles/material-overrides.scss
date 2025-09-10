@@ -53,6 +53,11 @@
   --mat-card-elevated-container-elevation: var(--mat-sys-level2);
 }
 
+// Add click through overlay option
+.cdk-overlay-pane:has(.mat-pointer-events-none) {
+  pointer-events: none;
+}
+
 // Fix drawer border radius without requiring themes to use !important, though uses 0 2 0 specificity
 :root .mat-drawer {
   border-top-right-radius: 0;
