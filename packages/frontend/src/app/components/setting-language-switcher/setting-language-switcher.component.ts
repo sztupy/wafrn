@@ -2,7 +2,7 @@ import { Component } from '@angular/core'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatSelectChange, MatSelectModule } from '@angular/material/select'
 import { TranslatePipe, TranslateService } from '@ngx-translate/core'
-import { languageMap } from 'src/app/lists/languages'
+import { languageMap, SupportedLanguage, supportedLanguages } from 'src/app/lists/languages'
 import { LoginService } from 'src/app/services/login.service'
 
 @Component({
@@ -13,7 +13,7 @@ import { LoginService } from 'src/app/services/login.service'
   styleUrl: './setting-language-switcher.component.scss'
 })
 export class SettingLanguageSwitcherComponent {
-  allLanguages: string[]
+  allLanguages
   appLanguage: string
 
   languageMap = languageMap
@@ -22,7 +22,7 @@ export class SettingLanguageSwitcherComponent {
     private loginService: LoginService,
     private translationService: TranslateService
   ) {
-    this.allLanguages = translationService.langs
+    this.allLanguages = supportedLanguages
     this.appLanguage = translationService.currentLang
   }
 
