@@ -21,6 +21,7 @@ import { LoginService } from './login.service'
 import { SettingsProfileComponent } from '../pages/settings/settings-profile/settings-profile.component'
 import { CrashButtonComponent } from '../components/crash-button/crash-button.component'
 import { ComponentPortal, Portal } from '@angular/cdk/portal'
+import { SettingThemeSwitcherComponent } from '../components/setting-theme-switcher/setting-theme-switcher.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -448,9 +449,7 @@ export class SettingsService {
       title: 'settings.sidebar.appearance',
       type: 'generic',
       values: [
-        { type: 'description', value: 'THEME FIELD HERE' },
-        { type: 'description', value: 'COLOR SCHEME FIELD HERE' },
-        { type: 'description', value: 'ADDITIONAL STYLE MODES FIELD HERE' },
+        { type: 'component', value: new ComponentPortal(SettingThemeSwitcherComponent) },
         { type: 'description', value: 'LANGUAGE HERE' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.classicOptions' },
