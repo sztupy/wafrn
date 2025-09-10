@@ -33,6 +33,8 @@ const settingKeyVariants = [
   'hideProfileNotLoggedIn',
   'disableEmailNotifications',
   // everything else - stored in the options table
+  'rssOptions',
+  'alsoKnownAs',
   'forceClassicLogo',
   'forceClassicVideoPlayer',
   'forceClassicAudioPlayer',
@@ -171,6 +173,28 @@ export class SettingsService {
       default: false
     },
     // For new options, add below here.
+    rssOptions: {
+      key: 'rssOptions',
+      translationKey: 'settings.rssOptions',
+      serverKey: 'wafrn.rssOptions',
+      localStorageKey: 'rssOptions',
+      type: 'select',
+      default: '0',
+      variants: {
+        '0': 'settings.rssOptionsOptions.none',
+        '1': 'settings.rssOptionsOptions.articles',
+        '2': 'settings.rssOptionsOptions.all'
+      }
+    },
+    alsoKnownAs: {
+      key: 'alsoKnownAs',
+      translationKey: 'settings.alsoKnownAs',
+      translationDescriptionKey: 'settings.alsoKnownAsDescription',
+      serverKey: 'fediverse.public.alsoKnownAs',
+      localStorageKey: 'public.alsoKnownAs',
+      type: 'input',
+      default: ''
+    },
     forceClassicLogo: {
       key: 'forceClassicLogo',
       translationKey: 'settings.forceClassicLogo',
@@ -392,15 +416,15 @@ export class SettingsService {
         { type: 'description', value: 'CHANGE EMAIL FIELD HERE' },
         { type: 'key', value: 'disableEmailNotifications' },
         { type: 'description', value: 'CHANGE PASSWORD FIELD HERE' },
-        { type: 'description', value: '2FA FIELD HERE' },
+        { type: 'link', value: 'profile.security.mfa.setup', route: '/mfa' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.integrations' },
-        { type: 'description', value: 'ENABLE BLUESKY FIELD HERE' },
-        { type: 'description', value: 'RSS MICROFRONT FIELD HERE' },
+        { type: 'link', value: 'menu.settings.enableBluesky', route: '/profile/enable-bluesky' }, // FIXME: make this on the page itself?
+        { type: 'key', value: 'rssOptions' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.migration' },
-        { type: 'description', value: 'MIGRATE FROM AN OLD ACCOUNT FIELD HERE' },
-        { type: 'description', value: 'IMPORT FOLLOWERS FIELD HERE' },
+        { type: 'key', value: 'alsoKnownAs' },
+        { type: 'link', value: 'menu.settings.importFollows', route: '/profile/importFollows' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.deleteAccount' },
         { type: 'description', value: 'DELETE ACCOUNT BUTTON HERE' }

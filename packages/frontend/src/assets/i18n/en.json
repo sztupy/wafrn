@@ -286,6 +286,14 @@
     "name": "Name",
     "description": "Description",
     "disableEmailNotifications": "Disable email notifications",
+    "rssOptions": "Enable RSS and microfront for my blog page",
+    "rssOptionsOptions": {
+      "none": "None",
+      "articles": "Articles (Feature WIP)",
+      "all": "All"
+    },
+    "alsoKnownAs": "Previous alias",
+    "alsoKnownAsDescription": "Migrate from a different account (without the @)",
     "forceClassicLogo": "Force classic logo",
     "forceClassicVideoPlayer": "Force classic video player",
     "forceClassicAudioPlayer": "Force classic audio player",
