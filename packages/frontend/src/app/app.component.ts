@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
     this.title = this.titleService.getTitle()
     GlobalData.appDefaultTitle = this.title
 
-    this.translateService.addLangs(supportedLanguages)
+    this.translateService.addLangs([...supportedLanguages])
     this.translateService.setDefaultLang('en')
 
     // User specified language
