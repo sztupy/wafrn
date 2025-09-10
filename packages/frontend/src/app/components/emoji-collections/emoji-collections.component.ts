@@ -129,10 +129,10 @@ export class EmojiCollectionsComponent implements AfterViewInit, OnDestroy {
   constructor(private postService: PostsService) {
     this.subscription = this.postService.updateFollowers.subscribe(() => {
       this.emojiCollections = this.postService.emojiCollections
+      this.updateDimensions()
     })
   }
   ngAfterViewInit(): void {
-    this.updateDimensions()
     this.toggleCollection(-1)
   }
 
