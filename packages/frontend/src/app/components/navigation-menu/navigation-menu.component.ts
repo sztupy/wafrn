@@ -471,7 +471,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         icon: faCog,
         visible: () => this.loggedIn(),
         badge: this.followsAwaitingApproval,
-        routerLink: '/settings',
+        routerLink: '/settings/profile',
         highlightRoute: false
       },
       {
