@@ -501,9 +501,6 @@ export class SettingsService {
         this.values.name = blogDetails.name
         this.values.description = blogDetails.descriptionMarkdown
 
-        // Fediverse Attachments
-        console.log(blogDetails.publicOptions.map((val) => ({ name: val.optionName, value: val.optionValue })))
-
         const rawAttachments = blogDetails.publicOptions?.find(
           (elem) => elem.optionName === 'fediverse.public.attachment'
         )
