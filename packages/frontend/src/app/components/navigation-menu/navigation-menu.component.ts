@@ -480,10 +480,28 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         visible: () => this.loggedIn(),
         items: [
           {
-            label: 'menu.settings.superSecretMenu',
-            icon: faSkull,
+            label: 'menu.settings.themeEditor',
+            icon: faPaintbrush,
             visible: () => this.loggedIn(),
-            routerLink: '/doom',
+            routerLink: '/profile/css',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.followedHashtags',
+            icon: faHashtag,
+            visible: () => this.loggedIn(),
+            routerLink: '/profile/manageFollowedHashtags',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.bookmarkedPosts',
+            icon: faBookmark,
+            visible: () => this.loggedIn(),
+            routerLink: '/profile/bookmarkedPosts',
             command: () => {
               this.hideMenu()
             }
