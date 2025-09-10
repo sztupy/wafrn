@@ -488,7 +488,6 @@ export class SettingsService {
       title: 'settings.sidebar.miscellaneous',
       type: 'generic',
       values: [
-        { type: 'description', value: 'EMOJI COLLECTIONS HERE' },
         { type: 'key', value: 'replaceAIWithCocaine' },
         { type: 'key', value: 'replaceAIWord' },
         { type: 'separator' },

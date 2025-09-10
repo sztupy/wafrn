@@ -12,6 +12,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { MatButtonModule } from '@angular/material/button'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { SelectImageButtonComponent } from 'src/app/select-image-button/select-image-button.component'
+import { EmojiCollectionsComponent } from 'src/app/components/emoji-collections/emoji-collections.component'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { Emoji } from 'src/app/interfaces/emoji'
+import { MessageService } from 'src/app/services/message.service'
 
 @Component({
   selector: 'app-setting-loader',
@@ -23,7 +27,9 @@ import { SelectImageButtonComponent } from 'src/app/select-image-button/select-i
     FontAwesomeModule,
     TranslateModule,
     SettingEntryComponent,
-    SelectImageButtonComponent
+    SelectImageButtonComponent,
+    MatExpansionModule,
+    EmojiCollectionsComponent
   ],
   templateUrl: './settings-profile.component.html',
   styleUrl: './settings-profile.component.scss'
@@ -53,6 +59,7 @@ export class SettingsProfileComponent {
 
   constructor(
     private settingsService: SettingsService,
+    private messageService: MessageService,
     loginService: LoginService
   ) {
     this.data = settingsService.data
@@ -90,5 +97,13 @@ export class SettingsProfileComponent {
       this.settingsService.headerImage = file
     }
     this.settingsService.settingsModified.set(true)
+  }
+
+  copyEmoji(emoji: Emoji) {
+    navigator.clipboard.writeText(' ' + emoji.name + ' ')
+    this.messageService.add({
+      severity: 'success',
+      summary: `The emoji ${emoji.name} was copied to your clipboard`
+    })
   }
 }

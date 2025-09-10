@@ -54,3 +54,10 @@
     <fa-icon [icon]="addIcon" [fixedWidth]="true"></fa-icon>
   </button>
 </section>
+<hr />
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>Emoji List</mat-panel-title>
+  </mat-expansion-panel-header>
+  <app-emoji-collections (emoji)="copyEmoji($event)"></app-emoji-collections>
+</mat-expansion-panel>

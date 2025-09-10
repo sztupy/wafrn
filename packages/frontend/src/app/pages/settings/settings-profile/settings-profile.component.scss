@@ -43,3 +43,7 @@
 .fedi-attachment-remove-button {
   border-radius: var(--mat-sys-corner-small);
 }
+
+mat-expansion-panel {
+  --mat-expansion-container-background-color: var(--mat-sys-surface-container-high);
+}
