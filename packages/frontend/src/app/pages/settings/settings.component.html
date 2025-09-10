@@ -1,7 +1,7 @@
 <div class="mx-3 mb-4 lg:mx-4 wafrn-container-wide">
   <h2 class="my-3 text-3xl">{{ 'menu.settings.title' | translate }}</h2>
 </div>
-<div class="mx-3 lg:mx-4 grid grid-nogutter gap-4 wafrn-container-wide">
+<div class="mx-3 lg:mx-4 grid grid-nogutter column-gap-4 wafrn-container-wide">
   <section class="col-12 md:col-4 md:max-w-20rem">
     <mat-nav-list>
       @for (group of groups; track $index) {
@@ -13,8 +13,8 @@
         </a>
       }
     </mat-nav-list>
-    <hr />
-    <section class="flex justify-content-center gap-3">
+    <hr class="hidden md:block" />
+    <section class="flex justify-content-center gap-3 mt-3 md:mt-0">
       <button
         mat-flat-button
         class="w-full settings-save-button"
@@ -29,6 +29,7 @@
         }
       </button>
     </section>
+    <hr class="my-6 md:hidden" />
   </section>
   <section class="col">
     <ng-template [cdkPortalOutlet]="portal"></ng-template>
