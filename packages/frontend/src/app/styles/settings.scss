@@ -6,6 +6,11 @@
   font-size: 0.9rem;
 }
 
+.setting-link-button {
+  --mat-button-outlined-horizontal-padding: 18px;
+  --mat-button-outlined-container-shape: var(--mat-sys-corner-small);
+}
+
 .mat-mdc-form-field + .setting-description {
   margin-top: 0.25rem;
 }

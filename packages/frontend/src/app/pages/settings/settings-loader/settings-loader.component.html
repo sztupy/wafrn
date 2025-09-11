@@ -10,13 +10,20 @@
       <hr />
     } @else if (setting.type === 'link') {
       <p>
-        <button mat-stroked-button color="primary" class="w-full" [routerLink]="setting.route">
+        <a mat-stroked-button color="primary" class="w-full lg:w-auto setting-link-button" [routerLink]="setting.route">
           {{ setting.value | translate }}
-        </button>
+        </a>
       </p>
     } @else if (setting.type === 'linkDynamic') {
       <p>
-        <a [routerLink]="setting.route()">{{ setting.value | translate }}</a>
+        <a
+          mat-stroked-button
+          color="primary"
+          class="w-full lg:w-auto setting-link-button"
+          [routerLink]="setting.route()"
+        >
+          {{ setting.value | translate }}
+        </a>
       </p>
     } @else if (setting.type === 'component') {
       <div class="mb-3">
