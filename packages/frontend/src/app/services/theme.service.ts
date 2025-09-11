@@ -249,7 +249,9 @@ export class ThemeService {
 
   // CUSTOM CSS STUFF
   setMyTheme() {
-    this.setCustomCSS(this.loginService.getLoggedUserUUID())
+    if (this.loginService.getLoggedUserUUID()) {
+      this.setCustomCSS(this.loginService.getLoggedUserUUID())
+    }
   }
 
   updateTheme(newTheme: string) {

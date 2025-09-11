@@ -50,6 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     private themeService: ThemeService,
     private readonly viewportScroller: ViewportScroller
   ) {
+    this.themeService.setMyTheme()
     this.titleService.setTitle(GlobalData.appDefaultTitle)
     this.metaTagService.addTags([
       {
@@ -246,8 +247,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     // but hey if you dont like it you delete that very easily ;D
     if (!this.jwtService.tokenValid()) {
       const welcomePost = await this.dashboardService.getArticle('system.welcome')
-      if (welcomePost)
-        this.posts.push(welcomePost)
+      if (welcomePost) this.posts.push(welcomePost)
     }
     filteredPosts.forEach((post) => {
       this.posts.push(post)
