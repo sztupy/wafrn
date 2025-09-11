@@ -1,6 +1,7 @@
 .avatar {
   height: var(--avatar-size);
   width: var(--avatar-size);
+  background-color: var(--mat-sys-surface-container-highest);
   border-radius: var(--mat-sys-corner-small);
   background-size: contain;
   background-repeat: no-repeat;
