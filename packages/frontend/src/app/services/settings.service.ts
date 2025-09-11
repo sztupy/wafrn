@@ -433,7 +433,7 @@ export class SettingsService {
         // { type: 'description', value: '[Email Change] (not currently available, sorry!)' },
         { type: 'key', value: 'disableEmailNotifications' },
         { type: 'link', value: 'Change password', route: '/recoverPassword' },
-        { type: 'link', value: 'profile.security.mfa.setup', route: '/mfa' }, // FIXME: make this on the page itself?
+        { type: 'link', value: 'profile.security.mfa.setup', route: '/mfaSetup' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.integrations' },
         { type: 'link', value: 'menu.settings.enableBluesky', route: '/profile/enable-bluesky' }, // FIXME: make this on the page itself?
