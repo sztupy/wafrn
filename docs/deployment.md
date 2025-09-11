@@ -142,7 +142,7 @@ If you set up wafrn manually, then follow the steps below:
 
 2. Create a new domain for your Bluesky service. For example we'll use `bsky.example.com`
 
-3. Make sure in your DNS host both `bsky.example.com` and `*.bsky.example.com` points to the computer you're running docker compose
+3. Make sure in your DNS host both `bsky.example.com` and `*.bsky.example.com` points to the computer you're running docker compose (we also recomend \*.example.com)
 
 4. Make sure `COMPOSE_PROFILES=bluesky` is set in your `.env` file
 
@@ -198,9 +198,9 @@ You can find an example override repository that replaces the logo files and hid
 
 Wafrn will create three posts for you for the following pages:
 
-* `https://wafrn.example.com/article/system.welcome` is the short welcome message on top that logged out users will see
-* `https://wafrn.example.com/article/system.about` is the contents of the About page, including site rules, and the list of banned server
-* `https://wafrn.example.com/article/system.privacy-policy` is the privacy policy
+- `https://wafrn.example.com/article/system.welcome` is the short welcome message on top that logged out users will see
+- `https://wafrn.example.com/article/system.about` is the contents of the About page, including site rules, and the list of banned server
+- `https://wafrn.example.com/article/system.privacy-policy` is the privacy policy
 
 When logged in as the admin user you can update each of the above to customize it to your instance's need
 
@@ -212,7 +212,7 @@ To help people who want to install both Wafrn and other web applications on the 
 
 To facilitate this Wafrn's Caddy includes a couple hooks, where you can add extra configuration. The two most important are:
 
-* If you create a file in `packages/caddy/main_domain_pre`, e.g. `packages/caddy/main_domain_pre/website.conf`, you can add extra configuration to your main Wafrn domain. Example:
+- If you create a file in `packages/caddy/main_domain_pre`, e.g. `packages/caddy/main_domain_pre/website.conf`, you can add extra configuration to your main Wafrn domain. Example:
 
   ```bash
   handle_path /website* {
@@ -224,7 +224,7 @@ To facilitate this Wafrn's Caddy includes a couple hooks, where you can add extr
 
   **Note:** Make sure to also allow access to this host and port in your docker-compose file, by adding `extra_hosts: ["host.docker.internal:host-gateway"]` to your `frontend` configuration.
 
-* If you create a file in `packages/caddy/vhosts`, e.g. `packages/caddy/vhosts/website.example.com.conf`, you can add additional vhosts. Example:
+- If you create a file in `packages/caddy/vhosts`, e.g. `packages/caddy/vhosts/website.example.com.conf`, you can add additional vhosts. Example:
 
   ```bash
   website.example.com {
@@ -234,7 +234,7 @@ To facilitate this Wafrn's Caddy includes a couple hooks, where you can add extr
 
   This setting will route anything on `https://website.example.com` to whatever's running on port `8888`. As above, `http` will be automatically redirected to `https`, and Caddy will take care of obtaining the TLS certificates for you through Let's Encrypt. If you want to disable this, you can specify `http://website.example.com` on the first line to force this setting for http only. Also see the caveats about networking as well.
 
-* There are other hooks if you need to update the global Caddy config, or want to add something to the other domains (cache, monitoring, pds) as well. The full list of hooks can be found in the [Caddyfile](https://codeberg.org/wafrn/wafrn/src/commit/main/packages/frontend/Caddyfile.example).
+- There are other hooks if you need to update the global Caddy config, or want to add something to the other domains (cache, monitoring, pds) as well. The full list of hooks can be found in the [Caddyfile](https://codeberg.org/wafrn/wafrn/src/commit/main/packages/frontend/Caddyfile.example).
 
 Don't forget to rebuild your frontend container for the changes to be picked up.
 
