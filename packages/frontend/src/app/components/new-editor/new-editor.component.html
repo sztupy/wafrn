@@ -20,6 +20,7 @@
         attr.aria-label="{{ 'editor.ariaLabelQuoteSetter' | translate }}"
         mat-icon-button
         (click)="quoteOpen = !quoteOpen"
+        [disabled]="data?.quote"
         class="input-height-btn"
         matTooltip="{{ 'editor.quoteButton' | translate }}"
       >
@@ -120,38 +121,42 @@
       </app-info-card>
     }
     @if (showContentWarning || contentWarning) {
-      <mat-form-field class="w-full transition-size" appearance="outline">
-        <mat-label>Content warning (optional)</mat-label>
-        <input
-          [(ngModel)]="contentWarning"
-          placeholder="{{ 'editor.sensitivePlaceholder' | translate }}"
-          matNativeControl
-        />
-      </mat-form-field>
-      <hr class="menu-hr" />
+      <section class="px-3 my-2">
+        <mat-form-field class="w-full transition-size mat-form-field-no-padding" appearance="outline">
+          <mat-label>Content warning (optional)</mat-label>
+          <input
+            [(ngModel)]="contentWarning"
+            placeholder="{{ 'editor.sensitivePlaceholder' | translate }}"
+            matNativeControl
+          />
+        </mat-form-field>
+      </section>
+      <hr class="mb-2 menu-hr" />
     }
 
     @if (showMentionedUsersList) {
-      <mat-chip-grid
-        *ngIf="mentionedUsers.length >= 1"
-        #chipGrid
-        aria-label="Mentioned users"
-        class="mb-2 mention-chip-grid"
-      >
-        @for (user of mentionedUsers; track $index) {
-          <mat-chip-row [editable]="true" (removed)="removeMention($index)">
-            {{ user.url }}
-            <button matChipRemove [attr.aria-label]="'remove ' + user.url">x</button>
-          </mat-chip-row>
-        }
-        <input [hidden]="true" placeholder="Add mention (FEATURE NOT DONE YET)" [matChipInputFor]="chipGrid" />
-      </mat-chip-grid>
+      <section class="px-2">
+        <mat-chip-grid
+          *ngIf="mentionedUsers.length >= 1"
+          #chipGrid
+          aria-label="Mentioned users"
+          class="mb-2 mention-chip-grid"
+        >
+          @for (user of mentionedUsers; track $index) {
+            <mat-chip-row [editable]="true" (removed)="removeMention($index)">
+              {{ user.url }}
+              <button matChipRemove [attr.aria-label]="'remove ' + user.url">x</button>
+            </mat-chip-row>
+          }
+          <input [hidden]="true" placeholder="Add mention (FEATURE NOT DONE YET)" [matChipInputFor]="chipGrid" />
+        </mat-chip-grid>
+      </section>
     }
 
     @if (quoteOpen && !data?.quote) {
       @if (!quoteLoading) {
-        <mat-card class="p-2 my-4">
-          <mat-form-field class="w-full" appearance="outline">
+        <section class="px-3 my-2 flex gap-3 align-items-center">
+          <mat-form-field class="w-full mat-form-field-no-padding add-quote-input" appearance="outline">
             <mat-label> {{ 'editor.wootQuoteBoxLabel' | translate }} </mat-label>
             <input
               [(ngModel)]="urlPostToQuote"
@@ -163,14 +168,14 @@
             (click)="loadQuote()"
             mat-stroked-button
             color="primary"
-            class="w-full"
+            class="mat-circle-button"
             [disabled]="urlPostToQuote === ''"
           >
-            {{ 'editor.wootQuoteConfirmButton' | translate }}
+            <fa-icon [icon]="addIcon"></fa-icon>
           </button>
-        </mat-card>
+        </section>
       }
-      <hr class="menu-hr" />
+      <hr class="mb-2 menu-hr" />
     }
 
     <form class="relative" [formGroup]="postCreatorForm">
@@ -183,7 +188,7 @@
         <textarea
           id="postCreatorContent"
           formControlName="content"
-          class="w-full"
+          class="w-full woot-textarea"
           (blur)="editorFocusedOut()"
           (focus)="editorFocusedIn()"
           (paste)="handlePaste($event)"
@@ -212,7 +217,7 @@
     }
 
     @if (uploadedMedias.length > 0) {
-      <section class="mt-3" id="uploaded-media" [class.mb-3]="allDescriptionsFilled()">
+      <section class="px-3" id="uploaded-media" [class.mb-3]="allDescriptionsFilled()">
         <div class="grid gap-3">
           @for (media of uploadedMedias; track media; let i = $index) {
             <div class="col-12 md:col relative">
@@ -227,6 +232,7 @@
                   placeholder="{{ 'editor.altTextFieldPlaceholder' | translate }}"
                   [(ngModel)]="media.description"
                   matNativeControl
+                  cdkTextareaAutosize
                   required
                   class="w-full"
                 ></textarea>
@@ -237,7 +243,7 @@
                   'editor.isNSFWToggle' | translate
                 }}</mat-checkbox>
 
-                <button mat-stroked-button class="delete-btn mat-circle-button" (click)="deleteImage(i)">
+                <button mat-flat-button class="delete-btn mat-circle-button" (click)="deleteImage(i)">
                   <fa-icon size="lg" [icon]="closeIcon"></fa-icon>
                 </button>
               </div>
@@ -279,26 +285,31 @@
     </section>
 
     @if (data && data.post && !editing) {
-      <p class="mb-2">{{ 'editor.inReplyTo' | translate }}</p>
-      <div class="mb-3 quoted-post">
-        <app-post-header [fragment]="data.post" [disableLink]="true"></app-post-header>
-        <app-post-fragment [fragment]="data.post"></app-post-fragment>
-      </div>
+      <section class="px-3 pt-2">
+        <p class="mb-2">{{ 'editor.inReplyTo' | translate }}</p>
+        <div class="quoted-post">
+          <app-post-header [fragment]="data.post" [disableLink]="true"></app-post-header>
+          <app-post-fragment [fragment]="data.post"></app-post-fragment>
+        </div>
+      </section>
     }
 
-    <section id="quote">
-      @if (!data?.quote) {
-        <div>
-          @if (quoteLoading) {
+    @if (data && data.quote) {
+      <section class="px-3 pt-2" id="quote">
+        @if (quoteLoading) {
+          <div>
             <mat-spinner class="my-4" color="accent" diameter="24"></mat-spinner>
-          }
-        </div>
-      }
-      @if (data && data.quote) {
+          </div>
+        }
         <div>
           <p class="mb-2">{{ 'editor.quoteTitle' | translate }}</p>
-          <div class="quoted-post mb-4">
-            <button mat-mini-fab class="delete-btn" color="warn" (click)="data ? (data.quote = undefined) : null">
+          <div class="quoted-post">
+            <button
+              mat-flat-button
+              class="mat-circle-button delete-btn"
+              color="warn"
+              (click)="data ? (data.quote = undefined) : null"
+            >
               <fa-icon size="lg" [icon]="closeIcon"></fa-icon>
             </button>
             <div class="flex">
@@ -307,8 +318,8 @@
             <app-post-fragment [fragment]="data.quote"></app-post-fragment>
           </div>
         </div>
-      }
-    </section>
+      </section>
+    }
 
     <div class="px-3 pt-3 bottom-information-bar">
       <div class="min-w-0">

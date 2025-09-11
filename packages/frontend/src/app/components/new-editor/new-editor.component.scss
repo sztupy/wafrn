@@ -42,6 +42,10 @@
   max-height: max-content;
 }
 
+.add-quote-input {
+  field-sizing: auto;
+}
+
 .cw-wrapper {
   flex-grow: 5;
   display: flex;
@@ -51,6 +55,10 @@
   flex-shrink: 0;
   margin: 3px 0;
   margin-left: -2px;
+}
+
+.woot-textarea {
+  --mat-form-field-filled-input-text-placeholder-color: var(--mat-sys-outline);
 }
 
 app-media-preview {
@@ -63,9 +71,13 @@ app-media-preview {
 }
 
 .delete-btn {
+  --mat-button-filled-container-color: var(--mat-sys-primary-container);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-primary-container);
+  --mat-button-filled-state-layer-color: var(--mat-sys-on-primary-container);
+  box-shadow: var(--mat-sys-level2);
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 0.5rem;
+  right: 0.5rem;
   z-index: 2;
 }
 

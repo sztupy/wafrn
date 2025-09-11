@@ -23,7 +23,8 @@ import {
   faAt,
   faAsterisk,
   faInfo,
-  faCircleInfo
+  faCircleInfo,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
 import { PostHeaderComponent } from '../post/post-header/post-header.component'
