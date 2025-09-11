@@ -372,7 +372,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         label: 'menu.inbox',
         icon: faInbox,
         visible: () => this.loggedIn(),
-        badge: this.notifications + this.awaitingAsks,
+        badge: this.notifications + this.awaitingAsks + this.followsAwaitingApproval,
         items: [
           {
             label: 'menu.notifications',
@@ -399,6 +399,16 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             visible: () => this.loggedIn(),
             badge: this.awaitingAsks,
             routerLink: '/profile/myAsks',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.follows',
+            icon: faUsers,
+            visible: () => this.currentAccount()?.manuallyAcceptsFollows === true,
+            badge: this.followsAwaitingApproval,
+            routerLinkDynamic: computed(() => '/blog/' + this.currentAccount()?.url + '/followers'),
             command: () => {
               this.hideMenu()
             }
@@ -470,7 +480,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         label: 'menu.settings.title',
         icon: faCog,
         visible: () => this.loggedIn(),
-        badge: this.followsAwaitingApproval,
         routerLink: '/settings/profile',
         highlightRoute: false
       },
