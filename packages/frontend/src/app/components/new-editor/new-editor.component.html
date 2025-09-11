@@ -153,31 +153,6 @@
       </section>
     }
 
-    @if (quoteOpen && !data?.quote) {
-      @if (!quoteLoading) {
-        <section class="px-3 my-2 flex gap-3 align-items-center">
-          <mat-form-field class="w-full mat-form-field-no-padding add-quote-input" appearance="outline">
-            <mat-label> {{ 'editor.wootQuoteBoxLabel' | translate }} </mat-label>
-            <input
-              [(ngModel)]="urlPostToQuote"
-              placeholder="{{ 'editor.wootQuoteBoxPlaceholder' | translate }}"
-              matNativeControl
-            />
-          </mat-form-field>
-          <button
-            (click)="loadQuote()"
-            mat-stroked-button
-            color="primary"
-            class="mat-circle-button"
-            [disabled]="urlPostToQuote === ''"
-          >
-            <fa-icon [icon]="addIcon"></fa-icon>
-          </button>
-        </section>
-      }
-      <hr class="mb-2 menu-hr" />
-    }
-
     <form class="relative" [formGroup]="postCreatorForm">
       <mat-form-field
         class="mb-3 w-full mat-form-field-no-background mat-form-field-no-padding woot-textfield"
@@ -294,21 +269,42 @@
       </section>
     }
 
-    @if (data && data.quote) {
+    @if (quoteOpen && !data?.quote && !quoteLoading) {
+      <section class="px-3 mt-3 flex gap-3 align-items-center">
+        <mat-form-field class="w-full mat-form-field-no-padding add-quote-input" appearance="outline">
+          <mat-label> {{ 'editor.wootQuoteBoxLabel' | translate }} </mat-label>
+          <input
+            [(ngModel)]="urlPostToQuote"
+            placeholder="{{ 'editor.wootQuoteBoxPlaceholder' | translate }}"
+            matNativeControl
+          />
+        </mat-form-field>
+        <button
+          (click)="loadQuote()"
+          mat-stroked-button
+          color="primary"
+          class="mat-circle-button"
+          [disabled]="urlPostToQuote === ''"
+        >
+          <fa-icon [icon]="addIcon"></fa-icon>
+        </button>
+      </section>
+    }
+    @if (quoteLoading || data?.quote) {
       <section class="px-3 pt-2" id="quote">
-        @if (quoteLoading) {
-          <div>
-            <mat-spinner class="my-4" color="accent" diameter="24"></mat-spinner>
-          </div>
-        }
-        <div>
-          <p class="mb-2">{{ 'editor.quoteTitle' | translate }}</p>
-          <div class="quoted-post">
+        <p class="mb-1 quote-label">{{ 'editor.quoteTitle' | translate }}</p>
+        <div class="quoted-post">
+          @if (quoteLoading) {
+            <div class="flex align-items-center justify-content-center">
+              <mat-spinner class="my-4" color="accent" diameter="32"></mat-spinner>
+            </div>
+          }
+          @if (data && data.quote) {
             <button
               mat-flat-button
               class="mat-circle-button delete-btn"
               color="warn"
-              (click)="data ? (data.quote = undefined) : null"
+              (click)="data ? (data.quote = undefined) : null; quoteOpen = false"
             >
               <fa-icon size="lg" [icon]="closeIcon"></fa-icon>
             </button>
@@ -316,7 +312,7 @@
               <app-post-header [fragment]="data.quote"></app-post-header>
             </div>
             <app-post-fragment [fragment]="data.quote"></app-post-fragment>
-          </div>
+          }
         </div>
       </section>
     }

@@ -21,8 +21,6 @@ import {
   faPaperPlane,
   faNewspaper,
   faAt,
-  faAsterisk,
-  faInfo,
   faCircleInfo,
   faPlus
 } from '@fortawesome/free-solid-svg-icons'
