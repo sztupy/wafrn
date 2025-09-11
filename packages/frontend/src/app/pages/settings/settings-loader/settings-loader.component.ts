@@ -4,7 +4,7 @@ import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-
 import { GroupedSettingData, SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
 import { SETTINGS_TOKEN } from '../settings.component'
 import { RouterModule } from '@angular/router'
-import { CdkPortalOutlet, ComponentPortal, Portal } from '@angular/cdk/portal'
+import { CdkPortalOutlet, Portal } from '@angular/cdk/portal'
 import { MatButtonModule } from '@angular/material/button'
 
 @Component({

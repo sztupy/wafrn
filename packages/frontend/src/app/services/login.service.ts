@@ -168,7 +168,7 @@ export class LoginService {
     return success
   }
 
-  async requestPasswordReset(email: string) {
+  async requestPasswordReset(email: string, navigate: boolean = true) {
     const res = false
     const payload = {
       email: email
@@ -176,7 +176,7 @@ export class LoginService {
     const response: any = await this.http
       .post(`${EnvironmentService.environment.baseUrl}/forgotPassword`, payload)
       .toPromise()
-    if (response?.success) {
+    if (response?.success && navigate) {
       this.router.navigate(['/'])
     }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import JSConfetti from 'js-confetti'
 import { AudioName, AudioService } from './audio.service'
+import { TranslateService } from '@ngx-translate/core'
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import { AudioName, AudioService } from './audio.service'
 export class MessageService {
   public static confetti: JSConfetti
   constructor(
+    private translateService: TranslateService,
     private snackBar: MatSnackBar,
     private audioService: AudioService
   ) {
@@ -21,6 +23,7 @@ export class MessageService {
     severity: 'error' | 'success' | 'warn' | 'info'
     summary: string
     confettiEmojis?: string[]
+    translate?: true
     soundName?: AudioName
   }) {
     if (localStorage.getItem('disableSounds') != 'true' && message.soundName) {
@@ -35,7 +38,10 @@ export class MessageService {
       default:
         icon = '✅'
     }
-    this.snackBar.open(message.summary, icon, {
+
+    const summary = message.translate ? this.translateService.instant(message.summary) : message.summary
+
+    this.snackBar.open(summary, icon, {
       duration: 3000,
       horizontalPosition: 'right',
       verticalPosition: 'top'

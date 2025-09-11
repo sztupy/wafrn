@@ -6,7 +6,9 @@
   font-size: 0.9rem;
 }
 
-.setting-link-button {
+.setting-button {
+  --mat-button-filled-horizontal-padding: 18px;
+  --mat-button-filled-container-shape: var(--mat-sys-corner-small);
   --mat-button-outlined-horizontal-padding: 18px;
   --mat-button-outlined-container-shape: var(--mat-sys-corner-small);
 }

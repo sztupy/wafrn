@@ -293,6 +293,10 @@
     "changeHeaderImage": "Change Banner",
     "name": "Name",
     "description": "Description",
+    "changePasswordTitle": "Request a password change",
+    "changePassword": "Change password",
+    "changePasswordDescription": "A link change your password has been sent to your email.",
+    "changePasswordMessage": "A link change your password has been sent to your email.",
     "disableEmailNotifications": "Disable email notifications",
     "rssOptions": "Enable RSS and microfront for my blog page",
     "rssOptionsOptions": {
