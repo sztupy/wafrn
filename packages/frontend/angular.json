@@ -2,9 +2,7 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
     "analytics": "2ed75e61-714f-4d01-bf90-aa49cf351d90",
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["@angular-eslint/schematics"]
   },
   "version": 1,
   "newProjectRoot": "projects",
@@ -30,23 +28,12 @@
               "base": "dist/wafrn"
             },
             "index": "src/index.html",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/.htaccess",
-              "src/manifest.webmanifest",
-              "src/robots.txt"
-            ],
-            "styles": [
-              "../../node_modules/primeflex/primeflex.css",
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets", "src/.htaccess", "src/manifest.webmanifest", "src/robots.txt"],
+            "styles": ["../../node_modules/primeflex/primeflex.css", "src/styles.scss"],
             "scripts": [],
             "serviceWorker": "ngsw-config.json",
             "browser": "src/main.ts"
@@ -62,7 +49,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumError": "16kb"
                 }
               ],
               "fileReplacements": [
@@ -72,6 +59,7 @@
                 }
               ],
               "sourceMap": true,
+              "namedChunks": true,
               "outputHashing": "all"
             },
             "custom": {
@@ -84,7 +72,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumError": "16kb"
                 }
               ],
               "fileReplacements": [
@@ -105,7 +93,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumError": "16kb"
                 }
               ],
               "fileReplacements": [
@@ -151,6 +139,18 @@
                   "with": "src/environments/environment.devprod.ts"
                 }
               ]
+            },
+            "devdevelopment": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.devdevelopment.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -172,6 +172,10 @@
             "devprod": {
               "buildTarget": "wafrn:build:devprod",
               "proxyConfig": "src/proxy.conf.prod.json"
+            },
+            "devdevelopment": {
+              "buildTarget": "wafrn:build:devdevelopment",
+              "proxyConfig": "src/proxy.conf.prod.json"
             }
           },
           "defaultConfiguration": "development"
@@ -186,19 +190,13 @@
           "builder": "@angular-devkit/build-angular:jest",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

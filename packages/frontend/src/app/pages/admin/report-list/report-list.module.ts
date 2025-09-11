@@ -5,12 +5,14 @@ import { RouterModule } from '@angular/router'
 import { MatCardModule } from '@angular/material/card'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatTableModule } from '@angular/material/table'
+import { MatSortModule } from '@angular/material/sort'
 import { MatInputModule } from '@angular/material/input'
 import { FormsModule } from '@angular/forms'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatButtonModule } from '@angular/material/button'
 import { AvatarSmallComponent } from 'src/app/components/avatar-small/avatar-small.component'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
+import { TranslateModule } from '@ngx-translate/core'
 
 @NgModule({
   declarations: [ReportListComponent],
@@ -23,6 +25,7 @@ import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
       }
     ]),
     MatTableModule,
+    MatSortModule,
     FormsModule,
     MatCardModule,
     MatPaginatorModule,
@@ -30,7 +33,8 @@ import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
     MatCheckboxModule,
     MatButtonModule,
     AvatarSmallComponent,
-    PostLinkModule
+    PostLinkModule,
+    TranslateModule
   ]
 })
-export class ReportListModule { }
+export class ReportListModule {}

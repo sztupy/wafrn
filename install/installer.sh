@@ -7,6 +7,8 @@ if [ "$EUID" -eq 0 ]; then
   exit
 fi
 
+export ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )"/.. &> /dev/null && pwd )
+
 if [ "$1" == "--unattended" ]; then
   # This will be put there by cloud-init. We only need it to load up the variables then we can discard
   if [ -f /wafrn-cloud-config ]; then
@@ -15,6 +17,8 @@ if [ "$1" == "--unattended" ]; then
     sudo rm /wafrn-cloud-config
   fi
 else
+  cat $ROOT_DIR/docs/assets/logo.ansi.txt || true
+  echo
   echo "Remember, this script is made for Debian/Ubuntu based systems. It will install Docker, and then set up wafrn under it. Make sure you don't have anything running under ports 80 and 443"
   echo
   echo "Please make sure to read the docs before continuing. Or don't. You have been warned"
@@ -80,9 +84,10 @@ else
   fi
 
   echo Please select from the following packages:
-  echo "1: Minimum install (default); Runs the bare minimum to get Wafrn running"
-  echo "2: Monitoring support; Minimum install with added Grafana to monitor your instance"
-  echo "3: Advanced install; More advanced config, with separate workers to handle the load. Preferred options for larger instances."
+  # workers dont work well on minimum install and ªªªª
+  #echo "1: Minimum install (default); Runs the bare minimum to get Wafrn running"
+  #echo "2: Monitoring support; Minimum install with added Grafana to monitor your instance"
+  echo "3: Advanced install (recommended); More advanced config, with separate workers to handle the load. Preferred options for larger instances."
   echo "4: Advanced install with monitoring support; The full package: advanced install plus Grafana support"
 
   read INSTALL_TYPE

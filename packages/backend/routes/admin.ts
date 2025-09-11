@@ -8,6 +8,8 @@ import { redisCache } from '../utils/redis.js'
 import sendActivationEmail from '../utils/sendActivationEmail.js'
 import { UserAttributes } from '../models/user.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { logger } from '../utils/logger.js'
+import { getAllLocalUserIds } from '../utils/cacheGetters/getAllLocalUserIds.js'
 
 export default function adminRoutes(app: Application) {
   app.get('/api/admin/server-list', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
@@ -91,7 +93,21 @@ export default function adminRoutes(app: Application) {
             as: 'blocked',
             attributes: ['url', 'avatar']
           }
-        ]
+        ],
+        where: {
+          [Op.or]: [
+            {
+              blockedId: {
+                [Op.in]: await getAllLocalUserIds()
+              }
+            },
+            {
+              blockerId: {
+                [Op.in]: await getAllLocalUserIds()
+              }
+            }
+          ]
+        }
       }),
       userServerBlocks: await ServerBlock.findAll({
         include: [
@@ -198,30 +214,30 @@ export default function adminRoutes(app: Application) {
   app.post('/api/admin/banUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     const userToBeBanned = await User.scope('full').findByPk(req.body.id)
     if (userToBeBanned && userToBeBanned.role != 10) {
+      if (userToBeBanned.email && req.body.message) {
+        try {
+          await sendActivationEmail(
+            userToBeBanned.email,
+            '',
+            'You have been banned from wafrn',
+            `Hello, you have been banned from wafrn. Reason: ${req.body.message}`
+          )
+        } catch (error) {
+          logger.info(error)
+        }
+      }
       userToBeBanned.banned = true
       await userToBeBanned.save()
-      // TOO fix this dirty thing oh my god
-      const unsolvedReports = await PostReport.findAll({
-        where: {
-          resolved: false
+      await PostReport.update(
+        {
+          resolved: true
         },
-        include: [
-          {
-            model: Post,
-            where: {
-              userId: req.body.id
-            }
+        {
+          where: {
+            reportedUserId: req.body.id
           }
-        ]
-      })
-      if (unsolvedReports) {
-        await Promise.allSettled(
-          unsolvedReports.map((elem: any) => {
-            elem.resolved = true
-            return elem.save()
-          })
-        )
-      }
+        }
+      )
     }
 
     res.send({
@@ -229,6 +245,37 @@ export default function adminRoutes(app: Application) {
     })
   })
 
+  app.post('/api/admin/forceNSFWUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
+    const userToBeNSFW = await User.scope('full').findByPk(req.body.id)
+    if (userToBeNSFW) {
+      userToBeNSFW.NSFW = true
+      await userToBeNSFW.save()
+      await PostReport.update(
+        {
+          resolved: true
+        },
+        {
+          where: {
+            reportedUserId: req.body.id
+          }
+        }
+      )
+      await Post.update(
+        {
+          content_warning: 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+        },
+        {
+          where: {
+            userId: req.body.id,
+            content_warning: ''
+          }
+        }
+      )
+    }
+    res.send({
+      success: true
+    })
+  })
   app.post('/api/admin/ignoreReport', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     res.send(
       await PostReport.update(

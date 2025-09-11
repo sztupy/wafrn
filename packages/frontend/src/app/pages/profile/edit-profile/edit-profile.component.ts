@@ -98,7 +98,8 @@ export class EditProfileComponent implements OnInit {
     replaceAIWithCocaine: new FormControl(false),
     replaceAIWord: new FormControl('cocaine'),
     hideQuotes: new FormControl(1),
-    displayMentionsOfBlockedUsersFromOtherUsers: new FormControl(false)
+    displayMentionsOfBlockedUsersFromOtherUsers: new FormControl(false),
+    hideNoDescriptionMedia: new FormControl(false)
   })
 
   password = ''
@@ -184,7 +185,10 @@ export class EditProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dashboardService.getBlogDetails(this.jwtService.getTokenData()['url'], true).then(async (blogDetails) => {
+    const userBlog = this.jwtService.getTokenData()
+    if (userBlog === null) return
+
+    this.dashboardService.getBlogDetails(userBlog.url, true).then(async (blogDetails) => {
       blogDetails['avatar'] = ''
       this.editProfileForm.patchValue(blogDetails)
       if (blogDetails.descriptionMarkdown) {
@@ -207,7 +211,7 @@ export class EditProfileComponent implements OnInit {
       const alsoKnownAs = publicOptions.find((elem) => elem.optionName == 'fediverse.public.alsoKnownAs')
       try {
         this.editProfileForm.controls['alsoKnownAs'].patchValue(JSON.parse(alsoKnownAs?.optionValue || ''))
-      } catch (_) {}
+      } catch (_) { }
       const askLevel = publicOptions.find((elem) => elem.optionName == 'wafrn.public.asks')
       this.editProfileForm.controls['asksLevel'].patchValue(askLevel ? parseInt(askLevel.optionValue) : 2)
       this.editProfileForm.controls['forceClassicAudioPlayer'].patchValue(
@@ -265,7 +269,7 @@ export class EditProfileComponent implements OnInit {
       if (fediAttachments) {
         try {
           this.fediAttachments = JSON.parse(fediAttachments.optionValue)
-        } catch (error) {}
+        } catch (error) { }
       }
       const localStorageNotificationsFrom = localStorage.getItem('notificationsFrom')
       if (localStorageNotificationsFrom) {
@@ -306,6 +310,10 @@ export class EditProfileComponent implements OnInit {
       if (localStorageHideQuotes) {
         this.editProfileForm.controls['hideQuotes'].patchValue(parseInt(localStorageHideQuotes))
       }
+      const hideNoDescriptionMedia = localStorage.getItem('hideNoDescriptionMedia') == 'true'
+      if (hideNoDescriptionMedia) {
+        this.editProfileForm.controls['hideNoDescriptionMedia'].patchValue(hideNoDescriptionMedia)
+      }
 
       this.loading = false
     })
@@ -331,6 +339,17 @@ export class EditProfileComponent implements OnInit {
         this.img,
         this.headerImg
       )
+
+      // Update multiple account saved data
+      const currentBlog = this.loginService.currentAccount()
+      if (currentBlog) {
+        const newBlog = await this.dashboardService.getBlogDetails(currentBlog.url)
+        this.loginService.accountList.update((list) => {
+          list[0].blog = newBlog
+          return [...list]
+        })
+        localStorage.setItem('accountList', JSON.stringify(this.loginService.accountList()))
+      }
 
       this.messages.add({
         severity: 'success',

@@ -1,6 +1,7 @@
 // Colors
 :root {
   --mat-menu-container-color: var(--mat-sys-surface-container-high);
+  --mat-badge-text-color: var(--mat-sys-on-primary);
 }
 
 // Allow tiny buttons
@@ -27,9 +28,34 @@
   content: unset !important;
 }
 
+// Allows top aligned checkboxes to their labels
+.mat-checkbox-top .mat-internal-form-field {
+  align-items: flex-start;
+}
+
+// Allow empty background filled forms
+.mat-form-field-no-background {
+  --mat-form-field-filled-container-color: transparent;
+  --mat-form-field-hover-state-layer-opacity: 0;
+  --mat-form-field-filled-with-label-container-padding-bottom: 0;
+
+  .mdc-line-ripple {
+    display: none;
+  }
+}
+.mat-form-field-no-outline {
+  --mat-form-field-outlined-outline-width: 0;
+  --mat-form-field-outlined-focus-outline-width: 0;
+}
+
 // Add higher height card option
 .mat-card-higher {
   --mat-card-elevated-container-elevation: var(--mat-sys-level2);
+}
+
+// Add click through overlay option
+.cdk-overlay-pane:has(.mat-pointer-events-none) {
+  pointer-events: none;
 }
 
 // Fix drawer border radius without requiring themes to use !important, though uses 0 2 0 specificity
@@ -57,11 +83,21 @@
   opacity: var(--mat-list-list-item-focus-state-layer-opacity, var(--mat-sys-focus-state-layer-opacity));
 }
 
+// smaller list icons
+:root {
+  --mat-list-list-item-leading-icon-size: 20px;
+  --mat-list-list-item-leading-icon-start-space: 12px;
+  --mat-list-list-item-leading-icon-end-space: 12px;
+}
+
 // Fix badges going off the sidenav
 :root .mat-badge-after .mat-badge-content {
   --mat-badge-container-overlap-offset: 0 0 -12px 0;
   left: unset;
   right: 0;
+}
+:root .mat-mdc-menu-panel {
+  overflow: unset;
 }
 
 // Make menu selections not have block padding

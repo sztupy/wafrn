@@ -4,11 +4,13 @@ import { LoginService } from './services/login.service'
 import { EnvironmentService } from './services/environment.service'
 import { TranslateService } from '@ngx-translate/core'
 import { SwPush } from '@angular/service-worker'
-
+import { Title } from '@angular/platform-browser'
+import { GlobalData } from './services/global-data.service'
 import { WebsocketService } from './services/websocket.service'
 import { NavigationError, Router } from '@angular/router'
 import { filter, map } from 'rxjs'
 import { MessageService } from './services/message.service'
+import { supportedLanguages } from './lists/languages'
 
 @Component({
   selector: 'app-root',
@@ -29,9 +31,13 @@ export class AppComponent implements OnInit {
     private translateService: TranslateService,
     private websocketService: WebsocketService,
     private router: Router,
-    private messages: MessageService
+    private messages: MessageService,
+    private titleService: Title
   ) {
-    this.translateService.addLangs(['en', 'pl', 'es'])
+    this.title = this.titleService.getTitle()
+    GlobalData.appDefaultTitle = this.title
+
+    this.translateService.addLangs([...supportedLanguages])
     this.translateService.setDefaultLang('en')
 
     // User specified language
@@ -81,7 +87,9 @@ export class AppComponent implements OnInit {
       this.messages.add({ severity: 'success', summary: 'Wafrn has been updated!' })
     }
     if (this.swUpdate.isEnabled) {
+      console.log('SOFTWARE UPDATES ACTIVE - This is a PWA')
       this.swUpdate.checkForUpdate().then((updateAvaiable) => {
+        console.log(updateAvaiable)
         if (EnvironmentService.environment.disablePWA) {
           if ('caches' in window) {
             caches.keys().then(function (keyList) {
@@ -115,8 +123,28 @@ export class AppComponent implements OnInit {
         }
       })
     }
+
+    if (EnvironmentService.environment.disablePWA) {
+      if ('caches' in window) {
+        caches.keys().then(function (keyList) {
+          return Promise.all(
+            keyList.map(function (key) {
+              return caches.delete(key)
+            })
+          )
+        })
+      }
+      if (window.navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+          for (const registration of registrations) {
+            registration.unregister()
+          }
+        })
+      }
+    }
     // TODO lets keep with this later
-    if (false && this.swPush.isEnabled && EnvironmentService.environment.webpushPublicKey) {
+    /*
+    if (this.swPush.isEnabled && EnvironmentService.environment.webpushPublicKey) {
       this.swPush
         .requestSubscription({
           serverPublicKey: EnvironmentService.environment.webpushPublicKey
@@ -125,5 +153,6 @@ export class AppComponent implements OnInit {
           console.log(notificationSubscription)
         })
     }
+    */
   }
 }

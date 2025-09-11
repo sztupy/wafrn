@@ -858,7 +858,7 @@ function userRoutes(app: Application) {
         res.sendStatus(404)
         return
       }
-      let followed = blog.url.startsWith('@')
+      let followed = blog.isRemoteUser
         ? blog.followingCount
         : Follows.count({
             where: {
@@ -866,7 +866,7 @@ function userRoutes(app: Application) {
               accepted: true
             }
           })
-      let followers = blog.url.startsWith('@')
+      let followers = blog.isRemoteUser
         ? blog.followerCount
         : Follows.count({
             where: {
@@ -1311,8 +1311,10 @@ function userRoutes(app: Application) {
           success: false
         })
       }
+
+      const question = req.body.question ? req.body.question.substring(0, 10240) : ''
       const ask = await Ask.create({
-        question: req.body.question,
+        question: question,
         apObject: null,
         creationIp: getIp(req),
         answered: false,

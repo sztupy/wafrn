@@ -7,6 +7,19 @@ import { SimplifiedUser } from '../interfaces/simplified-user'
 import { statsReply } from '../interfaces/statsReply'
 import { EnvironmentService } from './environment.service'
 
+export type UserReport = {
+  id: string
+  resolved: string
+  severity: string
+  description: string
+  userId: string
+  user: SimplifiedUser
+  postId: string
+  post: string
+  reportedUserId: string
+  reportedUser: SimplifiedUser
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,16 +47,22 @@ export class AdminService {
     return response
   }
 
-  async getReports(): Promise<any> {
-    return firstValueFrom(this.http.get(`${EnvironmentService.environment.baseUrl}/admin/reportList`))
+  async getReports(): Promise<UserReport[]> {
+    return firstValueFrom(this.http.get<UserReport[]>(`${EnvironmentService.environment.baseUrl}/admin/reportList`))
   }
 
   async ignoreReport(id: number): Promise<any> {
     return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/ignoreReport`, { id: id }))
   }
 
-  async banUser(id: string) {
-    return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/banUser`, { id: id }))
+  async banUser(id: string, message: string | null) {
+    return firstValueFrom(
+      this.http.post(`${EnvironmentService.environment.baseUrl}/admin/banUser`, { id: id, message: message })
+    )
+  }
+
+  async forceNSFWUser(id: string) {
+    return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/forceNSFWUser`, { id: id }))
   }
 
   async banList() {

@@ -635,6 +635,10 @@ div.fragment-content-warning div.fragment-content {}
 div.fragment-content-warning button {}
 
 */
+    /* Post ask*/
+    :root .ask-user {
+        color: var(--mat-sys-on-surface);
+    }
     /* POST TEXT */
     div.wafrn-text-default {
         color: var(--main-textcolor);
@@ -709,10 +713,15 @@ div.fragment-content-warning button {}
 
 */
     /* TAGS */
+    .tag-list {
+        gap: 0.25rem;
+        padding-inline: 6px;
+    }
+
     a.tag {
         background-color: silver !important;
 
-        color: var(--link-textcolor) !important;
+        background-image: linear-gradient(in oklab to right, var(--gradient-colors-dark));
 
         transition: var(--color-trans);
 
@@ -724,6 +733,10 @@ div.fragment-content-warning button {}
 
         border-radius: 0;
     }
+
+   a.tag .tag-text {
+        color: var(--link-textcolor);
+   }
 
     a.tag:hover {
         color: var(--link-textcolor-hover) !important;

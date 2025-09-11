@@ -70,7 +70,7 @@ export const colorSchemeData: ColorSchemeData = {
   rizzler: { name: 'Rizzler', compatibility: 'both', autoReset: true },
   contrastWater: { name: 'Contrast Water', compatibility: 'both', autoReset: true },
   wafrn98: { name: 'Wafrn98', compatibility: 'dark' },
-  aqua: { name: 'Aqua', compatibility: 'both' },
+  aqua: { name: 'Aqua', compatibility: 'light' },
   unwafrn: { name: 'Unwafrn', compatibility: 'dark' },
   wafrnverse: { name: 'Wafrnverse', compatibility: 'both' },
   dracula: { name: 'Dracula', compatibility: 'both' },
@@ -119,7 +119,7 @@ const colorThemeVariants = ['light', 'dark', 'auto'] as const
 type ColorThemeTuple = typeof colorThemeVariants
 export type ColorTheme = ColorThemeTuple[number]
 
-type ColorThemeData = { [key in ColorTheme]: string }
+export type ColorThemeData = { [key in ColorTheme]: string }
 export const colorThemeData: ColorThemeData = {
   light: 'Light',
   dark: 'Dark',
@@ -136,7 +136,14 @@ function isColorScheme(value: string): value is ColorScheme {
 }
 
 // More styles!
-const additionalStyleModeVariants = ['centerLayout', 'topToolbar', 'horizontalMenu', 'lowContrastSidebar'] as const
+const additionalStyleModeVariants = [
+  'centerLayout',
+  'topToolbar',
+  'horizontalMenu',
+  'lowContrastSidebar',
+  'oldTags',
+  'colorfulTags'
+] as const
 type AdditionalStyleModeTuple = typeof additionalStyleModeVariants
 export type AdditionalStyleMode = AdditionalStyleModeTuple[number]
 
@@ -150,7 +157,9 @@ export const additionalStyleModesData: AdditionalStyleModeData = {
   centerLayout: { name: 'Center Layout' },
   topToolbar: { name: 'Top Toolbar' },
   horizontalMenu: { name: 'Horizontal Menu' },
-  lowContrastSidebar: { name: 'Low Contrast Sidebar' }
+  lowContrastSidebar: { name: 'Low Contrast Sidebar' },
+  oldTags: { name: 'Old Tags' },
+  colorfulTags: { name: 'Colorful Tags' }
 }
 
 @Injectable({
@@ -163,7 +172,9 @@ export class ThemeService {
     centerLayout: signal(false),
     topToolbar: signal(false),
     horizontalMenu: signal(false),
-    lowContrastSidebar: signal(false)
+    lowContrastSidebar: signal(false),
+    oldTags: signal(false),
+    colorfulTags: signal(false)
   }
 
   constructor(

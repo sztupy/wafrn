@@ -1,0 +1,18 @@
+.setting-header {
+}
+
+.setting-description {
+  color: var(--mat-sys-outline);
+  font-size: 0.9rem;
+}
+
+.setting-button {
+  --mat-button-filled-horizontal-padding: 18px;
+  --mat-button-filled-container-shape: var(--mat-sys-corner-small);
+  --mat-button-outlined-horizontal-padding: 18px;
+  --mat-button-outlined-container-shape: var(--mat-sys-corner-small);
+}
+
+.mat-mdc-form-field + .setting-description {
+  margin-top: 0.25rem;
+}

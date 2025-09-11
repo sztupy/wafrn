@@ -102,12 +102,12 @@ export class BottomReplyBarComponent implements OnChanges {
       finalOne.medias?.length == 0
   }
 
-  async replyPost(post: ProcessedPost) {
-    await this.editorService.replyPost(post)
+  async replyPost() {
+    await this.editorService.replyPost(this.fragment)
   }
 
-  async quotePost(post: ProcessedPost) {
-    await this.editorService.quotePost(post)
+  async quotePost() {
+    await this.editorService.quotePost(this.fragment)
   }
 
   async editPost(post: ProcessedPost) {
@@ -118,9 +118,9 @@ export class BottomReplyBarComponent implements OnChanges {
     this.deletePostService.openDeletePostDialog(id)
   }
 
-  async deleteRewoots(id: string) {
+  async deleteRewoots() {
     this.loadingAction = true
-    const success = await firstValueFrom(this.deletePostService.deleteRewoots(id))
+    const success = await firstValueFrom(this.deletePostService.deleteRewoots(this.fragment.id))
     if (success) {
       this.myRewootsIncludePost = false
       this.messages.add({
@@ -136,10 +136,21 @@ export class BottomReplyBarComponent implements OnChanges {
     this.loadingAction = false
   }
 
-  async likePost(postToLike: ProcessedPost) {
+  async toggleLike() {
+    if (this.loadingAction || this.fragment.userId === this.myId) return
+
+    const hasLikedPost = this.fragment.userLikesPostRelations.includes(this.myId)
+    if (!hasLikedPost) {
+      this.likePost()
+    } else {
+      this.unlikePost()
+    }
+  }
+
+  async likePost() {
     this.loadingAction = true
-    if (await this.postService.likePost(postToLike.id)) {
-      postToLike.userLikesPostRelations.push(this.myId)
+    if (await this.postService.likePost(this.fragment.id)) {
+      this.fragment.userLikesPostRelations.push(this.myId)
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
@@ -156,10 +167,10 @@ export class BottomReplyBarComponent implements OnChanges {
     this.loadingAction = false
   }
 
-  async unlikePost(postToUnlike: ProcessedPost) {
+  async unlikePost() {
     this.loadingAction = true
-    if (await this.postService.unlikePost(postToUnlike.id)) {
-      postToUnlike.userLikesPostRelations = postToUnlike.userLikesPostRelations.filter((elem) => elem != this.myId)
+    if (await this.postService.unlikePost(this.fragment.id)) {
+      this.fragment.userLikesPostRelations = this.fragment.userLikesPostRelations.filter((elem) => elem != this.myId)
       this.messages.add({
         severity: 'success',
         summary: 'You no longer like this woot'
@@ -172,22 +183,17 @@ export class BottomReplyBarComponent implements OnChanges {
     }
     this.loadingAction = false
   }
-  async unbookmarkPost() {
-    if (await this.postService.unbookmarkPost(this.fragment.id)) {
-      this.fragment.bookmarkers = this.fragment.bookmarkers.filter((elem) => elem != this.myId)
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully unbookmarked this woot'
-      })
-      this.bookmarked.set(false)
+
+  async toggleBookmark() {
+    if (!this.bookmarked()) {
+      this.bookmarkPost()
     } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
+      this.unbookmarkPost()
     }
   }
+
   async bookmarkPost() {
+    this.loadingAction = true
     if (await this.postService.bookmarkPost(this.fragment.id)) {
       this.fragment.bookmarkers.push(this.myId)
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
@@ -203,15 +209,42 @@ export class BottomReplyBarComponent implements OnChanges {
         summary: 'Something went wrong. Please try again'
       })
     }
+    this.loadingAction = false
   }
 
-  async quickReblog(postToBeReblogged: ProcessedPost) {
+  async unbookmarkPost() {
     this.loadingAction = true
-    if (postToBeReblogged?.privacy !== 10) {
+    if (await this.postService.unbookmarkPost(this.fragment.id)) {
+      this.fragment.bookmarkers = this.fragment.bookmarkers.filter((elem) => elem != this.myId)
+      this.messages.add({
+        severity: 'success',
+        summary: 'You successfully unbookmarked this woot'
+      })
+      this.bookmarked.set(false)
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'Something went wrong. Please try again'
+      })
+    }
+    this.loadingAction = false
+  }
+
+  async toggleReblog() {
+    if (!this.myRewootsIncludePost) {
+      this.quickReblog()
+    } else {
+      this.deleteRewoots()
+    }
+  }
+
+  async quickReblog() {
+    this.loadingAction = true
+    if (this.fragment.privacy !== 10) {
       const response = await this.editor.createPost({
         mentionedUsers: [],
         content: '',
-        idPostToReblog: postToBeReblogged.id,
+        idPostToReblog: this.fragment.id,
         privacy: 0,
         media: []
       })

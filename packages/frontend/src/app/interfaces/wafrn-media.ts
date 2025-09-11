@@ -1,7 +1,7 @@
 export interface WafrnMedia {
   id: string
   NSFW: boolean
-  description: string
+  description: string | null
   url: string
   external: boolean
   mediaOrder: number

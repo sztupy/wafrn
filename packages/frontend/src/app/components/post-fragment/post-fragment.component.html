@@ -2,12 +2,15 @@
   @if (fragment().title) {
     <h1 [innerText]="fragment().title"></h1>
   }
-  @if (fragment().ask) {
-    <app-single-ask [ask]="fragment().ask!"></app-single-ask>
-  }
   @if (fragment().content_warning || fragment().muted_words_cw) {
-    <div class="content-warning-text" [innerHTML]="fragment().muted_words_cw"></div>
-    <div class="content-warning-text" [innerHTML]="fragment().content_warning"></div>
+    @if (fragment().muted_words_cw) {
+      <div class="muted-words content-warning-text">
+        {{ 'post-fragment.mutedWords' | translate }} {{ fragment().muted_words_cw }}
+      </div>
+    }
+    @if (fragment().content_warning) {
+      <div class="content-warning-text" [innerHTML]="fragment().content_warning"></div>
+    }
     <button class="toggle-cw-button" mat-raised-button color="primary" (click)="cwClick()" class="w-full my-2">
       @if (showSensitiveContent()) {
         Hide
@@ -25,26 +28,29 @@
     class="flex flex-column gap-3 post-content"
     [ngClass]="{ hidden: (fragment().content_warning || fragment().muted_words_cw) && !showSensitiveContent() }"
   >
+    @if (fragment().ask) {
+      <app-single-ask [ask]="fragment().ask!"></app-single-ask>
+    }
     @for (block of wafrnFormattedContent(); track $index) {
       <!-- The thing that I really struggled at here is giving this @if a condition that made sense
          for posts which already have the mentions in the body of the post. I failed to find one.
     -->
-      @if (mentionPosts.length != 0) {
-        <section style="border-bottom: 1px solid var(--mat-sys-surface-container-highest); width: fit-content">
-          <span
-            ><small
-              ><span style="color: var(--mat-sys-outline)">{{ 'post-fragment.replyingTo' | translate }}</span
-              ><a [routerLink]="['/blog/' + url]" *ngFor="let url of mentionPosts">{{ url }} </a></small
-            ></span
-          >
+      @if (mentionPosts.length != 0 && !fragment().ask) {
+        <section class="reply-list">
+          <span class="reply-list-title">{{ 'post-fragment.replyingTo' | translate }}</span>
+          @for (url of mentionPosts; track $index) {
+            <a [routerLink]="['/blog/' + url]" class="subtle-link reply-list-link">{{ url }}</a>
+          }
         </section>
       }
-      <div #mediaInline class="fragment-content overflow-hidden">
-        <div [injectHTML]="block" class="post-text"></div>
-        @if (typeof block !== 'string') {
-          <app-wafrn-media [data]="$any(block)"></app-wafrn-media>
-        }
-      </div>
+      @if (block) {
+        <div #mediaInline class="fragment-content overflow-hidden">
+          <div [injectHTML]="block" class="post-text"></div>
+          @if (typeof block !== 'string') {
+            <app-wafrn-media [data]="$any(block)" [filteredWords]="fragment().muted_words_cw"></app-wafrn-media>
+          }
+        </div>
+      }
     }
     @if (fragment().questionPoll) {
       <div>
@@ -64,6 +70,7 @@
                 'carousel-media': !forceOldMediaStyle && nonLinkMediaCount > 1
               }"
               [data]="media"
+              [filteredWords]="fragment().muted_words_cw"
             ></app-wafrn-media>
           }
         }
@@ -79,9 +86,11 @@
       }
     </section>
     @if (fragment().tags && fragment().tags.length) {
-      <div class="flex flex-wrap gap-2 tag-list">
+      <div class="tag-list">
         @for (tag of fragment().tags; track $index) {
-          <a class="tag" [routerLink]="'/dashboard/search/' + tag.tagName"> #{{ tag.tagName }} </a>
+          <a class="tag" [routerLink]="'/dashboard/search/' + tag.tagName" [attr.data-tag]="tag.tagName">
+            <span class="tag-text">#{{ tag.tagName }}</span>
+          </a>
         }
       </div>
     }
@@ -109,7 +118,7 @@
     }
     <section class="mt-3" class="flex flex-wrap gap-1 emoji-reactions">
       @for (emoji of emojiCollection(); track $index) {
-        @if (availableEmojiNames.includes(emoji.name) || !emoji.img) {
+        @if (availableEmojiNames.has(emoji.name) || !emoji.img) {
           <!--TODO fix this! The function gettooltipusers gets called on every event
           which slows down the app when there are too many emojis
           solution: rework the emojis part so its processed only on load with all data there

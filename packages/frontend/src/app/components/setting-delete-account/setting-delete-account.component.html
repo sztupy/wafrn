@@ -1,0 +1,18 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>{{ 'settings.requestAccountDeletion' | translate }}</mat-panel-title>
+  </mat-expansion-panel-header>
+  <app-info-card type="caution" addClass="mb-3">{{ 'profile.delete.psa1' | translate }}</app-info-card>
+  <p class="mb-1 setting-description">{{ 'profile.delete.psa2' | translate }}</p>
+  <mat-form-field class="block mb-3 w-full mat-form-field-no-padding" appearance="outline">
+    <mat-label>{{ 'login.password' | translate }}</mat-label>
+    <input (change)="handleInput($event)" type="password" name="password" matInput />
+  </mat-form-field>
+  <div>
+    <button mat-flat-button class="request-delete-button" (click)="requestDeleteAccount()">
+      <fa-icon [icon]="warnIcon" [fixedWidth]="true"></fa-icon>
+      {{ 'profile.delete.button' | translate }}
+      <fa-icon [icon]="warnIcon" [fixedWidth]="true"></fa-icon>
+    </button>
+  </div>
+</mat-expansion-panel>

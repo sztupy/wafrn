@@ -1,16 +1,16 @@
 import { FederatedHost, User } from '../../models/index.js'
+import { splitHandle } from '../../models/user.js'
 import { logger } from '../logger.js'
 import { getPetitionSigned } from './getPetitionSigned.js'
 import { getRemoteActor } from './getRemoteActor.js'
 
 async function searchRemoteUser(searchTerm: string, user: any): Promise<User | null> {
-  const usernameAndDomain = searchTerm.split('@')
+  const searchData = splitHandle(searchTerm)
   const users: Array<any> = []
-  if (searchTerm.startsWith('@') && searchTerm.length > 3 && usernameAndDomain.length === 3) {
-    const userToSearch = searchTerm.substring(1)
+  if (searchData && searchData.type === 'fediverse') {
     // fediverse users are like emails right? god I hope so
-    const username = usernameAndDomain[1]
-    const domain = usernameAndDomain[2]
+    const username = searchData.username
+    const domain = searchData.domain
     const domainBlocked = await FederatedHost.findOne({
       where: {
         displayName: domain,

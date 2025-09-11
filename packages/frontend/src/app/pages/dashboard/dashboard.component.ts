@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser'
 import { NavigationSkipped, Router } from '@angular/router'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
+import { GlobalData } from 'src/app/services/global-data.service'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
 import { SnappyCreate, SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
@@ -49,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     private themeService: ThemeService,
     private readonly viewportScroller: ViewportScroller
   ) {
-    this.titleService.setTitle('Wafrn - the social network that respects you')
+    this.titleService.setTitle(GlobalData.appDefaultTitle)
     this.metaTagService.addTags([
       {
         name: 'description',
@@ -122,22 +123,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
       }
     })
 
-    this.loadPosts(this.currentPage).then(() => {
-      setTimeout(() => {
-        this.themeService.setMyTheme()
-        // we detect the bottom; of the page and load more posts
-        const element = document.querySelector('#if-you-see-this-load-more-posts')
-        const observer = new IntersectionObserver((intersectionEntries: IntersectionObserverEntry[]) => {
-          if (intersectionEntries[0].isIntersecting) {
-            this.currentPage++
-            this.loadPosts(this.currentPage)
-          }
-        })
-        if (element) {
-          observer.observe(element)
-        }
-      })
-    })
+    this.loadPosts(this.currentPage)
   }
 
   reloadPosts() {
@@ -153,15 +139,8 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     this.loadPosts(this.currentPage)
   }
 
-  async countViewedPost() {
-    this.viewedPostsNumber++
-    if (this.posts.length - 1 < this.viewedPostsNumber) {
-      this.currentPage++
-      await this.loadPosts(this.currentPage)
-    }
-  }
-
   async loadPosts(page: number) {
+    this.currentPage += 1
     this.loadingPosts = true
     let scrollDate = new Date(this.timestamp)
     if (page == 0) {
@@ -266,42 +245,9 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     // also some ads for RAID SHADOW LEGENDS. This is a joke.
     // but hey if you dont like it you delete that very easily ;D
     if (!this.jwtService.tokenValid()) {
-      this.posts.push([
-        {
-          hierarchyLevel: 0,
-          isRewoot: false,
-          quotes: [],
-          emojiReactions: [],
-          id: '872c9649-5043-460e-a9df-c35a568c8aef',
-          content_warning: '',
-          markdownContent: '',
-          content:
-            '<p>To fully enjoy this hellsite, please consider joining us, <a href="/register" rel="noopener noreferrer" target="_blank">register into wafrn!</a></p><p><br></p><p>bring your twisted ideas onto others, share recipies of cake that swap the flour for mayo or hot sauce!</p><p><br></p><p><br></p><p>Consider <a href="/register" rel="noopener noreferrer" target="_blank">joining wafrn</a>!</p>',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          userId: '40472b5b-b668-4156-b795-a60f2986e928',
-          user: {
-            avatar: '/1641804617334_2f7de58d61c79f0bca67869c5b375f74a3787a17.webp',
-            url: 'admin',
-            name: 'admin',
-            id: 'admin'
-          },
-          medias: [],
-          tags: [],
-          notes: 0,
-          remotePostId: '',
-          privacy: 0,
-          userLikesPostRelations: [],
-          emojis: [],
-          descendents: [],
-          bookmarkers: [],
-          parentCollection: [],
-          canReblog: false,
-          canLike: false,
-          canQuote: false,
-          canReply: false
-        }
-      ])
+      const welcomePost = await this.dashboardService.getArticle('system.welcome')
+      if (welcomePost)
+        this.posts.push(welcomePost)
     }
     filteredPosts.forEach((post) => {
       this.posts.push(post)

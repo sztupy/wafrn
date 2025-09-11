@@ -1,6 +1,6 @@
 import { Op } from 'sequelize'
 import { getAtProtoSession } from '../../atproto/utils/getAtProtoSession.js'
-import { forcePopulateUsers } from '../../atproto/utils/getAtprotoUser.js'
+import { forcePopulateUsers, getAtprotoUser } from '../../atproto/utils/getAtprotoUser.js'
 import { Follows, User } from '../../models/index.js'
 import { getAdminUser } from '../getAdminAndDeletedUser.js'
 
@@ -9,10 +9,19 @@ async function syncBskyFollowersAndFollowing(userId: string) {
   if (user && user.bskyDid) {
     const agent = await getAtProtoSession(await getAdminUser())
 
-    const followersResponse = await agent.getFollowers({ actor: user.bskyDid })
-
-    const followersDids = followersResponse.data.followers.map((elem) => elem.did)
-
+    let followersDids: string[] = []
+    let followersResponse = await agent.getFollowers({ actor: user.bskyDid })
+    while (followersResponse.data.followers.length > 0) {
+      followersDids = followersDids.concat(followersResponse.data.followers.map((elem) => elem.did))
+      if (followersResponse.data.cursor) {
+        followersResponse = await agent.getFollowers({ actor: user.bskyDid, cursor: followersResponse.data.cursor })
+      } else {
+        break
+      }
+    }
+    //for await (const did of followersDids) {
+    //  await getAtprotoUser(did, await getAdminUser())
+    //}
     await forcePopulateUsers(followersDids, await getAdminUser())
 
     const followers = await User.findAll({
@@ -38,14 +47,25 @@ async function syncBskyFollowersAndFollowing(userId: string) {
         }
       })
     }
+    let followingDids: string[] = []
+    let followingResponse = await agent.getFollows({ actor: user.bskyDid })
+    while (followingResponse.data.follows.length > 0) {
+      followingDids = followingDids.concat(followingResponse.data.follows.map((elem) => elem.did))
+      if (followingResponse.data.cursor) {
+        followingResponse = await agent.getFollows({ actor: user.bskyDid, cursor: followingResponse.data.cursor })
+      } else {
+        break
+      }
+    }
+    //for await (const did of followingDids) {
+    //  await getAtprotoUser(did, await getAdminUser())
+    //}
+    await forcePopulateUsers(followingDids, await getAdminUser())
 
-    const followingResponse = await agent.getFollows({ actor: user.bskyDid })
-    const followingdids = followingResponse.data.follows.map((elem) => elem.did)
-    await forcePopulateUsers(followingdids, await getAdminUser())
     const newFollowsToCreate = await User.findAll({
       where: {
         bskyDid: {
-          [Op.in]: followingdids
+          [Op.in]: followingDids
         }
       }
     })

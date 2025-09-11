@@ -45,5 +45,7 @@ Disallow: /
 User-agent: *
 Disallow /
 Allow: /$
+Allow: /.well-known/
+Allow: /article/
 Allow: /fediverse/
 Allow: /blog/

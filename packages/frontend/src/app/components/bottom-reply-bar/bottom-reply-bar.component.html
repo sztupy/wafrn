@@ -20,7 +20,7 @@
           aria-label="Quote woot"
           mat-button
           color="accent"
-          (click)="quotePost(fragment)"
+          (click)="quotePost()"
           class="cursor-pointer quote-icon"
         >
           <fa-icon size="lg" [icon]="quoteIcon" matTooltip="Quote woot"></fa-icon>
@@ -31,7 +31,7 @@
           aria-label="Delete rewoot"
           mat-button
           color="accent"
-          (click)="deleteRewoots(fragment.id)"
+          (click)="deleteRewoots()"
           class="cursor-pointer delete-rewoot-icon"
           [disabled]="loadingAction"
         >
@@ -44,7 +44,7 @@
           [disabled]="!fragment.canReblog"
           mat-button
           color="accent"
-          (click)="quickReblog(fragment)"
+          (click)="quickReblog()"
           class="cursor-pointer rewoot-icon"
           [disabled]="loadingAction"
         >
@@ -56,7 +56,7 @@
         [disabled]="!fragment.canReply"
         mat-button
         color="accent"
-        (click)="replyPost(fragment)"
+        (click)="replyPost()"
         class="cursor-pointer reply-icon"
       >
         <fa-icon size="lg" [icon]="reblogIcon" matTooltip="Reply woot"></fa-icon>
@@ -68,6 +68,7 @@
           color="accent"
           (click)="unbookmarkPost()"
           class="cursor-pointer unlike-icon"
+          [disabled]="loadingAction"
         >
           <fa-icon size="lg" [icon]="unbookmarkIcon" matTooltip="Unbookmark woot"></fa-icon>
         </button>
@@ -78,6 +79,7 @@
           color="accent"
           (click)="bookmarkPost()"
           class="cursor-pointer unlike-icon"
+          [disabled]="loadingAction"
         >
           <fa-icon size="lg" [icon]="bookmarkIcon" matTooltip="Bookmark woot"></fa-icon>
         </button>
@@ -88,8 +90,9 @@
             aria-label="Remove like"
             mat-button
             color="accent"
-            (click)="unlikePost(fragment)"
+            (click)="unlikePost()"
             class="cursor-pointer unlike-icon"
+            [disabled]="loadingAction"
           >
             <fa-icon size="lg" [icon]="clearHeartIcon" matTooltip="Remove like"></fa-icon>
           </button>
@@ -99,8 +102,9 @@
             [disabled]="!fragment.canLike"
             mat-button
             color="accent"
-            (click)="likePost(fragment)"
+            (click)="likePost()"
             class="cursor-pointer like-icon"
+            [disabled]="loadingAction"
           >
             <fa-icon size="lg" [icon]="solidHeartIcon" matTooltip="Like woot"></fa-icon>
           </button>

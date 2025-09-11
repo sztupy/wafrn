@@ -6,12 +6,30 @@
   --mat-button-protected-container-color: var(--mat-sys-surface-container-high);
 }
 
+.muted-words {
+  color: var(--mat-sys-outline);
+  font-size: 0.9rem;
+}
+
 .post-content.hidden {
   display: none !important;
 }
 
 .post-content section:empty {
   display: none !important;
+}
+
+.reply-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.75ch;
+  width: fit-content;
+  border-bottom: 1px solid var(--mat-sys-surface-container-highest);
+  font-size: 0.8rem;
+}
+
+.reply-list-title {
+  color: var(--mat-sys-outline);
 }
 
 .reacted {

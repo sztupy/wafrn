@@ -13,6 +13,7 @@ import { LoaderComponent } from 'src/app/components/loader/loader.component'
 import { BlogHeaderComponent } from '../../components/blog-header/blog-header.component'
 import { InfoCardComponent } from 'src/app/components/info-card/info-card.component'
 import { ForumComponent } from '../forum/forum.component'
+import { PostListComponent } from 'src/app/components/post-list/post-list.component'
 
 const routes: Routes = [
   {
@@ -49,7 +50,8 @@ const routes: Routes = [
     LoaderComponent,
     BlogHeaderComponent,
     InfoCardComponent,
-    ForumComponent
+    ForumComponent,
+    PostListComponent
   ]
 })
-export class ViewBlogModule { }
+export class ViewBlogModule {}

@@ -36,7 +36,11 @@ export class SingleNotificationComponent implements OnInit {
     if (this.notification.emojiReact) {
       this.emojiUrl =
         EnvironmentService.environment.externalCacheurl +
-        encodeURIComponent(this.notification.emojiReact?.url as string)
+        encodeURIComponent(
+          this.notification.emojiReact.external
+            ? this.notification.emojiReact.url
+            : EnvironmentService.environment.baseMediaUrl + this.notification.emojiReact.url
+        )
     }
   }
 }

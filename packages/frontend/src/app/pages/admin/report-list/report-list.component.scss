@@ -4,8 +4,19 @@
   display: inline-flex;
 }
 
+.report-description {
+  max-width: 45ch;
+}
+
 @media (min-width: 992px) {
   .block-list-container {
     margin-left: 360px;
   }
+}
+
+.primary {
+  --mat-button-filled-container-color: var(--mat-sys-primary);
+}
+.warn {
+  --mat-button-filled-container-color: var(--mat-sys-error);
 }

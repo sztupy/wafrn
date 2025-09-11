@@ -2,8 +2,12 @@
   --avatar-size: 32px;
 }
 
+.ribbon-container {
+  gap: 0.5rem;
+}
+
 .ribbon-icon {
-  margin-right: 0.125rem;
+  margin-right: 0.25rem;
 }
 
 .ribbon-date {
@@ -15,5 +19,5 @@
 }
 
 .nudge-left {
-  margin-left: -0.25rem;
+  margin-left: -0.125rem;
 }

@@ -14,3 +14,12 @@
   width: 24px;
   text-align: center;
 }
+
+.menu-toggle-hidden {
+  visibility: hidden;
+  position: absolute;
+  inset: 0;
+  // evil method to break out of mat-button's relative
+  margin-inline: calc(-1 * var(--mat-button-text-horizontal-padding, 12px));
+  margin-block: calc(-1 / 2 * ((var(--mat-button-text-container-height, 40px) - 24px)));
+}

@@ -1,3 +1,7 @@
 .top-bar {
   padding-top: 0.75rem !important;
 }
+
+.active {
+  outline: 3px solid var(--mat-sys-primary);
+}

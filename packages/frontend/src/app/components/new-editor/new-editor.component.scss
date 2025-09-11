@@ -1,11 +1,6 @@
-.taglist {
-  margin-top: -8px;
-  margin-bottom: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+.editor-separator {
+  border-top-width: 3px;
 }
-
 .grid {
   margin: 0;
 }
@@ -13,31 +8,6 @@
 .grid > div {
   border: 1px solid var(--mat-sys-outline);
   border-radius: 8px;
-}
-
-.post-length-note {
-  display: flex;
-  align-items: center;
-  justify-content: right;
-  text-align: right;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-  margin-bottom: 1.25rem;
-
-  p {
-    margin: 0;
-  }
-}
-
-.post-length-warning {
-  font-size: 0.7em;
-  line-height: 1.1;
-  color: var(--mat-sys-outline);
-}
-
-.length-overflow {
-  --mat-progress-bar-active-indicator-color: var(--mat-sys-error);
-  --mat-progress-spinner-active-indicator-color: var(--mat-sys-error);
 }
 
 .below-editor-toolbar {
@@ -72,6 +42,10 @@
   max-height: max-content;
 }
 
+.add-quote-input {
+  field-sizing: auto;
+}
+
 .cw-wrapper {
   flex-grow: 5;
   display: flex;
@@ -81,6 +55,10 @@
   flex-shrink: 0;
   margin: 3px 0;
   margin-left: -2px;
+}
+
+.woot-textarea {
+  --mat-form-field-filled-input-text-placeholder-color: var(--mat-sys-outline);
 }
 
 app-media-preview {
@@ -93,21 +71,19 @@ app-media-preview {
 }
 
 .delete-btn {
+  --mat-button-filled-container-color: var(--mat-sys-primary-container);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-primary-container);
+  --mat-button-filled-state-layer-color: var(--mat-sys-on-primary-container);
+  box-shadow: var(--mat-sys-level2);
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 0.5rem;
+  right: 0.5rem;
   z-index: 2;
 }
 
 .delete-btn.mdc-icon-button .ng-fa-icon {
   display: block;
   transform: translateY(-5px);
-}
-
-.fucked-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @media screen and (max-width: 380px) {
@@ -118,6 +94,10 @@ app-media-preview {
   .post-btn {
     width: 24px;
   }
+}
+
+.quote-label {
+  color: var(--mat-sys-outline);
 }
 
 .quote-container {
@@ -137,16 +117,144 @@ app-media-preview {
 }
 
 .suggestions-menu {
-  max-height: 24rem;
-  max-width: 16rem;
+  transition:
+    left 100ms ease-out,
+    top 100ms ease-out;
+  max-height: 350px;
+  min-width: 200px;
+  max-width: 350px;
   position: fixed;
   z-index: 999;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   background-color: var(--mat-sys-surface-container);
   border-radius: var(--mat-sys-corner-small);
-  border: 1px solid var(--mat-sys-outline);
-  padding: 0.5rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: var(--mat-sys-level2);
+}
+
+.suggestion-text-placeholder {
+  --mat-progress-bar-track-height: 16px;
+  --mat-progress-bar-active-indicator-height: 16px;
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-outline-variant);
+  // --mat-progress-bar-track-color: var(--mat-sys-outline-variant);
+}
+
+.suggestion-item {
+  padding: 0.25rem 0.5rem;
+  &:hover {
+    background-color: var(--mat-sys-surface-container-highest);
+  }
+}
+
+.emoji-suggestion-image {
+  width: 32px;
+  height: 32px;
+}
+
+.media-drop-indicator {
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: var(--mat-sys-corner-small);
+  background-color: rgb(from var(--mat-sys-primary) r g b / 0.25);
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  color: rgb(from var(--mat-sys-on-surface) r g b / 0.5);
+  pointer-events: none;
+}
+
+.bottom-information-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.posting-label {
+  color: var(--mat-sys-outline);
+  font-size: 0.7em;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-avatar {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  img {
+    background-color: var(--mat-sys-surface-container-highest);
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.user-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  ::ng-deep img {
+    vertical-align: top;
+  }
+}
+
+.woot-tagfield {
+  background-color: var(--mat-sys-surface-variant);
+
+  ::ng-deep .mat-mdc-floating-label {
+    overflow: unset;
+  }
+
+  mat-label {
+    display: inline-block;
+    background-color: var(--mat-sys-surface-variant);
+    outline: 4px solid var(--mat-sys-surface-variant);
+  }
+}
+
+.taglist {
+  margin-top: -8px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.post-length-note {
+  min-width: max-content;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  gap: 0.25rem;
+
+  p {
+    margin: 0;
+    line-height: 1;
+  }
+}
+
+.post-length-warning {
+  font-size: 0.7em;
+  line-height: 1;
+  color: var(--mat-sys-outline);
+}
+
+.warning-text {
+  color: var(--mat-sys-error);
+}
+
+.length-overflow {
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-error);
+  --mat-progress-spinner-active-indicator-color: var(--mat-sys-error);
 }
 
 svg {

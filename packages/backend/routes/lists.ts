@@ -9,6 +9,7 @@ import { searchRemoteUser } from '../utils/activitypub/searchRemoteUser.js'
 import { follow } from '../utils/follow.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
 import { wait } from '../utils/wait.js'
+import { promiseRace } from '../atproto/utils/promiseRace.js'
 export default function listRoutes(app: Application) {
   // Recomended users to follow
   app.post(
@@ -19,6 +20,10 @@ export default function listRoutes(app: Application) {
       if (req.file) {
         try {
           const petitionBy = await User.findByPk(req.jwtData?.userId)
+          if (!petitionBy) {
+            res.sendStatus(401)
+            return
+          }
           const lines: string[] = (await fs.readFile(req.file.path, 'utf8'))
             .split('\n')
             .map((elem) => elem.split(',')[0])
@@ -79,12 +84,4 @@ export default function listRoutes(app: Application) {
       }
     }
   )
-
-  async function promiseRace(promises: Promise<any>[], timeoutTime: number) {
-    return Promise.allSettled(
-      promises.map((p) => {
-        return Promise.race([p, wait(5000)])
-      })
-    )
-  }
 }

@@ -14,29 +14,40 @@
     on_demand_tls {
         ask http://pds:3000/tls-check
     }
+
+    import /etc/caddy/config/global/* ${{DOMAIN_NAME}}
 }
 
 ${{MEDIA_DOMAIN}} {
+    import /etc/caddy/config/media_domain_pre/* ${{DOMAIN_NAME}} ${{MEDIA_DOMAIN}}
+
     handle {
         root * /var/www/html/uploads/
         try_files {path} /index.html
         file_server
     }
+
+    import /etc/caddy/config/media_domain_post/* ${{DOMAIN_NAME}} ${{MEDIA_DOMAIN}}
 }
 
 ${{CACHE_DOMAIN}} {
+    import /etc/caddy/config/cache_domain_pre/* ${{DOMAIN_NAME}} ${{CACHE_DOMAIN}}
+
     handle /api/cache* {
         reverse_proxy ${{CACHE_HOST:-backend:9000}}
     }
+
+    import /etc/caddy/config/cache_domain_post/* ${{DOMAIN_NAME}} ${{CACHE_DOMAIN}}
 }
 
 ${{DOMAIN_NAME}} {
+    import /etc/caddy/config/main_domain_pre/* ${{DOMAIN_NAME}}
 
     header * {
-                ccess-Control-Allow-Origin: "*"
-                Service-Worker-Allowed: "/",
-                Cache-Control: no-cache, no-store, must-revalidate
-        }
+        # Service-Worker-Allowed: "/",
+        # Cache-Control: no-cache, no-store, must-revalidate
+    }
+
     @api path /api* /fediverse* /contexts* /post* /blog* /.well-known*
 
     handle @api {
@@ -47,21 +58,35 @@ ${{DOMAIN_NAME}} {
         reverse_proxy adminer:8080
     }
 
+    import /etc/caddy/config/main_domain_mid/* ${{DOMAIN_NAME}}
+
     handle {
         root * /var/www/html/frontend/
         try_files {path} /index.html
         file_server
     }
+
+    import /etc/caddy/config/main_domain_post/* ${{DOMAIN_NAME}}
 }
 
 monitoring.${{DOMAIN_NAME}} {
+    import /etc/caddy/config/monitoring_domain_pre/* ${{DOMAIN_NAME}}
+
     reverse_proxy grafana:2345
+
+    import /etc/caddy/config/monitoring_domain_post/* ${{DOMAIN_NAME}}
 }
 
 ${{PDS_DOMAIN_NAME}} *.${{PDS_DOMAIN_NAME}} {
+    import /etc/caddy/config/pds_domain_pre/* ${{DOMAIN_NAME}} ${{PDS_DOMAIN_NAME}}
+
     tls {
         on_demand
     }
 
     reverse_proxy pds:3000
+
+    import /etc/caddy/config/pds_domain_post/* ${{DOMAIN_NAME}} ${{PDS_DOMAIN_NAME}}
 }
+
+import /etc/caddy/config/vhosts/* ${{DOMAIN_NAME}}

@@ -23,22 +23,19 @@ const routes: Routes = [
 
       {
         path: 'register',
-        canActivate: [userLoggedGuard],
         loadChildren: () => import('./pages/register/register.module').then((m) => m.RegisterModule)
       },
       {
         path: 'checkMail',
-        canActivate: [userLoggedGuard],
         loadComponent: () => import('./pages/check-email/check-email.component').then((m) => m.CheckEmailComponent)
       },
       {
         path: 'about',
-        loadChildren: () => import('./pages/privacy/privacy.module').then((m) => m.PrivacyModule)
+        loadChildren: () => import('./pages/about/about.module').then((m) => m.AboutModule)
       },
-      // TODO delete this route in the future I guess
       {
         path: 'privacy',
-        loadChildren: () => import('./pages/privacy/privacy.module').then((m) => m.PrivacyModule)
+        redirectTo: '/article/system.privacy-policy'
       },
       {
         path: 'recoverPassword',
@@ -91,6 +88,11 @@ const routes: Routes = [
       {
         path: 'profile',
         loadChildren: () => import('./pages/profile/profile.module').then((m) => m.ProfileModule),
+        canActivate: [loginRequiredGuard]
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('./pages/settings/settings.module').then((m) => m.SettingsModule),
         canActivate: [loginRequiredGuard]
       },
       {

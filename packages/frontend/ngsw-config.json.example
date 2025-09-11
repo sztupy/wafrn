@@ -1,0 +1,63 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "navigationUrls": [
+    "/dashboard",
+    "/dashboard/**",
+    "/profile",
+    "/profile/**",
+    "/blog/**",
+    "/fediverse/post/**",
+    "/search",
+    "/search/**",
+    "/admin",
+    "/admin/**",
+    "/privacy"
+  ],
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js",
+          "/assets/logo.png",
+          "/assets/logo_mascot.png",
+          "/assets/i18n/*",
+          "/assets/fonts/*",
+          "/assets/sounds/*"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    }
+  ],
+  "dataGroups":[
+    {
+      "name": "media",
+      "urls": [
+        "${{MEDIA_DOMAIN}}/**",
+        "${{CACHE_DOMAIN}}/**"
+
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 850,
+        "maxAge": "3d",
+        "timeout": "1h"
+      }
+    }
+  ]
+}

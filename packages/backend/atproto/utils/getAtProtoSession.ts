@@ -14,7 +14,7 @@ async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
     persistSession: async (evt, session) => {
       if (session && user) {
         // Updated so we do not need to log in on every interaction. Validity is a bit less than 60 seconds so this is safe.
-        await redisCache.set('bskySession:' + user.id, JSON.stringify(session), 'EX', 50)
+        await redisCache.set('bskySession:' + user.id, JSON.stringify(session), 'EX', 3600)
       }
     }
   })
@@ -33,6 +33,7 @@ async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
         })
       }
     } catch (error) {
+      await redisCache.del('bskySession:' + user.id)
       logger.error({
         message: `Error logging in with bsky user`,
         user: user.url,

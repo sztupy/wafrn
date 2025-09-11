@@ -1,17 +1,7 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  computed,
-  ElementRef,
-  input,
-  OnChanges,
-  ViewChild
-} from '@angular/core'
+import { AfterViewInit, Component, computed, ElementRef, input, OnInit, ViewChild } from '@angular/core'
 import { WafrnMedia } from '../../interfaces/wafrn-media'
 import { EnvironmentService } from '../../services/environment.service'
 import { MediaService } from '../../services/media.service'
-import { MessageService } from '../../services/message.service'
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 //@ts-ignore
 import Vlitejs from 'vlitejs'
@@ -22,13 +12,16 @@ import Vlitejs from 'vlitejs'
   styleUrls: ['./wafrn-media.component.scss'],
   standalone: false
 })
-export class WafrnMediaComponent implements OnChanges, AfterViewInit {
+export class WafrnMediaComponent implements OnInit, AfterViewInit {
   data = input.required<WafrnMedia>()
+  filteredWords = input<string>()
 
   @ViewChild('videoelement') videoElement: ElementRef<HTMLVideoElement> | undefined
   @ViewChild('audioelement') audioElement: ElementRef<HTMLAudioElement> | undefined
 
-  readonly extensionsToHideImgTag = ['mp4', 'aac', 'mp3', 'ogg', 'webm', 'weba', 'svg', 'ogg', 'oga']
+  vlitePlayer: { play: Function; pause: Function } | undefined
+
+  readonly extensionsToHideImgTag = ['mp4', 'aac', 'mp3', 'wav', 'ogg', 'webm', 'weba', 'svg', 'ogg', 'oga']
   readonly tmpUrl = computed<string>(() =>
     this.data().external
       ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(this.data().url)
@@ -43,16 +36,18 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   readonly enableVideoControls = computed<boolean | ''>(() => this.mediaService.checkForceClassicVideoPlayer() ?? false)
   readonly enableAudioControls = computed<boolean | ''>(() => this.mediaService.checkForceClassicAudioPlayer() ?? false)
 
-  private readonly alwaysAltMedia = ['audio', 'video']
+  private readonly alwaysAltMedia = ['audio']
   readonly alwaysShowAlt = computed<boolean>(() => this.alwaysAltMedia.includes(this.mimeType()?.split('/')[0]))
 
-  private readonly nonsentitiveMedia = ['audio', 'video']
+  private readonly nonsentitiveMedia = ['audio']
   readonly hideSensitiveButton = computed<boolean>(() =>
     this.nonsentitiveMedia.includes(this.mimeType()?.split('/')[0])
   )
 
-  disableNSFWFilter = true
+  disableNSFWFilter: boolean
+  hideNoDescriptionMedia: boolean
 
+  originallyNsfw = true
   nsfw = true
   viewLongImage = false
   descriptionVisible = false
@@ -60,32 +55,33 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
   readonly hideIcon = faEyeSlash
 
   errorMode = false
-  constructor(
-    private mediaService: MediaService,
-    private messagesService: MessageService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor(private mediaService: MediaService) {
     this.disableNSFWFilter = mediaService.checkNSFWFilterDisabled()
+    this.hideNoDescriptionMedia = (localStorage.getItem('hideNoDescriptionMedia') ?? 'false') === 'true'
   }
 
-  ngOnChanges(): void {
-    this.nsfw = this.data().NSFW && !this.disableNSFWFilter
-    this.cdr.markForCheck()
+  ngOnInit(): void {
+    const noDescription = this.data().description === null
+    const hasFilteredWords = this.filteredWords() !== undefined
+    this.nsfw =
+      (this.data().NSFW || (noDescription && this.hideNoDescriptionMedia) || hasFilteredWords) &&
+      !this.disableNSFWFilter
+    this.originallyNsfw = this.nsfw
   }
 
   ngAfterViewInit(): void {
     const videoElement = this.videoElement?.nativeElement
     if (videoElement && !this.mediaService.checkForceClassicVideoPlayer()) {
-      new Vlitejs(videoElement, {
+      this.vlitePlayer = new Vlitejs(videoElement, {
         options: {
           autoHide: true,
           autoHideDelay: 500
         }
-      })
+      }).player
     }
     const audioElement = this.audioElement?.nativeElement
     if (audioElement && !this.mediaService.checkForceClassicAudioPlayer()) {
-      new Vlitejs(audioElement, {})
+      this.vlitePlayer = new Vlitejs(audioElement, {}).player
     }
   }
 
@@ -140,5 +136,13 @@ export class WafrnMediaComponent implements OnChanges, AfterViewInit {
 
   handleError() {
     this.errorMode = true
+  }
+
+  toggleNsfw() {
+    if (!this.nsfw) {
+      this.vlitePlayer?.pause() || this.videoElement?.nativeElement.pause()
+    }
+
+    this.nsfw = !this.nsfw
   }
 }

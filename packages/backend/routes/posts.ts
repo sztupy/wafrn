@@ -44,6 +44,8 @@ import { getAtProtoThread } from '../atproto/utils/getAtProtoThread.js'
 import dompurify from 'isomorphic-dompurify'
 import { Privacy, PrivacyType } from '../models/post.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { addHandlePrefix } from '../models/user.js'
+import { getAdminUser } from '../utils/getAdminAndDeletedUser.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -69,21 +71,23 @@ const prepareSendPostQueue = new Queue('prepareSendPost', {
 })
 export default function postsRoutes(app: Application) {
   app.get(
-    '/api/article/:user/:title',
+    '/api/article/:user?/:slug',
     optionalAuthentication,
     navigationRateLimiter,
     async (req: AuthorizedRequest, res: Response) => {
       const userUrl = req.params?.user
-      const postTitle = req.params?.title.replaceAll('-', ' ')
-      const user = await User.findOne({
-        where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
-      })
+      const postSlug = req.params?.slug
+      const user = userUrl
+        ? await User.findOne({
+            where: sequelize.where(sequelize.fn('lower', sequelize.col('url')), userUrl.toLowerCase())
+          })
+        : await getAdminUser()
       if (!user) {
         res.sendStatus(404)
       } else {
         const postFound = await Post.findOne({
           where: sequelize.and(
-            sequelize.where(sequelize.fn('lower', sequelize.col('title')), postTitle.toLowerCase()),
+            sequelize.where(sequelize.fn('lower', sequelize.col('slug')), postSlug.toLowerCase()),
             sequelize.where(sequelize.col('userId'), user.id)
           )
         })
@@ -135,7 +139,7 @@ export default function postsRoutes(app: Application) {
 
   /**
    * @deprecated We recomend instead using the forum endpoint. This method will not recive maintenance
-   */
+
   app.get(
     '/api/v2/descendents/:id',
     optionalAuthentication,
@@ -202,6 +206,7 @@ export default function postsRoutes(app: Application) {
       }
     }
   )
+  */
   app.get('/api/v2/blog', optionalAuthentication, async (req: AuthorizedRequest, res: Response) => {
     let success = false
     const id = req.query.id as string
@@ -218,7 +223,7 @@ export default function postsRoutes(app: Application) {
         return
       }
 
-      if (blog.url.startsWith('@') && !req.jwtData?.userId) {
+      if (blog.isRemoteUser && !req.jwtData?.userId) {
         // require auth to see external user blog
         return res.sendStatus(403)
       }
@@ -295,7 +300,7 @@ export default function postsRoutes(app: Application) {
         if (!posterUser?.enableBsky && parent) {
           if (parent.bskyUri) {
             const parentPoster = await User.findByPk(parent.userId)
-            if (parentPoster?.url.startsWith('@')) {
+            if (parentPoster?.isRemoteUser) {
               return res.status(403).send({ success: false, message: 'You need to enable bluesky' })
             } else {
               // we do same check for all parents
@@ -318,8 +323,8 @@ export default function postsRoutes(app: Application) {
                     }
                   }
                 })
-                const parentsUserUrls = ancestors.map((elem) => elem.user.url)
-                if (parentsUserUrls.some((elem) => elem.split('@').length == 2)) {
+                const parentsUser = ancestors.map((elem) => elem.user)
+                if (parentsUser.some((elem) => elem.isBlueskyUser)) {
                   return res.status(403).send({ success: false, message: 'You need to enable bluesky' })
                 }
               }
@@ -462,7 +467,7 @@ export default function postsRoutes(app: Application) {
         }
         content = content.replaceAll(mentionRegex, (userUrl: string) => userUrl.toLowerCase())
 
-        let dbFoundMentions: any[] = []
+        let dbFoundMentions: User[] = []
         const newMentionedUsers = req.body.mentionedUserIds || req.body.mentionedUsersIds || []
         if (postToBeQuoted) {
           newMentionedUsers.push(postToBeQuoted.userId)
@@ -492,7 +497,7 @@ export default function postsRoutes(app: Application) {
         }
 
         if (dbFoundMentions.length > 0) {
-          mentionsToAdd = mentionsToAdd.concat(dbFoundMentions.map((usr: any) => usr.id))
+          mentionsToAdd = mentionsToAdd.concat(dbFoundMentions.map((usr) => usr.id))
 
           // we check if user federates with threads and if not we check they are not mentioning anyone from threads
           const options = await getUserOptions(posterId)
@@ -500,7 +505,7 @@ export default function postsRoutes(app: Application) {
             (elem) => elem.optionName === 'wafrn.federateWithThreads' && elem.optionValue === 'true'
           )
           if (userFederatesWithThreads.length === 0) {
-            if (dbFoundMentions.some((usr: any) => usr.url.toLowerCase().endsWith('.threads.net'))) {
+            if (dbFoundMentions.some((usr) => usr.url.toLowerCase().endsWith('.threads.net'))) {
               success = false
               res.status(403)
               res.send({
@@ -544,20 +549,15 @@ export default function postsRoutes(app: Application) {
             return null
           }
 
-          const sortedMentions = dbFoundMentions.sort((a: any, b: any) => a.url.length - b.url.length)
+          const sortedMentions = dbFoundMentions.sort((a, b) => a.url.length - b.url.length)
           for (let userMentioned of sortedMentions) {
-            const url =
-              !userMentioned.url.trim().startsWith('@') && userMentioned.url.split('.').length == 1
-                ? `${userMentioned.url.trim()}`
-                : userMentioned.url.split('@')[1].trim()
-            const remoteId =
-              userMentioned.url.split('@').length > 2
-                ? userMentioned.remoteId
-                : `${completeEnvironment.frontendUrl}/fediverse/blog/${userMentioned.url}`
-            const remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
-            const stringToReplace = userMentioned.url.startsWith('@')
-              ? userMentioned.url.toLowerCase()
-              : `@${userMentioned.url.toLowerCase()}`
+            const url = userMentioned.longHandle
+            const remoteId = userMentioned.fullFediverseUrl
+            let remoteUrl = userMentioned.remoteMentionUrl ? userMentioned.remoteMentionUrl : remoteId
+            if (userMentioned.url.startsWith('@') && !remoteUrl && userMentioned.bskyDid) {
+              remoteUrl = 'https://bsky.app/profile/' + userMentioned.bskyDid
+            }
+            const stringToReplace = addHandlePrefix(userMentioned.url.toLowerCase())
             const targetString = `<span class="h-card" translate="no"><a href="${remoteUrl}" class="u-url mention">@<span>${url}</span></a></span>`
             content = content.replace(`${stringToReplace}`, `${targetString}`).trim()
           }
@@ -739,6 +739,28 @@ export default function postsRoutes(app: Application) {
       }
     }
   )
+
+  app.post('/api/refederatePost', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
+    let success = false
+    const user = (await User.findByPk(req.jwtData?.userId as string)) as User
+    const post = await Post.findOne({
+      where: {
+        userId: user.id,
+        id: req.body.postId as string
+      }
+    })
+    if (post) {
+      await prepareSendPostQueue.add(
+        'prepareSendPost',
+        { postId: post.id, petitionBy: post.userId },
+        { jobId: post.id, delay: 1500 }
+      )
+      success = true
+    }
+    res.send({
+      success
+    })
+  })
 
   app.post('/api/reportPost', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     let success = false

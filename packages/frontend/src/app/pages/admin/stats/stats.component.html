@@ -1,33 +1,33 @@
-<h2 class="mb-1 lg:mx-4 wafrn-container">Stats</h2>
-@if (backendReply) {
-  <mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">
-    <div class="mb-2">
-      <p>ATProto waiting</p>
-      <p class="big">{{ backendReply.atProtoAwaiting }}</p>
-    </div>
-    <div class="mb-2">
-      <p>ATProto send post awaiting</p>
-      <p class="big">{{ backendReply.sendPostBskyAwaiting }}</p>
-    </div>
-    <div class="mb-2">
-      <p>Inbox still waiting</p>
-      <p class="big">{{ backendReply.inboxAwaiting }}</p>
-    </div>
-    <div class="mb-2">
-      <p>Preparation send awaiting</p>
-      <p class="big">{{ backendReply.prepareSendPostAwaiting }}</p>
-    </div>
-    <div class="mb-2">
-      <p>Send post awaiting</p>
-      <p class="big">{{ backendReply.sendPostAwaiting }}</p>
-    </div>
-    <div class="mb-2">
-      <p>Delete post awaiting</p>
-      <p class="big">{{ backendReply.deletePostAwaiting }}</p>
-    </div>
-    <div class="mb-2">
-      <p>Generate Private and public key for new user</p>
-      <p class="big">{{ backendReply.createKeyPairWaiting }}</p>
-    </div>
-  </mat-card>
-}
+<div class="mx-3 lg:mx-4 wafrn-container">
+  <h2 class="my-3 text-3xl">{{ 'menu.admin.stats' | translate }}</h2>
+</div>
+<mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">
+  <div class="data-pair">
+    <p>ATProto waiting</p>
+    <p class="value">{{ backendReply?.atProtoAwaiting ?? '-' }}</p>
+  </div>
+  <div class="data-pair">
+    <p>ATProto send post awaiting</p>
+    <p class="value">{{ backendReply?.sendPostBskyAwaiting ?? '-' }}</p>
+  </div>
+  <div class="data-pair">
+    <p>Inbox still waiting</p>
+    <p class="value">{{ backendReply?.inboxAwaiting ?? '-' }}</p>
+  </div>
+  <div class="data-pair">
+    <p>Preparation send awaiting</p>
+    <p class="value">{{ backendReply?.prepareSendPostAwaiting ?? '-' }}</p>
+  </div>
+  <div class="data-pair">
+    <p>Send post awaiting</p>
+    <p class="value">{{ backendReply?.sendPostAwaiting ?? '-' }}</p>
+  </div>
+  <div class="data-pair">
+    <p>Delete post awaiting</p>
+    <p class="value">{{ backendReply?.deletePostAwaiting ?? '-' }}</p>
+  </div>
+  <div class="data-pair">
+    <p>Generate Private and public key for new user</p>
+    <p class="value">{{ backendReply?.createKeyPairWaiting ?? '-' }}</p>
+  </div>
+</mat-card>

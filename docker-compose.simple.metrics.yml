@@ -1,8 +1,8 @@
 services:
   backend: &default_backend
     build:
-      context: packages/backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/backend/Dockerfile
       # these args configure private env vars for the backend and public env vars for the frontend
       args:
         ADMIN_USER: ${ADMIN_USER}
@@ -53,6 +53,9 @@ services:
         FRONTEND_SHORTEN_POSTS: ${FRONTEND_SHORTEN_POSTS:-}
         FRONTEND_DISABLE_PWA: ${FRONTEND_DISABLE_PWA:-}
         FRONTEND_MAINTENANCE: ${FRONTEND_MAINTENANCE:-}
+        FRONTEND_SHORT_TITLE: ${FRONTEND_SHORT_TITLE:-}
+        FRONTEND_LONG_TITLE: ${FRONTEND_LONG_TITLE:-}
+        FRONTEND_DESCRIPTION: ${FRONTEND_DESCRIPTION:-}
     depends_on:
       db:
         condition: service_healthy
@@ -66,9 +69,9 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ./packages/backend/uploads:/wafrn/uploads
-      - ./packages/backend/cache:/wafrn/cache
-      - frontend:/wafrn/packages/frontend:ro
+      - ./packages/backend/uploads:/app/packages/backend/uploads
+      - ./packages/backend/cache:/app/packages/backend/cache
+      - frontend:/app/packages/frontend:ro
 
   migration:
     <<: *default_backend
@@ -85,14 +88,17 @@ services:
   frontend:
     restart: unless-stopped
     build:
-      context: packages/frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/frontend/Dockerfile
       args:
         DOMAIN_NAME: ${DOMAIN_NAME}
         PDS_DOMAIN_NAME: ${PDS_DOMAIN_NAME}
         CACHE_DOMAIN: ${CACHE_DOMAIN}
         MEDIA_DOMAIN: ${MEDIA_DOMAIN}
         ACME_EMAIL: ${ACME_EMAIL}
+        FRONTEND_SHORT_TITLE: ${FRONTEND_SHORT_TITLE:-}
+        FRONTEND_LONG_TITLE: ${FRONTEND_LONG_TITLE:-}
+        FRONTEND_DESCRIPTION: ${FRONTEND_DESCRIPTION:-}
     ports:
       - 80:80
       - 443:443
@@ -100,6 +106,7 @@ services:
       - "caddy:/data"
       - "frontend:/var/www/html/frontend"
       - ./packages/backend/uploads:/var/www/html/uploads
+      - ./packages/caddy:/etc/caddy/config
 
   db:
     build:

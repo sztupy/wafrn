@@ -10,6 +10,9 @@ src/environments/environment.prod.ts
 # settings
 Caddyfile
 
+# override directory
+/overrides
+
 # dependencies
 /node_modules
 

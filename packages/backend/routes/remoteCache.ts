@@ -11,6 +11,10 @@ import { getLinkPreview } from 'link-preview-js'
 import { linkPreviewRateLimiter } from '../utils/rateLimiters.js'
 import { getMimeType } from 'stream-mime-type'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { Media } from '../models/media.js'
+import { Op } from 'sequelize'
+import { spawn } from 'child_process'
+import sequelize from 'sequelize/lib/sequelize'
 
 function sendWithCache(res: Response, localFileName: string) {
   // Does the .mime file exist?
@@ -25,13 +29,33 @@ function sendWithCache(res: Response, localFileName: string) {
 }
 
 // converting the stream parsing to a promise to be able to use async/await and catch the errors with the try/catch blocks
-function writeStream(stream: NodeJS.ReadableStream, localFileName: string, mime: string) {
+function writeStream(stream: NodeJS.ReadableStream, localFileName: string, mime: string, altText: string) {
   const writeStream = fs.createWriteStream(localFileName)
   fs.writeFileSync(localFileName + '.mime', mime)
   return new Promise((resolve, reject) => {
     writeStream.on('finish', async () => {
       writeStream.close()
-      return resolve(localFileName)
+      if (altText != '') {
+        try {
+          const updateAltText = spawn('exiv2', [
+            '-M',
+            `set Exif.Photo.UserComment charset=Ascii ${altText
+              .replaceAll('"', '')
+              .replaceAll("'", '')
+              .replaceAll('\\', '')
+              .replaceAll('$', '')
+              .replaceAll('@', '')}`,
+            localFileName
+          ])
+          updateAltText.on('close', () => {
+            return resolve(localFileName)
+          })
+        } catch (error) {
+          return resolve(localFileName)
+        }
+      } else {
+        return resolve(localFileName)
+      }
     })
     writeStream.on('error', (error) => {
       return reject(error)
@@ -74,6 +98,15 @@ export default function cacheRoutes(app: Application) {
                 '&cid=' +
                 encodeURIComponent(cid)
               mediaUrl = url
+            } else if (did.startsWith('did:web')) {
+              const url =
+                'https://' +
+                did.split('did:web:')[1] +
+                '/xrpc/com.atproto.sync.getBlob?did=' +
+                encodeURIComponent(did) +
+                '&cid=' +
+                encodeURIComponent(cid)
+              mediaUrl = url
             }
           } catch (error) {
             return res.sendStatus(500)
@@ -83,10 +116,23 @@ export default function cacheRoutes(app: Application) {
           responseType: 'stream',
           headers: { 'User-Agent': 'wafrnCacher' }
         })
+        let altText = ''
+        let dbMediaUrl = String(req.query?.media).startsWith(completeEnvironment.mediaUrl)
+          ? String(req.query?.media).split(completeEnvironment.mediaUrl)[1]
+          : String(req.query?.media)
+        let media = await Media.findOne({
+          where: sequelize.where(
+            sequelize.fn('md5', sequelize.col('url')),
+            crypto.createHash('md5').update(dbMediaUrl).digest('hex')
+          )
+        })
+        if (media) {
+          altText = media.description
+        }
         const { stream, mime } = await getMimeType(response.data)
         res.contentType(mime)
-        stream.pipe(res)
-        await writeStream(stream, localFileName, mime)
+        await writeStream(stream, localFileName, mime, altText)
+        return await sendWithCache(res, localFileName)
       } catch (error) {
         return res.sendStatus(500)
       }

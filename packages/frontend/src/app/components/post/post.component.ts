@@ -2,13 +2,15 @@ import {
   Component,
   computed,
   EventEmitter,
+  input,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
   Signal,
-  signal
+  signal,
+  viewChild
 } from '@angular/core'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { LoginService } from 'src/app/services/login.service'
@@ -35,6 +37,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { EnvironmentService } from 'src/app/services/environment.service'
+import { Subject } from 'rxjs'
+import { BottomReplyBarComponent } from '../bottom-reply-bar/bottom-reply-bar.component'
+import { HotkeyAction } from 'src/app/services/hotkey.service'
 
 @Component({
   selector: 'app-post',
@@ -44,6 +49,8 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 })
 export class PostComponent implements OnInit, OnDestroy, OnChanges {
   @Input() post!: ProcessedPost[]
+  actionSubscription = input<Subject<HotkeyAction>>()
+  active = input<boolean>(false)
   showFull: boolean = false
   postCanExpand = computed(() => {
     let textLength = 0
@@ -75,6 +82,7 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
   loadingAction = false
   // 0 no display at all 1 display like 2 display dislike
   showLikeFinalPost: number = 0
+  uniquePost: ProcessedPost | undefined // ID unique to post (cover empty reblogs)
   finalPost!: ProcessedPost
 
   // icons
@@ -95,6 +103,9 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
   userIcon = faUser
   editedIcon = faPen
   checkIcon = faCheck
+
+  // bottom bar for controls
+  bottomReplyBar = viewChild.required(BottomReplyBarComponent)
 
   // subscriptions
   updateFollowersSubscription
@@ -147,6 +158,8 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
     this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
     this.originalPostContent = this.post
     this.finalPosts = this.originalPostContent.slice(-5)
+    this.uniquePost = this.post.at(-1)
+
     if (!this.showFull) {
       this.post = this.post.slice(0, EnvironmentService.environment.shortenPosts)
 
@@ -161,6 +174,8 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
     if (localStorage.getItem('automaticalyExpandPosts') === 'true') {
       this.expandPost()
     }
+
+    this.actionSubscription()?.subscribe((action) => this.handlePostActions(action))
   }
 
   isEmptyReblog() {
@@ -197,5 +212,29 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
     this.expanded.set(true)
     this.postsExpanded = this.postsExpanded + 50
     this.post = this.originalPostContent.slice(0, this.postsExpanded)
+  }
+
+  async handlePostActions(action: HotkeyAction) {
+    if (!this.active()) return
+
+    switch (action) {
+      case 'likePost':
+        await this.bottomReplyBar()?.toggleLike()
+        break
+      case 'rewootPost':
+        await this.bottomReplyBar()?.toggleReblog()
+        break
+      case 'replyPost':
+        await this.bottomReplyBar()?.replyPost()
+        break
+      case 'quotePost':
+        await this.bottomReplyBar()?.quotePost()
+        break
+      case 'bookmarkPost':
+        await this.bottomReplyBar()?.toggleBookmark()
+        break
+      default:
+        break
+    }
   }
 }

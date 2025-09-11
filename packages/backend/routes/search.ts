@@ -22,6 +22,7 @@ import { getAtProtoThread } from '../atproto/utils/getAtProtoThread.js'
 import { logger } from '../utils/logger.js'
 import { Privacy } from '../models/post.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { addHandlePrefix, splitHandle } from '../models/user.js'
 export default function searchRoutes(app: Application) {
   app.get('/api/userSearch/:term', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
     const posterId = req.jwtData?.userId ? req.jwtData.userId : '00000000-0000-0000-0000-000000000000'
@@ -59,7 +60,8 @@ export default function searchRoutes(app: Application) {
     }
     try {
       urlString = new URL(searchTerm).href
-    } catch (error) {}
+    } catch (error) {
+    }
     if (urlString && !page) {
       // we force fetch said remote post. Nothing eslse!
       const userPoster = await User.findByPk(posterId)
@@ -144,20 +146,20 @@ export default function searchRoutes(app: Application) {
 
   async function searchUsers(searchTerm: string, userId: string, page = 0): Promise<User[]> {
     let remoteMatch: Promise<User | null> | null = null
-    let firstMatch = !page
-      ? User.findOne({
-          attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
-          where: {
-            activated: true,
-            banned: {
-              [Op.ne]: true
-            },
-            url: {
-              [Op.iLike]: searchTerm
-            }
+    let firstMatch: Promise<User | null> | null = null
+    if (!page)
+      firstMatch = User.findOne({
+        attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
+        where: {
+          activated: true,
+          banned: {
+            [Op.ne]: true
+          },
+          url: {
+            [Op.iLike]: searchTerm
           }
-        })
-      : null
+        }
+      })
     if (page == 0) {
       remoteMatch = searchUserFediAndbsky(searchTerm, (await User.findByPk(userId)) as User)
     }
@@ -176,59 +178,57 @@ export default function searchRoutes(app: Application) {
         }
       }
     })
-    let localUsers =
-      localUsersCount >= page * completeEnvironment.postsPerPage
-        ? await User.findAll({
-            where: {
-              activated: true,
-              banned: {
-                [Op.ne]: true
-              },
-              email: {
-                [Op.ne]: null
-              },
-              url: {
-                [Op.iLike]: `%${searchTerm}%`
+    let localUsers: User[] = []
+    if (localUsersCount >= page * completeEnvironment.postsPerPage)
+      localUsers = await User.findAll({
+        where: {
+          activated: true,
+          banned: {
+            [Op.ne]: true
+          },
+          email: {
+            [Op.ne]: null
+          },
+          url: {
+            [Op.iLike]: `%${searchTerm}%`
+          }
+        },
+        attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
+        order: [['createdAt', 'DESC']],
+        limit: completeEnvironment.postsPerPage,
+        offset: page * completeEnvironment.postsPerPage
+      })
+    const remoteUsersPage = page - Math.floor(localUsersCount / completeEnvironment.postsPerPage)
+    let remoteUsers: Promise<User[]> | User[] = []
+    if (remoteUsersPage >= 0)
+      remoteUsers = User.findAll({
+        where: {
+          activated: true,
+          email: null,
+          banned: {
+            [Op.ne]: true
+          },
+          url: {
+            [Op.iLike]: `%${searchTerm}%`
+          },
+          [Op.or]: [
+            {
+              federatedHostId: {
+                [Op.notIn]: await getallBlockedServers()
               }
             },
-            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
-            order: [['createdAt', 'DESC']],
-            limit: completeEnvironment.postsPerPage,
-            offset: page * completeEnvironment.postsPerPage
-          })
-        : []
-    const remoteUsersPage = page - Math.floor(localUsersCount / completeEnvironment.postsPerPage)
-    let remoteUsers =
-      remoteUsersPage >= 0
-        ? User.findAll({
-            where: {
-              activated: true,
-              email: null,
-              banned: {
-                [Op.ne]: true
-              },
-              url: {
-                [Op.iLike]: `%${searchTerm}%`
-              },
-              [Op.or]: [
-                {
-                  federatedHostId: {
-                    [Op.notIn]: await getallBlockedServers()
-                  }
-                },
-                {
-                  federatedHostId: {
-                    [Op.eq]: null
-                  }
-                }
-              ]
-            },
-            attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
-            order: [['createdAt', 'DESC']],
-            limit: completeEnvironment.postsPerPage,
-            offset: remoteUsersPage * completeEnvironment.postsPerPage
-          })
-        : []
+            {
+              federatedHostId: {
+                [Op.eq]: null
+              }
+            }
+          ]
+        },
+        attributes: ['url', 'avatar', 'name', 'description', 'remoteId', 'bskyDid', 'federatedHostId', 'id'],
+        order: [['createdAt', 'DESC']],
+        limit: completeEnvironment.postsPerPage,
+        offset: remoteUsersPage * completeEnvironment.postsPerPage
+      })
 
     const tmp = await Promise.all([firstMatch, localUsers, remoteUsers, remoteMatch])
     if (await remoteMatch) {
@@ -252,31 +252,32 @@ export default function searchRoutes(app: Application) {
     // WILL ALWAYS ADD INITIAL @ SO WE CAN AUTOCOMPLETE ON POST EDITOR
     // search exact url match and forces update in local db.
     // only search in bsky if user has enabed bsky
-    const searchTerm = searchTermIncomplete.startsWith('@') ? searchTermIncomplete : `@${searchTermIncomplete}`
-    const searchTermSplitted = searchTerm.split('@')
+    const searchTerm = addHandlePrefix(searchTermIncomplete)
+
+    const searchData = splitHandle(searchTerm)
+
     let result: User | null = null
 
     if (
       completeEnvironment.enableBsky &&
       usr.enableBsky &&
-      searchTermSplitted.length === 2 &&
-      searchTermSplitted[0] == ''
+      searchData.type === "bluesky"
     ) {
       try {
-        const bskySearchResult = await getAtprotoUser(searchTerm.split('@')[1], usr)
+        const bskySearchResult = await getAtprotoUser(searchData.handle, usr)
         if (bskySearchResult && bskySearchResult.url != completeEnvironment.deletedUser) {
           result = bskySearchResult
         }
       } catch (error) {
         logger.debug({
-          message: `Error in search of bsky user: searchTerm`,
+          message: `Error in search of bsky user: ${searchTerm}`,
           error
         })
       }
     }
 
     // we have a full @fediUser@fediServer url. Time to search!
-    if (!result && searchTermSplitted.length === 3) {
+    if (!result && searchData.type === "fediverse") {
       result = await searchRemoteUser(searchTerm, usr)
     }
     return result
@@ -295,9 +296,18 @@ export default function searchRoutes(app: Application) {
   ): Promise<string[]> {
     let res: string[] = []
     const totalPostExactMatchQuery: any = await sequelize.query(
-      `SELECT count(*) AS "count" FROM (select 1 from "postTags" AS "postTags" INNER JOIN "posts" AS "post" ON "postTags"."postId" = "post"."id" AND "post"."privacy" IN (0, 2) ${
-        options?.userId ? 'AND "post"."userId" = \'' + options.userId + "'" : ''
-      } WHERE "postTags"."tagName" ILIKE ':searchParam' limit 5000);`,
+      `SELECT
+        count(*) AS "count"
+      FROM
+        (
+          SELECT 1
+          FROM "postTags" AS "postTags"
+          INNER JOIN "posts" AS "post"
+            ON "postTags"."postId" = "post"."id"
+            AND "post"."privacy" IN (0, 2)
+            ${options?.userId ? 'AND "post"."userId" = \'' + options.userId + "'" : ''}
+          WHERE "postTags"."tagName" ILIKE ':searchParam' limit 5000
+        );`,
       {
         replacements: {
           searchParam: searchTerm

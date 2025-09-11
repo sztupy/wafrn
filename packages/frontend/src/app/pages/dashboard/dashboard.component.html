@@ -3,12 +3,12 @@
     <h2 class="my-3 text-3xl dashboard-title">{{ title }}</h2>
   </div>
 }
-@for (post of posts; track $index) {
-  <app-post [post]="post"></app-post>
-}
-@if (loadingPosts) {
-  <app-loader>posts</app-loader>
-}
+<app-post-list
+  [posts]="posts"
+  [visible]="snActive"
+  [loading]="loadingPosts"
+  (loadPosts)="loadPosts(currentPage)"
+></app-post-list>
 
 @if (noMorePosts) {
   <mat-card class="p-3 mb-6 lg:mx-4 wafrn-container">

@@ -46,12 +46,14 @@ import { ReportService } from 'src/app/services/report.service'
 })
 export class BlogHeaderComponent implements OnChanges, OnDestroy {
   parser = new DOMParser()
-  blogDetails = input.required<BlogDetails>()
+  blogDetails = input<BlogDetails>()
   avatarUrl = computed<string>(() => {
-    return this.blogDetails().url.startsWith('@')
-      ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(this.blogDetails().avatar)
+    const blog = this.blogDetails()
+    if (blog === undefined) return '/assets/img/anon.webp'
+    return blog.url.startsWith('@')
+      ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.avatar)
       : EnvironmentService.environment.externalCacheurl +
-          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blogDetails().avatar)
+          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
   })
   headerUrl = ''
   loggedIn: Signal<boolean>
@@ -71,10 +73,10 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
   allowAsk = false
   allowRemoteAsk = false
   isBlueskyUser = false
-  headerHTML = ''
+  headerHTML: string | undefined
 
   fediComp = computed<{ name: string; value: string }[]>(() => {
-    const fediAttachment = this.blogDetails().publicOptions.find(
+    const fediAttachment = this.blogDetails()?.publicOptions.find(
       (elem) => elem.optionName == 'fediverse.public.attachment'
     )
     if (fediAttachment) {
@@ -96,33 +98,33 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     this.loggedIn = loginService.loggedIn
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.blogDetails) {
-      this.headerUrl = this.blogDetails().url.startsWith('@')
-        ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(this.blogDetails().headerImage)
-        : EnvironmentService.environment.externalCacheurl +
-          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blogDetails().headerImage)
-      const askLevelOption = this.blogDetails().publicOptions.find((elem) => elem.optionName == 'wafrn.public.asks')
-      let askLevel = askLevelOption ? parseInt(askLevelOption.optionValue) : 2
-      if (this.blogDetails().url.startsWith('@')) {
-        askLevel = 3
-      }
-      this.allowAsk = this.loginService.loggedIn() ? [1, 2].includes(askLevel) : askLevel == 1
-      this.allowAsk = this.allowAsk && this.loginService.getLoggedUserUUID() != this.blogDetails().id
-      this.allowRemoteAsk = askLevel != 3 && this.loginService.getLoggedUserUUID() != this.blogDetails().id
-      this.isMe = this.blogDetails().id == this.loginService.getLoggedUserUUID()
-      let path = this.activatedRoute.snapshot.routeConfig?.path
-      if (path && this.allowAsk && path.toLowerCase().endsWith('/ask')) {
-        this.openAskDialog()
-      }
-      const parsedAsHTML = this.parser.parseFromString(this.blogDetails().description, 'text/html')
-      const imgs = parsedAsHTML.getElementsByTagName('img')
-      Array.from(imgs).forEach((img, index) => {
-        if (!img.src.startsWith(EnvironmentService.environment.externalCacheurl)) {
-          img.src = EnvironmentService.environment.externalCacheurl + encodeURIComponent(img.src)
-        }
-      })
-      this.headerHTML = parsedAsHTML.documentElement.innerHTML
+    const blog = this.blogDetails()
+    if (blog === undefined) return
+    this.headerUrl = blog.url.startsWith('@')
+      ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.headerImage)
+      : EnvironmentService.environment.externalCacheurl +
+        encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.headerImage)
+    const askLevelOption = blog.publicOptions.find((elem) => elem.optionName == 'wafrn.public.asks')
+    let askLevel = askLevelOption ? parseInt(askLevelOption.optionValue) : 2
+    if (blog.url.startsWith('@')) {
+      askLevel = 3
     }
+    this.allowAsk = this.loginService.loggedIn() ? [1, 2].includes(askLevel) : askLevel == 1
+    this.allowAsk = this.allowAsk && this.loginService.getLoggedUserUUID() != blog.id
+    this.allowRemoteAsk = askLevel != 3 && this.loginService.getLoggedUserUUID() != blog.id
+    this.isMe = blog.id == this.loginService.getLoggedUserUUID()
+    let path = this.activatedRoute.snapshot.routeConfig?.path
+    if (path && this.allowAsk && path.toLowerCase().endsWith('/ask')) {
+      this.openAskDialog()
+    }
+    const parsedAsHTML = this.parser.parseFromString(blog.description, 'text/html')
+    const imgs = parsedAsHTML.getElementsByTagName('img')
+    Array.from(imgs).forEach((img, index) => {
+      if (!img.src.startsWith(EnvironmentService.environment.externalCacheurl)) {
+        img.src = EnvironmentService.environment.externalCacheurl + encodeURIComponent(img.src)
+      }
+    })
+    this.headerHTML = parsedAsHTML.documentElement.innerHTML
   }
 
   ngOnDestroy(): void {}
@@ -182,10 +184,14 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
   }
 
   async updateDisableRewoots() {
-    await this.postService.updateDisableRewoots(this.blogDetails().id)
+    const blog = this.blogDetails()
+    if (blog === undefined) return
+    await this.postService.updateDisableRewoots(blog.id)
   }
 
   async updateDisableQuotes() {
-    await this.postService.updateDisableQuotes(this.blogDetails().id)
+    const blog = this.blogDetails()
+    if (blog === undefined) return
+    await this.postService.updateDisableQuotes(blog.id)
   }
 }

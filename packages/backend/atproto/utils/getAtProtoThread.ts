@@ -56,7 +56,7 @@ async function getAtProtoThread(
         indexedAt: new Date().toISOString(),
         author: {
           did: operation.remoteUser.bskyDid as string,
-          handle: operation.remoteUser.url.split('@')[1],
+          handle: operation.remoteUser.longHandle,
           displayName: operation.remoteUser.name
         }
       }
@@ -233,9 +233,10 @@ async function processSinglePost(
     postText = postText.replaceAll('\n', '<br>')
 
     const labels = getPostLabels(post)
-    const cw = labels.length > 0
-      ? `Post is labeled as: ${labels.join(', ')}`
-      : undefined
+    let cw = labels.length > 0 ? `Post is labeled as: ${labels.join(', ')}` : undefined
+    if (!cw && postCreator.NSFW) {
+      cw = 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+    }
     const newData = {
       userId: postCreator.id,
       bskyCid: post.cid,

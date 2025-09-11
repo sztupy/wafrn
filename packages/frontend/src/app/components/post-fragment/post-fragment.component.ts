@@ -67,7 +67,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
   followsSubscription!: Subscription
   userId: string
   mentionPosts: string[] = []
-  availableEmojiNames: string[] = []
+  availableEmojiNames: Set<string> = new Set()
 
   userCannotReact = computed<boolean>(() => {
     const ownPost = this.fragment().userId === this.userId
@@ -164,12 +164,14 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
 
   ngOnInit(): void {
     this.followsSubscription = this.postService.updateFollowers.subscribe(() => {
-      this.availableEmojiNames = []
-      this.postService.emojiCollections.forEach(
-        (collection) =>
-          (this.availableEmojiNames = this.availableEmojiNames.concat(collection.emojis.map((elem) => elem.name)))
-      )
-      this.availableEmojiNames.push('❤️')
+      this.postService.emojiCollections.forEach((collection) => {
+        collection.emojis
+          .map((e) => e.name)
+          .forEach((name) => {
+            this.availableEmojiNames.add(name)
+          })
+      })
+      this.availableEmojiNames.add('❤️')
     })
     this.likeSubscription = this.postService.postLiked.subscribe((likeEvent) => {
       if (likeEvent.id === this.fragment()?.id) {
@@ -269,8 +271,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
       this.emojiCollection()
         .sort(
           (a, b) =>
-            +(this.availableEmojiNames.includes(b.name) || !b.img) -
-            +(this.availableEmojiNames.includes(a.name) || !a.img)
+            +(this.availableEmojiNames.has(b.name) || !b.img) - +(this.availableEmojiNames.has(a.name) || !a.img)
         )
         .sort((a, b) => +(b.id === 'Like') - +(a.id === 'Like'))
         .sort((a, b) => b.users.length - a.users.length)
@@ -442,10 +443,12 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     })
   }
 
-  createUserObject() {
+  createUserObject(): SimplifiedUser | undefined {
+    const currentUser = this.jwtService.getTokenData()
+    if (currentUser === null) return undefined
     return {
-      url: this.jwtService.getTokenData()['url'],
-      name: this.jwtService.getTokenData()['url'],
+      url: currentUser.url,
+      name: currentUser.url,
       id: this.loginService.getLoggedUserUUID(),
       avatar: ''
     }

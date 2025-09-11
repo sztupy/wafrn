@@ -17,7 +17,7 @@ import { SimplifiedUser } from '../interfaces/simplified-user'
 import { Router } from '@angular/router'
 
 @Injectable({
-  providedIn: 'any'
+  providedIn: 'root'
 })
 export class EditorService implements OnDestroy {
   base_url = EnvironmentService.environment.baseUrl
@@ -125,6 +125,7 @@ export class EditorService implements OnDestroy {
   }
 
   async searchUser(url: string): Promise<{ users: SimplifiedUser[] }> {
+    if (url.length === 0) return { users: [] }
     let result = await firstValueFrom(
       this.http.get<{
         users: SimplifiedUser[]

@@ -26,6 +26,8 @@ import getFollowedsIds from './cacheGetters/getFollowedsIds.js'
 import { Queue } from 'bullmq'
 import { completeEnvironment } from './backendOptions.js'
 import { InteractionControl, InteractionControlType, Privacy } from '../models/post.js'
+import { getAllLocalUserIds } from './cacheGetters/getAllLocalUserIds.js'
+import { checkBskyLabelersNSFW } from './atproto/checkBskyLabelerNSFW.js'
 
 const updateMediaDataQueue = new Queue('processRemoteMediaData', {
   connection: completeEnvironment.bullmqConnection,
@@ -201,6 +203,26 @@ async function getUnjointedPosts(postIdsInput: string[], posterId: string, doNot
   // we need a list of all the userId we just got from the post
   let userIds: string[] = []
   let postIds: string[] = []
+  if (completeEnvironment.enableBsky) {
+    // DETECT BSKY NSFW
+    const bskyPosts = await Post.findAll({
+      where: {
+        id: {
+          [Op.in]: postIdsInput
+        },
+        userId: {
+          [Op.notIn]: await getAllLocalUserIds()
+        },
+        bskyUri: {
+          [Op.ne]: null
+        }
+      }
+    })
+    if (bskyPosts && bskyPosts.length) {
+      await checkBskyLabelersNSFW(bskyPosts.filter((elem) => !elem.content_warning && elem.bskyUri))
+    }
+    // END DETECT BSKY NSFW
+  }
   const posts = await Post.findAll({
     include: [
       {
@@ -379,7 +401,7 @@ async function getUnjointedPosts(postIdsInput: string[], posterId: string, doNot
       post.content === '' &&
       !tagsAwaited.some((tag: any) => tag.postId === post.id) &&
       !mediasAwaited.some((media: any) => media.postId === post.id)
-    const validPrivacy = [Privacy.Public, Privacy.LocalOnly, Privacy.Unlisted].includes(post.privacy)
+    const validPrivacy = [Privacy.Public, Privacy.LocalOnly, Privacy.Unlisted, Privacy.LinkOnly].includes(post.privacy)
     const userFollowsPoster = usersFollowedByPoster.includes(post.userId) && post.privacy === Privacy.FollowersOnly
     const userIsMentioned = postsMentioningUser.includes(post.id)
     const posterIsInBlockedServer = blockedServers.includes(usersMap.get(post.userId)?.federatedHostId as string)
@@ -460,8 +482,8 @@ async function canInteract(
   let userFollowers = userFollowersInput
     ? userFollowersInput
     : getFollowedsIds(userId, false, {
-        getFollowersInstead: true
-      })
+      getFollowersInstead: true
+    })
   let mentions = mentionsInput ? mentionsInput : getMentionedUserIds([postId])
   let post: Promise<Post | null> | Post | null = Post.findByPk(postId)
   await Promise.all([usersFollowing, userFollowers, mentions, post])

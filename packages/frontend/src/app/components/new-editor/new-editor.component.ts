@@ -1,5 +1,17 @@
 import { CommonModule, Location } from '@angular/common'
-import { Component, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import {
+  Component,
+  computed,
+  ElementRef,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  Signal,
+  viewChild,
+  ViewChild
+} from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -13,14 +25,16 @@ import {
   faExclamationTriangle,
   faGlobe,
   faLandMineOn,
-  faQuestionCircle,
   faQuoteLeft,
   faServer,
   faSkullCrossbones,
   faUnlock,
   faUser,
   faPaperPlane,
-  faAt
+  faNewspaper,
+  faAt,
+  faCircleInfo,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
 import { PostHeaderComponent } from '../post/post-header/post-header.component'
@@ -55,6 +69,15 @@ import { Emoji } from 'src/app/interfaces/emoji'
 import { Dialog } from '@angular/cdk/dialog'
 import { Router } from '@angular/router'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { BlogDetails } from 'src/app/interfaces/blogDetails'
+import Fuse from 'fuse.js'
+
+type EmojiSuggestion = {
+  img: string
+  id: string
+  name: string
+}
+
 @Component({
   selector: 'app-new-editor',
   imports: [
@@ -80,7 +103,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
     TranslateModule,
     MatBadgeModule,
     MatChipsModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTooltipModule
   ],
   templateUrl: './new-editor.component.html',
   styleUrl: './new-editor.component.scss'
@@ -91,7 +115,8 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     { level: 3, name: 'Unlisted', icon: faUnlock },
     { level: 2, name: 'This instance only', icon: faServer },
     { level: 1, name: 'Followers only', icon: faUser },
-    { level: 10, name: 'Direct Message', icon: faEnvelope }
+    { level: 10, name: 'Direct Message', icon: faEnvelope },
+    { level: 20, name: 'Link Only', icon: faNewspaper }
   ]
   quoteOpen = false
   data: EditorData | undefined
@@ -105,9 +130,15 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   pollQuestions: QuestionPollQuestion[] = []
   disableImageUploadButton = false
   uploadedMedias: WafrnMedia[] = []
-  emojiCollections: EmojiCollection[] = []
+
+  postContent = viewChild<ElementRef<HTMLTextAreaElement>>('postContent')
   @ViewChild('suggestionsMenu') suggestionsMenu!: MatMenuTrigger
+  @ViewChild(FileUploadComponent) fileUploadComponent: FileUploadComponent | undefined
+
+  suggestionLoading = signal(false)
+  suggestionMatches = signal(false)
   suggestions: { img: string; text: string }[] = []
+  emojiSuggestions: EmojiSuggestion[] = []
   cursorPosition = {
     x: 0,
     y: 0
@@ -126,16 +157,22 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   urlPostToQuote: string = ''
   quoteLoading = false
   postBeingSubmitted = false
+  draggingOverTextarea = false
+
+  currentUser: Signal<BlogDetails | undefined>
+  currentUserAvatar: Signal<string>
 
   closeIcon = faClose
   quoteIcon = faQuoteLeft
   contentWarningIcon = faExclamationTriangle
   landMineIcon = faLandMineOn
   skull = faSkullCrossbones
-  infoIcon = faQuestionCircle
+  infoIcon = faCircleInfo
   alertIcon = faExclamationTriangle
   postIcon = faPaperPlane
   atIcon = faAt
+  addIcon = faPlus
+
   emojiSubscription: Subscription
   editorUpdatedSubscription: Subscription | undefined
   httpMentionPetitionSubscription: Subscription | undefined
@@ -144,6 +181,32 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   showMentionedUsersList = true
 
   parser = new DOMParser()
+
+  // Emoji search
+  emojiCollections = signal<EmojiCollection[]>([])
+  emojiProcessed = computed<Emoji[]>(() =>
+    this.emojiCollections()
+      .flatMap((collection) => collection.emojis.map((emoji) => emoji))
+      .map((emoji) => {
+        return emoji
+      })
+  )
+  fuse = new Fuse<Emoji>([], {
+    threshold: 0.4,
+    keys: [
+      { name: 'id' },
+      {
+        name: 'name',
+        getFn: (emoji) => {
+          // Trim keyboard emoji
+          const keyboardEmoji = emoji.id !== emoji.name
+          if (keyboardEmoji) return emoji.name.split(')').at(1) ?? emoji.name
+
+          return emoji.name
+        }
+      }
+    ]
+  })
 
   constructor(
     private messages: MessageService,
@@ -163,10 +226,10 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.privacy = Math.max(this.data.post.privacy, this.privacy)
     }
     this.emojiSubscription = this.postService.updateFollowers.subscribe(() => {
-      this.emojiCollections = this.postService.emojiCollections
+      this.emojiCollections.set([...this.postService.emojiCollections])
+      this.fuse.setCollection(this.emojiProcessed())
     })
-    let postCreatorContent = ''
-    const currentUserId = this.jwtService.getTokenData().userId
+    const currentUserId = this.jwtService.getTokenData()?.userId
     if (this.data?.post?.mentionPost && this.data.post.mentionPost.length > 0) {
       const mentionedUsersSet = new Set(this.data.post.mentionPost.filter((elem) => elem.id != currentUserId))
       this.mentionedUsers = Array.from(mentionedUsersSet)
@@ -179,7 +242,6 @@ export class NewEditorComponent implements OnInit, OnDestroy {
         this.mentionedUsers.push(this.data.post.user)
       }
     }
-    this.postCreatorForm.controls['content'].patchValue(postCreatorContent)
 
     if (this.editing && this.data?.post) {
       this.postCreatorForm.controls['content'].patchValue(this.data.post.markdownContent)
@@ -188,6 +250,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.uploadedMedias = this.data.post.medias ? this.data.post.medias.filter((elem) => elem.mediaOrder < 9999) : []
       this.privacy = this.data.post.privacy
     }
+
+    this.currentUser = loginService.currentAccount
+    this.currentUserAvatar = computed(
+      () => (this.currentUser() && dashboardService.getAvatarUrl(<BlogDetails>this.currentUser())) || ''
+    )
   }
 
   ngOnInit() {
@@ -211,9 +278,9 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       const textarea = document.getElementById('postCreatorContent') as HTMLTextAreaElement
       const internalPosition = this.getCaretPosition(textarea)
       const rect = textarea.getBoundingClientRect()
-      // 250 being the max width of the suggestions menu and 350 being the max height
+      // 350 being the max width of the suggestions menu and 350 being the max height
       this.cursorPosition = {
-        x: Math.min(internalPosition.x + rect.x, screenWidth - 275),
+        x: Math.min(internalPosition.x + rect.x, screenWidth - 350),
         y: Math.min(
           Math.max(48, internalPosition.y + rect.y),
           Math.max(screenHeight - 325, screenHeight - 64 * this.suggestions.length)
@@ -222,51 +289,81 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMentionsSuggestions(cursorPosition: number) {
+  updateMentionsSuggestions(newText: string | null, cursorPosition: number) {
     this.httpMentionPetitionSubscription?.unsubscribe()
-    this.suggestions = []
-    const textToMatch = (' ' +
-      this.postCreatorForm.value.content?.slice(cursorPosition - 250, cursorPosition).replaceAll('\n', ' ')) as string
-    const matches = textToMatch.match(/[\n\r\s]?[@:][\w-\.]+@?[\w-\.]*$/)
-    if (matches && matches.length > 0) {
-      this.updateMentionsPanelPosition()
-      const match = matches[0].trim()
-      if (match.startsWith('@')) {
-        this.httpMentionPetitionSubscription = from(
-          this.editorService.searchUser(match.toLowerCase().slice(1))
-        ).subscribe((res: any) => {
-          this.suggestions = res.users.map((elem: any) => {
-            return {
-              img: elem.avatar,
-              text: elem.url
-            }
-          })
-          this.httpMentionPetitionSubscription?.unsubscribe()
+    this.suggestions.length = 0
+    this.emojiSuggestions.length = 0
+    this.suggestionLoading.set(false)
+
+    const textToMatch = (' ' + newText?.slice(cursorPosition - 250, cursorPosition).replaceAll('\n', ' ')) as string
+    const match = textToMatch
+      .match(/[\n\r\s]?[@:][\w-\.]+@?[\w-\.]*$/)
+      ?.at(0)
+      ?.trim()
+    const trailingSpace = newText?.endsWith(' ')
+    if (!match || trailingSpace) {
+      this.suggestionMatches.set(false)
+      return
+    }
+    this.suggestionMatches.set(true)
+
+    const matchIsUser = match.startsWith('@')
+    if (matchIsUser) {
+      this.suggestionLoading.set(true)
+      this.httpMentionPetitionSubscription = from(
+        this.editorService.searchUser(match.toLowerCase().slice(1))
+      ).subscribe((res: any) => {
+        this.suggestions = res.users.map((elem: any) => {
+          return {
+            img: elem.avatar,
+            text: elem.url
+          }
         })
-      } else {
-        this.suggestions = this.emojiCollections
-          .map((elem) => {
-            const emojis = elem.emojis.filter(
-              (emoji) => emoji.id == emoji.name && emoji.name.toLowerCase().includes(match.toLowerCase())
-            )
-            return emojis.map((emoji) => ({
-              text: emoji.id,
-              img: emoji.url
-            }))
-          })
-          .flat()
-          .slice(0, 25)
-      }
+        this.httpMentionPetitionSubscription?.unsubscribe()
+        this.suggestionLoading.set(false)
+      })
+    } else {
+      // Evil regex to remove VARIATION SELECTOR 1-16 (check https://unicode-explorer.com/b/FE00)
+      // These made certain keyboard emoji duplicate. Agony.
+      //
+      // Sliced to 25 because if you have more than that many suggestions you have a problem
+      const matchedEmojiIds = [
+        ...new Set(this.fuse.search(match).map((res) => res.item.id.replaceAll(/([\uFE00-\uFE0F])/g, '')))
+      ].slice(0, 25)
+      this.emojiSuggestions = matchedEmojiIds
+        .map((id) => this.emojiProcessed().find((emoji) => emoji.id === id))
+        .filter((elem) => elem !== undefined)
+        .map((emoji) => ({
+          img: emoji.url
+            ? EnvironmentService.environment.externalCacheurl +
+              EnvironmentService.environment.baseMediaUrl +
+              encodeURIComponent(emoji.url)
+            : '',
+          id: emoji.id,
+          name: emoji.name.includes(')') ? emoji.name.split(')')[1] : emoji.name
+        }))
     }
   }
 
   insertMention(user: { img: string; text: string }) {
     let initialPart = (' ' + this.postCreatorForm.value.content?.slice(0, this.cursorTextPosition)) as string
-    const userUrl = user.text.startsWith(':') ? user.text : user.text.startsWith('@') ? user.text : '@' + user.text
-    initialPart = initialPart.replace(/[[@:][A-Z0-9a-z_.@-]*$/i, userUrl)
+    const userUrl = user.text.startsWith('@') ? user.text : '@' + user.text
+    initialPart = initialPart.replace(/[[@][A-Z0-9a-z_.@-]*$/i, userUrl)
     let finalPart = this.postCreatorForm.value.content?.slice(this.cursorTextPosition) as string
     this.postCreatorForm.controls['content'].patchValue(initialPart.trim() + ' ' + finalPart.trim())
+    this.postContent()?.nativeElement.focus()
     this.suggestions = []
+    this.suggestionMatches.set(false)
+  }
+
+  insertEmoji(emoji: EmojiSuggestion) {
+    let initialPart = (' ' + this.postCreatorForm.value.content?.slice(0, this.cursorTextPosition)) as string
+    initialPart = initialPart.replace(/[[:][A-Z0-9a-z_.@-]*$/i, emoji.id)
+    let finalPart = this.postCreatorForm.value.content?.slice(this.cursorTextPosition) as string
+    this.postCreatorForm.controls['content'].patchValue(initialPart.trim() + ' ' + finalPart.trim())
+    this.postContent()?.nativeElement.focus()
+    this.emojiSuggestions.length = 0
+    this.suggestionMatches.set(false)
   }
 
   ngOnDestroy(): void {
@@ -411,7 +508,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     let tagsToSend = ''
     this.tags
       .split(',')
-      .map((elem) => elem.trim())
+      .map(this.tagMap)
       .filter((t) => t !== '')
       .forEach((elem) => {
         tagsToSend = `${tagsToSend}${elem.trim()},`
@@ -476,6 +573,13 @@ export class NewEditorComponent implements OnInit, OnDestroy {
 
   closeEditor() {
     this.location.back()
+  }
+
+  tagMap(tags: string): string {
+    const trimmed = tags.trim()
+    const prefixRemoved = trimmed.startsWith('#') ? trimmed.slice(1) : trimmed
+
+    return prefixRemoved
   }
 
   // things for calculating position
@@ -544,18 +648,21 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     this.httpMentionPetitionSubscription = undefined
   }
   editorFocusedIn() {
-    this.editorUpdatedSubscription = this.postCreatorForm.controls['content'].valueChanges
-      .pipe(debounceTime(300))
-      .subscribe((changes) => this.editorUpdateProcess())
+    this.editorUpdatedSubscription = this.postCreatorForm.controls['content'].valueChanges.subscribe((newValue) =>
+      this.editorUpdateProcess(newValue)
+    )
   }
 
-  editorUpdateProcess() {
-    let postCreatorHTMLElement = document.getElementById('postCreatorContent') as HTMLTextAreaElement
+  editorUpdateProcess(change: string | null) {
+    const postElement = this.postContent()?.nativeElement
+    if (!postElement) return
+
     // we only call the event if user is writing to avoid TOOMFOLERY
-    if (postCreatorHTMLElement.selectionStart === postCreatorHTMLElement.selectionEnd) {
-      this.updateMentionsSuggestions(postCreatorHTMLElement.selectionStart)
-      this.cursorTextPosition = postCreatorHTMLElement.selectionStart
-    }
+    const textSelected = postElement.selectionStart !== postElement.selectionEnd
+    if (textSelected) return
+
+    this.updateMentionsSuggestions(change, postElement.selectionStart)
+    this.cursorTextPosition = postElement.selectionStart
   }
 
   removeMention(index: number) {
@@ -625,5 +732,84 @@ export class NewEditorComponent implements OnInit, OnDestroy {
 
   mediaIsVideo(media: WafrnMedia) {
     return media.url.endsWith('mp4') // technology
+  }
+
+  handlePaste(event: ClipboardEvent) {
+    const items = event.clipboardData?.items
+    const files = event.clipboardData?.files
+    console.log(files)
+    if (items === undefined) return
+
+    // Choose first matching media format
+    // Has to be a for loop because of evil APIs
+    const mediaFormats = ['image', 'video', 'audio']
+    let item = undefined
+    for (let i = 0; i < items.length; i++) {
+      const element = items[i]
+      const itemIsMedia = mediaFormats.some((format) => element.type.includes(format))
+      if (element.type === 'application/x-moz-file') {
+        this.messages.add({
+          severity: 'warn',
+          summary: 'Firefox does not allow reading the clipboard from file explorers, try dragging the file in'
+        })
+      }
+      if (itemIsMedia) {
+        item = items[i]
+        break
+      }
+    }
+    if (item === undefined) return
+
+    const image = item.getAsFile()
+    if (!image) return
+
+    this.fileUploadComponent?.uploadFile(image)
+  }
+
+  handleDrop(event: DragEvent) {
+    event.preventDefault()
+    this.draggingOverTextarea = false
+
+    const items = event.dataTransfer?.items
+
+    // Handle Firefox jank and guard for if we had to resort to dark arts
+    if (items && this.handleFirefoxJank(items)) return
+
+    const item = event.dataTransfer?.files[0]
+    if (item === undefined) return
+
+    const mediaFormats = ['image', 'video', 'audio']
+    const itemIsMedia = mediaFormats.some((format) => item.type.includes(format))
+    if (!itemIsMedia) return
+
+    this.fileUploadComponent?.uploadFile(item)
+  }
+
+  // Returns true if we had to do it the evil way
+  handleFirefoxJank(items: DataTransferItemList): boolean {
+    for (let i = 0; i < items.length; i++) {
+      const element = items[i]
+
+      // we got a dragged file from the DOM so now we have to go to callback hell
+      // there's no way to await this, by the way
+      if (element.type === 'application/x-moz-file-promise-url') {
+        element.getAsString(async (url) => {
+          const blob = await fetch(url).then((res) => res.blob())
+          if (blob === null) return
+          const file = new File([blob], 'image.' + blob.type.split('/')[1], { type: blob.type })
+          this.fileUploadComponent?.uploadFile(file)
+        })
+        return true
+      }
+    }
+    return false
+  }
+
+  handleDrag(event: DragEvent) {
+    if (event.type === 'dragenter') {
+      this.draggingOverTextarea = true
+    } else {
+      this.draggingOverTextarea = false
+    }
   }
 }

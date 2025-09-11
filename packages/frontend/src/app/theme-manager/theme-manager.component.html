@@ -46,16 +46,13 @@
     <link href="/assets/themes/fan.css" rel="stylesheet" />
   }
   @case ('catppuccin_frappe') {
-    <link href="/assets/themes/catppuccin_frappe.css" rel="stylesheet" />
-  }
-  @case ('catppuccin_latte') {
-    <link href="/assets/themes/catppuccin_latte.css" rel="stylesheet" />
+    <link href="/assets/themes/catppuccin_latte-frappe.css" rel="stylesheet" />
   }
   @case ('catppuccin_macchiato') {
-    <link href="/assets/themes/catppuccin_macchiato.css" rel="stylesheet" />
+    <link href="/assets/themes/catppuccin_latte-macchiato.css" rel="stylesheet" />
   }
   @case ('catppuccin_mocha') {
-    <link href="/assets/themes/catppuccin_mocha.css" rel="stylesheet" />
+    <link href="/assets/themes/catppuccin_latte-mocha.css" rel="stylesheet" />
   }
 }
 
@@ -67,4 +64,10 @@
 }
 @if (additionalStyleModes.lowContrastSidebar()) {
   <link href="/assets/themes/low-contrast-sidebar.css" rel="stylesheet" />
+}
+@if (additionalStyleModes.oldTags()) {
+  <link href="/assets/themes/old-tags.css" rel="stylesheet" />
+}
+@if (additionalStyleModes.colorfulTags()) {
+  <link href="/assets/themes/colorful-tags.css" rel="stylesheet" />
 }

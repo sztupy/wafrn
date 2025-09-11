@@ -1,0 +1,299 @@
+{
+  "common": {
+    "commaSeparation": "Vesszővel elválasztva",
+    "characters": "karakterek"
+  },
+  "login": {
+    "title": "Bejelentkezés",
+    "welcomeBack": "Üdvözlünk!",
+    "exploreWithoutAccount": "Kattints ide hogy körülnézz mielőtt beregisztrálsz!",
+    "dontHaveAccount": "Nincs regisztrációd?",
+    "register": "Regisztrálj be!",
+    "checkSpam": "Ha nem tudsz bejelentkezni, nézd meg a SPAM mappádat előbb!",
+    "email": "Email",
+    "password": "Jelszó",
+    "mfaNextStep": "Csak egy lépés...",
+    "mfaToken": "Azonosító kód",
+    "mfaTokenEnter": "Add meg az azonosító kódodat az két faktoros azonosító alkalmazásból",
+    "forgottenPassword": "Elfelejtett jelszó",
+    "showPassword": "Jelszó megmutatása",
+    "hidePassword": "Jelszó elrejtése",
+    "loginButton": "Bejelentkezés",
+    "checkEmail": "Kérlek nézd meg az emailjeidet",
+    "checkEmailLine1": "Küldtünk neked egy emailt. Kérlek nézd meg a SPAM mappádat is",
+    "checkEmailLine2": "Ha problémáa ütköztél kérlek lépj kapcsolatba az adminnal, akinek az elérhetősége megtalálható a <a href=\"/about\">bemutatkozás oldalon</a>",
+    "alreadyLoggedIn": "Már be vagy jelentkezve ezzel a felhasználóval"
+  },
+  "register": {
+    "title": "Regisztráció",
+    "welcome": "Köszöntünk a Wafrnban!",
+    "manualReviewInfo": "Egy adminisztrátor meg fogja nézni a profilodat mielőtt csatlakozhatsz. Ez egy manuális folyamat ami több időt vehet igénybe.",
+    "registerButton": "Regisztráció"
+  },
+  "notifications": {
+    "title": "Értesítések",
+    "loadingMore": "További értesítések betöltése",
+    "refresh": "Frissítés"
+  },
+  "menu": {
+    "login": "Bejelentkezés",
+    "register": "Regisztráció",
+    "dashboard": "Hírfolyam",
+    "dashboardHover": "Hírfolyam megtekintése",
+    "writeWoot": "Woot",
+    "notifications": "Értesítések",
+    "explore": "Felfedezés",
+    "exploreWafrn": "A WAFRN felfedezése",
+    "exploreFediverse": "WAFRN és barátok",
+    "unansweredAsks": "Megválaszolatlan kérdések",
+    "privateMessages": "Privát üzenetek",
+    "search": "Keresés",
+    "profile": "Profil",
+    "myBlog": "Saját blog",
+    "about": "Bemutatkozás",
+    "privacy": "Adatvédelem",
+    "source": "Forráskód",
+    "patreon": "Patreon",
+    "kofi": "Ko-fi",
+    "inbox": "Beérkezett üzenetek",
+    "otherAccounts": "További felhasználók",
+    "addAccount": "Felhasználó hozzáadása",
+    "logout": "Kijelentkezés",
+    "viewBlog": "Blog megtekintése",
+    "switchToAlt": "Felhasználóváltás",
+    "faq": "GYIK",
+    "more": "Tovább",
+    "settings": {
+      "title": "Beállítások",
+      "follows": "Követők kezelése",
+      "enableBluesky": "Bluesky engedélyezése",
+      "editProfile": "Tulajdonságok és profilok",
+      "themeEditor": "Témaszerkesztő",
+      "mutedUsers": "Némított felhasználók",
+      "mutedPosts": "Némított posztok",
+      "bookmarkedPosts": "Könyvjelzők",
+      "followedHashtags": "Követett hashtagek",
+      "myBlockedUsers": "Blokkolt felhasználók",
+      "myBlockedServers": "Blokkolt szerverek",
+      "importFollows": "Követők importálása",
+      "superSecretMenu": "Szuper-titkos menü"
+    },
+    "admin": {
+      "title": "Adminisztráció",
+      "serverList": "Szerverek listája",
+      "addEmojis": "Emoji hozzáadása",
+      "reports": "Bejelentések",
+      "bans": "Tiltott felhasználók",
+      "blocklist": "Blokkolt felhasználók",
+      "stats": "Statisztika",
+      "awaitingAproval": "Engedélykérések"
+    }
+  },
+  "theme-editor": {
+    "title": "Témaszerkesztő",
+    "templateNote": "Kiinduló téma, valamint tippek és trükkök megtalálhatóak:",
+    "themeTextLabel": "CSS téma szerkesztése",
+    "themeTextPlaceholder": "Saját CSS írása...",
+    "themeGuideName": "Használati útmutató",
+    "updateButton": "Téma frissítése"
+  },
+  "editor": {
+    "inReplyTo": "Válasz:",
+    "quoteButton": "Woot idézése",
+    "publishWoot": "Woot publikálása",
+    "directMessageWarning": "Mind a küldő mind a fogadó szerver adminisztrátorai el tudják olvasni ezeket az üzeneteket!",
+    "unlistedWarning": "Listázatlan posztok nem kereshetőek, beleértve hashtageket, és nem jelennek meg a Felfedezés oldalon sem. A követőid azonban látják őket a hírfolyamukon, valamint közvetlen linkként elérhetőek bárki számára. Lényegében ha csak a követőidnek szánsz egy posztot.",
+    "directMessageWithQuoteWarning": "Figyelem! Az idézett poszt felhasználója is értesítést fog kapni erről az üzenetről",
+    "sensitivePlaceholder": "Milyen figyelmeztetéssel szeretnéd ellátni ezt a wootot?",
+    "wootQuoteBoxLabel": "Másold be a woot linkjét hogy idézhesd. Ez lehet külső szerverről származó link, vagy helyi Wafrn link is",
+    "wootQuoteBoxPlaceholder": "Másold ide a woot linkjét",
+    "wootQuoteConfirmButton": "Woot idézése",
+    "wootTextLabel": "Woot szövege",
+    "wootTextPlaceholder": "Kezdj írni...",
+    "uploadMediaIndicator": "Dobd ide a feltöltendő fájlokat",
+    "bskyLengthWarning": "300 karakter feletti rész nem lesz látható Bluesky-on, de követőid kapnak egy linket ahol az egészet elolvashatják",
+    "bskyLengthNotice": "Csak Bluesky számára releváns. Csak közelítő érték!",
+    "bskyLengthLabel": "Bluesky karakterlimit",
+    "altTextFieldLabel": "Kép leírása",
+    "altTextFieldLabelVideo": "Videó leírása",
+    "altTextFieldPlaceholder": "Leírás. Kérlek töltsd ki!",
+    "isNSFWToggle": "Felnőtt tartalom",
+    "mediaCountMastodonWarning": "Figyelem! A további feltöltések nem lesznek láthatóak Mastodon felhasználók által!",
+    "altTextWarning": "Kérlek töltsd ki a feltöltt fájl leírását azok számára akik nem tudják azt megnézni. Ha nem szeretnél leírást adni, a beállítások alatt ki tudod kapcsolni ezt a figyelmeztetést",
+    "quoteTitle": "Idézet:",
+    "tagFieldLabel": "Tagek",
+    "tagSeparationNotice": "Vesszővel elválasztva",
+    "ariaLabelWootPrivacy": "Woot láthatóságának szerkesztése",
+    "ariaLabelQuoteSetter": "Idézet bekapcsolása",
+    "uploadMediaTooltip": "Fájl feltöltése",
+    "contentWarningTooltip": "Tartalomra vonatkozó figyelmeztetés",
+    "insertEmojiTooltip": "Emoji beillesztése",
+    "hiddenMentionsTooltip": "További említett felhasználók",
+    "editorGuide": "Szeretnéd formázni posztjaidat de nem tudod hogy kell? Látogasd meg a <a target=\"_blank\" href=\"https://wafrn.net/faq/user\">felhasználói kézikönyvet</a>",
+    "usernameLabel": "Posztoló felhasználó:"
+  },
+  "profile": {
+    "profile": {
+      "chooseAvatar": "Új profilkép feltöltése",
+      "chooseHeader": "Új fejléckép feltöltése",
+      "changeDisplayName": "Név (emojikat is tartalmazhat)",
+      "changeBio": "Bemutatkozás / a blogod leírása. Emojikat és Markdown parancsokat is tartalmazhat",
+      "extraInfoHead": "További információk a Fediverse számára",
+      "addAttachment": "Új fediverse adatcsatolmány",
+      "fieldPropertyName": "Adatcsatolmány neve",
+      "fieldPropertyValue": "Adatcsatolmány tartalma"
+    },
+    "preferences": {
+      "appearance": "Kinézet",
+      "colorScheme": "Színséma",
+      "theme": "Téma",
+      "additionalStyleModes": "További stílusok",
+      "language": "Nyelv",
+      "appLanguage": "Alkalmazás nyelve",
+      "notificationFilters": "Értesítések szűrése",
+      "showNotificationsFrom": "Értesítések mutatása az alábbi időtől: ",
+      "notifyFrom": {
+        "everyone": "Mindenki",
+        "followers": "Követők",
+        "following": "Követett blogok",
+        "mutual": "Közös ismerettségek"
+      },
+      "notifyWhen": {
+        "mentioned": "Említések",
+        "followed": "Követések",
+        "likesEmojiReacts": "Lájkok és emoji reakciók",
+        "quoted": "Idézetek",
+        "rewooted": "Rewootok"
+      },
+      "manuallyAcceptFollows": "Bekövetések manuális engedélyezése",
+      "disableForceAltText": "Leírás nélküli feltöltések engedélyezése (nagyon nagy gonoszság bekapcsolni)",
+      "forceClassicLogo": "Klasszikus logó bekapcsolása",
+      "forceClassicVideoPlayer": "Klasszikus videolejátszó bekapcsolása",
+      "forceClassicAudioPlayer": "Klasszikus audiolejátszó bekapcsolása",
+      "forceClassicMediaView": "Feltöltött képek függőleges megjelenítése",
+      "dontCollapseQuotes": "Idézetek összezsugorításának kikapcsolása",
+      "disableCwExceptMuted": "Tartalomfigyelmeztetések figyelmen kívül hagyása (kivéve ha némított szavakat tartalmaznak)",
+      "disableConfetti": "Konfettik kikapcsolása lájkolás és posztolás után",
+      "enableConfettiRecivingLike": "Konfetti bekapcsolása ha lájkot kapsz",
+      "disableUiSounds": "Hangeffektek kikapcsolása",
+      "dashboardIsExploreLocal": "Kiindulóoldal a követők hírfolyama helyett a szerver hírfolyama legyen",
+      "cocAIne": "AI lecserélése kokAInra, vagy másra",
+      "customCocAIne": "Mire cseréljem le az AI-t",
+      "notRecommendedOptions": "Nem ajánlott piszkálni jellegű beállítások",
+      "disableNSFWFilter": "Felnőtt tartalom elhomályosításának kikapcsolása",
+      "automaticallyExpandAllPosts": "Posztok összezsugorításának kikapcsolása",
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Blokkolt felhasználók, akiket mások említenek megjelenítése",
+      "hideNoDescriptionMedia": "Leírás nélküli feltöltések automatikus felnőtt tartalommá minősítése"
+    },
+    "privacy": {
+      "defaultPostPrivacy": "Posztok alapértelmezett láthatósága",
+      "asks": "Kérdések",
+      "disableEmailNotifications": "Email értesítések kikapcsolása",
+      "hideFollows": "Követők és követettek elrejtése",
+      "hideProfileNotLoggedInDescription": "Profil elrejtése regisztrálatlan felhasználók és a kereső előtt ezen a szerveren.\n(Figyelem! Más Fediverse szerverre, és Bluesky-ra elküldött posztok láthatóak lehetnek továbbra is a külsős szervereken)",
+      "rssOptions": "RSS és Microformats engedélyezése a blogomon"
+    },
+    "security": {
+      "header": "Biztonsági beállítások",
+      "passwordChange": "Jelszócsere",
+      "mfa": {
+        "header": "Két-faktoros azonosítás",
+        "setup": "Két-faktoros azonosítás beállítása",
+        "addNew": "Új két-faktoros azonosító hozzáadása",
+        "friendlyNameLabel": "Új azonosító neve. Például 'Munkahelyi telefon', vagy 'Aegis'",
+        "typeLabel": "Azonosító típusa",
+        "setupNewButton": "Új authentikátor beállítása",
+        "tokenLabel": "Kód",
+        "deleteLabel": "Törlés",
+        "scanInstructions": "Olvasd be az alábbi kódot az authentikátor alkalmazásodban, majd a megjelenített kódot írd be",
+        "installInstructions": "Ha még nem használsz authentikátor alkalmazást mi az <a href=\"https://getaegis.app/\" target=\"_blank\">Aegis</a> (Android) vagy <a href=\"https://2fas.com/\" target=\"_blank\">2FAS</a> (iOS és Android) alkalmazásokat javasoljuk",
+        "imageAltSecret": "Az titkos kódod a '{{ secret }}'",
+        "secretFallback": "Ha nem tudod beolvasni a QR kódot, akkor használd a következő titkos kódot: '{{ secret }}' a kiválasztott alkalmazásban",
+        "confirmDeleteMessage": "Biztos hogy szeretnéd ezt a két-faktoros szolgáltatót törölni? Figyelem! Ha az összes két-faktoros szolgáltatót törlöd akkor a két-faktoros azonosítás ki lesz kapcsolva",
+        "deleteSuccess": "Szolgáltató sikeresen törölve",
+        "verifySuccess": "Siker, a két-faktoros azonosítás be lett kapcsolva",
+        "verifyFailed": "Hibás azonosítás. Kérlek ellenőrizd, hogy a helyes kódot adtad-e meg. Ha nem sikerül az azonosítás kérlek fordulj az adminisztrátorokhoz segítségért!",
+        "errorMessageGeneric": "Hiba történt! Kérlek próbáld újra, vagy fordulj az adminisztrátorokhoz segítségért!",
+        "noMfa": "Nincs két-faktoros azonosítás engedélyezve a felhasználódhoz",
+        "mfaList": "Az alábbi két-faktoros azonosítók vannak engedélyezve a profilodon:",
+        "type": {
+          "totpLabel": "Authentikátor alkalmazás"
+        }
+      }
+    },
+    "other": {
+      "movingFromAccount": "'Másik felhasználód ahonnan költöznél ide. (@ nélkül)'",
+      "wordsThatWillAutoCwPosts": "Szavak amik automatikusan tartalomfigyelmeztetést idéznek elő a posztokon",
+      "superMutedWords": "Szavak, amelyek teljesen elrejtik a posztokat (Csak óvatosan használd)",
+      "availableEmoji": "Elérhető emojik",
+      "rollToCrash": "Dobj egy kockával hogy lefagyaszd a böngésződ!",
+      "rollSurvived": "Túlélted!",
+      "rollDied": "MEGHALTÁL",
+      "rollDiedCountPrefix": "Dobások száma:"
+    },
+    "bsky": {
+      "psa1": "A Bluesky integráció még kísérleti stádiumban van! Készülj fel hogy a dolgok elromolhatnak és el is fognak romolni!",
+      "psa2_1": "Kérlek nézd meg",
+      "psa2_2": "a GYIK-et",
+      "psa2_3": "hogy megtudd mi az ami többnyire működik és mi az ami nem.",
+      "psa3": "A jövőben itt tudod majd finomhangolni a Bluesky integrációdat, de most még nem."
+    },
+    "migrate": {
+      "psa1": "Ha szeretnél egy másik szerverre költözni, először add meg az új elérhetőséged (ezt a fogadó szerver ellenőrizni fogja), utána kattints",
+      "psa2": "ide"
+    },
+    "delete": {
+      "psa1": "A felhasználói fiókodat deaktiváljuk, és 30 nap múlva törölni fogjuk. A törlés visszavonhatatlan!",
+      "psa2": "Kérlek add meg a jelszavadat ha tényleg ezt szeretnéd",
+      "button": "Felhasználói fiók törlése"
+    },
+    "tabHeaders": {
+      "profile": "Profil",
+      "preferences": "Beállítások",
+      "privacySecurity": "Adatvédelem és biztonság",
+      "misc": "Egyebek"
+    },
+    "updateButton": "Profil frissítése"
+  },
+  "ask-dialog-content": {
+    "askAnonymously": "Anonim kérdés feltevése",
+    "askFormLabel": "Kérdés",
+    "askButtonText": "Küld"
+  },
+  "keyboard-shortcuts": {
+    "keyboardShortcuts": "Gyorsbillentyűk",
+    "groupNavigation": "Navigáció",
+    "scrollDown": "Görgetés le",
+    "scrollUp": "Görgetés fel",
+    "scrollDownPage": "Következő oldal",
+    "scrollUpPage": "Előző oldal",
+    "nextPost": "Következő poszt",
+    "previousPost": "Előző poszt",
+    "groupPostAction": "Posztolás",
+    "likePost": "Poszt lájkolása",
+    "rewootPost": "Hozzáadott érték nélküli rewoot",
+    "replyPost": "Válasz a posztra",
+    "quotePost": "Poszt idézése",
+    "groupMisc": "Egyebek",
+    "openEditor": "Szerkesztő megnyitása",
+    "viewKeyboardShortcuts": "Gyorsbillentyűk megtekintése",
+    "unbound": "kötetlen",
+    "additionalOptions": "További beállítások",
+    "smoothScroll": "finom-görgetés"
+  },
+  "post-fragment": {
+    "mutedWords": "A poszt némított szavakat tartalmaz:",
+    "replyingTo": "említések: "
+  },
+  "media": {
+    "noAltText": "A csatolmány nem tartalmaz leírást",
+    "sensitiveContent": "Szenzitív tartalom",
+    "manuallyHidden": "Csatolmány kézzel el lett rejtve"
+  },
+  "page-not-found": {
+    "title": "404: az oldal nem található",
+    "subtitle": "Lehet hogy eladó bojlert kerestél, de itt sajnos nem találtál.",
+    "couldNotFind": "nem vezet működő oldalra",
+    "returnHome": "Vissza a főoldalra"
+  }
+}

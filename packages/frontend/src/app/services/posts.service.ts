@@ -490,7 +490,7 @@ export class PostsService {
       )
     ]
     if (cwedWords.length > 0) {
-      newPost.muted_words_cw = `Post includes muted words: ${cwedWords}`
+      newPost.muted_words_cw = cwedWords.join(', ')
     }
     const hideQuotesLevel = localStorage.getItem('hideQuotes')
       ? parseInt(localStorage.getItem('hideQuotes') as string)
@@ -696,7 +696,9 @@ export class PostsService {
     // we remove stuff like script tags. we only allow certain stuff.
     const parsedAsHTML = this.parser.parseFromString(sanitized, 'text/html')
     const links = parsedAsHTML.getElementsByTagName('a')
-    const mentionedRemoteIds = post.mentionPost ? post.mentionPost?.map((elem) => elem.remoteId) : []
+    const mentionedRemoteIds = post.mentionPost
+      ? post.mentionPost?.map((elem) => (elem.remoteId ? elem.remoteId : `https://bsky.app/profile/${elem.bskyDid}`))
+      : []
     const mentionRemoteUrls = post.mentionPost ? post.mentionPost?.map((elem) => elem.url) : []
     const mentionedHosts = post.mentionPost
       ? post.mentionPost?.map(
@@ -726,7 +728,9 @@ export class PostsService {
       // TODO not all software links to mentionedProfile
       if (mentionedRemoteIds.includes(link.href)) {
         if (post.mentionPost) {
-          const mentionedUser = post.mentionPost.find((elem) => elem.remoteId === link.href)
+          const mentionedUser = post.mentionPost.find(
+            (elem) => elem.remoteId === link.href || `https://bsky.app/profile/${elem.bskyDid}` === link.href
+          )
           if (mentionedUser) {
             link.href = `${EnvironmentService.environment.frontUrl}/blog/${mentionedUser.url}`
             link.classList.add('mention')
@@ -924,6 +928,16 @@ export class PostsService {
       this.http.post(`${EnvironmentService.environment.baseUrl}/muteRewoots`, {
         userId: userId,
         muteQuotes: true
+      })
+    )
+    this.loadFollowers()
+    return res
+  }
+
+  async forceRefederate(postId: string) {
+    const res = await firstValueFrom(
+      this.http.post(`${EnvironmentService.environment.baseUrl}/refederatePost`, {
+        postId: postId
       })
     )
     this.loadFollowers()

@@ -63,9 +63,12 @@ async function postToAtproto(post: Post, agent: BskyAgent) {
 
   const contentWarning = post.content_warning ? `[${post.content_warning.trim()}]\n` : ''
   const tags = (await post.getPostTags()).map((elem) => `#${elem.tagName.trim().replaceAll(' ', '-')}`).join(' ')
-  let postText: string = dompurify.sanitize((contentWarning + post.markdownContent.trim() + ' ' + tags).trim(), {
-    ALLOWED_TAGS: []
-  })
+  let postText: string = dompurify.sanitize(
+    (contentWarning + (post.markdownContent ? post.markdownContent.trim() : post.content.trim()) + ' ' + tags).trim(),
+    {
+      ALLOWED_TAGS: []
+    }
+  )
 
   if (quotedPost && !bskyQuote) {
     const remoteId = getPostUrlForQuote(quotedPost)
@@ -88,7 +91,7 @@ async function postToAtproto(post: Post, agent: BskyAgent) {
       if (user.remoteMentionUrl) {
         // A Fedi user url already has an @ in the start
         mentionRegex = new RegExp(`(?<=\\s|^)(${escapedUrl})(?=\\s|$)`, 'gm')
-        postText = postText.replaceAll(mentionRegex, `[@${user.url.split('@')[1]}](${user.remoteMentionUrl})`)
+        postText = postText.replaceAll(mentionRegex, `[@${user.shortHandle}](${user.remoteMentionUrl})`)
         continue
       }
 

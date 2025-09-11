@@ -7,15 +7,13 @@
   hidden
 />
 
-@if (uploadStatus !== UploadStatus.Uploading) {
+@if (uploadStatus() !== UploadStatus.Uploading) {
   <div class="file-upload">
     <button [disabled]="disabled()" mat-icon-button class="w-full input-height-btn" (click)="fileUpload.click()">
       <fa-icon size="lg" [icon]="uploadIcon"></fa-icon>
     </button>
   </div>
-}
-
-@if (uploadStatus === UploadStatus.Uploading) {
+} @else {
   <button
     mat-button
     class="flex align-items-center justify-content-center file-upload-spinner-wrapper"
@@ -26,7 +24,7 @@
       color="accent"
       diameter="24"
       mode="determinate"
-      [value]="uploadProgress"
+      [value]="uploadProgress()"
     ></mat-spinner>
   </button>
 }

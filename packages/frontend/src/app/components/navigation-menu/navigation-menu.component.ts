@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   computed,
+  effect,
   OnDestroy,
   OnInit,
   Signal,
@@ -9,13 +10,13 @@ import {
   ViewEncapsulation,
   WritableSignal
 } from '@angular/core'
-import { NavigationEnd, Router } from '@angular/router'
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
 import { fromEvent, merge, Subscription } from 'rxjs'
 import { Action } from 'src/app/interfaces/editor-launcher-data'
 import { DashboardService } from 'src/app/services/dashboard.service'
 import { EditorService } from 'src/app/services/editor.service'
 import { JwtService } from 'src/app/services/jwt.service'
-import { LoginService } from 'src/app/services/login.service'
+import { AccountData, LoginService } from 'src/app/services/login.service'
 import { NotificationsService } from 'src/app/services/notifications.service'
 import { toObservable } from '@angular/core/rxjs-interop'
 
@@ -52,13 +53,17 @@ import {
   faArrowRightToBracket,
   faGrip,
   faImagePortrait,
-  faUsers
+  faUsers,
+  faPlus,
+  faShuffle,
+  faInbox
 } from '@fortawesome/free-solid-svg-icons'
 import { MenuItem, MenuLink } from 'src/app/interfaces/menu-item'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { AudioService } from 'src/app/services/audio.service'
 import { ThemeService } from 'src/app/services/theme.service'
 import packageJson from '../../../../package.json'
+import { BlogDetails } from 'src/app/interfaces/blogDetails'
 
 @Component({
   selector: 'app-navigation-menu',
@@ -71,6 +76,56 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = []
   menuItemsMobile: MenuItem[][] = []
   menuLinks: MenuLink[] = []
+
+  currentAccount: Signal<BlogDetails | undefined>
+  accountList: Signal<AccountData[]>
+  accountListMenuItems = computed(() =>
+    this.accountList()
+      .filter((_, index) => index !== 0)
+      .map<MenuItem>((account) => {
+        return {
+          label: '',
+          labelDynamic: () => account.blog.name,
+          image: this.dashboardService.getAvatarUrl(account.blog),
+          visible: () => this.loggedIn(),
+          badge: 0, // TODO: badges on other accounts from token (needs API)
+          items: [
+            {
+              label: 'menu.viewBlog',
+              icon: faImagePortrait,
+              visible: () => this.loggedIn(),
+              routerLinkDynamic: computed(() => '/blog/' + account.blog.url),
+              command: () => {
+                this.hideMenu()
+              }
+            },
+            {
+              label: 'menu.switchToAlt',
+              icon: faShuffle,
+              visible: () => this.loggedIn(),
+              command: () => {
+                this.hideMenu()
+                this.loginService.switchAccount(account.token)
+              }
+            },
+            {
+              label: '',
+              visible: () => this.loggedIn(),
+              divider: true
+            },
+            {
+              label: 'menu.logout',
+              icon: faSignOut,
+              visible: () => this.loggedIn(),
+              command: () => {
+                this.loginService.logOutAccount(account.token)
+                this.hideMenu()
+              }
+            }
+          ]
+        }
+      })
+  )
 
   maintenanceMode = EnvironmentService.environment.maintenance
   maintenanceMessage = EnvironmentService.environment.maintenanceMessage
@@ -113,6 +168,9 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     private audioService: AudioService,
     themeService: ThemeService
   ) {
+    this.currentAccount = loginService.currentAccount
+    this.accountList = loginService.accountList
+
     if (this.loginService.getForceClassicLogo()) {
       this.logo = '/assets/classicLogo.png'
     }
@@ -145,6 +203,8 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     )
 
     this.menuVisible = !this.mobile()
+
+    effect(() => this.loggedIn() && this.drawMenu())
   }
 
   ngOnInit(): void {
@@ -175,26 +235,27 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   }
 
   async updateNotifications(url: string) {
-    if (this.loggedIn()) {
-      const previousNotifications =
-        this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
-      const response = await this.notificationsService.getUnseenNotifications()
-      if (url === '/dashboard/notifications') {
-        this.notifications = 0
-      } else {
-        this.notifications = response.notifications
-      }
-      this.adminNotifications = response.reports
-      this.usersAwaitingApproval = response.usersAwaitingApproval
-      this.followsAwaitingApproval = response.followsAwaitingApproval
-      this.awaitingAsks = response.asks
-      const newNotifications =
-        this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
-      if (previousNotifications != newNotifications && localStorage.getItem('disableSounds') != 'true') {
-        this.audioService.playSound('notification')
-      }
-      this.cdr.detectChanges()
+    if (!this.loggedIn()) return
+
+    const previousNotifications =
+      this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
+    const response = await this.notificationsService.getUnseenNotifications()
+    if (url === '/dashboard/notifications') {
+      this.notifications = 0
+    } else {
+      this.notifications = response.notifications
     }
+    this.adminNotifications = response.reports
+    this.usersAwaitingApproval = response.usersAwaitingApproval
+    this.followsAwaitingApproval = response.followsAwaitingApproval
+    this.awaitingAsks = response.asks
+    const newNotifications =
+      this.adminNotifications + this.usersAwaitingApproval + this.followsAwaitingApproval + this.awaitingAsks
+    if (previousNotifications != newNotifications && localStorage.getItem('disableSounds') != 'true') {
+      this.audioService.playSound('notification')
+    }
+    this.cdr.detectChanges()
+
     this.drawMenu()
   }
 
@@ -251,7 +312,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: '',
+        label: 'divider',
         visible: () => !this.loggedIn(),
         divider: true
       },
@@ -308,45 +369,26 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         }
       },
       {
-        label: '',
+        label: 'menu.inbox',
+        icon: faInbox,
         visible: () => this.loggedIn(),
-        divider: true
-      },
-      {
-        label: 'menu.notifications',
-        icon: faBell,
-        visible: () => this.loggedIn(),
-        badge: this.notifications,
-        routerLink: '/dashboard/notifications',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: 'menu.privateMessages',
-        icon: faEnvelope,
-        visible: () => this.loggedIn(),
-        routerLink: '/dashboard/private',
-        command: () => {
-          this.hideMenu()
-        }
-      },
-      {
-        label: '',
-        visible: () => this.loggedIn(),
-        divider: true
-      },
-      {
-        label: 'menu.profile',
-        icon: faUser,
-        visible: () => this.loggedIn(),
-        badge: this.awaitingAsks,
+        badge: this.notifications + this.awaitingAsks + this.followsAwaitingApproval,
         items: [
           {
-            label: 'menu.myBlog',
-            icon: faImagePortrait,
+            label: 'menu.notifications',
+            icon: faBell,
             visible: () => this.loggedIn(),
-            routerLinkDynamic: () => '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
+            badge: this.notifications,
+            routerLink: '/dashboard/notifications',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.privateMessages',
+            icon: faEnvelope,
+            visible: () => this.loggedIn(),
+            routerLink: '/dashboard/private',
             command: () => {
               this.hideMenu()
             }
@@ -357,6 +399,57 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             visible: () => this.loggedIn(),
             badge: this.awaitingAsks,
             routerLink: '/profile/myAsks',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.follows',
+            icon: faUsers,
+            visible: () => this.currentAccount()?.manuallyAcceptsFollows === true,
+            badge: this.followsAwaitingApproval,
+            routerLinkDynamic: computed(() => '/blog/' + this.currentAccount()?.url + '/followers'),
+            command: () => {
+              this.hideMenu()
+            }
+          }
+        ]
+      },
+      {
+        label: 'divider',
+        visible: () => this.loggedIn(),
+        divider: true
+      },
+      {
+        label: 'user',
+        labelDynamic: computed(() => this.currentAccount()?.name ?? 'No one will believe you'),
+        image:
+          this.currentAccount() !== undefined
+            ? this.dashboardService.getAvatarUrl(<BlogDetails>this.currentAccount())
+            : '',
+        visible: () => this.loggedIn(),
+        class: 'active-account',
+        active: true,
+        items: [
+          {
+            label: 'menu.myBlog',
+            icon: faImagePortrait,
+            visible: () => this.loggedIn(),
+            routerLinkDynamic: computed(() => '/blog/' + this.currentAccount()?.url),
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'divider',
+            visible: () => this.loggedIn(),
+            divider: true
+          },
+          {
+            label: 'menu.addAccount',
+            icon: faPlus,
+            visible: () => this.loggedIn(),
+            routerLink: '/login',
             command: () => {
               this.hideMenu()
             }
@@ -373,63 +466,33 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         ]
       },
       {
+        label: 'menu.otherAccounts',
+        visible: () => this.loggedIn() && this.accountList().length > 1,
+        plainText: true
+      },
+      ...this.accountListMenuItems(),
+      {
+        label: '',
+        visible: () => this.loggedIn(),
+        divider: true
+      },
+      {
         label: 'menu.settings.title',
         icon: faCog,
         visible: () => this.loggedIn(),
-        highlightRoute: false,
-        badge: this.followsAwaitingApproval,
+        routerLink: '/settings/profile',
+        highlightRoute: false
+      },
+      {
+        label: 'menu.more',
+        icon: faGrip,
+        visible: () => this.loggedIn(),
         items: [
-          {
-            label: 'menu.settings.follows',
-            icon: faUsers,
-            visible: () => true,
-            badge: this.followsAwaitingApproval,
-            routerLinkDynamic: () => '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          // {
-          //   label: 'menu.settings.enableBluesky',
-          //   icon: faBluesky,
-          //   visible:()=> true,
-          //   routerLink: '/profile/enable-bluesky',
-          //   command: () => {
-          //     this.hideMenu()
-          //   }
-          // },
-          {
-            label: 'menu.settings.editProfile',
-            icon: faUserEdit,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/edit',
-            command: () => {
-              this.hideMenu()
-            }
-          },
           {
             label: 'menu.settings.themeEditor',
             icon: faPaintbrush,
             visible: () => this.loggedIn(),
             routerLink: '/profile/css',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.mutedUsers',
-            icon: faVolumeMute,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/mutes',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.mutedPosts',
-            icon: faBellSlash,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/silencedPosts',
             command: () => {
               this.hideMenu()
             }
@@ -451,49 +514,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             command: () => {
               this.hideMenu()
             }
-          },
-          {
-            label: 'menu.settings.myBlockedUsers',
-            icon: faBan,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/blocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.myBlockedServers',
-            icon: faServer,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/serverBlocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.settings.importFollows',
-            icon: faUserEdit,
-            visible: () => this.loggedIn(),
-            routerLink: '/profile/importFollows',
-            command: () => {
-              this.hideMenu()
-            }
-          }
-        ]
-      },
-      {
-        label: 'menu.more',
-        icon: faGrip,
-        visible: () => this.loggedIn(),
-        items: [
-          {
-            label: 'menu.settings.superSecretMenu',
-            icon: faSkull,
-            visible: () => this.loggedIn(),
-            routerLink: '/doom',
-            command: () => {
-              this.hideMenu()
-            }
           }
         ]
       },
@@ -504,10 +524,21 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
         badge: this.adminNotifications + this.usersAwaitingApproval,
         items: [
           {
-            label: 'menu.admin.serverList',
-            icon: faServer,
+            label: 'menu.admin.awaitingAproval',
+            icon: faUserLock,
             visible: () => true,
-            routerLink: '/admin/server-list',
+            badge: this.usersAwaitingApproval,
+            routerLink: '/admin/activate-users',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.reports',
+            icon: faExclamationTriangle,
+            visible: () => true,
+            badge: this.adminNotifications,
+            routerLink: '/admin/user-reports',
             command: () => {
               this.hideMenu()
             }
@@ -522,11 +553,19 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             }
           },
           {
-            label: 'menu.admin.reports',
-            icon: faExclamationTriangle,
+            label: 'menu.admin.stats',
+            icon: faChartSimple,
             visible: () => true,
-            badge: this.adminNotifications,
-            routerLink: '/admin/user-reports',
+            routerLink: '/admin/stats',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.admin.serverList',
+            icon: faServer,
+            visible: () => true,
+            routerLink: '/admin/server-list',
             command: () => {
               this.hideMenu()
             }
@@ -545,25 +584,6 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             icon: faHourglass,
             visible: () => true,
             routerLink: '/admin/user-blocks',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.stats',
-            icon: faChartSimple,
-            visible: () => true,
-            routerLink: '/admin/stats',
-            command: () => {
-              this.hideMenu()
-            }
-          },
-          {
-            label: 'menu.admin.awaitingAproval',
-            icon: faUserLock,
-            visible: () => true,
-            badge: this.usersAwaitingApproval,
-            routerLink: '/admin/activate-users',
             command: () => {
               this.hideMenu()
             }
@@ -605,7 +625,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           }
         },
         {
-          label: '',
+          label: 'mobileDivider',
           visible: () => !this.loggedIn(),
           divider: true
         },
@@ -693,7 +713,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
           label: 'menu.myBlog',
           icon: faUser,
           visible: () => this.loggedIn(),
-          routerLink: '/blog/' + (this.loggedIn() ? this.jwtService.getTokenData()['url'] : ''),
+          routerLinkDynamic: computed(() => '/blog/' + this.currentAccount()?.url),
           command: () => {
             this.hideMenu()
           }
@@ -715,8 +735,12 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
 
     this.menuLinks = [
       {
-        label: 'menu.privacy',
+        label: 'menu.about',
         routerLink: '/about'
+      },
+      {
+        label: 'menu.privacy',
+        routerLink: '/privacy'
       },
       {
         label: 'menu.faq',

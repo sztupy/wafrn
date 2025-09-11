@@ -21,7 +21,8 @@
     "loginButton": "Log in",
     "checkEmail": "Please check your email",
     "checkEmailLine1": "We have sent you an email. Please do check your email and the spam folder",
-    "checkEmailLine2": "If you have any problem, write to the instance admin, whose email can be found <a href=\"/about\">here</a>"
+    "checkEmailLine2": "If you have any problem, write to the instance admin, whose email can be found <a href=\"/about\">here</a>",
+    "alreadyLoggedIn": "You are already logged in on with that account"
   },
   "register": {
     "title": "Register",
@@ -49,11 +50,17 @@
     "search": "Search",
     "profile": "Profile",
     "myBlog": "My blog",
+    "about": "About",
     "privacy": "Privacy",
     "source": "Source",
     "patreon": "Patreon",
     "kofi": "Ko-fi",
+    "inbox": "Inbox",
+    "otherAccounts": "Other accounts",
+    "addAccount": "Add account",
     "logout": "Log out",
+    "viewBlog": "View blog",
+    "switchToAlt": "Switch to account",
     "faq": "FAQ",
     "more": "More",
     "settings": {
@@ -103,8 +110,10 @@
     "wootQuoteConfirmButton": "Add woot as quote",
     "wootTextLabel": "Woot text",
     "wootTextPlaceholder": "Start writing...",
+    "uploadMediaIndicator": "Drop to upload media",
     "bskyLengthWarning": "Text above 300 characters will be cut off and instead a link to wafrn will be shown",
     "bskyLengthNotice": "This only affects Bluesky, currently only an approximation!",
+    "bskyLengthLabel": "Bluesky character limit",
     "altTextFieldLabel": "Image Description",
     "altTextFieldLabelVideo": "Video Description",
     "altTextFieldPlaceholder": "Description. Please FILL THIS",
@@ -120,7 +129,9 @@
     "contentWarningTooltip": "Content Warning",
     "insertEmojiTooltip": "Insert emoji",
     "hiddenMentionsTooltip": "Other mentioned users",
-    "editorGuide": "Doubts on how to format the text or how to start? Check <a target=\"_blank\" href=\"https://wafrn.net/faq/user\">the guide</a>"
+    "editorGuide": "Doubts on how to format the text or how to start? Check <a target=\"_blank\" href=\"https://wafrn.net/faq/user\">the guide</a>",
+    "usernameLabel": "Posting as",
+    "noResults": "No results."
   },
   "profile": {
     "profile": {
@@ -172,7 +183,8 @@
       "notRecommendedOptions": "Not recommended options",
       "disableNSFWFilter": "Disable NSFW images filter",
       "automaticallyExpandAllPosts": "Automatically expand all posts",
-      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users"
+      "displayMentionsOfBlockedUsersFromOtherUsers": "Do not hide posts containing mentions to blocked users",
+      "hideNoDescriptionMedia": "Automatically CW media with no alt text"
     },
     "privacy": {
       "defaultPostPrivacy": "Default post privacy",
@@ -244,6 +256,113 @@
     },
     "updateButton": "Update profile"
   },
+  "settings": {
+    "sidebar": {
+      "profile": "Profile",
+      "account": "Account",
+      "appearance": "Appearance and UI",
+      "behavior": "Behavior",
+      "privacy": "Privacy",
+      "mutesAndBlocks": "Mutes and Blocks",
+      "miscellaneous": "Miscellaneous"
+    },
+    "header": {
+      "fediAttachments": "Fediverse Attachments",
+      "emailAndPassword": "Email and Password",
+      "integrations": "Integrations",
+      "migration": "Account Migration",
+      "deleteAccount": "Delete Account",
+      "appearance": "Appearance",
+      "uiLanguage": "User Interface Language",
+      "classicOptions": "Classic Options",
+      "animationsAndSounds": "Animations and Sounds",
+      "dashboardBehavior": "Dashboard Behavior",
+      "cwBehavior": "Content Warning Behavior",
+      "profilePrivacy": "Profile Privacy",
+      "editor": "Editor",
+      "followers": "Followers",
+      "mutedBlockedWords": "Muted and Blocked Words",
+      "blockBehavior": "Block Behavior",
+      "mutedBlockedUsers": "Muted and Blocked Users",
+      "fun": "Fun"
+    },
+    "fediPropertyKey": "Property Name",
+    "fediPropertyValue": "Property Value",
+    "addFediAttachment": "Add Attachment",
+    "changeAvatar": "Change Avatar",
+    "changeHeaderImage": "Change Banner",
+    "name": "Name",
+    "description": "Description",
+    "changePasswordTitle": "Request a password change",
+    "changePassword": "Change password",
+    "changePasswordDescription": "A link change your password has been sent to your email.",
+    "changePasswordMessage": "A link change your password has been sent to your email.",
+    "disableEmailNotifications": "Disable email notifications",
+    "rssOptions": "Enable RSS and microfront for my blog page",
+    "rssOptionsOptions": {
+      "none": "None",
+      "articles": "Articles (Feature WIP)",
+      "all": "All"
+    },
+    "alsoKnownAs": "Previous alias",
+    "requestAccountDeletion": "Request Account Deletion",
+    "alsoKnownAsDescription": "Migrate from a different account (without the @)",
+    "theme": "Theme",
+    "themeDescription": "Theme. Affects colors, some themes will also affect Light/Dark mode.",
+    "lightDarkMode": "Light/Dark mode",
+    "lightDarkModeDescription": "Light/Dark mode. Some themes do not work in certain modes.",
+    "additionalStyleModes": "Additional style modes",
+    "additionalStyleModesDescription": "Additional options for layout and classic versions of the UI.",
+    "uiLanguage": "User interface language",
+    "uiLanguageDescription": "Wafrn is translated into various languages by volunteers. Check out <a href=\"https://codeberg.org/wafrn/wafrn\">Source</a> to help!",
+    "forceClassicLogo": "Force classic logo",
+    "forceClassicVideoPlayer": "Force classic video player",
+    "forceClassicAudioPlayer": "Force classic audio player",
+    "forceClassicMediaView": "Force classic media view (vertical)",
+    "disableConfetti": "Disable confetti effects when performing certain actions",
+    "disableConfettiDescription": "By default, emoji confetti is launched on like, react, woot, edit, and rewoot.",
+    "enableConfettiReceivingLike": "Enable confetti when you receive a like (PvP)",
+    "disableSounds": "Disable sound effects when performing certain actions",
+    "disableSoundsDescription": "By default, a sound is played on like, react, woot, edit, and rewoot.",
+    "defaultDashboard": "Default dashboard",
+    "defaultDashboardOptions": {
+      "dashboard": "Dashboard",
+      "exploreLocal": "Explore Local"
+    },
+    "automaticallyExpandPosts": "Automatically expand all posts",
+    "expandQuotes": "Do not collapse quotes",
+    "disableCW": "Disable CW unless post contains muted words",
+    "disableNSFWFilter": "Disable NSFW images filter",
+    "hideNoDescriptionMedia": "Automatically CW media with no alt text",
+    "disableForceAltText": "Allow uploading media without alt text",
+    "disableForceAltTextDescription": "Only enable this if you're evil.",
+    "manuallyAcceptsFollows": "Manually accept follows",
+    "enableAsks": "Enable asks",
+    "enableAnonymousAsks": "Enable anonymous asks",
+    "hideProfileNotLoggedIn": "Hide profile to users who are not logged in",
+    "hideProfileNotLoggedInDescription": "Only applies to your profile in this wafrn, not to your posts nor other fedi instances or bluesky.",
+    "hideFollows": "Hide my follows and followers",
+    "displayMentionsOfBlockedUsersFromOtherUsers": "Show posts containing mentions to blocked users",
+    "defaultPostEditorPrivacy": "Default Post Editor Privacy",
+    "postEditorPrivacyOptions": {
+      "public": "Public",
+      "followersOnly": "Followers Only",
+      "instanceOnly": "Instance Only",
+      "unlisted": "Unlisted"
+    },
+    "mutedWords": "Muted words",
+    "mutedWordsDescription": "One word per line. Posts with these phrases will be placed behind a CW.",
+    "superMutedWords": "Blocked words",
+    "superMutedWordsDescription": "One word per line. Posts with these phrases will be entierely hidden.",
+    "hideQuotes": "Hide Quotes",
+    "hideQuotesOptions": {
+      "cwDisabledQuotesUsers": "CW quote posts from users you disabled quotes for",
+      "cwUnfollowedOrDisabledQuotesUsers": "CW quote posts from anyone you don't follow",
+      "hidePostsDisabledQuotesUsers": "Block quote posts from users you don't follow"
+    },
+    "replaceAIWithCocaine": "Replace AI with a custom word",
+    "replaceAIWord": "Word to replace AI with"
+  },
   "ask-dialog-content": {
     "askAnonymously": "Make question anonymous",
     "askFormLabel": "Question",
@@ -251,10 +370,19 @@
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",
+    "groupNavigation": "Navigation",
     "scrollDown": "Scroll down",
     "scrollUp": "Scroll up",
     "scrollDownPage": "Scroll a page down",
     "scrollUpPage": "Scroll a page up",
+    "nextPost": "Next post",
+    "previousPost": "Previous post",
+    "groupPostAction": "Post Actions",
+    "likePost": "Like post",
+    "rewootPost": "Rewoot post",
+    "replyPost": "Reply to post",
+    "quotePost": "Quote post",
+    "groupMisc": "Miscellaneous",
     "openEditor": "Open editor",
     "viewKeyboardShortcuts": "View keyboard shortcuts",
     "unbound": "unbound",
@@ -262,7 +390,13 @@
     "smoothScroll": "Smooth scroll"
   },
   "post-fragment": {
-    "replyingTo": "replying to: "
+    "mutedWords": "Post contains muted words:",
+    "replyingTo": "mentions: "
+  },
+  "media": {
+    "noAltText": "Media does not have alt text",
+    "sensitiveContent": "This media contains sensitive content",
+    "manuallyHidden": "Media manually hidden"
   },
   "page-not-found": {
     "title": "404: page not found",
