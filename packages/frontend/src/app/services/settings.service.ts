@@ -587,6 +587,10 @@ export class SettingsService {
       this.dashboardService.getBlogDetails(userBlog.url, true).then((blogDetails) => {
         this.values.name = blogDetails.name
         this.values.description = blogDetails.descriptionMarkdown
+        this.values.manuallyAcceptsFollows = blogDetails.manuallyAcceptsFollows
+        this.values.hideFollows = blogDetails.hideFollows
+        this.values.hideProfileNotLoggedIn = blogDetails.hideProfileNotLoggedIn
+        this.values.disableEmailNotifications = blogDetails.disableEmailNotifications
 
         const rawAttachments = blogDetails.publicOptions?.find(
           (elem) => elem.optionName === 'fediverse.public.attachment'
