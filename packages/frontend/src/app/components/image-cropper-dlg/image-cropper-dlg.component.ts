@@ -37,9 +37,13 @@ export class ImageCropperDlgComponent {
   croppedImage: File | null = null;
   cropFinishedCallback: (croppedImage: File) => void
 
+  addPngExt(path: string) {
+    return path.endsWith('.png') ? path : path + '.png'
+  }
+
   imageCropped(event: ImageCroppedEvent) {
     this.canFinish = true
-    this.croppedImage = new File([event.blob!], this.image.name)
+    this.croppedImage = new File([event.blob!], this.addPngExt(this.image.name))
   }
 
   cropperReady() {
