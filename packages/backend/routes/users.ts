@@ -1311,8 +1311,10 @@ function userRoutes(app: Application) {
           success: false
         })
       }
+
+      const question = req.body.question ? req.body.question.substring(0, 10240) : ''
       const ask = await Ask.create({
-        question: req.body.question,
+        question: question,
         apObject: null,
         creationIp: getIp(req),
         answered: false,
