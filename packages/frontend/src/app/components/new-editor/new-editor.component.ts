@@ -308,6 +308,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     initialPart = initialPart.replace(/[[@:][A-Z0-9a-z_.@-]*$/i, userUrl)
     let finalPart = this.postCreatorForm.value.content?.slice(this.cursorTextPosition) as string
     this.postCreatorForm.controls['content'].patchValue(initialPart.trim() + ' ' + finalPart.trim())
+    this.postContent()?.nativeElement.focus()
     this.suggestions = []
     this.suggestionMatches.set(false)
   }
