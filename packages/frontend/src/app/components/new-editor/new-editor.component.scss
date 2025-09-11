@@ -131,7 +131,6 @@ app-media-preview {
   border-radius: var(--mat-sys-corner-small);
   border: 1px solid var(--mat-sys-outline-variant);
   box-shadow: var(--mat-sys-level2);
-  padding: 0.5rem;
 }
 
 .suggestion-text-placeholder {
@@ -139,6 +138,18 @@ app-media-preview {
   --mat-progress-bar-active-indicator-height: 16px;
   --mat-progress-bar-active-indicator-color: var(--mat-sys-outline-variant);
   // --mat-progress-bar-track-color: var(--mat-sys-outline-variant);
+}
+
+.suggestion-item {
+  padding: 0.25rem 0.5rem;
+  &:hover {
+    background-color: var(--mat-sys-surface-container-highest);
+  }
+}
+
+.emoji-suggestion-image {
+  width: 32px;
+  height: 32px;
 }
 
 .media-drop-indicator {
