@@ -1,80 +1,80 @@
-@if (item.plainText) {
-  <div class="ml-3 pt-2 font-medium text-sm">{{ item.label | translate }}</div>
-} @else if (item.divider) {
-  <hr class="m-0" />
-} @else if (button) {
-  <a
-    [matMenuTriggerFor]="item.items ? menu : null"
-    [routerLink]="parsedLink()"
-    [matBadge]="item.badge"
-    [matBadgeHidden]="item.badge === 0"
-    matBadgePosition="above after"
-    *ngIf="item.visible"
-    mat-button
-    class="mat-circle-button"
-    (click)="doCommand()"
-    (keydown)="handleKey($event)"
-    [attr.data-menu-item]="item.label"
-    tabIndex="0"
-  >
-    @if (item.icon) {
-      <span class="menu-item-icon">
-        <fa-icon [icon]="item.icon"></fa-icon>
-      </span>
-    }
-  </a>
-
-  <mat-menu #menu="matMenu">
-    @for (elem of item.items; track $index) {
-      <app-menu-item [item]="elem"></app-menu-item>
-    }
-  </mat-menu>
-} @else {
-  <a
-    [class.subroute-active]="routeChildActive()"
-    routerLinkActive="route-active"
-    [routerLinkActiveOptions]="{ exact: item.highlightRoute !== false }"
-    [matMenuTriggerFor]="item.items ? menu : null"
-    [matMenuTriggerRestoreFocus]="false"
-    #menuTrigger="matMenuTrigger"
-    [routerLink]="parsedLink()"
-    [matBadge]="item.badge"
-    [matBadgeHidden]="item.badge === 0"
-    matBadgePosition="above after"
-    *ngIf="item.visible"
-    mat-list-item
-    (click)="doCommand()"
-    (keydown)="handleKey($event, menuTrigger)"
-    [attr.data-menu-item]="item.label"
-    class="{{ item.class }}"
-    tabIndex="0"
-  >
-    <div class="flex align-items-center justify-content-start navigation-menu-button">
+@if (item.visible()) {
+  @if (item.plainText) {
+    <div class="ml-3 pt-2 font-medium text-sm">{{ item.label | translate }}</div>
+  } @else if (item.divider) {
+    <hr class="m-0" />
+  } @else if (button) {
+    <a
+      [matMenuTriggerFor]="item.items ? menu : null"
+      [routerLink]="parsedLink()"
+      [matBadge]="item.badge"
+      [matBadgeHidden]="item.badge === 0"
+      matBadgePosition="above after"
+      mat-button
+      class="mat-circle-button"
+      (click)="doCommand()"
+      (keydown)="handleKey($event)"
+      [attr.data-menu-item]="item.label"
+      tabIndex="0"
+    >
       @if (item.icon) {
-        <span class="mr-3 menu-item-icon">
-          <fa-icon [icon]="item.icon" [fixedWidth]="true"></fa-icon>
+        <span class="menu-item-icon">
+          <fa-icon [icon]="item.icon"></fa-icon>
         </span>
       }
-      @if (item.image !== undefined) {
-        <span class="mr-3 menu-item-image">
-          <img [src]="item.image" />
-        </span>
-      }
-      <span
-        class="mr-1 menu-item-content"
-        [innerHTML]="item.labelDynamic ? item.labelDynamic() : (item.label | translate)"
-      ></span>
-      @if (item.items) {
-        <span class="ml-auto menu-item-arrow" [class.menu-open]="expanded"
-          ><fa-icon [icon]="arrowIcon" size="xs"
-        /></span>
-      }
-    </div>
-  </a>
+    </a>
 
-  <mat-menu #menu="matMenu" (closed)="menuClose()">
-    @for (elem of item.items; track $index) {
-      <app-menu-item [item]="elem"></app-menu-item>
-    }
-  </mat-menu>
+    <mat-menu #menu="matMenu">
+      @for (elem of item.items; track $index) {
+        <app-menu-item [item]="elem"></app-menu-item>
+      }
+    </mat-menu>
+  } @else {
+    <a
+      [class.subroute-active]="routeChildActive()"
+      routerLinkActive="route-active"
+      [routerLinkActiveOptions]="{ exact: item.highlightRoute !== false }"
+      [matMenuTriggerFor]="item.items ? menu : null"
+      [matMenuTriggerRestoreFocus]="false"
+      #menuTrigger="matMenuTrigger"
+      [routerLink]="parsedLink()"
+      [matBadge]="item.badge"
+      [matBadgeHidden]="item.badge === 0"
+      matBadgePosition="above after"
+      mat-list-item
+      (click)="doCommand()"
+      (keydown)="handleKey($event, menuTrigger)"
+      [attr.data-menu-item]="item.label"
+      class="{{ item.class }}"
+      tabIndex="0"
+    >
+      <div class="flex align-items-center justify-content-start navigation-menu-button">
+        @if (item.icon) {
+          <span class="mr-3 menu-item-icon">
+            <fa-icon [icon]="item.icon" [fixedWidth]="true"></fa-icon>
+          </span>
+        }
+        @if (item.image !== undefined) {
+          <span class="mr-3 menu-item-image">
+            <img [src]="item.image" />
+          </span>
+        }
+        <span
+          class="mr-1 menu-item-content"
+          [innerHTML]="item.labelDynamic ? item.labelDynamic() : (item.label | translate)"
+        ></span>
+        @if (item.items) {
+          <span class="ml-auto menu-item-arrow" [class.menu-open]="expanded"
+            ><fa-icon [icon]="arrowIcon" size="xs"
+          /></span>
+        }
+      </div>
+    </a>
+
+    <mat-menu #menu="matMenu" (closed)="menuClose()">
+      @for (elem of item.items; track $index) {
+        <app-menu-item [item]="elem"></app-menu-item>
+      }
+    </mat-menu>
+  }
 }
