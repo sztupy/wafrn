@@ -23,12 +23,10 @@ const routes: Routes = [
 
       {
         path: 'register',
-        canActivate: [userLoggedGuard],
         loadChildren: () => import('./pages/register/register.module').then((m) => m.RegisterModule)
       },
       {
         path: 'checkMail',
-        canActivate: [userLoggedGuard],
         loadComponent: () => import('./pages/check-email/check-email.component').then((m) => m.CheckEmailComponent)
       },
       {
@@ -144,4 +142,4 @@ const routes: Routes = [
   providers: [{ provide: RouteReuseStrategy, useClass: CustomReuseStrategy }],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
