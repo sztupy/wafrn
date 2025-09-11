@@ -361,14 +361,25 @@
       [style.left.px]="cursorPosition.x"
       [style.top.px]="cursorPosition.y"
     >
-      <div class="flex flex-column gap-2">
+      <div class="flex flex-column">
         @if (suggestionLoading()) {
           <div class="flex gap-3 align-items-center suggestion-item">
             <app-avatar-small></app-avatar-small>
             <mat-progress-bar class="max-w-16rem suggestion-text-placeholder" mode="indeterminate"></mat-progress-bar>
           </div>
-        } @else if (suggestions.length === 0) {
+        } @else if (suggestions.length === 0 && emojiSuggestions.length === 0) {
           <div class="suggestion-item">{{ 'editor.noResults' | translate }}</div>
+        }
+        @for (emoji of emojiSuggestions; track $index) {
+          <div (click)="insertEmoji(emoji)" class="flex gap-2 align-items-center suggestion-item">
+            @if (emoji.img) {
+              <img [src]="emoji.img" class="emoji-suggestion-image" />
+            }
+            {{ emoji.id }}
+            @if (emoji.id !== emoji.name) {
+              {{ emoji.name }}
+            }
+          </div>
         }
         @for (user of suggestions; track $index) {
           <div (click)="insertMention(user)" class="flex gap-2 align-items-center suggestion-item">

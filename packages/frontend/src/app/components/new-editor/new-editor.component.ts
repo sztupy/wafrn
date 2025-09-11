@@ -70,6 +70,14 @@ import { Dialog } from '@angular/cdk/dialog'
 import { Router } from '@angular/router'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
+import Fuse from 'fuse.js'
+
+type EmojiSuggestion = {
+  img: string
+  id: string
+  name: string
+}
+
 @Component({
   selector: 'app-new-editor',
   imports: [
@@ -122,7 +130,6 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   pollQuestions: QuestionPollQuestion[] = []
   disableImageUploadButton = false
   uploadedMedias: WafrnMedia[] = []
-  emojiCollections: EmojiCollection[] = []
 
   postContent = viewChild<ElementRef<HTMLTextAreaElement>>('postContent')
   @ViewChild('suggestionsMenu') suggestionsMenu!: MatMenuTrigger
@@ -131,6 +138,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   suggestionLoading = signal(false)
   suggestionMatches = signal(false)
   suggestions: { img: string; text: string }[] = []
+  emojiSuggestions: EmojiSuggestion[] = []
   cursorPosition = {
     x: 0,
     y: 0
@@ -174,6 +182,38 @@ export class NewEditorComponent implements OnInit, OnDestroy {
 
   parser = new DOMParser()
 
+  // Emoji search
+  emojiCollections = signal<EmojiCollection[]>([])
+  emojiProcessed = computed<Emoji[]>(() =>
+    this.emojiCollections()
+      .flatMap((collection) => collection.emojis.map((emoji) => emoji))
+      .map((emoji) => {
+        if (emoji.url.length !== 0) {
+          emoji.url =
+            EnvironmentService.environment.externalCacheurl +
+            EnvironmentService.environment.baseMediaUrl +
+            encodeURIComponent(emoji.url)
+        }
+        return emoji
+      })
+  )
+  fuse = new Fuse<Emoji>([], {
+    threshold: 0.4,
+    keys: [
+      { name: 'id' },
+      {
+        name: 'name',
+        getFn: (emoji) => {
+          // Trim keyboard emoji
+          const keyboardEmoji = emoji.id !== emoji.name
+          if (keyboardEmoji) return emoji.name.split(')').at(1) ?? emoji.name
+
+          return emoji.name
+        }
+      }
+    ]
+  })
+
   constructor(
     private messages: MessageService,
     private dashboardService: DashboardService,
@@ -192,7 +232,8 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.privacy = Math.max(this.data.post.privacy, this.privacy)
     }
     this.emojiSubscription = this.postService.updateFollowers.subscribe(() => {
-      this.emojiCollections = this.postService.emojiCollections
+      this.emojiCollections.set([...this.postService.emojiCollections])
+      this.fuse.setCollection(this.emojiProcessed())
     })
     const currentUserId = this.jwtService.getTokenData()?.userId
     if (this.data?.post?.mentionPost && this.data.post.mentionPost.length > 0) {
@@ -257,6 +298,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   updateMentionsSuggestions(newText: string | null, cursorPosition: number) {
     this.httpMentionPetitionSubscription?.unsubscribe()
     this.suggestions.length = 0
+    this.emojiSuggestions.length = 0
     this.suggestionLoading.set(false)
 
     const textToMatch = (' ' + newText?.slice(cursorPosition - 250, cursorPosition).replaceAll('\n', ' ')) as string
@@ -287,29 +329,42 @@ export class NewEditorComponent implements OnInit, OnDestroy {
         this.suggestionLoading.set(false)
       })
     } else {
-      this.suggestions = this.emojiCollections
-        .map((elem) => {
-          const emojis = elem.emojis.filter(
-            (emoji) => emoji.id == emoji.name && emoji.name.toLowerCase().includes(match.toLowerCase())
-          )
-          return emojis.map((emoji) => ({
-            text: emoji.id,
-            img: emoji.url
-          }))
-        })
-        .flat()
-        .slice(0, 25)
+      // Evil regex to remove VARIATION SELECTOR 1-16 (check https://unicode-explorer.com/b/FE00)
+      // These made certain keyboard emoji duplicate. Agony.
+      //
+      // Sliced to 25 because if you have more than that many suggestions you have a problem
+      const matchedEmojiIds = [
+        ...new Set(this.fuse.search(match).map((res) => res.item.id.replaceAll(/([\uFE00-\uFE0F])/g, '')))
+      ].slice(0, 25)
+      this.emojiSuggestions = matchedEmojiIds
+        .map((id) => this.emojiProcessed().find((emoji) => emoji.id === id))
+        .filter((elem) => elem !== undefined)
+        .map((emoji) => ({
+          img: emoji.url,
+          id: emoji.id,
+          name: emoji.name.includes(')') ? emoji.name.split(')')[1] : emoji.name
+        }))
     }
   }
 
   insertMention(user: { img: string; text: string }) {
     let initialPart = (' ' + this.postCreatorForm.value.content?.slice(0, this.cursorTextPosition)) as string
-    const userUrl = user.text.startsWith(':') ? user.text : user.text.startsWith('@') ? user.text : '@' + user.text
-    initialPart = initialPart.replace(/[[@:][A-Z0-9a-z_.@-]*$/i, userUrl)
+    const userUrl = user.text.startsWith('@') ? user.text : '@' + user.text
+    initialPart = initialPart.replace(/[[@][A-Z0-9a-z_.@-]*$/i, userUrl)
     let finalPart = this.postCreatorForm.value.content?.slice(this.cursorTextPosition) as string
     this.postCreatorForm.controls['content'].patchValue(initialPart.trim() + ' ' + finalPart.trim())
     this.postContent()?.nativeElement.focus()
     this.suggestions = []
+    this.suggestionMatches.set(false)
+  }
+
+  insertEmoji(emoji: EmojiSuggestion) {
+    let initialPart = (' ' + this.postCreatorForm.value.content?.slice(0, this.cursorTextPosition)) as string
+    initialPart = initialPart.replace(/[[:][A-Z0-9a-z_.@-]*$/i, emoji.id)
+    let finalPart = this.postCreatorForm.value.content?.slice(this.cursorTextPosition) as string
+    this.postCreatorForm.controls['content'].patchValue(initialPart.trim() + ' ' + finalPart.trim())
+    this.postContent()?.nativeElement.focus()
+    this.emojiSuggestions.length = 0
     this.suggestionMatches.set(false)
   }
 
