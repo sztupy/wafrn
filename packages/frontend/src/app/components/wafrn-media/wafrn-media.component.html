@@ -3,7 +3,11 @@
     <app-link-preview [link]="displayUrl()"></app-link-preview>
   }
 } @else {
-  <div class="media-container" [class.always-show-alt]="alwaysShowAlt()">
+  <div
+    class="media-container"
+    [class.always-show-alt]="alwaysShowAlt()"
+    [class.video-media]="mimeType().startsWith('video')"
+  >
     <div class="media-content-container">
       @if (
         (!extensionsToHideImgTag.includes(extension()) || mimeType() === 'UNKNOWN') && !mimeType().startsWith('video')

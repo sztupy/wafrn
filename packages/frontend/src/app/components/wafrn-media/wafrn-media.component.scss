@@ -99,6 +99,11 @@ video {
   .image-description {
     bottom: unset;
   }
+
+  .video-media .toggle-button {
+    opacity: 1;
+    grid-row: 2/2;
+  }
 }
 
 /* Limit the height AGAIN */
