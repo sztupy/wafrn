@@ -117,16 +117,28 @@ app-media-preview {
 }
 
 .suggestions-menu {
-  max-height: 24rem;
-  max-width: 16rem;
+  transition:
+    left 100ms ease-out,
+    top 100ms ease-out;
+  max-height: 350px;
+  min-width: 200px;
+  max-width: 350px;
   position: fixed;
   z-index: 999;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   background-color: var(--mat-sys-surface-container);
   border-radius: var(--mat-sys-corner-small);
-  border: 1px solid var(--mat-sys-outline);
+  border: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: var(--mat-sys-level2);
   padding: 0.5rem;
+}
+
+.suggestion-text-placeholder {
+  --mat-progress-bar-track-height: 16px;
+  --mat-progress-bar-active-indicator-height: 16px;
+  --mat-progress-bar-active-indicator-color: var(--mat-sys-outline-variant);
+  // --mat-progress-bar-track-color: var(--mat-sys-outline-variant);
 }
 
 .media-drop-indicator {

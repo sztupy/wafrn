@@ -1,5 +1,17 @@
 import { CommonModule, Location } from '@angular/common'
-import { Component, computed, HostListener, inject, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core'
+import {
+  Component,
+  computed,
+  ElementRef,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  Signal,
+  viewChild,
+  ViewChild
+} from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -111,8 +123,13 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   disableImageUploadButton = false
   uploadedMedias: WafrnMedia[] = []
   emojiCollections: EmojiCollection[] = []
+
+  postContent = viewChild<ElementRef<HTMLTextAreaElement>>('postContent')
   @ViewChild('suggestionsMenu') suggestionsMenu!: MatMenuTrigger
   @ViewChild(FileUploadComponent) fileUploadComponent: FileUploadComponent | undefined
+
+  suggestionLoading = signal(false)
+  suggestionMatches = signal(false)
   suggestions: { img: string; text: string }[] = []
   cursorPosition = {
     x: 0,
@@ -177,7 +194,6 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     this.emojiSubscription = this.postService.updateFollowers.subscribe(() => {
       this.emojiCollections = this.postService.emojiCollections
     })
-    let postCreatorContent = ''
     const currentUserId = this.jwtService.getTokenData()?.userId
     if (this.data?.post?.mentionPost && this.data.post.mentionPost.length > 0) {
       const mentionedUsersSet = new Set(this.data.post.mentionPost.filter((elem) => elem.id != currentUserId))
@@ -191,7 +207,6 @@ export class NewEditorComponent implements OnInit, OnDestroy {
         this.mentionedUsers.push(this.data.post.user)
       }
     }
-    this.postCreatorForm.controls['content'].patchValue(postCreatorContent)
 
     if (this.editing && this.data?.post) {
       this.postCreatorForm.controls['content'].patchValue(this.data.post.markdownContent)
@@ -228,9 +243,9 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       const textarea = document.getElementById('postCreatorContent') as HTMLTextAreaElement
       const internalPosition = this.getCaretPosition(textarea)
       const rect = textarea.getBoundingClientRect()
-      // 250 being the max width of the suggestions menu and 350 being the max height
+      // 350 being the max width of the suggestions menu and 350 being the max height
       this.cursorPosition = {
-        x: Math.min(internalPosition.x + rect.x, screenWidth - 275),
+        x: Math.min(internalPosition.x + rect.x, screenWidth - 350),
         y: Math.min(
           Math.max(48, internalPosition.y + rect.y),
           Math.max(screenHeight - 325, screenHeight - 64 * this.suggestions.length)
@@ -239,41 +254,51 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateMentionsSuggestions(cursorPosition: number) {
+  updateMentionsSuggestions(newText: string | null, cursorPosition: number) {
     this.httpMentionPetitionSubscription?.unsubscribe()
-    this.suggestions = []
-    const textToMatch = (' ' +
-      this.postCreatorForm.value.content?.slice(cursorPosition - 250, cursorPosition).replaceAll('\n', ' ')) as string
-    const matches = textToMatch.match(/[\n\r\s]?[@:][\w-\.]+@?[\w-\.]*$/)
-    if (matches && matches.length > 0) {
-      this.updateMentionsPanelPosition()
-      const match = matches[0].trim()
-      if (match.startsWith('@')) {
-        this.httpMentionPetitionSubscription = from(
-          this.editorService.searchUser(match.toLowerCase().slice(1))
-        ).subscribe((res: any) => {
-          this.suggestions = res.users.map((elem: any) => {
-            return {
-              img: elem.avatar,
-              text: elem.url
-            }
-          })
-          this.httpMentionPetitionSubscription?.unsubscribe()
+    this.suggestions.length = 0
+    this.suggestionLoading.set(false)
+
+    const textToMatch = (' ' + newText?.slice(cursorPosition - 250, cursorPosition).replaceAll('\n', ' ')) as string
+    const match = textToMatch
+      .match(/[\n\r\s]?[@:][\w-\.]+@?[\w-\.]*$/)
+      ?.at(0)
+      ?.trim()
+    const trailingSpace = newText?.endsWith(' ')
+    if (!match || trailingSpace) {
+      this.suggestionMatches.set(false)
+      return
+    }
+    this.suggestionMatches.set(true)
+
+    const matchIsUser = match.startsWith('@')
+    if (matchIsUser) {
+      this.suggestionLoading.set(true)
+      this.httpMentionPetitionSubscription = from(
+        this.editorService.searchUser(match.toLowerCase().slice(1))
+      ).subscribe((res: any) => {
+        this.suggestions = res.users.map((elem: any) => {
+          return {
+            img: elem.avatar,
+            text: elem.url
+          }
         })
-      } else {
-        this.suggestions = this.emojiCollections
-          .map((elem) => {
-            const emojis = elem.emojis.filter(
-              (emoji) => emoji.id == emoji.name && emoji.name.toLowerCase().includes(match.toLowerCase())
-            )
-            return emojis.map((emoji) => ({
-              text: emoji.id,
-              img: emoji.url
-            }))
-          })
-          .flat()
-          .slice(0, 25)
-      }
+        this.httpMentionPetitionSubscription?.unsubscribe()
+        this.suggestionLoading.set(false)
+      })
+    } else {
+      this.suggestions = this.emojiCollections
+        .map((elem) => {
+          const emojis = elem.emojis.filter(
+            (emoji) => emoji.id == emoji.name && emoji.name.toLowerCase().includes(match.toLowerCase())
+          )
+          return emojis.map((emoji) => ({
+            text: emoji.id,
+            img: emoji.url
+          }))
+        })
+        .flat()
+        .slice(0, 25)
     }
   }
 
@@ -284,6 +309,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     let finalPart = this.postCreatorForm.value.content?.slice(this.cursorTextPosition) as string
     this.postCreatorForm.controls['content'].patchValue(initialPart.trim() + ' ' + finalPart.trim())
     this.suggestions = []
+    this.suggestionMatches.set(false)
   }
 
   ngOnDestroy(): void {
@@ -568,18 +594,21 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     this.httpMentionPetitionSubscription = undefined
   }
   editorFocusedIn() {
-    this.editorUpdatedSubscription = this.postCreatorForm.controls['content'].valueChanges
-      .pipe(debounceTime(300))
-      .subscribe((changes) => this.editorUpdateProcess())
+    this.editorUpdatedSubscription = this.postCreatorForm.controls['content'].valueChanges.subscribe((newValue) =>
+      this.editorUpdateProcess(newValue)
+    )
   }
 
-  editorUpdateProcess() {
-    let postCreatorHTMLElement = document.getElementById('postCreatorContent') as HTMLTextAreaElement
+  editorUpdateProcess(change: string | null) {
+    const postElement = this.postContent()?.nativeElement
+    if (!postElement) return
+
     // we only call the event if user is writing to avoid TOOMFOLERY
-    if (postCreatorHTMLElement.selectionStart === postCreatorHTMLElement.selectionEnd) {
-      this.updateMentionsSuggestions(postCreatorHTMLElement.selectionStart)
-      this.cursorTextPosition = postCreatorHTMLElement.selectionStart
-    }
+    const textSelected = postElement.selectionStart !== postElement.selectionEnd
+    if (textSelected) return
+
+    this.updateMentionsSuggestions(change, postElement.selectionStart)
+    this.cursorTextPosition = postElement.selectionStart
   }
 
   removeMention(index: number) {

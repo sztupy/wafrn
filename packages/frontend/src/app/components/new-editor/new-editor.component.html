@@ -161,11 +161,13 @@
       >
         <mat-label>{{ 'editor.wootTextLabel' | translate }}</mat-label>
         <textarea
+          #postContent
           id="postCreatorContent"
           formControlName="content"
           class="w-full woot-textarea"
           (blur)="editorFocusedOut()"
           (focus)="editorFocusedIn()"
+          (input)="updateMentionsPanelPosition()"
           (paste)="handlePaste($event)"
           (drop)="handleDrop($event)"
           (dragenter)="handleDrag($event)"
@@ -355,11 +357,19 @@
     <div
       #suggestionsMenu
       class="suggestions-menu"
-      [hidden]="suggestions.length === 0"
+      [hidden]="!suggestionLoading() && !suggestionMatches()"
       [style.left.px]="cursorPosition.x"
       [style.top.px]="cursorPosition.y"
     >
       <div class="flex flex-column gap-2">
+        @if (suggestionLoading()) {
+          <div class="flex gap-3 align-items-center suggestion-item">
+            <app-avatar-small></app-avatar-small>
+            <mat-progress-bar class="max-w-16rem suggestion-text-placeholder" mode="indeterminate"></mat-progress-bar>
+          </div>
+        } @else if (suggestions.length === 0) {
+          <div class="suggestion-item">{{ 'editor.noResults' | translate }}</div>
+        }
         @for (user of suggestions; track $index) {
           <div (click)="insertMention(user)" class="flex gap-2 align-items-center suggestion-item">
             <app-avatar-small
