@@ -125,6 +125,7 @@ export class EditorService implements OnDestroy {
   }
 
   async searchUser(url: string): Promise<{ users: SimplifiedUser[] }> {
+    if (url.length === 0) return { users: [] }
     let result = await firstValueFrom(
       this.http.get<{
         users: SimplifiedUser[]
