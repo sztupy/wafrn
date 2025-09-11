@@ -188,12 +188,6 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     this.emojiCollections()
       .flatMap((collection) => collection.emojis.map((emoji) => emoji))
       .map((emoji) => {
-        if (emoji.url.length !== 0) {
-          emoji.url =
-            EnvironmentService.environment.externalCacheurl +
-            EnvironmentService.environment.baseMediaUrl +
-            encodeURIComponent(emoji.url)
-        }
         return emoji
       })
   )
@@ -340,7 +334,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
         .map((id) => this.emojiProcessed().find((emoji) => emoji.id === id))
         .filter((elem) => elem !== undefined)
         .map((emoji) => ({
-          img: emoji.url,
+          img: emoji.url
+            ? EnvironmentService.environment.externalCacheurl +
+              EnvironmentService.environment.baseMediaUrl +
+              encodeURIComponent(emoji.url)
+            : '',
           id: emoji.id,
           name: emoji.name.includes(')') ? emoji.name.split(')')[1] : emoji.name
         }))
