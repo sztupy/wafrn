@@ -1,4 +1,4 @@
-import { Component, Injector, Inject, OnInit, DOCUMENT } from '@angular/core'
+import { Component, Injector, Inject, OnInit, DOCUMENT, HostBinding, ElementRef, effect } from '@angular/core'
 import { SwUpdate } from '@angular/service-worker'
 import { LoginService } from './services/login.service'
 import { EnvironmentService } from './services/environment.service'
@@ -11,6 +11,7 @@ import { NavigationError, Router } from '@angular/router'
 import { filter, map } from 'rxjs'
 import { MessageService } from './services/message.service'
 import { supportedLanguages } from './lists/languages'
+import { ThemeService } from './services/theme.service'
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,8 @@ import { supportedLanguages } from './lists/languages'
 })
 export class AppComponent implements OnInit {
   title = 'wafrn'
+
+  @HostBinding('attr.data-additional-style-modes') dataAdditionalStyleModes: string | null = null
 
   constructor(
     private swUpdate: SwUpdate,
@@ -32,7 +35,8 @@ export class AppComponent implements OnInit {
     private websocketService: WebsocketService,
     private router: Router,
     private messages: MessageService,
-    private titleService: Title
+    private titleService: Title,
+    themeService: ThemeService
   ) {
     this.title = this.titleService.getTitle()
     GlobalData.appDefaultTitle = this.title
@@ -71,6 +75,15 @@ export class AppComponent implements OnInit {
         }
         window.location.reload()
       })
+    })
+
+    // Sync data value of additional style modes to root
+    effect(() => {
+      const attributeValue = Object.entries(themeService.additionalStyleModes)
+        .filter(([_, value]) => value())
+        .map(([mode, _]) => mode)
+        .join(' ')
+      this.dataAdditionalStyleModes = attributeValue || null
     })
   }
 
