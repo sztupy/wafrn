@@ -12,10 +12,22 @@
     >
       @for (user of usersAutocompleteOptions; track user) {
         <mat-option [value]="user">
-          <div class="flex gap-2 align-items-center suggestion-item">
-            <app-avatar-small [user]="user"></app-avatar-small> {{ user.url }}
+          <div class="flex gap-3 align-items-center suggestion-item">
+            <app-avatar-small [user]="user"></app-avatar-small> <span>{{ user.url }}</span>
           </div></mat-option
         >
+      }
+      @if (form.controls['userSearcher'].value && usersAutocompleteOptions.length === 0) {
+        @if (searching()) {
+          <mat-option class="full-option" disabled>
+            <div class="flex gap-3 align-items-center">
+              <app-avatar-small></app-avatar-small>
+              <mat-progress-bar class="max-w-16rem" mode="indeterminate"></mat-progress-bar>
+            </div>
+          </mat-option>
+        } @else {
+          <mat-option disabled>{{ 'editor.noResults' | translate }}</mat-option>
+        }
       }
     </mat-autocomplete>
   </form>

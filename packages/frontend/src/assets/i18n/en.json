@@ -130,7 +130,8 @@
     "insertEmojiTooltip": "Insert emoji",
     "hiddenMentionsTooltip": "Other mentioned users",
     "editorGuide": "Doubts on how to format the text or how to start? Check <a target=\"_blank\" href=\"https://wafrn.net/faq/user\">the guide</a>",
-    "usernameLabel": "Posting as"
+    "usernameLabel": "Posting as",
+    "noResults": "No results."
   },
   "profile": {
     "profile": {
@@ -292,6 +293,10 @@
     "changeHeaderImage": "Change Banner",
     "name": "Name",
     "description": "Description",
+    "changePasswordTitle": "Request a password change",
+    "changePassword": "Change password",
+    "changePasswordDescription": "A link change your password has been sent to your email.",
+    "changePasswordMessage": "A link change your password has been sent to your email.",
     "disableEmailNotifications": "Disable email notifications",
     "rssOptions": "Enable RSS and microfront for my blog page",
     "rssOptionsOptions": {

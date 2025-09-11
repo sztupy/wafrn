@@ -24,6 +24,7 @@ import { ComponentPortal, Portal } from '@angular/cdk/portal'
 import { SettingThemeSwitcherComponent } from '../components/setting-theme-switcher/setting-theme-switcher.component'
 import { SettingLanguageSwitcherComponent } from '../components/setting-language-switcher/setting-language-switcher.component'
 import { SettingDeleteAccountComponent } from '../components/setting-delete-account/setting-delete-account.component'
+import { SettingChangePasswordComponent } from '../components/setting-change-password/setting-change-password.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -432,8 +433,8 @@ export class SettingsService {
         { type: 'header', value: 'settings.header.emailAndPassword' },
         // { type: 'description', value: '[Email Change] (not currently available, sorry!)' },
         { type: 'key', value: 'disableEmailNotifications' },
-        { type: 'link', value: 'Change password', route: '/recoverPassword' },
-        { type: 'link', value: 'profile.security.mfa.setup', route: '/mfa' }, // FIXME: make this on the page itself?
+        { type: 'component', value: new ComponentPortal(SettingChangePasswordComponent) },
+        { type: 'link', value: 'profile.security.mfa.setup', route: '/mfaSetup' }, // FIXME: make this on the page itself?
         { type: 'separator' },
         { type: 'header', value: 'settings.header.integrations' },
         { type: 'link', value: 'menu.settings.enableBluesky', route: '/profile/enable-bluesky' }, // FIXME: make this on the page itself?
