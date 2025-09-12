@@ -162,16 +162,21 @@ function userRoutes(app: Application) {
             }
 
             const userWithEmail = User.create(user)
-            const mailHeader = `Welcome to ${completeEnvironment.instanceUrl}, please verify your email!`
-            const mailBody = `<h1>Welcome to ${completeEnvironment.instanceUrl}</h1> To verify your email <a href="${
-              completeEnvironment.instanceUrl
-            }/activate/${encodeURIComponent(
-              req.body.email.toLowerCase()
-            )}/${activationCode}">click here!</a>. If you can not see the link correctly please copy this link:
-            ${completeEnvironment.instanceUrl}/activate/${encodeURIComponent(
-              req.body.email.toLowerCase()
-            )}/${activationCode}
-            `
+            
+            const instanceUrl = completeEnvironment.instanceUrl.startsWith('http')
+              ? completeEnvironment.instanceUrl
+              : `https://${completeEnvironment.instanceUrl}`
+            let instanceHost = completeEnvironment.instanceUrl
+            try {
+              instanceHost = new URL(instanceUrl).host
+            } catch (err) {
+              console.error('cannot use `completeEnvironment.instanceUrl` in `new URL` constructor')
+            }
+            
+            const email = req.body.email.toLowerCase()
+            const activationLink = `${instanceUrl}/activate/${encodeURIComponent(email)}/${activationCode}`
+            const mailHeader = `Welcome to ${instanceHost}, please verify your email!`
+            const mailBody = `<h1>Welcome to ${instanceUrl}</h1> To verify your email <a href="${activationLink}">click here!</a>.<br /><br /> If you can not see the link correctly please copy this link: ${activationLink}`
             const emailSent = completeEnvironment.disableRequireSendEmail
               ? true
               : sendActivationEmail(req.body.email.toLowerCase(), activationCode, mailHeader, mailBody)
