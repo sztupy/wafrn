@@ -1,7 +1,8 @@
 {
   "common": {
     "commaSeparation": "Separated with commas",
-    "characters": "characters"
+    "characters": "characters",
+    "default": "Default"
   },
   "login": {
     "title": "Log in",
@@ -273,7 +274,7 @@
       "migration": "Account Migration",
       "deleteAccount": "Delete Account",
       "appearance": "Appearance",
-      "uiLanguage": "User Interface Language",
+      "userInterface": "User Interface",
       "classicOptions": "Classic Options",
       "animationsAndSounds": "Animations and Sounds",
       "dashboardBehavior": "Dashboard Behavior",
@@ -361,7 +362,18 @@
       "hidePostsDisabledQuotesUsers": "Block quote posts from users you don't follow"
     },
     "replaceAIWithCocaine": "Replace AI with a custom word",
-    "replaceAIWord": "Word to replace AI with"
+    "replaceAIWord": "Word to replace AI with",
+    "postReplyBarOrder": "Post reply bar icon order",
+    "postReplyBarOrderDescription": "Some items are shown depending on you are the poster",
+    "postReplyBarOrderOptions": {
+      "quote": "Quote",
+      "rewoot": "Rewoot",
+      "reply": "Reply",
+      "bookmark": "Bookmark",
+      "like": "Like",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
   },
   "ask-dialog-content": {
     "askAnonymously": "Make question anonymous",

@@ -1,0 +1,52 @@
+.drag-drop-list {
+  max-width: 500px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-small);
+}
+.drag-drop-list-item {
+  background-color: var(--mat-sys-surface-variant);
+  padding: 0 0.5rem;
+
+  border-bottom: 1px solid var(--mat-sys-outline);
+
+  &:first-child {
+    border-top-left-radius: var(--mat-sys-corner-small);
+    border-top-right-radius: var(--mat-sys-corner-small);
+  }
+
+  &:last-child {
+    border-bottom: unset;
+    border-bottom-left-radius: var(--mat-sys-corner-small);
+    border-bottom-right-radius: var(--mat-sys-corner-small);
+  }
+}
+.drag-drop-item-drag-indicator {
+  color: var(--mat-sys-outline);
+}
+.drag-drop-item-icon {
+  color: var(--mat-sys-primary);
+}
+
+.list-item-disabled {
+  color: var(--mat-sys-outline);
+  background-color: var(--mat-sys-surface-container-low);
+
+  .drag-drop-item-icon {
+    color: var(--mat-sys-outline);
+  }
+}
+
+.cdk-drag-preview {
+  border: none;
+  box-sizing: border-box;
+  box-shadow: var(--mat-sys-level2);
+}
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+.cdk-drag-animating {
+  transition: transform 100ms cubic-bezier(0, 0, 0.2, 1);
+}
+.drag-drop-list.cdk-drop-list-dragging .drag-drop-list-item:not(.cdk-drag-placeholder) {
+  transition: transform 100ms cubic-bezier(0, 0, 0.2, 1);
+}
