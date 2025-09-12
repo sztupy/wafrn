@@ -1,4 +1,4 @@
-<div class="flex justify-content-between">
+<div class="flex flex-wrap row-gap-2 justify-content-between">
   <div class="flex align-items-center">
     @if (notes) {
       <p class="m-0 text-sm">
@@ -13,7 +13,7 @@
     }
   </div>
   @if (loggedIn()) {
-    <div class="flex gap-1 action-list" aria-label="Action list">
+    <div class="flex flex-wrap gap-1 action-list" aria-label="Action list">
       @for (button of buttonList; track $index) {
         @if (button.enabled) {
           @switch (button.value) {
