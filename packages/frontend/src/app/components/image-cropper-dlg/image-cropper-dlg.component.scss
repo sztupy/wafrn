@@ -1,4 +1,8 @@
 #cropper {
     margin-bottom: 1em;
-    border-radius: 10px;
+
+    // Workaround: Hide outline/borders around the cropper
+    padding: 4px;
+    --cropper-overlay-color: none;
+    line-height: 0;
 }

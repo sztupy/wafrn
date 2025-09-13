@@ -3,8 +3,8 @@
 <image-cropper
   id="cropper"
   [imageFile]="image"
-  [maintainAspectRatio]="true"
-  [aspectRatio]="imageAspectRatio"
+  [maintainAspectRatio]="imageAspectRatio != null"
+  [aspectRatio]="imageAspectRatio ?? 1"
   format="png"
   output="blob"
   (imageCropped)="imageCropped($event)"

@@ -25,13 +25,11 @@ export class ImageCropperDlgComponent {
     this.cropFinishedCallback = data.cropFinishedCallback
     if (this.imageAspect == 'avatar') {
       this.imageAspectRatio = 1 / 1
-    } else if (this.imageAspect == 'header' ) {
-      this.imageAspectRatio = 25 / 4
     }
   }
 
   canFinish: boolean = false
-  imageAspectRatio = 1 / 1
+  imageAspectRatio: number | null = null
   imageAspect: 'avatar' | 'header'
   image: File
   croppedImage: File | null = null;
