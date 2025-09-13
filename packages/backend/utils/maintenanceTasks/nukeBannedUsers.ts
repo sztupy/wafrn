@@ -257,4 +257,8 @@ async function nukeBannedUsers() {
   }
 }
 
+nukeBannedUsers().then(() => {
+  console.log('done')
+})
+
 export { nukeBannedUsers }
