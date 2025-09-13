@@ -60,8 +60,7 @@ export default function searchRoutes(app: Application) {
     }
     try {
       urlString = new URL(searchTerm).href
-    } catch (error) {
-    }
+    } catch (error) {}
     if (urlString && !page) {
       // we force fetch said remote post. Nothing eslse!
       const userPoster = await User.findByPk(posterId)
@@ -83,7 +82,7 @@ export default function searchRoutes(app: Application) {
             }
             const uri = `at://${bskyProfile}/app.bsky.feed.post/${bskyUri}`
 
-            let bskyPostId = await getAtProtoThread(uri, undefined, true)
+            let bskyPostId = await getAtProtoThread(uri, true)
             if (bskyPostId) {
               postsIds = [bskyPostId]
             }
@@ -258,11 +257,7 @@ export default function searchRoutes(app: Application) {
 
     let result: User | null = null
 
-    if (
-      completeEnvironment.enableBsky &&
-      usr.enableBsky &&
-      searchData.type === "bluesky"
-    ) {
+    if (completeEnvironment.enableBsky && usr.enableBsky && searchData.type === 'bluesky') {
       try {
         const bskySearchResult = await getAtprotoUser(searchData.handle, usr)
         if (bskySearchResult && bskySearchResult.url != completeEnvironment.deletedUser) {
@@ -277,7 +272,7 @@ export default function searchRoutes(app: Application) {
     }
 
     // we have a full @fediUser@fediServer url. Time to search!
-    if (!result && searchData.type === "fediverse") {
+    if (!result && searchData.type === 'fediverse') {
       result = await searchRemoteUser(searchTerm, usr)
     }
     return result

@@ -124,7 +124,7 @@ async function processFirehose(job: Job) {
           }
           case 'app.bsky.feed.post': {
             const postBskyUri = `at://${job.data.repo}/${operation.path}`
-            await getAtProtoThread(postBskyUri, { operation, remoteUser })
+            await getAtProtoThread(postBskyUri)
             break
           }
           case 'app.bsky.feed.repost': {
@@ -216,7 +216,7 @@ async function processFirehose(job: Job) {
           case 'app.bsky.feed.threadgate': {
             const postBskyUri = (operation.record as any).post
             if (postBskyUri) {
-              await getAtProtoThread(postBskyUri, undefined, true)
+              await getAtProtoThread(postBskyUri, true)
             }
             break
           }
@@ -360,7 +360,7 @@ async function processFirehose(job: Job) {
           case 'app.bsky.feed.threadgate': {
             const postBskyUri = (operation.record as any).post
             if (postBskyUri) {
-              await getAtProtoThread(postBskyUri, undefined, true)
+              await getAtProtoThread(postBskyUri, true)
             }
             break
           }
