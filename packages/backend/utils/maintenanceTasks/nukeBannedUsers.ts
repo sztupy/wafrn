@@ -36,7 +36,7 @@ async function nukeBannedUsers() {
   })
   const users = await User.scope('full').findAll({
     where: {
-      banned: true,
+      selfDeleted: true,
       id: {
         [Op.ne]: ((await getDeletedUser()) as User).id
       },
@@ -45,7 +45,7 @@ async function nukeBannedUsers() {
       }
     }
   })
-
+  console.log('Users to delete: ' + users.length)
   const usersToNukeIds = users.map((elem) => elem.id)
 
   // if users, we prepare
