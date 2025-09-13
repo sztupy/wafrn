@@ -153,6 +153,8 @@ services:
       PDS_REPORT_SERVICE_URL: "https://mod.bsky.app"
       PDS_REPORT_SERVICE_DID: "did:plc:ar7c4by46qjdydhdevvrndac"
       PDS_CRAWLERS: "https://bsky.network, https://atproto.africa"
+      PDS_EMAIL_SMTP_URL: "smtps://${SMTP_USER}:${SMTP_PASSWORD}@${SMTP_HOST}:${SMTP_HOST}"
+      PDS_EMAIL_FROM_ADDRESS: "${SMTP_USER}"
       LOG_ENABLED: true
     volumes:
       - pds:/pds
@@ -217,8 +219,8 @@ services:
       GF_SMTP_FROM_ADDRESS: ${SMTP_FROM}
       GF_SERVER_DOMAIN: ${DOMAIN_NAME}
       GF_SMTP_FROM_NAME: ${SMTP_FROM}
-      GF_SMTP_USER: ${SMTP_USER}
-      GF_SMTP_PASSWORD: ${SMTP_PASSWORD}
+      GF_SMTP_USER: "${SMTP_USER}"
+      GF_SMTP_PASSWORD: "${SMTP_PASSWORD}"
 
       POSTGRES_METRICS_USER: ${POSTGRES_METRICS_USER}
       POSTGRES_METRICS_PASSWORD: ${POSTGRES_METRICS_PASSWORD}
