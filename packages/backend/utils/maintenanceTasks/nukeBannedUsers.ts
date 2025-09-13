@@ -56,7 +56,6 @@ async function nukeBannedUsers() {
     await UserFollowHashtags.destroy({
       where: {
         userId: {
-          selfDeleted: true,
           [Op.in]: usersToNukeIds
         }
       }
