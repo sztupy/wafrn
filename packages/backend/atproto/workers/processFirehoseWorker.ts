@@ -213,7 +213,7 @@ async function processFirehose(job: Job) {
           case 'app.bsky.feed.threadgate': {
             const postBskyUri = (operation.record as any).post
             if (postBskyUri) {
-              await getAtProtoThread(postBskyUri, true)
+              await getAtProtoThread(postBskyUri, undefined, true)
             }
             break
           }
@@ -357,7 +357,7 @@ async function processFirehose(job: Job) {
           case 'app.bsky.feed.threadgate': {
             const postBskyUri = (operation.record as any).post
             if (postBskyUri) {
-              await getAtProtoThread(postBskyUri, true)
+              await getAtProtoThread(postBskyUri, undefined, true)
             }
             break
           }

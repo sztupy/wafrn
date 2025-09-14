@@ -818,7 +818,7 @@ export default function postsRoutes(app: Application) {
         }
       }
       if (remotePost?.bskyUri) {
-        await getAtProtoThread(remotePost.bskyUri, true)
+        await getAtProtoThread(remotePost.bskyUri, undefined, true)
       }
     } catch (error) {
       logger.debug({ message: 'error getting external responses', post: req.query.id, error: error })

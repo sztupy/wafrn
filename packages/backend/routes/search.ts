@@ -82,7 +82,7 @@ export default function searchRoutes(app: Application) {
             }
             const uri = `at://${bskyProfile}/app.bsky.feed.post/${bskyUri}`
 
-            let bskyPostId = await getAtProtoThread(uri, true)
+            let bskyPostId = await getAtProtoThread(uri, undefined, true)
             if (bskyPostId) {
               postsIds = [bskyPostId]
             }
