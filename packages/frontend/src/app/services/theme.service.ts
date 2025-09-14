@@ -42,6 +42,7 @@ const colorSchemeVariants = [
   'wafrnverse',
   'dracula',
   'fan',
+  'waffler',
   'catppuccin_frappe',
   'catppuccin_latte',
   'catppuccin_macchiato',
@@ -75,6 +76,7 @@ export const colorSchemeData: ColorSchemeData = {
   wafrnverse: { name: 'Wafrnverse', compatibility: 'both' },
   dracula: { name: 'Dracula', compatibility: 'both' },
   fan: { name: 'Fan', compatibility: 'both' },
+  waffler: { name: "Waffler", compatibility: 'both' },
   catppuccin_frappe: { name: 'Catppuccin Frappe', compatibility: 'both' },
   catppuccin_latte: { name: 'Catppuccin Latte', compatibility: 'both' },
   catppuccin_macchiato: { name: 'Catppuccin Macchiato', compatibility: 'both' },
@@ -103,7 +105,7 @@ export const colorSchemeGroupList: ColorSchemeGroupList = {
   },
   computeryThemes: {
     name: 'Computery themes',
-    entries: ['unwafrn', 'wafrnverse', 'wafrn98', 'aqua', 'fan']
+    entries: ['unwafrn', 'wafrnverse', 'wafrn98', 'aqua', 'fan', 'waffler']
   },
   experimentalThemes: {
     name: 'Experimental themes',
