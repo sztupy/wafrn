@@ -45,7 +45,6 @@ async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
       throw new Error(`Error login with bluesky: ${user.url}`)
     }
   }
-
   return agent
 }
 
