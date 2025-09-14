@@ -64,6 +64,7 @@ async function getAtProtoThread(uri: string, forceUpdate?: boolean): Promise<str
         }
       }
     }
+    await wait(25)
     return procesedPost as string
   } else {
   }
