@@ -7,7 +7,7 @@ import { PostView, ThreadViewPost } from '@atproto/api/dist/client/types/app/bsk
 import { getAtprotoUser } from './getAtprotoUser.js'
 import { CreateOrUpdateOp } from '@skyware/firehose'
 import { logger } from '../../utils/logger.js'
-import { RichText } from '@atproto/api'
+import { AtpAgent, RichText } from '@atproto/api'
 import showdown from 'showdown'
 import { bulkCreateNotifications, createNotification } from '../../utils/pushNotifications.js'
 import { getAllLocalUserIds } from '../../utils/cacheGetters/getAllLocalUserIds.js'
@@ -33,7 +33,11 @@ const adminUser = User.findOne({
   }
 })
 
-async function getAtProtoThread(uri: string, forceUpdate?: boolean): Promise<string | undefined> {
+async function getAtProtoThread(
+  uri: string,
+  forceUpdate?: boolean,
+  inputAgent?: AtpAgent
+): Promise<string | undefined> {
   const existingPost = forceUpdate
     ? undefined
     : await Post.findOne({
@@ -45,7 +49,9 @@ async function getAtProtoThread(uri: string, forceUpdate?: boolean): Promise<str
     return existingPost.id
   }
   // TODO optimize this a bit if post is not in reply to anything that we dont have
-  const preThread = await getPostThreadSafe({ uri: uri, depth: 1, parentHeight: 1 })
+  const agent = inputAgent && inputAgent.did ? inputAgent : await getAtProtoSession((await adminUser) as User)
+
+  const preThread = await getPostThreadSafe({ uri: uri, depth: 1, parentHeight: 1 }, agent)
   if (preThread) {
     const thread: ThreadViewPost = preThread.data.thread as ThreadViewPost
     //const tmpDids = getDidsFromThread(thread)
@@ -53,18 +59,17 @@ async function getAtProtoThread(uri: string, forceUpdate?: boolean): Promise<str
     let parentId: string | undefined = undefined
     if (thread.parent && thread.parent.post) {
       const parentUri = (thread.parent.post as { uri: string | undefined }).uri
-      parentId = parentUri ? await getAtProtoThread(parentUri) : undefined
+      parentId = parentUri ? await getAtProtoThread(parentUri, forceUpdate, agent) : undefined
     }
     const procesedPost = await processSinglePost(thread.post, parentId, forceUpdate)
     if (thread.replies && procesedPost) {
       for await (const repliesThread of thread.replies) {
         const replyUri = (repliesThread.post as { uri: string | undefined }).uri
         if (replyUri) {
-          await getAtProtoThread(replyUri, forceUpdate)
+          await getAtProtoThread(replyUri, forceUpdate, agent)
         }
       }
     }
-    await wait(25)
     return procesedPost as string
   } else {
   }
@@ -405,9 +410,9 @@ function getPostLabels(post: PostView) {
   return Array.from(labels)
 }
 
-async function getPostThreadSafe(options: any) {
+async function getPostThreadSafe(options: any, inputAgent?: AtpAgent) {
   try {
-    const agent = await getAtProtoSession((await adminUser) as User)
+    const agent = inputAgent && inputAgent.did ? inputAgent : await getAtProtoSession((await adminUser) as User)
     return await agent.getPostThread(options)
   } catch (error) {
     logger.debug({
