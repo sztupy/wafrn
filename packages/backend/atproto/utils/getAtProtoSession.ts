@@ -5,9 +5,9 @@ import { completeEnvironment } from '../../utils/backendOptions.js'
 import { logger } from '../../utils/logger.js'
 import { getAdminAtprotoSession } from '../../utils/atproto/getAdminAtprotoSession.js'
 
-async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
+async function getAtProtoSession(userInput?: User, force?: boolean): Promise<AtpAgent> {
   let user = userInput ? ((await User.scope('full').findByPk(userInput.id)) as User) : undefined
-  if (user && user.url == completeEnvironment.adminUser) {
+  if (!force && user && user.url == completeEnvironment.adminUser) {
     // a bit dirty innit?
     return await getAdminAtprotoSession()
   }

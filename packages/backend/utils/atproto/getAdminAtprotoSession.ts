@@ -6,7 +6,7 @@ let adminSession: AtpAgent | undefined
 
 async function getAdminAtprotoSession(): Promise<AtpAgent> {
   if (!adminSession) {
-    adminSession = await getAtProtoSession(await getAdminUser())
+    adminSession = await getAtProtoSession(await getAdminUser(), true)
   }
   return adminSession
 }
