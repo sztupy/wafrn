@@ -19,6 +19,9 @@ async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
     }
   })
   if (user) {
+    logger.debug({
+      message: `Obtaining session for ${user.url}`
+    })
     const existingSession = await redisCache.get('bskySession:' + user.id)
     let loggedIn = false
     if (existingSession) {
