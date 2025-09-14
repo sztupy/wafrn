@@ -17,6 +17,8 @@ import { UpdatedAt } from 'sequelize-typescript'
 import { completeEnvironment } from '../../utils/backendOptions.js'
 import { include } from 'underscore'
 import { MediaAttributes } from '../../models/media.js'
+import { getAdminUser } from '../../utils/getAdminAndDeletedUser.js'
+import { getAdminAtprotoSession } from '../../utils/atproto/getAdminAtprotoSession.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -27,17 +29,9 @@ const markdownConverter = new showdown.Converter({
   emoji: true
 })
 
-const adminUser = User.findOne({
-  where: {
-    url: completeEnvironment.adminUser
-  }
-})
+const adminUser = getAdminUser()
 
-async function getAtProtoThread(
-  uri: string,
-  forceUpdate?: boolean,
-  inputAgent?: AtpAgent
-): Promise<string | undefined> {
+async function getAtProtoThread(uri: string, forceUpdate?: boolean): Promise<string | undefined> {
   const existingPost = forceUpdate
     ? undefined
     : await Post.findOne({
@@ -49,9 +43,7 @@ async function getAtProtoThread(
     return existingPost.id
   }
   // TODO optimize this a bit if post is not in reply to anything that we dont have
-  const agent = inputAgent && inputAgent.did ? inputAgent : await getAtProtoSession((await adminUser) as User)
-
-  const preThread = await getPostThreadSafe({ uri: uri, depth: 1, parentHeight: 1 }, agent)
+  const preThread = await getPostThreadSafe({ uri: uri, depth: 1, parentHeight: 1 })
   if (preThread) {
     const thread: ThreadViewPost = preThread.data.thread as ThreadViewPost
     //const tmpDids = getDidsFromThread(thread)
@@ -59,14 +51,14 @@ async function getAtProtoThread(
     let parentId: string | undefined = undefined
     if (thread.parent && thread.parent.post) {
       const parentUri = (thread.parent.post as { uri: string | undefined }).uri
-      parentId = parentUri ? await getAtProtoThread(parentUri, forceUpdate, agent) : undefined
+      parentId = parentUri ? await getAtProtoThread(parentUri, forceUpdate) : undefined
     }
     const procesedPost = await processSinglePost(thread.post, parentId, forceUpdate)
     if (thread.replies && procesedPost) {
       for await (const repliesThread of thread.replies) {
         const replyUri = (repliesThread.post as { uri: string | undefined }).uri
         if (replyUri) {
-          await getAtProtoThread(replyUri, forceUpdate, agent)
+          await getAtProtoThread(replyUri, forceUpdate)
         }
       }
     }
@@ -410,9 +402,9 @@ function getPostLabels(post: PostView) {
   return Array.from(labels)
 }
 
-async function getPostThreadSafe(options: any, inputAgent?: AtpAgent) {
+async function getPostThreadSafe(options: any) {
   try {
-    const agent = inputAgent && inputAgent.did ? inputAgent : await getAtProtoSession((await adminUser) as User)
+    const agent = await getAdminAtprotoSession()
     return await agent.getPostThread(options)
   } catch (error) {
     logger.debug({

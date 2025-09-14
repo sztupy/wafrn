@@ -5,6 +5,7 @@ import { Post } from '../../models/index.js'
 import { getAllLocalUserIds } from '../cacheGetters/getAllLocalUserIds.js'
 import { getAdminUser } from '../getAdminAndDeletedUser.js'
 import { logger } from '../logger.js'
+import { getAdminAtprotoSession } from './getAdminAtprotoSession.js'
 
 async function checkBskyLabelersNSFW(posts: Post[]): Promise<void> {
   if (posts.length == 0) {
@@ -15,7 +16,7 @@ async function checkBskyLabelersNSFW(posts: Post[]): Promise<void> {
     const dids: string[] = posts
       .filter((elem) => elem.bskyUri && !localUsers.includes(elem.userId))
       .map((elem) => elem.bskyUri as string)
-    const agent = await getAtProtoSession(await getAdminUser())
+    const agent = await getAdminAtprotoSession()
     const getLabelsPetition = agent.com.atproto.label.queryLabels({
       uriPatterns: dids,
       // hardcoded: bsky moderation service

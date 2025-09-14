@@ -4,12 +4,9 @@ import _ from 'underscore'
 import { FederatedHost, User } from '../../models/index.js'
 import { completeEnvironment } from '../backendOptions.js'
 import { getRemoteActorIdProcessor } from '../queueProcessors/getRemoteActorIdProcessor.js'
+import { getAdminUser } from '../getAdminAndDeletedUser.js'
 
-let adminUserPromise = User.findOne({
-  where: {
-    url: completeEnvironment.adminUser
-  }
-})
+let adminUserPromise = getAdminUser()
 
 async function updateAllUsers() {
   console.log('lets a update all users that we caaaaaaaaan')

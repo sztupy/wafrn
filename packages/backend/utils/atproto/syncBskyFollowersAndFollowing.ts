@@ -3,11 +3,12 @@ import { getAtProtoSession } from '../../atproto/utils/getAtProtoSession.js'
 import { forcePopulateUsers, getAtprotoUser } from '../../atproto/utils/getAtprotoUser.js'
 import { Follows, User } from '../../models/index.js'
 import { getAdminUser } from '../getAdminAndDeletedUser.js'
+import { getAdminAtprotoSession } from './getAdminAtprotoSession.js'
 
 async function syncBskyFollowersAndFollowing(userId: string) {
   const user = await User.findByPk(userId)
   if (user && user.bskyDid) {
-    const agent = await getAtProtoSession(await getAdminUser())
+    const agent = await getAdminAtprotoSession()
 
     let followersDids: string[] = []
     let followersResponse = await agent.getFollowers({ actor: user.bskyDid })

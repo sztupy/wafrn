@@ -22,12 +22,9 @@ import { createNotification } from '../../utils/pushNotifications.js'
 import { Privacy } from '../../models/post.js'
 import { completeEnvironment } from '../../utils/backendOptions.js'
 import { wait } from '../../utils/wait.js'
+import { getAdminUser } from '../../utils/getAdminAndDeletedUser.js'
 
-const adminUser = User.findOne({
-  where: {
-    url: completeEnvironment.adminUser
-  }
-})
+const adminUser = getAdminUser()
 async function processFirehose(job: Job) {
   // FIRST VERSION. THIS IS GONA BE DIRTY
   const remoteUser = await getAtprotoUser(job.data.repo, (await adminUser) as User)
