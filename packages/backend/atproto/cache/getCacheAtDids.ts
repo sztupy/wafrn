@@ -28,15 +28,23 @@ async function getCacheAtDids(forceUpdate = false): Promise<{
   let cacheResult = forceUpdate ? undefined : superCache
   if (!cacheResult) {
     const follows = await Follows.findAll({
+      include: [
+        {
+          model: User,
+          as: 'followed',
+          where: {
+            bskyDid: {
+              [Op.ne]: null
+            }
+          },
+          required: true
+        }
+      ],
       attributes: ['followedId'],
-      group: ['followedId'],
+      //group: ['followedId'],
       where: {
-        followedId: {
-          [Op.notIn]: await getAllLocalUserIds()
-        },
-        // TODO to reactivate this, the function syncFollows needs to update the bskyUri on the follows table
-        bskyUri: {
-          [Op.ne]: null
+        followerId: {
+          [Op.in]: await getAllLocalUserIds()
         }
       }
     })
