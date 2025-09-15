@@ -427,7 +427,7 @@ export class SettingsService {
       serverKey: 'wafrn.postReplyBarOrder',
       localStorageKey: 'postReplyBarOrder',
       type: 'list',
-      default: [],
+      default: [{"value":"quote","enabled":true},{"value":"rewoot","enabled":true},{"value":"reply","enabled":true},{"value":"bookmark","enabled":true},{"value":"like","enabled":true},{"value":"edit","enabled":true},{"value":"delete","enabled":true}],
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo
     }
