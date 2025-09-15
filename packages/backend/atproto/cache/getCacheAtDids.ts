@@ -33,10 +33,11 @@ async function getCacheAtDids(forceUpdate = false): Promise<{
       where: {
         followedId: {
           [Op.notIn]: await getAllLocalUserIds()
-        },
-        bskyUri: {
-          [Op.ne]: null
         }
+        // TODO to reactivate this, the function syncFollows needs to update the bskyUri on the follows table
+        //bskyUri: {
+        //  [Op.ne]: null
+        //}
       }
     })
     const dids = await User.findAll({
@@ -70,7 +71,7 @@ async function getCacheAtDids(forceUpdate = false): Promise<{
     )
     const followedDids = new Set<string>([
       ...dids.map((elem) => elem.bskyDid || '').filter((elem) => elem != ''),
-      ...localUserDids
+      ...Array.from(localUserDids)
     ])
 
     const followedHashtagsQuery = await UserFollowHashtags.findAll({
