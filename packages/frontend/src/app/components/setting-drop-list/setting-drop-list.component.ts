@@ -1,31 +1,20 @@
 import { Component, Inject } from '@angular/core'
 import { SETTINGS_TOKEN } from 'src/app/pages/settings/settings.component'
-import { SettingData, SettingKey, SettingListItem, SettingsService } from 'src/app/services/settings.service'
-import { replyBarItems } from '../bottom-reply-bar/bottom-reply-bar.component'
+import {
+  DropListData,
+  DropListDataEntry,
+  SettingData,
+  SettingKey,
+  SettingListItem,
+  SettingsService
+} from 'src/app/services/settings.service'
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop'
 import { TranslatePipe } from '@ngx-translate/core'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
-import {
-  faBars,
-  faBookmark,
-  faHeart,
-  faPen,
-  faQuoteLeft,
-  faRepeat,
-  faReply,
-  faRotateRight,
-  faTrash
-} from '@fortawesome/free-solid-svg-icons'
+import { faBars, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatExpansionModule } from '@angular/material/expansion'
-
-type DropListDataEntryKeyData = { icon: IconDefinition; translationKey: string }
-type DropListDataEntry = {
-  list: string[]
-  data: Record<string, DropListDataEntryKeyData>
-}
 
 @Component({
   selector: 'app-setting-drop-list',
@@ -47,22 +36,7 @@ export class SettingDropListComponent {
   settingKey: SettingKey
   itemList: SettingListItem[]
   defaultOrder: SettingListItem[]
-
-  dropListData: Record<any, DropListDataEntry> = {
-    postReplyBarOrder: {
-      list: [...replyBarItems],
-      data: {
-        quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
-        rewoot: { icon: faRepeat, translationKey: 'settings.postReplyBarOrderOptions.rewoot' },
-        reply: { icon: faReply, translationKey: 'settings.postReplyBarOrderOptions.reply' },
-        bookmark: { icon: faBookmark, translationKey: 'settings.postReplyBarOrderOptions.bookmark' },
-        like: { icon: faHeart, translationKey: 'settings.postReplyBarOrderOptions.like' },
-        edit: { icon: faPen, translationKey: 'settings.postReplyBarOrderOptions.edit' },
-        delete: { icon: faTrash, translationKey: 'settings.postReplyBarOrderOptions.delete' }
-      }
-    }
-  }
-  dropListDataEntry // The active entry from the data above
+  dropListDataEntry: DropListData | undefined // The active entry from the data above
 
   barsIcon = faBars
   defaultIcon = faRotateRight
@@ -73,12 +47,9 @@ export class SettingDropListComponent {
   ) {
     this.data = settingsService.data
     this.settingKey = data.settingKey
-    this.dropListDataEntry = this.dropListData[this.settingKey as keyof typeof this.dropListData]
+    this.dropListDataEntry = this.data[this.settingKey].dropListData
 
-    this.defaultOrder = this.dropListDataEntry.list.map((item) => ({
-      value: item,
-      enabled: true
-    }))
+    this.defaultOrder = this.data[this.settingKey].default as SettingListItem[]
     this.itemList = settingsService.values[this.settingKey] as SettingListItem[]
 
     // Reset if no value or new values
@@ -106,8 +77,8 @@ export class SettingDropListComponent {
     this.settingsService.settingsModified.set(true)
   }
 
-  keyToEntry(key: string): DropListDataEntryKeyData | undefined {
-    return this.dropListDataEntry.data[key]
+  keyToEntry(key: string): DropListDataEntry | undefined {
+    return this.dropListDataEntry && this.dropListDataEntry[key]
   }
 
   listAsString(list: SettingListItem[]): string {
