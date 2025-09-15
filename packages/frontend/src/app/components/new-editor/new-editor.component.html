@@ -252,7 +252,7 @@
         <div class="mt-2 mx-2 tag-list">
           @for (tag of tags.split(','); track $index) {
             @if (tag && tag !== '' && tag.trim() !== '') {
-              <span class="tag" [attr.data-tag]="tag.trim()"
+              <span class="tag" [attr.data-tag]="tagMap(tag)"
                 ><span class="tag-text">#{{ tagMap(tag) }}</span></span
               >
             }
