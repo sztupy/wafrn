@@ -125,7 +125,8 @@ async function processFirehose(job: Job) {
             break
           }
           case 'app.bsky.feed.repost': {
-            const postToBeRewooted = await getAtProtoThread(record.subject.uri)
+            // we do not need to get all the replies, making this operation a lot faster for big threads
+            const postToBeRewooted = await getAtProtoThread(record.subject.uri, false, false)
             if (postToBeRewooted) {
               try {
                 const parent = await Post.findByPk(postToBeRewooted)
@@ -213,7 +214,7 @@ async function processFirehose(job: Job) {
           case 'app.bsky.feed.threadgate': {
             const postBskyUri = (operation.record as any).post
             if (postBskyUri) {
-              await getAtProtoThread(postBskyUri, undefined, true)
+              await getAtProtoThread(postBskyUri, true)
             }
             break
           }
@@ -357,7 +358,7 @@ async function processFirehose(job: Job) {
           case 'app.bsky.feed.threadgate': {
             const postBskyUri = (operation.record as any).post
             if (postBskyUri) {
-              await getAtProtoThread(postBskyUri, undefined, true)
+              await getAtProtoThread(postBskyUri, true)
             }
             break
           }
