@@ -1,0 +1,64 @@
+.drag-drop-list {
+  max-width: 500px;
+  margin-right: 2rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background-color: var(--mat-sys-surface-container-low);
+}
+.drag-drop-list-item {
+  background-color: var(--mat-sys-surface-variant);
+  border: 2px solid var(--mat-sys-surface-variant);
+  padding: 0 0.5rem;
+}
+.drag-drop-item-drag-indicator {
+  color: var(--mat-sys-outline);
+}
+.drag-drop-item-icon {
+  color: var(--mat-sys-primary);
+}
+
+.list-item-disabled {
+  color: var(--mat-sys-outline);
+  background-color: var(--mat-sys-surface-container-low);
+  border-color: var(--mat-sys-surface-container-low);
+
+  .drag-drop-item-icon {
+    color: var(--mat-sys-outline);
+  }
+}
+
+.drag-handle {
+  cursor: move;
+  position: relative;
+}
+.drag-touch-target {
+  // Makes the dragging easier
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 40px;
+  width: 40px;
+  transform: translate(-50%, -50%);
+  display: var(--mat-checkbox-touch-target-display, block);
+}
+
+.cdk-drag-preview {
+  border: none;
+  box-shadow: var(--mat-sys-level2);
+  opacity: 0.2;
+  & ::ng-deep .mat-mdc-checkbox-touch-target {
+    height: 0;
+  }
+}
+.cdk-drag-placeholder {
+  border-radius: 0;
+  box-sizing: border-box;
+  border: 2px dashed var(--mat-sys-outline-variant);
+  z-index: 1;
+}
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+.drag-drop-list.cdk-drop-list-dragging .drag-drop-list-item {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+  border-radius: 0;
+}

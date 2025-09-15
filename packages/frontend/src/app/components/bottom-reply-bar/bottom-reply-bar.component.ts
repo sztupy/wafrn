@@ -32,6 +32,11 @@ import { EditorService } from 'src/app/services/editor.service'
 import { LoginService } from 'src/app/services/login.service'
 import { MessageService } from 'src/app/services/message.service'
 import { PostsService } from 'src/app/services/posts.service'
+import { SettingListItem, SettingsService } from 'src/app/services/settings.service'
+
+export const replyBarItems = ['quote', 'rewoot', 'reply', 'bookmark', 'like', 'edit', 'delete'] as const
+type replyBarItemsVariants = typeof replyBarItems
+export type ReplyBarItem = replyBarItemsVariants[number]
 
 @Component({
   selector: 'app-bottom-reply-bar',
@@ -71,18 +76,23 @@ export class BottomReplyBarComponent implements OnChanges {
   bookmarkIcon = faBookmark
   unbookmarkIcon = faBookBookmark
 
+  // Ordering
+  buttonList: SettingListItem[]
+
   constructor(
     readonly loginService: LoginService,
     private readonly postService: PostsService,
     private readonly editorService: EditorService,
     private readonly deletePostService: DeletePostService,
     private readonly messages: MessageService,
-    private readonly editor: EditorService
+    private readonly editor: EditorService,
+    settingsService: SettingsService
   ) {
     this.loggedIn = loginService.loggedIn
     if (this.loggedIn()) {
       this.myId = loginService.getLoggedUserUUID()
     }
+    this.buttonList = settingsService.values.postReplyBarOrder as SettingListItem[]
   }
 
   ngOnInit(): void {

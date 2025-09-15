@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core'
+import { computed, Injectable, Injector, signal } from '@angular/core'
 import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
 import {
@@ -25,6 +25,8 @@ import { SettingThemeSwitcherComponent } from '../components/setting-theme-switc
 import { SettingLanguageSwitcherComponent } from '../components/setting-language-switcher/setting-language-switcher.component'
 import { SettingDeleteAccountComponent } from '../components/setting-delete-account/setting-delete-account.component'
 import { SettingChangePasswordComponent } from '../components/setting-change-password/setting-change-password.component'
+import { SettingDropListComponent } from '../components/setting-drop-list/setting-drop-list.component'
+import { SETTINGS_TOKEN } from '../pages/settings/settings.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -60,16 +62,22 @@ const settingKeyVariants = [
   'superMutedWords',
   'hideQuotes',
   'replaceAIWithCocaine',
-  'replaceAIWord'
+  'replaceAIWord',
+  'postReplyBarOrder'
 ] as const
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
 
-export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea' | 'user'
+export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea' | 'user' | 'list'
+
+export type SettingListItem = {
+  value: string
+  enabled: boolean
+}
 
 // Setting type cannot be numbers because of a bug with mat-select
 // Simply write your numbers as strings (agony)
-export type SettingValueType = string | boolean
+export type SettingValueType = string | boolean | SettingListItem[]
 export interface SettingDataEntry {
   key: SettingKey // Copy of key for components to use
   translationKey: string
@@ -367,8 +375,8 @@ export class SettingsService {
       localStorageKey: 'mutedWords',
       type: 'textarea',
       default: '""',
-      convertFromStorage: this.convertListFrom,
-      convertToStorage: this.convertListTo
+      convertFromStorage: this.convertCommaListFrom,
+      convertToStorage: this.convertCommaListTo
     },
     superMutedWords: {
       key: 'superMutedWords',
@@ -378,8 +386,8 @@ export class SettingsService {
       localStorageKey: 'superMutedWords',
       type: 'textarea',
       default: '""',
-      convertFromStorage: this.convertListFrom,
-      convertToStorage: this.convertListTo
+      convertFromStorage: this.convertCommaListFrom,
+      convertToStorage: this.convertCommaListTo
     },
     hideQuotes: {
       key: 'hideQuotes',
@@ -411,6 +419,17 @@ export class SettingsService {
       default: '"cocaine"',
       convertFromStorage: this.convertStringFrom,
       convertToStorage: this.convertStringTo
+    },
+    postReplyBarOrder: {
+      key: 'postReplyBarOrder',
+      translationKey: 'settings.postReplyBarOrder',
+      translationDescriptionKey: 'settings.postReplyBarOrderDescription',
+      serverKey: 'wafrn.postReplyBarOrder',
+      localStorageKey: 'postReplyBarOrder',
+      type: 'list',
+      default: [],
+      convertFromStorage: this.convertListFrom,
+      convertToStorage: this.convertListTo
     }
   }
   // Generates settings sidebar links and gives the settings-loader pages their data through values
@@ -457,8 +476,16 @@ export class SettingsService {
         { type: 'header', value: 'settings.header.appearance' },
         { type: 'component', value: new ComponentPortal(SettingThemeSwitcherComponent) },
         { type: 'separator' },
-        { type: 'header', value: 'settings.header.uiLanguage' },
+        { type: 'header', value: 'settings.header.userInterface' },
         { type: 'component', value: new ComponentPortal(SettingLanguageSwitcherComponent) },
+        {
+          type: 'component',
+          value: new ComponentPortal(
+            SettingDropListComponent,
+            null,
+            this.makeInject({ settingKey: 'postReplyBarOrder' })
+          )
+        },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.classicOptions' },
         { type: 'key', value: 'forceClassicLogo' },
@@ -726,6 +753,10 @@ export class SettingsService {
     }
   }
 
+  makeInject(data: any) {
+    return Injector.create({ providers: [{ provide: SETTINGS_TOKEN, useValue: data }] })
+  }
+
   // Various conversions for annoying edge cases
   convertStringFrom(list: string): string {
     try {
@@ -738,16 +769,31 @@ export class SettingsService {
     return `"${list}"`
   }
 
-  convertListFrom(list: string): string {
+  convertCommaListFrom(list: string): string {
     try {
       return JSON.parse(list).replaceAll(',', '\n')
     } catch (error) {
       return ''
     }
   }
-  convertListTo(list: SettingValueType): string {
+  convertCommaListTo(list: SettingValueType): string {
     if (typeof list !== 'string') return ''
     return `"${list.replaceAll('\n', ',')}"`
+  }
+
+  convertListFrom(list: string): SettingValueType {
+    try {
+      return JSON.parse(list)
+    } catch (error) {
+      return []
+    }
+  }
+  convertListTo(list: SettingValueType): string {
+    if (Array.isArray(list)) {
+      return JSON.stringify(list)
+    }
+    console.error('Error converting list to string!', list)
+    return list.toString() // should not happen lmao
   }
 
   convertAsksTo(): string {

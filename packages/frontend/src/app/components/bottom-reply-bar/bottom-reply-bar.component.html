@@ -1,4 +1,4 @@
-<div class="flex justify-content-between">
+<div class="flex flex-wrap row-gap-2 justify-content-between">
   <div class="flex align-items-center">
     @if (notes) {
       <p class="m-0 text-sm">
@@ -13,115 +13,143 @@
     }
   </div>
   @if (loggedIn()) {
-    <div class="flex gap-1 action-list" aria-label="Action list">
-      @if (fragment.privacy !== 10 && fragment.privacy !== 1 && fragment.privacy !== 2) {
-        <button
-          [disabled]="!fragment.canQuote"
-          aria-label="Quote woot"
-          mat-button
-          color="accent"
-          (click)="quotePost()"
-          class="cursor-pointer quote-icon"
-        >
-          <fa-icon size="lg" [icon]="quoteIcon" matTooltip="Quote woot"></fa-icon>
-        </button>
-      }
-      @if (myRewootsIncludePost) {
-        <button
-          aria-label="Delete rewoot"
-          mat-button
-          color="accent"
-          (click)="deleteRewoots()"
-          class="cursor-pointer delete-rewoot-icon"
-          [disabled]="loadingAction"
-        >
-          <fa-icon size="lg" [icon]="closeIcon" matTooltip="Delete rewoot"></fa-icon>
-        </button>
-      }
-      @if (!myRewootsIncludePost && fragment.privacy !== 10 && fragment.privacy !== 1) {
-        <button
-          aria-label="Rewoot"
-          [disabled]="!fragment.canReblog"
-          mat-button
-          color="accent"
-          (click)="quickReblog()"
-          class="cursor-pointer rewoot-icon"
-          [disabled]="loadingAction"
-        >
-          <fa-icon size="lg" [icon]="quickReblogIcon" matTooltip="Rewoot"></fa-icon>
-        </button>
-      }
-      <button
-        aria-label="Reply woot"
-        [disabled]="!fragment.canReply"
-        mat-button
-        color="accent"
-        (click)="replyPost()"
-        class="cursor-pointer reply-icon"
-      >
-        <fa-icon size="lg" [icon]="reblogIcon" matTooltip="Reply woot"></fa-icon>
-      </button>
-      @if (bookmarked()) {
-        <button
-          aria-label="Unbookmark woot"
-          mat-button
-          color="accent"
-          (click)="unbookmarkPost()"
-          class="cursor-pointer unlike-icon"
-          [disabled]="loadingAction"
-        >
-          <fa-icon size="lg" [icon]="unbookmarkIcon" matTooltip="Unbookmark woot"></fa-icon>
-        </button>
-      } @else {
-        <button
-          aria-label="Bookmark woot"
-          mat-button
-          color="accent"
-          (click)="bookmarkPost()"
-          class="cursor-pointer unlike-icon"
-          [disabled]="loadingAction"
-        >
-          <fa-icon size="lg" [icon]="bookmarkIcon" matTooltip="Bookmark woot"></fa-icon>
-        </button>
-      }
-      @if (fragment.userId !== myId) {
-        @if (fragment.userLikesPostRelations.includes(myId)) {
-          <button
-            aria-label="Remove like"
-            mat-button
-            color="accent"
-            (click)="unlikePost()"
-            class="cursor-pointer unlike-icon"
-            [disabled]="loadingAction"
-          >
-            <fa-icon size="lg" [icon]="clearHeartIcon" matTooltip="Remove like"></fa-icon>
-          </button>
-        } @else {
-          <button
-            aria-label="Like woot"
-            [disabled]="!fragment.canLike"
-            mat-button
-            color="accent"
-            (click)="likePost()"
-            class="cursor-pointer like-icon"
-            [disabled]="loadingAction"
-          >
-            <fa-icon size="lg" [icon]="solidHeartIcon" matTooltip="Like woot"></fa-icon>
-          </button>
+    <div class="flex flex-wrap gap-1 action-list" aria-label="Action list">
+      @for (button of buttonList; track $index) {
+        @if (button.enabled) {
+          @switch (button.value) {
+            @case ('quote') {
+              @if (fragment.privacy !== 10 && fragment.privacy !== 1 && fragment.privacy !== 2) {
+                <button
+                  [disabled]="!fragment.canQuote"
+                  aria-label="Quote woot"
+                  mat-button
+                  color="accent"
+                  (click)="quotePost()"
+                  class="cursor-pointer quote-icon"
+                >
+                  <fa-icon size="lg" [icon]="quoteIcon" matTooltip="Quote woot"></fa-icon>
+                </button>
+              }
+            }
+            @case ('rewoot') {
+              @if (myRewootsIncludePost) {
+                <button
+                  aria-label="Delete rewoot"
+                  mat-button
+                  color="accent"
+                  (click)="deleteRewoots()"
+                  class="cursor-pointer delete-rewoot-icon"
+                  [disabled]="loadingAction"
+                >
+                  <fa-icon size="lg" [icon]="closeIcon" matTooltip="Delete rewoot"></fa-icon>
+                </button>
+              } @else if (!myRewootsIncludePost && fragment.privacy !== 10 && fragment.privacy !== 1) {
+                <button
+                  aria-label="Rewoot"
+                  [disabled]="!fragment.canReblog"
+                  mat-button
+                  color="accent"
+                  (click)="quickReblog()"
+                  class="cursor-pointer rewoot-icon"
+                  [disabled]="loadingAction"
+                >
+                  <fa-icon size="lg" [icon]="quickReblogIcon" matTooltip="Rewoot"></fa-icon>
+                </button>
+              }
+            }
+            @case ('reply') {
+              <button
+                aria-label="Reply woot"
+                [disabled]="!fragment.canReply"
+                mat-button
+                color="accent"
+                (click)="replyPost()"
+                class="cursor-pointer reply-icon"
+              >
+                <fa-icon size="lg" [icon]="reblogIcon" matTooltip="Reply woot"></fa-icon>
+              </button>
+            }
+            @case ('bookmark') {
+              @if (bookmarked()) {
+                <button
+                  aria-label="Unbookmark woot"
+                  mat-button
+                  color="accent"
+                  (click)="unbookmarkPost()"
+                  class="cursor-pointer unlike-icon"
+                  [disabled]="loadingAction"
+                >
+                  <fa-icon size="lg" [icon]="unbookmarkIcon" matTooltip="Unbookmark woot"></fa-icon>
+                </button>
+              } @else {
+                <button
+                  aria-label="Bookmark woot"
+                  mat-button
+                  color="accent"
+                  (click)="bookmarkPost()"
+                  class="cursor-pointer unlike-icon"
+                  [disabled]="loadingAction"
+                >
+                  <fa-icon size="lg" [icon]="bookmarkIcon" matTooltip="Bookmark woot"></fa-icon>
+                </button>
+              }
+            }
+            @case ('like') {
+              @if (fragment.userId !== myId) {
+                @if (fragment.userLikesPostRelations.includes(myId)) {
+                  <button
+                    aria-label="Remove like"
+                    mat-button
+                    color="accent"
+                    (click)="unlikePost()"
+                    class="cursor-pointer unlike-icon"
+                    [disabled]="loadingAction"
+                  >
+                    <fa-icon size="lg" [icon]="clearHeartIcon" matTooltip="Remove like"></fa-icon>
+                  </button>
+                } @else {
+                  <button
+                    aria-label="Like woot"
+                    [disabled]="!fragment.canLike"
+                    mat-button
+                    color="accent"
+                    (click)="likePost()"
+                    class="cursor-pointer like-icon"
+                    [disabled]="loadingAction"
+                  >
+                    <fa-icon size="lg" [icon]="solidHeartIcon" matTooltip="Like woot"></fa-icon>
+                  </button>
+                }
+              }
+            }
+            @case ('edit') {
+              @if (fragment.userId === myId) {
+                <button
+                  aria-label="Edit woot"
+                  mat-button
+                  color="accent"
+                  (click)="editPost(fragment)"
+                  class="cursor-pointer"
+                >
+                  <fa-icon size="lg" [icon]="editedIcon" matTooltip="Edit woot"></fa-icon>
+                </button>
+              }
+            }
+            @case ('delete') {
+              @if (fragment.userId === myId) {
+                <button
+                  aria-label="Delete woot"
+                  mat-button
+                  color="accent"
+                  (click)="deletePost(fragment.id)"
+                  class="cursor-pointer delete-woot-icon"
+                >
+                  <fa-icon size="lg" [icon]="deleteIcon" matTooltip="Delete woot"></fa-icon>
+                </button>
+              }
+            }
+          }
         }
-      } @else {
-        <button aria-label="Edit woot" mat-button color="accent" (click)="editPost(fragment)" class="cursor-pointer">
-          <fa-icon size="lg" [icon]="editedIcon" matTooltip="Edit woot"></fa-icon>
-        </button>
-        <button
-          aria-label="Delete woot"
-          mat-button
-          color="accent"
-          (click)="deletePost(fragment.id)"
-          class="cursor-pointer delete-woot-icon"
-        >
-          <fa-icon size="lg" [icon]="deleteIcon" matTooltip="Delete woot"></fa-icon>
-        </button>
       }
     </div>
   }
