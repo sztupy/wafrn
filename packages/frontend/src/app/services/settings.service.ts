@@ -3,10 +3,17 @@ import { DashboardService } from './dashboard.service'
 import { JwtService } from './jwt.service'
 import {
   faBan,
+  faBookmark,
   faEllipsis,
+  faHeart,
   faKey,
   faPaintbrush,
+  faPen,
+  faQuoteLeft,
+  faRepeat,
+  faReply,
   faSliders,
+  faTrash,
   faUser,
   faUserSecret,
   IconDefinition
@@ -27,6 +34,7 @@ import { SettingDeleteAccountComponent } from '../components/setting-delete-acco
 import { SettingChangePasswordComponent } from '../components/setting-change-password/setting-change-password.component'
 import { SettingDropListComponent } from '../components/setting-drop-list/setting-drop-list.component'
 import { SETTINGS_TOKEN } from '../pages/settings/settings.component'
+import { replyBarItems } from '../components/bottom-reply-bar/bottom-reply-bar.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -88,6 +96,7 @@ export interface SettingDataEntry {
   type: SettingFormTypes
   default: SettingValueType
   variants?: Record<string, string> // For type 'select'
+  dropListData?: DropListData // For type 'list'
   convertFromStorage?: (stored: string) => SettingValueType
   convertToStorage?: (value: SettingValueType) => string
 }
@@ -130,6 +139,10 @@ export type FediAttachment = {
   name: string
   value: string
 }
+
+// For setting-drop-list drag and drop lists
+export type DropListDataEntry = { icon: IconDefinition; translationKey: string }
+export type DropListData = Record<string, DropListDataEntry>
 
 @Injectable({
   providedIn: 'root'
@@ -427,7 +440,16 @@ export class SettingsService {
       serverKey: 'wafrn.postReplyBarOrder',
       localStorageKey: 'postReplyBarOrder',
       type: 'list',
-      default: [{"value":"quote","enabled":true},{"value":"rewoot","enabled":true},{"value":"reply","enabled":true},{"value":"bookmark","enabled":true},{"value":"like","enabled":true},{"value":"edit","enabled":true},{"value":"delete","enabled":true}],
+      default: this.convertToListDefault([...replyBarItems]),
+      dropListData: {
+        quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
+        rewoot: { icon: faRepeat, translationKey: 'settings.postReplyBarOrderOptions.rewoot' },
+        reply: { icon: faReply, translationKey: 'settings.postReplyBarOrderOptions.reply' },
+        bookmark: { icon: faBookmark, translationKey: 'settings.postReplyBarOrderOptions.bookmark' },
+        like: { icon: faHeart, translationKey: 'settings.postReplyBarOrderOptions.like' },
+        edit: { icon: faPen, translationKey: 'settings.postReplyBarOrderOptions.edit' },
+        delete: { icon: faTrash, translationKey: 'settings.postReplyBarOrderOptions.delete' }
+      },
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo
     }
@@ -604,9 +626,8 @@ export class SettingsService {
     private utils: UtilsService,
     private jwtService: JwtService
   ) {
-    // Set defaults from local storage
-    const localStorageValues = this.getLocalStorageValues()
-    this.values = Object.assign(this.getDefaultSettings(), localStorageValues)
+    // Set defaults from local storage over global defaults
+    this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
 
     // Load blog details
     const userBlog = this.jwtService.getTokenData()
@@ -755,6 +776,14 @@ export class SettingsService {
 
   makeInject(data: any) {
     return Injector.create({ providers: [{ provide: SETTINGS_TOKEN, useValue: data }] })
+  }
+
+  // Drop list conversion for default orderings
+  convertToListDefault(list: string[]): SettingListItem[] {
+    return list.map((item) => ({
+      value: item,
+      enabled: true
+    }))
   }
 
   // Various conversions for annoying edge cases
