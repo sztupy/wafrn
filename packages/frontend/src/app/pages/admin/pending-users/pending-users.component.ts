@@ -26,12 +26,6 @@ export class PendingUsersComponent {
   }
 
   async activateUser(user: SimplifiedUser) {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.admin.activateUserTitle'
-    })
-
-    if (!confirm) return
-
     await this.adminService.activateUser(user.id)
     this.reloadList()
   }

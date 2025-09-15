@@ -379,7 +379,6 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "admin": {
-      "activateUserTitle": "Activate user",
       "requireExtraStepsTitle": "Require extra steps from user",
       "requireExtraStepsDescription": "User will be sent an email with additional steps",
       "userUsedVPNTitle": "Mark user as using a VPN",
