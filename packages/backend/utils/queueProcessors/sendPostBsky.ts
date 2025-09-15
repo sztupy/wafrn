@@ -18,7 +18,6 @@ async function sendPostBsky(job: Job) {
   if (post.privacy === Privacy.Public && localUser?.enableBsky && completeEnvironment.enableBsky) {
     if (!parent || parent.bskyUri) {
       // ok the user has bluesky time to send the post
-      const agent = await getAtProtoSession(localUser)
       let isReblog = false
       if (post.content == '' && post.content_warning == '' && post.parentId) {
         const mediaCount = await Media.count({
@@ -39,6 +38,7 @@ async function sendPostBsky(job: Job) {
         if (mediaCount + quotesCount + tagsCount === 0) {
           isReblog = true
           if (parent?.bskyUri) {
+            let agent = await getAtProtoSession(localUser)
             const { uri } = await agent.repost(parent.bskyUri, parent.bskyCid as string)
             post.bskyUri = uri
             await post.save()
@@ -46,6 +46,7 @@ async function sendPostBsky(job: Job) {
         }
       }
       if (!isReblog) {
+        let agent = await getAtProtoSession(localUser)
         const bskyPost = await agent.post(await postToAtproto(post, agent))
         await wait(750)
         const duplicatedPost = await Post.findOne({

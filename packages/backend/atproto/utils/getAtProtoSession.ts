@@ -3,9 +3,14 @@ import { User } from '../../models/index.js'
 import { redisCache } from '../../utils/redis.js'
 import { completeEnvironment } from '../../utils/backendOptions.js'
 import { logger } from '../../utils/logger.js'
+import { getAdminAtprotoSession } from '../../utils/atproto/getAdminAtprotoSession.js'
 
-async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
+async function getAtProtoSession(userInput?: User, force?: boolean): Promise<AtpAgent> {
   let user = userInput ? ((await User.scope('full').findByPk(userInput.id)) as User) : undefined
+  if (!force && user && user.url == completeEnvironment.adminUser) {
+    // a bit dirty innit?
+    return await getAdminAtprotoSession()
+  }
   const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
     ? completeEnvironment.bskyPds
     : 'https://' + completeEnvironment.bskyPds
@@ -19,6 +24,9 @@ async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
     }
   })
   if (user) {
+    logger.debug({
+      message: `Obtaining session for ${user.url}`
+    })
     const existingSession = await redisCache.get('bskySession:' + user.id)
     let loggedIn = false
     if (existingSession) {
@@ -42,7 +50,6 @@ async function getAtProtoSession(userInput?: User): Promise<AtpAgent> {
       throw new Error(`Error login with bluesky: ${user.url}`)
     }
   }
-
   return agent
 }
 

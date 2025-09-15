@@ -17,6 +17,7 @@ import { UpdatedAt } from 'sequelize-typescript'
 import { completeEnvironment } from '../../utils/backendOptions.js'
 import { include } from 'underscore'
 import { MediaAttributes } from '../../models/media.js'
+import { getAdminAtprotoSession } from '../../utils/atproto/getAdminAtprotoSession.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -478,7 +479,7 @@ function getPostLabels(post: PostView) {
 
 async function getPostThreadSafe(options: any) {
   try {
-    const agent = await getAtProtoSession((await adminUser) as User)
+    const agent = await getAdminAtprotoSession()
     return await agent.getPostThread(options)
   } catch (error) {
     logger.debug({
