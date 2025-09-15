@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { MatPaginator } from '@angular/material/paginator'
 import { MatTableDataSource } from '@angular/material/table'
-import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { AdminService, UserReport } from 'src/app/services/admin.service'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-report-list',
@@ -23,7 +23,10 @@ export class ReportListComponent implements OnInit {
     10: 'Illegal'
   }
 
-  constructor(private adminService: AdminService) {
+  constructor(
+    private adminService: AdminService,
+    private simpleDialog: SimpleDialogService
+  ) {
     this.loadReports()
   }
 
@@ -44,29 +47,69 @@ export class ReportListComponent implements OnInit {
     this.ready = true
   }
 
-  ignore(id: number) {
-    this.adminService.ignoreReport(id).then(() => {
-      this.loadReports()
+  async ignore(report: UserReport) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.admin.confirmIgnoreTitle',
+      titleSuffix: `${this.mapReport(report.severity)}`,
+      content: 'dialog.admin.confirmNSFWContent',
+      contentSuffix: report.description
     })
-  }
 
-  async ban(report: UserReport) {
-    let success = false
-    let banMessage: string | null = ''
-    if (!report.reportedUser.url.startsWith('@')) {
-      banMessage = prompt('Reason for ban (user will recive this in email)')
-      success = !!banMessage
-    } else {
-      success = confirm(`Proceed with ban of user ${report.reportedUser.url} ?`)
-    }
-    if (success) {
-      await this.adminService.banUser(report.reportedUser.id, banMessage)
-    }
+    if (!confirm) return
+
+    await this.adminService.ignoreReport(report.id)
     this.loadReports()
   }
 
-  async forceNSFW(id: string) {
-    await this.adminService.forceNSFWUser(id)
+  async ban(report: UserReport) {
+    let confirm = false
+    let reason = ''
+
+    // BSKY users do not get a reason I guess
+    const blueskyUser = report.reportedUser.url.startsWith('@')
+    if (blueskyUser) {
+      const confirmRes = await this.simpleDialog.createConfirmDialog({
+        title: 'dialog.admin.confirmBanTitle',
+        titleSuffix: report.reportedUser.url,
+        content: 'confirmBanContentBluesky'
+      })
+      confirm = confirmRes ?? false
+    } else {
+      const banRes = await this.simpleDialog.createPromptDialog({
+        title: 'dialog.admin.promptBanTitle',
+        titleSuffix: report.reportedUser.url,
+        content: 'dialog.admin.promptBanReasonLabel',
+        label: 'dialog.admin.promptBanReasonLabel'
+      })
+
+      if (!banRes?.confirmed) return
+
+      reason = banRes.value
+      const confirmRes = await this.simpleDialog.createConfirmDialog({
+        title: 'dialog.admin.confirmBanTitle',
+        titleSuffix: report.reportedUser.url,
+        content: 'dialog.admin.confirmBanContentFedi',
+        contentSuffix: reason
+      })
+      confirm = confirmRes ?? false
+    }
+
+    if (!confirm) return
+
+    await this.adminService.banUser(report.reportedUser.id, reason)
+    this.loadReports()
+  }
+
+  async forceNSFW(report: UserReport) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.admin.confirmNSFWTitle',
+      titleSuffix: report.reportedUser.url,
+      content: 'dialog.admin.confirmNSFWContent'
+    })
+
+    if (!confirm) return
+
+    await this.adminService.forceNSFWUser(report.reportedUser.id)
     this.loadReports()
   }
 

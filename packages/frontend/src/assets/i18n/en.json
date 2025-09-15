@@ -375,6 +375,27 @@
       "delete": "Delete"
     }
   },
+  "dialog": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "admin": {
+      "activateUserTitle": "Activate user",
+      "requireExtraStepsTitle": "Require extra steps from user",
+      "requireExtraStepsDescription": "User will be sent an email with additional steps",
+      "userUsedVPNTitle": "Mark user as using a VPN",
+      "userUsedVPNDescription": "Emails the user notifying them that VPNs are not allowed and deletes their registration",
+      "promptBanTitle": "Ban",
+      "promptBanReasonLabel": "The user will receive this in their ban email",
+      "promptBanReasonDescription": "The user will receive this in their ban email",
+      "confirmBanTitle": "Confirm banning",
+      "confirmBanContentBluesky": "Bluesky user will be permanently banned.",
+      "confirmBanContentFedi": "User will be permanently banned for reason:",
+      "confirmNSFWTitle": "Confirm muting",
+      "confirmNSFWContent": "All posts by this user will be content warned",
+      "confirmIgnoreTitle": "Confirm ignore report of",
+      "confirmIgnoreContent": "Post was reported for reason:"
+    }
+  },
   "ask-dialog-content": {
     "askAnonymously": "Make question anonymous",
     "askFormLabel": "Question",

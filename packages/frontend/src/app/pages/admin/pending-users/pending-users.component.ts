@@ -6,6 +6,7 @@ import { LoaderComponent } from 'src/app/components/loader/loader.component'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { AdminService } from 'src/app/services/admin.service'
 import { EnvironmentService } from 'src/app/services/environment.service'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-pending-users',
@@ -17,22 +18,45 @@ export class PendingUsersComponent {
   pendingUsers: SimplifiedUser[] = []
   loading = signal(true)
 
-  constructor(private adminService: AdminService) {
+  constructor(
+    private adminService: AdminService,
+    private simpleDialog: SimpleDialogService
+  ) {
     this.reloadList()
   }
 
-  async activateUser(id: string) {
-    await this.adminService.activateUser(id)
+  async activateUser(user: SimplifiedUser) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.admin.activateUserTitle'
+    })
+
+    if (!confirm) return
+
+    await this.adminService.activateUser(user.id)
     this.reloadList()
   }
 
-  async requireExtra(id: string) {
-    await this.adminService.requireExtraSteps(id)
+  async requireExtra(user: SimplifiedUser) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.admin.requireExtraStepsTitle',
+      content: 'dialog.admin.requireExtraStepsDescription'
+    })
+
+    if (!confirm) return
+
+    await this.adminService.requireExtraSteps(user.id)
     this.reloadList()
   }
 
-  async userUsedVPN(id: string) {
-    await this.adminService.userUsedVPN(id)
+  async userUsedVPN(user: SimplifiedUser) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.admin.userUsedVPNTitle',
+      content: 'dialog.admin.userUsedVPNDescription'
+    })
+
+    if (!confirm) return
+
+    await this.adminService.userUsedVPN(user.id)
     this.reloadList()
   }
 

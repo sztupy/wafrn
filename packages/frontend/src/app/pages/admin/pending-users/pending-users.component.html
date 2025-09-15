@@ -27,11 +27,11 @@
       </div>
     </div>
     <div class="flex flex-wrap gap-2">
-      <button (click)="activateUser(user.id)" mat-flat-button class="w-full lg:w-auto primary mr-auto">
+      <button (click)="activateUser(user)" mat-flat-button class="w-full lg:w-auto primary mr-auto">
         Activate user
       </button>
-      <button (click)="requireExtra(user.id)" mat-flat-button class="w-full lg:w-auto warn">Require extra steps</button>
-      <button (click)="userUsedVPN(user.id)" mat-flat-button class="w-full lg:w-auto warn">User used vpn</button>
+      <button (click)="requireExtra(user)" mat-flat-button class="w-full lg:w-auto warn">Require extra steps</button>
+      <button (click)="userUsedVPN(user)" mat-flat-button class="w-full lg:w-auto warn">User used vpn</button>
     </div>
   </mat-card>
 }

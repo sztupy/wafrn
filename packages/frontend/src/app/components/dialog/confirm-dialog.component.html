@@ -1,0 +1,30 @@
+<h2 class="dialog-title" mat-dialog-title
+  >{{ data.title | translate }} <strong class="dialog-title-suffix">{{ textData.titleSuffix }}</strong>
+</h2>
+@if (textData.content || textData.contentSuffix) {
+  <mat-dialog-content>
+    @if (textData.content) {
+      <p>{{ textData.content | translate }}</p>
+    }
+
+    @if (textData.contentSuffix) {
+      <p>
+        <strong class="dialog-content-suffix">{{ textData.contentSuffix | translate }}</strong>
+      </p>
+    }
+  </mat-dialog-content>
+}
+<mat-dialog-actions>
+  @if (textData.options) {
+    @if (textData.options.cancel) {
+      <button mat-stroked-button class="dialog-cancel-button" (click)="onCancel()">
+        {{ textData.options.cancel | translate }}
+      </button>
+    }
+    @if (textData.options.confirm) {
+      <button mat-flat-button class="dialog-confirm-button" (click)="onConfirm()" cdkFocusInitial>
+        {{ textData.options.confirm | translate }}
+      </button>
+    }
+  }
+</mat-dialog-actions>
