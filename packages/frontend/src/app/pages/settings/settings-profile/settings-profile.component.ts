@@ -1,4 +1,4 @@
-import { Component, computed, Signal } from '@angular/core'
+import { Component, computed, signal, Signal } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 import { SettingEntryComponent } from 'src/app/components/setting-entry/setting-entry.component'
 import { FediAttachment, SettingData, SettingsService, SettingValues } from 'src/app/services/settings.service'
@@ -16,6 +16,7 @@ import { EmojiCollectionsComponent } from 'src/app/components/emoji-collections/
 import { MatExpansionModule } from '@angular/material/expansion'
 import { Emoji } from 'src/app/interfaces/emoji'
 import { MessageService } from 'src/app/services/message.service'
+import { ImageCropperService } from 'src/app/services/image-cropper.service'
 
 @Component({
   selector: 'app-setting-loader',
@@ -39,18 +40,25 @@ export class SettingsProfileComponent {
   values: SettingValues
   fediAttachments: FediAttachment[]
 
+  newHeaderImage = signal<string | null>(null)
+  newAvatarImage = signal<string | null>(null)
+
   blog: Signal<BlogDetails | undefined>
-  avatarUrl = computed<string>(() =>
-    this.blog()
-      ? EnvironmentService.environment.externalCacheurl +
-        encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blog()?.avatar)
-      : ''
+  avatarUrl = computed<string>(() => {
+      if (this.newAvatarImage() != null) return this.newAvatarImage()!
+      return this.blog()
+        ? EnvironmentService.environment.externalCacheurl +
+          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blog()?.avatar)
+        : ''
+    }
   )
-  headerUrl = computed<string>(() =>
-    this.blog()
-      ? EnvironmentService.environment.externalCacheurl +
-        encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blog()?.headerImage)
-      : ''
+  headerUrl = computed<string>(() => {
+      if (this.newHeaderImage() != null) return this.newHeaderImage()!
+      return this.blog()
+        ? EnvironmentService.environment.externalCacheurl +
+          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + this.blog()?.headerImage)
+        : ''
+    }
   )
 
   imageIcon = faImage
@@ -60,6 +68,7 @@ export class SettingsProfileComponent {
   constructor(
     private settingsService: SettingsService,
     private messageService: MessageService,
+    private imageCropperService: ImageCropperService,
     loginService: LoginService
   ) {
     this.data = settingsService.data
@@ -90,13 +99,17 @@ export class SettingsProfileComponent {
   }
 
   attachFile(type: 'avatar' | 'header', file: File) {
-    if (type === 'avatar') {
-      this.settingsService.avatar = file
-    }
-    if (type === 'header') {
-      this.settingsService.headerImage = file
-    }
-    this.settingsService.settingsModified.set(true)
+    this.imageCropperService.openImageCropper(type, file, (croppedImage: File) => {
+      if (type === 'avatar') {
+        this.settingsService.avatar = croppedImage
+        this.newAvatarImage.set(URL.createObjectURL(this.settingsService.avatar!))
+      }
+      if (type === 'header') {
+        this.settingsService.headerImage = croppedImage
+        this.newHeaderImage.set(URL.createObjectURL(this.settingsService.headerImage!))
+      }
+      this.settingsService.settingsModified.set(true)
+    })
   }
 
   copyEmoji(emoji: Emoji) {

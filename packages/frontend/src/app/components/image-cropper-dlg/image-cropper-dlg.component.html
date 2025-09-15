@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Crop your {{ imageAspect | translate }}</h2>
+
+<image-cropper
+  id="cropper"
+  [imageFile]="image"
+  [maintainAspectRatio]="imageAspectRatio != null"
+  [aspectRatio]="imageAspectRatio ?? 1"
+  format="png"
+  output="blob"
+  (imageCropped)="imageCropped($event)"
+  (cropperReady)="cropperReady()"
+  (loadImageFailed)="loadImageFailed()"
+></image-cropper>
+
+<button mat-flat-button [disabled]="!canFinish" (click)="finishCrop()" class="w-full">Update {{ imageAspect | translate }}</button>
