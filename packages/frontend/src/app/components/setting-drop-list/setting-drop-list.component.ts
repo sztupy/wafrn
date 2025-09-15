@@ -68,7 +68,15 @@ export class SettingDropListComponent {
   }
 
   resetList() {
-    this.itemList = JSON.parse(JSON.stringify(this.defaultOrder))
+    // Deep check (agony)
+    const listDiffers = this.itemList.some(
+      (item, index) =>
+        item.enabled !== this.defaultOrder[index].enabled || item.value !== this.defaultOrder[index].value
+    )
+    if (listDiffers) {
+      this.itemList = JSON.parse(JSON.stringify(this.defaultOrder))
+      this.settingsService.settingsModified.set(true)
+    }
   }
 
   syncList() {
