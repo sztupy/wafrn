@@ -8,7 +8,10 @@
       cdkDrag
     >
       <div class="flex gap-2">
-        <fa-icon class="drag-drop-item-drag-indicator" [icon]="barsIcon" [fixedWidth]="true" size="lg"></fa-icon>
+        <div cdkDragHandle class="drag-handle">
+          <div class="drag-touch-target"></div>
+          <fa-icon class="drag-drop-item-drag-indicator" [icon]="barsIcon" [fixedWidth]="true" size="lg"></fa-icon>
+        </div>
         <div class="flex gap-1">
           @let entry = keyToEntry(item.value);
           @if (entry) {

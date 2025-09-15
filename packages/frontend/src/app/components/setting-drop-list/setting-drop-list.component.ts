@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core'
 import { SETTINGS_TOKEN } from 'src/app/pages/settings/settings.component'
 import { SettingData, SettingKey, SettingListItem, SettingsService } from 'src/app/services/settings.service'
 import { replyBarItems } from '../bottom-reply-bar/bottom-reply-bar.component'
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop'
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop'
 import { TranslatePipe } from '@ngx-translate/core'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import {
@@ -29,7 +29,7 @@ type DropListDataEntry = {
 @Component({
   selector: 'app-setting-drop-list',
   templateUrl: './setting-drop-list.component.html',
-  imports: [CdkDropList, CdkDrag, MatCheckboxModule, MatButtonModule, FontAwesomeModule, TranslatePipe],
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, MatCheckboxModule, MatButtonModule, FontAwesomeModule, TranslatePipe],
   styleUrl: './setting-drop-list.component.scss'
 })
 export class SettingDropListComponent {
