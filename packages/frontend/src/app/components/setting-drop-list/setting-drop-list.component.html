@@ -1,38 +1,42 @@
-<p class="mb-0">{{ data[settingKey].translationKey | translate }}</p>
-<p class="mb-0 setting-description">{{ data[settingKey].translationDescriptionKey! | translate }}</p>
-<div cdkDropList class="flex flex-column drag-drop-list" (cdkDropListDropped)="dropItem($event)">
-  @for (item of itemList; track item) {
-    <div
-      class="flex align-items-center justify-content-between gap-4 drag-drop-list-item"
-      [class.list-item-disabled]="!item.enabled"
-      cdkDrag
-    >
-      <div class="flex gap-2">
-        <div cdkDragHandle class="drag-handle">
-          <div class="drag-touch-target"></div>
-          <fa-icon class="drag-drop-item-drag-indicator" [icon]="barsIcon" [fixedWidth]="true" size="lg"></fa-icon>
-        </div>
-        <div class="flex gap-1">
-          @let entry = keyToEntry(item.value);
-          @if (entry) {
-            @if (entry.icon) {
-              <fa-icon class="drag-drop-item-icon" [icon]="entry.icon" [fixedWidth]="true"></fa-icon>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>{{ data[settingKey].translationKey | translate }}</mat-panel-title>
+  </mat-expansion-panel-header>
+  <p class="mb-0 setting-description">{{ data[settingKey].translationDescriptionKey! | translate }}</p>
+  <div cdkDropList class="flex flex-column drag-drop-list" (cdkDropListDropped)="dropItem($event)">
+    @for (item of itemList; track item) {
+      <div
+        class="flex align-items-center justify-content-between gap-4 drag-drop-list-item"
+        [class.list-item-disabled]="!item.enabled"
+        cdkDrag
+      >
+        <div class="flex gap-2">
+          <div cdkDragHandle class="drag-handle">
+            <div class="drag-touch-target"></div>
+            <fa-icon class="drag-drop-item-drag-indicator" [icon]="barsIcon" [fixedWidth]="true" size="lg"></fa-icon>
+          </div>
+          <div class="flex gap-1">
+            @let entry = keyToEntry(item.value);
+            @if (entry) {
+              @if (entry.icon) {
+                <fa-icon class="drag-drop-item-icon" [icon]="entry.icon" [fixedWidth]="true"></fa-icon>
+              }
+              @if (entry.translationKey) {
+                {{ entry.translationKey | translate }}
+              }
+            } @else {
+              {{ item.value }}
             }
-            @if (entry.translationKey) {
-              {{ entry.translationKey | translate }}
-            }
-          } @else {
-            {{ item.value }}
-          }
+          </div>
         </div>
+        <mat-checkbox (click)="toggleItem($index)" [checked]="item.enabled"></mat-checkbox>
       </div>
-      <mat-checkbox (click)="toggleItem($index)" [checked]="item.enabled"></mat-checkbox>
-    </div>
-  }
-</div>
-<div class="py-2">
-  <button mat-flat-button class="setting-button" (click)="resetList()">
-    <fa-icon [icon]="defaultIcon" [fixedWidth]="true" size="sm"></fa-icon>
-    {{ 'common.default' | translate }}
-  </button>
-</div>
+    }
+  </div>
+  <div class="py-2">
+    <button mat-flat-button class="setting-button" (click)="resetList()">
+      <fa-icon [icon]="defaultIcon" [fixedWidth]="true" size="sm"></fa-icon>
+      {{ 'common.default' | translate }}
+    </button>
+  </div>
+</mat-expansion-panel>

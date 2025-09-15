@@ -19,6 +19,7 @@ import {
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { MatButtonModule } from '@angular/material/button'
+import { MatExpansionModule } from '@angular/material/expansion'
 
 type DropListDataEntryKeyData = { icon: IconDefinition; translationKey: string }
 type DropListDataEntry = {
@@ -29,7 +30,16 @@ type DropListDataEntry = {
 @Component({
   selector: 'app-setting-drop-list',
   templateUrl: './setting-drop-list.component.html',
-  imports: [CdkDropList, CdkDrag, CdkDragHandle, MatCheckboxModule, MatButtonModule, FontAwesomeModule, TranslatePipe],
+  imports: [
+    MatExpansionModule,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
+    MatCheckboxModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    TranslatePipe
+  ],
   styleUrl: './setting-drop-list.component.scss'
 })
 export class SettingDropListComponent {
