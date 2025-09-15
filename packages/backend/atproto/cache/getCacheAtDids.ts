@@ -33,11 +33,11 @@ async function getCacheAtDids(forceUpdate = false): Promise<{
       where: {
         followedId: {
           [Op.notIn]: await getAllLocalUserIds()
-        }
+        },
         // TODO to reactivate this, the function syncFollows needs to update the bskyUri on the follows table
-        //bskyUri: {
-        //  [Op.ne]: null
-        //}
+        bskyUri: {
+          [Op.ne]: null
+        }
       }
     })
     const dids = await User.findAll({
