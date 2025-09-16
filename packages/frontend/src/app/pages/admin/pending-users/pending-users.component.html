@@ -17,21 +17,31 @@
     <div class="mb-3 flex flex-wrap align-items-center gap-3">
       <img loading="lazy" [src]="user.avatar" alt="user avatar" class="mx-auto lg:mx-0 user-image" />
       <div>
-        <p><strong>URL:</strong> {{ user.url }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p
+          ><strong>{{ 'admin.pendingUsers.url' | translate }}:</strong> {{ user.url }}</p
+        >
+        <p
+          ><strong>{{ 'admin.pendingUsers.email' | translate }}:</strong> {{ user.email }}</p
+        >
         <p>
-          <strong>Registration IP:</strong> {{ user.registerIp }}
+          <strong>{{ 'admin.pendingUsers.registerIp' | translate }}:</strong> {{ user.registerIp }}
           <a target="_blank" [href]="'https://ipinfo.io/' + user.registerIp">Check on ipinfo</a>
         </p>
-        <p><strong>Description:</strong> {{ user.description }}</p>
+        <p
+          ><strong>{{ 'admin.pendingUsers.description' | translate }}:</strong> {{ user.description }}</p
+        >
       </div>
     </div>
     <div class="flex flex-wrap gap-2">
-      <button (click)="activateUser(user.id)" mat-flat-button class="w-full lg:w-auto primary mr-auto">
-        Activate user
+      <button (click)="activateUser(user)" mat-flat-button class="w-full lg:w-auto primary mr-auto">
+        {{ 'admin.pendingUsers.activateUser' | translate }}
       </button>
-      <button (click)="requireExtra(user.id)" mat-flat-button class="w-full lg:w-auto warn">Require extra steps</button>
-      <button (click)="userUsedVPN(user.id)" mat-flat-button class="w-full lg:w-auto warn">User used vpn</button>
+      <button (click)="requireExtra(user)" mat-flat-button class="w-full lg:w-auto warn">
+        {{ 'admin.pendingUsers.requireExtraSteps' | translate }}
+      </button>
+      <button (click)="userUsedVPN(user)" mat-flat-button class="w-full lg:w-auto warn">{{
+        'admin.pendingUsers.userUsedVPN' | translate
+      }}</button>
     </div>
   </mat-card>
 }

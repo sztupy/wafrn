@@ -382,10 +382,39 @@
       "delete": "Delete"
     }
   },
+  "dialog": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "admin": {
+      "requireExtraStepsTitle": "Require extra steps from user",
+      "requireExtraStepsDescription": "User will be sent an email with additional steps.",
+      "userUsedVPNTitle": "Mark user as using a VPN",
+      "userUsedVPNDescription": "User will be sent an email that VPNs are not allowed and their registration will be deleted.",
+      "promptBanTitle": "Ban",
+      "promptBanReasonLabel": "Reason",
+      "promptBanReasonDescription": "User will receive this reason in their ban email.",
+      "confirmBanTitle": "Confirm banning",
+      "confirmBanContentBluesky": "Bluesky user will be permanently banned.",
+      "confirmBanContentFedi": "User will be permanently banned for reason:",
+      "confirmNSFWTitle": "Confirm muting",
+      "confirmNSFWContent": "All posts by this user will be content warned.",
+      "confirmIgnoreTitle": "Confirm ignoring report of",
+      "confirmIgnoreContent": "Post was reported for reason:"
+    },
+    "post-header": {
+      "followTitle": "Follow user"
+    }
+  },
   "ask-dialog-content": {
     "askAnonymously": "Make question anonymous",
     "askFormLabel": "Question",
     "askButtonText": "Ask"
+  },
+  "messages": {
+    "followMessageSuccess": "You now follow this user!",
+    "cancelFollowMessageSuccess": "Your follow request has been canceled.",
+    "unfollowMessageSuccess": "You no longer follow this user!",
+    "genericError": "Something went wrong! Check your internet connectivity and try again."
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",
@@ -429,6 +458,10 @@
     "silenceReplyNotifications": "Silence interactions and replies",
     "unsilenceReplyNotifications": "Unsilence replies and interactions"
   },
+  "post-header": {
+    "follow": "Follow",
+    "awaitingApproval": "Awaiting approval"
+  },
   "post-fragment": {
     "mutedWords": "Post contains muted words:",
     "replyingTo": "mentions: "
@@ -437,6 +470,18 @@
     "noAltText": "Media does not have alt text",
     "sensitiveContent": "This media contains sensitive content",
     "manuallyHidden": "Media manually hidden"
+  },
+  "admin": {
+    "pendingUsers": {
+      "url": "URL",
+      "email": "Email",
+      "registerIp": "Registration IP",
+      "description": "Description",
+      "checkIpInfo": "Check on IPinfo",
+      "activateUser": "Activate user",
+      "requireExtraSteps": "Require extra steps",
+      "userUsedVPN": "User used VPN"
+    }
   },
   "page-not-found": {
     "title": "404: page not found",

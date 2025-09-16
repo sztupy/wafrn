@@ -1,0 +1,40 @@
+<h2 class="dialog-title" mat-dialog-title>
+  {{ data.title | translate }} <strong class="dialog-title-suffix">{{ textData.titleSuffix }}</strong>
+</h2>
+<mat-dialog-content>
+  <mat-form-field class="pb-2 w-full mat-form-field-no-padding" floatLabel="always">
+    @if (textData.label) {
+      <mat-label>{{ textData.label | translate }}</mat-label>
+    }
+    <textarea
+      class="w-full"
+      required
+      (input)="onInput($any($event))"
+      matNativeControl
+      cdkTextareaAutosize
+      cdkFocusInitial
+    ></textarea>
+  </mat-form-field>
+  @if (textData.content) {
+    <p>{{ textData.content | translate }}</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  @if (textData.options) {
+    @if (textData.options.cancel) {
+      <button mat-stroked-button class="dialog-cancel-button" (click)="onCancel()">
+        {{ textData.options.cancel | translate }}
+      </button>
+    }
+    @if (textData.options.confirm) {
+      <button
+        mat-flat-button
+        class="dialog-confirm-button"
+        [disabled]="inputResponse().length === 0"
+        (click)="onConfirm()"
+      >
+        {{ textData.options.confirm | translate }}
+      </button>
+    }
+  }
+</mat-dialog-actions>
