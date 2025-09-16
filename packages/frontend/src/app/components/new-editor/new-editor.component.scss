@@ -42,6 +42,19 @@
   max-height: max-content;
 }
 
+.ask-label-section,
+.editing-label-section {
+  color: var(--mat-sys-primary);
+}
+.ask-label,
+.editing-label {
+  font-weight: bold;
+}
+.label-horizontal-bar {
+  border-bottom: 4px dotted var(--mat-sys-outline-variant);
+  flex: 1;
+}
+
 .add-quote-input {
   field-sizing: auto;
 }
