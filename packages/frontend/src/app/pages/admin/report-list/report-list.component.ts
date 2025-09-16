@@ -51,7 +51,7 @@ export class ReportListComponent implements OnInit {
     const confirm = await this.simpleDialog.createConfirmDialog({
       title: 'dialog.admin.confirmIgnoreTitle',
       titleSuffix: `${this.mapReport(report.severity)}`,
-      content: 'dialog.admin.confirmNSFWContent',
+      content: 'dialog.admin.confirmIgnoreContent',
       contentSuffix: report.description
     })
 
@@ -78,7 +78,7 @@ export class ReportListComponent implements OnInit {
       const banRes = await this.simpleDialog.createPromptDialog({
         title: 'dialog.admin.promptBanTitle',
         titleSuffix: report.reportedUser.url,
-        content: 'dialog.admin.promptBanReasonLabel',
+        content: 'dialog.admin.promptBanReasonDescription',
         label: 'dialog.admin.promptBanReasonLabel'
       })
 

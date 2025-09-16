@@ -384,14 +384,14 @@
       "userUsedVPNTitle": "Mark user as using a VPN",
       "userUsedVPNDescription": "User will be sent an email that VPNs are not allowed and their registration will be deleted.",
       "promptBanTitle": "Ban",
-      "promptBanReasonLabel": "The user will receive this in their ban email",
-      "promptBanReasonDescription": "The user will receive this in their ban email.",
+      "promptBanReasonLabel": "Reason",
+      "promptBanReasonDescription": "User will receive this reason in their ban email.",
       "confirmBanTitle": "Confirm banning",
       "confirmBanContentBluesky": "Bluesky user will be permanently banned.",
       "confirmBanContentFedi": "User will be permanently banned for reason:",
       "confirmNSFWTitle": "Confirm muting",
-      "confirmNSFWContent": "All posts by this user will be content warned",
-      "confirmIgnoreTitle": "Confirm ignore report of",
+      "confirmNSFWContent": "All posts by this user will be content warned.",
+      "confirmIgnoreTitle": "Confirm ignoring report of",
       "confirmIgnoreContent": "Post was reported for reason:"
     },
     "post-header": {
