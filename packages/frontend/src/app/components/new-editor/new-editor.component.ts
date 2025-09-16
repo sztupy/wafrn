@@ -34,7 +34,9 @@ import {
   faNewspaper,
   faAt,
   faCircleInfo,
-  faPlus
+  faPlus,
+  faPencil,
+  faQuestion
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
 import { PostHeaderComponent } from '../post/post-header/post-header.component'
@@ -172,6 +174,8 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   postIcon = faPaperPlane
   atIcon = faAt
   addIcon = faPlus
+  editingIcon = faPencil
+  replyAskIcon = faQuestion
 
   emojiSubscription: Subscription
   editorUpdatedSubscription: Subscription | undefined

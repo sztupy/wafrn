@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -8,10 +7,11 @@ import { BlogService } from 'src/app/services/blog.service'
 import { DashboardService } from 'src/app/services/dashboard.service'
 import { EditorService } from 'src/app/services/editor.service'
 import { LoaderComponent } from 'src/app/components/loader/loader.component'
+import { TranslatePipe } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-ask-list',
-  imports: [SingleAskComponent, MatButtonModule, MatCardModule, LoaderComponent],
+  imports: [SingleAskComponent, MatButtonModule, MatCardModule, LoaderComponent, TranslatePipe],
   templateUrl: './ask-list.component.html',
   styleUrl: './ask-list.component.scss'
 })
@@ -23,16 +23,22 @@ export class AskListComponent {
     private dashboard: DashboardService,
     private editor: EditorService,
     private blogService: BlogService
-  ) {
-    this.dashboard.getMyAsks().then((asks) => {
-      this.asks = asks
-      this.loading = false
-    })
+  ) {}
+
+  async ngOnInit() {
+    await this.syncAsks()
+  }
+
+  async syncAsks() {
+    this.loading = true
+    const asks = await this.dashboard.getMyAsks()
+    this.asks = asks
+    this.loading = false
   }
 
   async ignoreAsk(ask: Ask) {
     await this.blogService.ignoreAsk(ask)
-    window.location.reload()
+    await this.syncAsks()
   }
 
   replyAsk(ask: Ask) {

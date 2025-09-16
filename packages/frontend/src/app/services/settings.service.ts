@@ -21,7 +21,7 @@ import {
 import { UtilsService } from './utils.service'
 import { HttpClient } from '@angular/common/http'
 import { EnvironmentService } from './environment.service'
-import { catchError, lastValueFrom, of, timeout } from 'rxjs'
+import { catchError, debounceTime, fromEvent, lastValueFrom, of, timeout } from 'rxjs'
 import { PostsService } from './posts.service'
 import { MessageService } from './message.service'
 import { LoginService } from './login.service'
@@ -655,6 +655,13 @@ export class SettingsService {
         }
       })
     }
+
+    // Update settings on other tabs change
+    fromEvent(window, 'storage')
+      .pipe(debounceTime(500))
+      .subscribe(() => {
+        this.values = this.getLocalStorageValues()
+      })
   }
 
   private getLocalStorageValues(): SettingValues {

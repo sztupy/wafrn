@@ -89,6 +89,7 @@ export class RegisterComponent {
     'Fox',
     'Honk',
     'Warhammer 40k fan',
+    'Turtle',
     'I am going to kill god',
     'I am a rat',
     'A pumpkin full of meat would fix me',

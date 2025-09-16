@@ -1,4 +1,4 @@
-import { computed, effect, Injectable, Signal, signal, WritableSignal } from '@angular/core'
+import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core'
 import { Router } from '@angular/router'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { UntypedFormGroup } from '@angular/forms'
@@ -6,11 +6,10 @@ import { UntypedFormGroup } from '@angular/forms'
 import { UtilsService } from './utils.service'
 import { JwtService, JwtTokenDecoded } from './jwt.service'
 import { PostsService } from './posts.service'
-import { firstValueFrom } from 'rxjs'
+import { filter, firstValueFrom, fromEvent } from 'rxjs'
 import { EnvironmentService } from './environment.service'
 import { MessageService } from './message.service'
 import { TranslateService } from '@ngx-translate/core'
-import { environment } from 'src/environments/environment'
 import { DashboardService } from './dashboard.service'
 import { BlogDetails } from '../interfaces/blogDetails'
 
@@ -24,8 +23,8 @@ export type AccountData = {
 })
 export class LoginService {
   public loggedIn: WritableSignal<boolean>
-  public currentAccount: Signal<BlogDetails | undefined>
-  public accountList: WritableSignal<AccountData[]>
+  public currentAccount: Signal<BlogDetails | undefined> = computed(() => this.accountList()[0]?.blog)
+  public accountList: WritableSignal<AccountData[]> = signal([])
 
   constructor(
     private http: HttpClient,
@@ -39,6 +38,18 @@ export class LoginService {
   ) {
     this.loggedIn = signal(this.jwt.tokenValid())
 
+    this.getLocalStorageAccounts()
+
+    // Update account on other tab change
+    fromEvent(window, 'storage')
+      .pipe(filter((event) => (<StorageEvent>event).key === 'accountList'))
+      .subscribe(async (event) => {
+        this.getLocalStorageAccounts()
+        await this.handleSuccessfulLogin()
+      })
+  }
+
+  getLocalStorageAccounts() {
     const savedAccountList: AccountData[] = localStorage.getItem('accountList')
       ? JSON.parse(localStorage.getItem('accountList') as string)
       : []
@@ -52,9 +63,7 @@ export class LoginService {
         localStorage.setItem('accountList', JSON.stringify(savedAccountList))
       })
     }
-    this.accountList = signal(savedAccountList)
-
-    this.currentAccount = computed(() => this.accountList()[0]?.blog)
+    this.accountList.set(savedAccountList)
   }
 
   async logIn(loginForm: UntypedFormGroup): Promise<boolean> {
@@ -73,6 +82,7 @@ export class LoginService {
         } else {
           await this.addToken(petition.token)
           await this.handleSuccessfulLogin()
+          await this.router.navigate(['/dashboard'])
           success = true
         }
       }
@@ -91,6 +101,7 @@ export class LoginService {
       if (petition.success) {
         this.addToken(petition.token)
         await this.handleSuccessfulLogin()
+        await this.router.navigate(['/dashboard'])
         success = true
       }
     } catch (exception) {
@@ -444,7 +455,6 @@ export class LoginService {
   async handleSuccessfulLogin() {
     await this.postsService.loadFollowers()
     this.loggedIn.set(true)
-    this.router.navigate(['/dashboard'])
   }
 
   getLoggedUserUUID(): string {

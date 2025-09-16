@@ -36,6 +36,11 @@
     "loadingMore": "Loading more notifications",
     "refresh": "Refresh"
   },
+  "asks": {
+    "title": "Asks",
+    "noAsks": "No more asks found",
+    "nobodyAsked": "Nobody asked..."
+  },
   "menu": {
     "login": "Log in",
     "register": "Register",
@@ -99,6 +104,8 @@
     "updateButton": "Update Theme"
   },
   "editor": {
+    "editingLabel": "Editing woot",
+    "askReplyLabel": "Replying to ask",
     "inReplyTo": "In reply to:",
     "quoteButton": "Quote a woot",
     "publishWoot": "Publish this woot",
