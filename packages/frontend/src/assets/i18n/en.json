@@ -36,6 +36,11 @@
     "loadingMore": "Loading more notifications",
     "refresh": "Refresh"
   },
+  "asks": {
+    "title": "Asks",
+    "noAsks": "No more asks found",
+    "nobodyAsked": "Nobody asked..."
+  },
   "menu": {
     "login": "Log in",
     "register": "Register",
