@@ -20,6 +20,7 @@ import {
   faClose,
   faBookmark,
   faBookBookmark,
+  faCommentSlash
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
 import { MatMenuModule } from '@angular/material/menu'
@@ -34,10 +35,11 @@ import { UtilsService } from '../../services/utils.service'
 import { EnvironmentService } from '../../services/environment.service'
 import { firstValueFrom } from 'rxjs'
 import { faBluesky } from '@fortawesome/free-brands-svg-icons'
+import { TranslateModule } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-post-actions',
-  imports: [MatButtonModule, MatMenuModule, FontAwesomeModule],
+  imports: [MatButtonModule, MatMenuModule, FontAwesomeModule, TranslateModule],
   templateUrl: './post-actions.component.html',
   styleUrl: './post-actions.component.scss'
 })
@@ -64,6 +66,7 @@ export class PostActionsComponent implements OnChanges {
   closeIcon = faClose
   editedIcon = faPen
   silenceIcon = faBellSlash
+  silenceReplyIcon = faCommentSlash
   unsilenceIcon = faBell
   quoteIcon = faQuoteLeft
   bookmarkIcon = faBookmark
