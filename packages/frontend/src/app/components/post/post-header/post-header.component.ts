@@ -32,6 +32,8 @@ import { PostsService } from '../../../services/posts.service'
 import { AvatarSmallComponent } from '../../avatar-small/avatar-small.component'
 import { PostActionsComponent } from '../../post-actions/post-actions.component'
 import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
+import { TranslatePipe } from '@ngx-translate/core'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-post-header',
@@ -45,7 +47,8 @@ import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
     MatButtonModule,
     MatTooltipModule,
     PostLinkModule,
-    BlogLinkModule
+    BlogLinkModule,
+    TranslatePipe
   ],
   templateUrl: './post-header.component.html',
   styleUrl: './post-header.component.scss'
@@ -90,6 +93,7 @@ export class PostHeaderComponent implements OnChanges {
   constructor(
     public postService: PostsService,
     private messages: MessageService,
+    private simpleDialog: SimpleDialogService,
     loginService: LoginService
   ) {
     // its an array
@@ -103,32 +107,44 @@ export class PostHeaderComponent implements OnChanges {
     this.edited = this.fragment.updatedAt.getTime() - this.fragment.createdAt.getTime() > 6000
   }
 
-  async followUser(id: string) {
-    const response = await this.postService.followUser(id)
+  async followUser(post: ProcessedPost) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.followTitle',
+      titleSuffix: post.user.url
+    })
+
+    if (!confirm) return
+
+    const response = await this.postService.followUser(post.userId)
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You now follow this user!'
+        summary: 'messages.followMessageSuccess',
+        translate: true,
+        soundName: 'follow'
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet conectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
 
-  async unfollowUser(id: string) {
-    const response = await this.postService.unfollowUser(id)
+  async cancelFollowUser(post: ProcessedPost) {
+    const response = await this.postService.unfollowUser(post.userId)
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You no longer follow this user!'
+        summary: 'messages.cancelFollowMessageSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet conectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
