@@ -1,7 +1,7 @@
 import { effect, Injectable, signal, WritableSignal } from '@angular/core'
 import { LoginService } from './login.service'
 import { HttpClient } from '@angular/common/http'
-import { filter, firstValueFrom } from 'rxjs'
+import { debounceTime, filter, firstValueFrom, fromEvent, merge } from 'rxjs'
 import { EnvironmentService } from './environment.service'
 import { toObservable } from '@angular/core/rxjs-interop'
 
@@ -76,7 +76,7 @@ export const colorSchemeData: ColorSchemeData = {
   wafrnverse: { name: 'Wafrnverse', compatibility: 'both' },
   dracula: { name: 'Dracula', compatibility: 'both' },
   fan: { name: 'Fan', compatibility: 'both' },
-  waffler: { name: "Waffler", compatibility: 'both' },
+  waffler: { name: 'Waffler', compatibility: 'both' },
   catppuccin_frappe: { name: 'Catppuccin Frappe', compatibility: 'both' },
   catppuccin_latte: { name: 'Catppuccin Latte', compatibility: 'both' },
   catppuccin_macchiato: { name: 'Catppuccin Macchiato', compatibility: 'both' },
@@ -184,7 +184,14 @@ export class ThemeService {
     private http: HttpClient
   ) {
     // Setup when logging in or out and run once (yay signals)
-    toObservable(loginService.loggedIn).subscribe(() => this.setup())
+    // Also watches change from other tabs
+    merge(
+      toObservable(loginService.loggedIn),
+      fromEvent(window, 'storage').pipe(
+        filter((event) => ['theme', 'colorScheme'].includes((<StorageEvent>event).key ?? '')),
+        debounceTime(500)
+      )
+    ).subscribe(() => this.setup())
   }
 
   setup() {
