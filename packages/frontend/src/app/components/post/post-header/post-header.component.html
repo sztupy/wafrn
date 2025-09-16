@@ -42,13 +42,13 @@
           color="accent"
           class="text-sm follow-button"
           style="text-wrap: nowrap"
-          (click)="followUser(fragment.userId)"
+          (click)="followUser(fragment)"
         >
           Follow
         </button>
       }
       @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
-        <button mat-button color="accent" class="text-sm follow-button" (click)="unfollowUser(fragment.userId)">
+        <button mat-button color="accent" class="text-sm follow-button" (click)="cancelFollowUser(fragment)">
           Awaiting approval
         </button>
       }
@@ -71,7 +71,7 @@
   </div>
   <div class="flex flex-column align-items-center">
     @if (!simplified()) {
-      <app-post-actions [content]="fragment" class="align-self-end"></app-post-actions>
+      <app-post-actions [post]="fragment" class="align-self-end"></app-post-actions>
     }
     @if (
       !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
