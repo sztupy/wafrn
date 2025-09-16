@@ -37,18 +37,12 @@
       !postService.followedUserIds.includes(fragment.userId) &&
       loggedIn()
     ) {
-      <button
-        mat-button
-        color="accent"
-        class="text-sm follow-button"
-        style="text-wrap: nowrap"
-        (click)="followUser(fragment)"
-      >
+      <button mat-button class="text-sm follow-button" style="text-wrap: nowrap" (click)="followUser(fragment)">
         {{ 'post-header.follow' | translate }}
       </button>
     }
     @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
-      <button mat-button color="accent" class="text-sm follow-button" (click)="unfollowUser(fragment.userId)">
+      <button mat-button class="text-sm follow-button" (click)="unfollowUser(fragment.userId)">
         {{ 'post-header.awaitingApproval' | translate }}
       </button>
     }
