@@ -104,6 +104,8 @@
     "updateButton": "Update Theme"
   },
   "editor": {
+    "editingLabel": "Editing woot",
+    "askReplyLabel": "Replying to ask",
     "inReplyTo": "In reply to:",
     "quoteButton": "Quote a woot",
     "publishWoot": "Publish this woot",

@@ -98,11 +98,27 @@
 
   <div class="post-editor-data">
     @if (editing) {
-      <h4 class="mt-3">You are editing your woot</h4>
+      <section class="px-2 flex gap-2 justify-content-center align-items-center editing-label-section">
+        <div class="label-horizontal-bar"></div>
+        <fa-icon size="sm" [fixedWidth]="true" [icon]="editingIcon"></fa-icon>
+        <div class="editing-label">{{ 'editor.editingLabel' | translate }}</div>
+        <fa-icon size="sm" [fixedWidth]="true" [icon]="editingIcon"></fa-icon>
+        <div class="label-horizontal-bar"></div>
+      </section>
     }
     @if (data && data.ask) {
-      <h4 class="mt-3">Replying ask</h4>
-      <app-single-ask [ask]="data.ask"></app-single-ask>
+      <section class="px-2">
+        <div class="flex gap-2 justify-content-center align-items-center ask-label-section">
+          <div class="label-horizontal-bar"></div>
+          <fa-icon size="sm" [fixedWidth]="true" [icon]="replyAskIcon"></fa-icon>
+          <div class="ask-label">{{ 'editor.askReplyLabel' | translate }}</div>
+          <fa-icon size="sm" [fixedWidth]="true" [icon]="replyAskIcon"></fa-icon>
+          <div class="label-horizontal-bar"></div>
+        </div>
+        <div class="my-2">
+          <app-single-ask [ask]="data.ask"></app-single-ask>
+        </div>
+      </section>
     }
 
     @if (privacy === 10) {
