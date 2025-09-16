@@ -119,29 +119,32 @@ export class PostHeaderComponent implements OnChanges {
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'dialog.post-header.followMessageSuccess',
-        translate: true
+        summary: 'messages.followMessageSuccess',
+        translate: true,
+        soundName: 'follow'
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'dialog.post-header.followMessageError',
+        summary: 'messages.genericError',
         translate: true
       })
     }
   }
 
-  async unfollowUser(id: string) {
-    const response = await this.postService.unfollowUser(id)
+  async cancelFollowUser(post: ProcessedPost) {
+    const response = await this.postService.unfollowUser(post.userId)
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You no longer follow this user!'
+        summary: 'messages.cancelFollowMessageSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet conectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }

@@ -395,15 +395,19 @@
       "confirmIgnoreContent": "Post was reported for reason:"
     },
     "post-header": {
-      "followTitle": "Follow user",
-      "followMessageSuccess": "You now follow this user!",
-      "followMessageError": "Something went wrong! Check your internet connectivity and try again."
+      "followTitle": "Follow user"
     }
   },
   "ask-dialog-content": {
     "askAnonymously": "Make question anonymous",
     "askFormLabel": "Question",
     "askButtonText": "Ask"
+  },
+  "messages": {
+    "followMessageSuccess": "You now follow this user!",
+    "cancelFollowMessageSuccess": "Your follow request has been canceled.",
+    "unfollowMessageSuccess": "You no longer follow this user!",
+    "genericError": "Something went wrong! Check your internet connectivity and try again."
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",

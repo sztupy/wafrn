@@ -134,12 +134,14 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You no longer follow this user!'
+        summary: 'messages.unfollowMessageSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet connectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
@@ -149,13 +151,15 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You now follow this user!',
+        summary: 'messages.followMessageSuccess',
+        translate: true,
         soundName: 'follow'
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet connectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }

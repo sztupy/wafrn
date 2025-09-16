@@ -42,7 +42,7 @@
       </button>
     }
     @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
-      <button mat-button class="text-sm follow-button" (click)="unfollowUser(fragment.userId)">
+      <button mat-button class="text-sm follow-button" (click)="cancelFollowUser(fragment)">
         {{ 'post-header.awaitingApproval' | translate }}
       </button>
     }
