@@ -13,152 +13,151 @@
     mat-button
     class="relative split-button-right"
     matTooltip="Post actions"
-    (click)="openMenu()"
+    [matMenuTriggerFor]="menu"
   >
     <fa-icon [icon]="expandDownIcon"></fa-icon>
-    @if (menuOpen()) {
-      <button #menuToggle [matMenuTriggerFor]="menu" class="menu-toggle-hidden"></button>
-      <mat-menu #menu="matMenu" xPosition="before" id="post-actions-menu" (closed)="handleClose()">
-        <button (click)="sharePost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon class="mr-2" [icon]="shareIcon"></fa-icon>Share with wafrn
-          </span>
-        </button>
-        @if (content.remotePostId && content.user.url.startsWith('@')) {
-          <button (click)="shareOriginalPost()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon class="mr-2" [icon]="shareExternalIcon"></fa-icon>
-              Share external URL
-            </span>
-          </button>
-        }
-        @if (content.bskyUri) {
-          <button (click)="viewOnBsky()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon class="mr-2" [icon]="bskyIcon"></fa-icon>
-              View on bluesky
-            </span>
-          </button>
-        }
-        @if (myId == content.userId && content.privacy != 2) {
-          <button (click)="forceRefederate()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon class="mr-2" [icon]="globeIcon"></fa-icon>
-              Force refederate post
-            </span>
-          </button>
-        }
-        @if (content.user.url.startsWith('@') && content.privacy !== 1 && content.privacy !== 10) {
-          <button (click)="viewOriginalPost()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon class="mr-2" [icon]="goExternalPost"></fa-icon>
-              View original post
-            </span>
-          </button>
-        }
-        @if (loggedIn()) {
-          <button [disabled]="!content.canReply" (click)="replyPost()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon class="mr-2" [icon]="reblogIcon"></fa-icon>
-              Reply woot
-            </span>
-          </button>
-          @if (myRewootsIncludePost) {
-            <button (click)="deleteRewoots()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="closeIcon"></fa-icon>
-                Delete rewoot
-              </span>
-            </button>
-          } @else {
-            @if (content.privacy !== 10 && content.privacy !== 1) {
-              <button [disabled]="!content.canReblog" (click)="quickReblog()" mat-menu-item>
-                <span class="post-actions-menu-span-content">
-                  <fa-icon class="mr-2" [icon]="quickReblogIcon"></fa-icon>
-                  Rewoot
-                </span>
-              </button>
-            }
-          }
-          @if (content.privacy !== 10 && content.privacy !== 1 && content.privacy !== 2) {
-            <button [disabled]="!content.canQuote" (click)="quoteWoot()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="quoteIcon"></fa-icon>
-                Quote woot
-              </span>
-            </button>
-          }
-          @if (bookmarked()) {
-            <button (click)="unbookmarkPost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="unbookmarkIcon"></fa-icon>
-                Unbookmark woot
-              </span>
-            </button>
-          } @else {
-            <button (click)="bookmarkPost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="bookmarkIcon"></fa-icon>
-                Bookmark woot
-              </span>
-            </button>
-          }
-          @if (content.userId !== myId) {
-            @if (content.userLikesPostRelations.includes(myId)) {
-              <button (click)="unlikePost()" mat-menu-item>
-                <span class="post-actions-menu-span-content">
-                  <fa-icon class="mr-2" [icon]="clearHeartIcon"></fa-icon>
-                  Dislike woot
-                </span>
-              </button>
-            } @else {
-              <button [disabled]="!content.canLike" (click)="likePost()" mat-menu-item>
-                <span class="post-actions-menu-span-content">
-                  <fa-icon class="mr-2" [icon]="solidHeartIcon"></fa-icon>
-                  Like woot
-                </span>
-              </button>
-            }
-            <button (click)="reportPost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="reportIcon"></fa-icon>Report woot
-              </span>
-            </button>
-          } @else {
-            <button (click)="editPost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="editedIcon"></fa-icon>Edit woot
-              </span>
-            </button>
-            <button (click)="deletePost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="deleteIcon"></fa-icon>Delete woot
-              </span>
-            </button>
-          }
-          @if (!postSilenced) {
-            <button (click)="silencePost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence interactions
-              </span>
-            </button>
-          }
-          @if (!postSilenced) {
-            <button (click)="silencePost(true)" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence notifications and replies
-              </span>
-            </button>
-          }
-          @if (postSilenced) {
-            <button (click)="unsilencePost()" mat-menu-item>
-              <span class="post-actions-menu-span-content">
-                <fa-icon class="mr-2" [icon]="unsilenceIcon"></fa-icon>Reactivate notifications
-              </span>
-            </button>
-          }
-        }
-      </mat-menu>
-    }
   </button>
 </div>
+<mat-menu #menu="matMenu" xPosition="before" id="post-actions-menu">
+  <ng-template matMenuContent>
+    <button (click)="sharePost()" mat-menu-item>
+      <span class="post-actions-menu-span-content">
+        <fa-icon class="mr-2" [icon]="shareIcon"></fa-icon>Share with wafrn
+      </span>
+    </button>
+    @if (content.remotePostId && content.user.url.startsWith('@')) {
+      <button (click)="shareOriginalPost()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="shareExternalIcon"></fa-icon>
+          Share external URL
+        </span>
+      </button>
+    }
+    @if (content.bskyUri) {
+      <button (click)="viewOnBsky()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="bskyIcon"></fa-icon>
+          View on bluesky
+        </span>
+      </button>
+    }
+    @if (myId == content.userId && content.privacy != 2) {
+      <button (click)="forceRefederate()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="globeIcon"></fa-icon>
+          Force refederate post
+        </span>
+      </button>
+    }
+    @if (content.user.url.startsWith('@') && content.privacy !== 1 && content.privacy !== 10) {
+      <button (click)="viewOriginalPost()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="goExternalPost"></fa-icon>
+          View original post
+        </span>
+      </button>
+    }
+    @if (loggedIn()) {
+      <button [disabled]="!content.canReply" (click)="replyPost()" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon class="mr-2" [icon]="reblogIcon"></fa-icon>
+          Reply woot
+        </span>
+      </button>
+      @if (myRewootsIncludePost) {
+        <button (click)="deleteRewoots()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="closeIcon"></fa-icon>
+            Delete rewoot
+          </span>
+        </button>
+      } @else {
+        @if (content.privacy !== 10 && content.privacy !== 1) {
+          <button [disabled]="!content.canReblog" (click)="quickReblog()" mat-menu-item>
+            <span class="post-actions-menu-span-content">
+              <fa-icon class="mr-2" [icon]="quickReblogIcon"></fa-icon>
+              Rewoot
+            </span>
+          </button>
+        }
+      }
+      @if (content.privacy !== 10 && content.privacy !== 1 && content.privacy !== 2) {
+        <button [disabled]="!content.canQuote" (click)="quoteWoot()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="quoteIcon"></fa-icon>
+            Quote woot
+          </span>
+        </button>
+      }
+      @if (bookmarked()) {
+        <button (click)="unbookmarkPost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="unbookmarkIcon"></fa-icon>
+            Unbookmark woot
+          </span>
+        </button>
+      } @else {
+        <button (click)="bookmarkPost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="bookmarkIcon"></fa-icon>
+            Bookmark woot
+          </span>
+        </button>
+      }
+      @if (content.userId !== myId) {
+        @if (content.userLikesPostRelations.includes(myId)) {
+          <button (click)="unlikePost()" mat-menu-item>
+            <span class="post-actions-menu-span-content">
+              <fa-icon class="mr-2" [icon]="clearHeartIcon"></fa-icon>
+              Dislike woot
+            </span>
+          </button>
+        } @else {
+          <button [disabled]="!content.canLike" (click)="likePost()" mat-menu-item>
+            <span class="post-actions-menu-span-content">
+              <fa-icon class="mr-2" [icon]="solidHeartIcon"></fa-icon>
+              Like woot
+            </span>
+          </button>
+        }
+        <button (click)="reportPost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="reportIcon"></fa-icon>Report woot
+          </span>
+        </button>
+      } @else {
+        <button (click)="editPost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="editedIcon"></fa-icon>Edit woot
+          </span>
+        </button>
+        <button (click)="deletePost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="deleteIcon"></fa-icon>Delete woot
+          </span>
+        </button>
+      }
+      @if (!postSilenced) {
+        <button (click)="silencePost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence interactions
+          </span>
+        </button>
+      }
+      @if (!postSilenced) {
+        <button (click)="silencePost(true)" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="silenceIcon"></fa-icon>Silence notifications and replies
+          </span>
+        </button>
+      }
+      @if (postSilenced) {
+        <button (click)="unsilencePost()" mat-menu-item>
+          <span class="post-actions-menu-span-content">
+            <fa-icon class="mr-2" [icon]="unsilenceIcon"></fa-icon>Reactivate notifications
+          </span>
+        </button>
+      }
+    }
+  </ng-template>
+</mat-menu>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Signal, signal, viewChild } from '@angular/core'
+import { Component, Input, OnChanges, Signal, signal } from '@angular/core'
 import { ProcessedPost } from '../../interfaces/processed-post'
 import { MessageService } from '../../services/message.service'
 
@@ -19,10 +19,11 @@ import {
   faGlobe,
   faClose,
   faBookmark,
-  faBookBookmark
+  faBookBookmark,
+  faPowerOff
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { MatMenuModule } from '@angular/material/menu'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { EditorService } from '../../services/editor.service'
 import { LoginService } from '../../services/login.service'
@@ -34,6 +35,7 @@ import { UtilsService } from '../../services/utils.service'
 import { EnvironmentService } from '../../services/environment.service'
 import { firstValueFrom } from 'rxjs'
 import { faBluesky } from '@fortawesome/free-brands-svg-icons'
+
 @Component({
   selector: 'app-post-actions',
   imports: [MatButtonModule, MatMenuModule, FontAwesomeModule],
@@ -47,10 +49,6 @@ export class PostActionsComponent implements OnChanges {
   postSilenced = false
   myRewootsIncludePost = false
   bookmarked = signal<boolean>(false)
-
-  // Evil optimizations
-  menuOpen = signal<boolean>(false)
-  menuRef = viewChild<MatMenuTrigger>(MatMenuTrigger)
 
   // icons
   shareIcon = faShareNodes
@@ -72,6 +70,7 @@ export class PostActionsComponent implements OnChanges {
   bookmarkIcon = faBookmark
   unbookmarkIcon = faBookBookmark
   globeIcon = faGlobe
+  adminIcon = faPowerOff
 
   constructor(
     private messages: MessageService,
@@ -95,18 +94,6 @@ export class PostActionsComponent implements OnChanges {
   ngOnChanges(): void {
     this.myRewootsIncludePost = this.postService.rewootedPosts.includes(this.content.id)
     this.checkPostSilenced()
-  }
-
-  openMenu() {
-    this.menuOpen.set(true)
-    requestAnimationFrame(() => {
-      console.log(this.menuOpen(), this.menuRef())
-      this.menuRef()?.openMenu()
-    })
-  }
-
-  handleClose() {
-    this.menuOpen.set(false)
   }
 
   sharePost() {
@@ -306,5 +293,9 @@ export class PostActionsComponent implements OnChanges {
 
   async forceRefederate() {
     await this.postService.forceRefederate(this.content.id)
+  }
+
+  showAdminInfo() {
+    console.log(this.content.user)
   }
 }
