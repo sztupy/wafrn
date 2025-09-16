@@ -443,6 +443,18 @@
     "sensitiveContent": "This media contains sensitive content",
     "manuallyHidden": "Media manually hidden"
   },
+  "admin": {
+    "pendingUsers": {
+      "url": "URL",
+      "email": "Email",
+      "registerIp": "Registration IP",
+      "description": "Description",
+      "checkIpInfo": "Check on IPinfo",
+      "activateUser": "Activate user",
+      "requireExtraSteps": "Require extra steps",
+      "userUsedVPN": "User used VPN"
+    }
+  },
   "page-not-found": {
     "title": "404: page not found",
     "subtitle": "Looks like there isn't anything here.",
