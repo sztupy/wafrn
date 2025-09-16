@@ -20,7 +20,6 @@ import {
   faClose,
   faBookmark,
   faBookBookmark,
-  faPowerOff
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
 import { MatMenuModule } from '@angular/material/menu'
@@ -70,7 +69,6 @@ export class PostActionsComponent implements OnChanges {
   bookmarkIcon = faBookmark
   unbookmarkIcon = faBookBookmark
   globeIcon = faGlobe
-  adminIcon = faPowerOff
 
   constructor(
     private messages: MessageService,
@@ -290,9 +288,5 @@ export class PostActionsComponent implements OnChanges {
 
   async forceRefederate() {
     await this.postService.forceRefederate(this.post().id)
-  }
-
-  showAdminInfo() {
-    console.log(this.post()?.user)
   }
 }
