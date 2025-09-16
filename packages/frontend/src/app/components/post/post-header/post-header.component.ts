@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, Input, OnChanges, Signal, SimpleChanges, input } from '@angular/core'
+import { Component, OnChanges, Signal, SimpleChanges, input } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
@@ -32,6 +32,8 @@ import { PostsService } from '../../../services/posts.service'
 import { AvatarSmallComponent } from '../../avatar-small/avatar-small.component'
 import { PostActionsComponent } from '../../post-actions/post-actions.component'
 import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
+import { TranslatePipe } from '@ngx-translate/core'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-post-header',
@@ -45,14 +47,14 @@ import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
     MatButtonModule,
     MatTooltipModule,
     PostLinkModule,
-    BlogLinkModule
+    BlogLinkModule,
+    TranslatePipe
   ],
   templateUrl: './post-header.component.html',
   styleUrl: './post-header.component.scss'
 })
 export class PostHeaderComponent implements OnChanges {
-  @Input() fragment!: ProcessedPost
-  @Input() post!: ProcessedPost[]
+  fragment = input.required<ProcessedPost>()
   readonly simplified = input<boolean>(true)
   readonly disableLink = input<boolean>(false)
   readonly headerText = input<string>('')
@@ -90,6 +92,7 @@ export class PostHeaderComponent implements OnChanges {
   constructor(
     public postService: PostsService,
     private messages: MessageService,
+    private simpleDialog: SimpleDialogService,
     loginService: LoginService
   ) {
     // its an array
@@ -97,38 +100,50 @@ export class PostHeaderComponent implements OnChanges {
     this.privacyOptions[20] = { level: 20, name: 'Link only', icon: faNewspaper }
     this.loggedIn = loginService.loggedIn
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    const relative = DateTime.fromJSDate(this.fragment.createdAt).setLocale('en').toRelative()
+  ngOnChanges(): void {
+    const relative = DateTime.fromJSDate(this.fragment().createdAt).setLocale('en').toRelative()
     this.timeAgo = relative ? relative : 'Error with date'
-    this.edited = this.fragment.updatedAt.getTime() - this.fragment.createdAt.getTime() > 6000
+    this.edited = this.fragment().updatedAt.getTime() - this.fragment().createdAt.getTime() > 6000
   }
 
-  async followUser(id: string) {
-    const response = await this.postService.followUser(id)
+  async followUser(post: ProcessedPost) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.followTitle',
+      titleSuffix: post.user.url
+    })
+
+    if (!confirm) return
+
+    const response = await this.postService.followUser(post.userId)
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You now follow this user!'
+        summary: 'messages.followMessageSuccess',
+        translate: true,
+        soundName: 'follow'
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet conectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
 
-  async unfollowUser(id: string) {
-    const response = await this.postService.unfollowUser(id)
+  async cancelFollowUser(post: ProcessedPost) {
+    const response = await this.postService.unfollowUser(post.userId)
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You no longer follow this user!'
+        summary: 'messages.cancelFollowMessageSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet conectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }

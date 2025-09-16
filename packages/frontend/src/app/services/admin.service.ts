@@ -8,9 +8,9 @@ import { statsReply } from '../interfaces/statsReply'
 import { EnvironmentService } from './environment.service'
 
 export type UserReport = {
-  id: string
-  resolved: string
-  severity: string
+  id: number
+  resolved: boolean
+  severity: number
   description: string
   userId: string
   user: SimplifiedUser

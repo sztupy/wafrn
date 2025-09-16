@@ -281,7 +281,9 @@
       <section class="px-3 pt-2">
         <p class="mb-2">{{ 'editor.inReplyTo' | translate }}</p>
         <div class="quoted-post">
-          <app-post-header [fragment]="data.post" [disableLink]="true"></app-post-header>
+          @if (data.post) {
+            <app-post-header [fragment]="data.post" [disableLink]="true"></app-post-header>
+          }
           <app-post-fragment [fragment]="data.post"></app-post-fragment>
         </div>
       </section>
