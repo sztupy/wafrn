@@ -33,6 +33,7 @@ import { AvatarSmallComponent } from '../../avatar-small/avatar-small.component'
 import { PostActionsComponent } from '../../post-actions/post-actions.component'
 import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
 import { TranslatePipe } from '@ngx-translate/core'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-post-header',
@@ -92,6 +93,7 @@ export class PostHeaderComponent implements OnChanges {
   constructor(
     public postService: PostsService,
     private messages: MessageService,
+    private simpleDialog: SimpleDialogService,
     loginService: LoginService
   ) {
     // its an array
@@ -105,8 +107,15 @@ export class PostHeaderComponent implements OnChanges {
     this.edited = this.fragment.updatedAt.getTime() - this.fragment.createdAt.getTime() > 6000
   }
 
-  async followUser(id: string) {
-    const response = await this.postService.followUser(id)
+  async followUser(post: ProcessedPost) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.followTitle',
+      titleSuffix: post.user.url
+    })
+
+    if (!confirm) return
+
+    const response = await this.postService.followUser(post.userId)
     if (response) {
       this.messages.add({
         severity: 'success',
