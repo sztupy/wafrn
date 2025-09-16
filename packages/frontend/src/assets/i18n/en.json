@@ -382,7 +382,7 @@
       "requireExtraStepsTitle": "Require extra steps from user",
       "requireExtraStepsDescription": "User will be sent an email with additional steps",
       "userUsedVPNTitle": "Mark user as using a VPN",
-      "userUsedVPNDescription": "Emails the user notifying them that VPNs are not allowed and deletes their registration",
+      "userUsedVPNDescription": "User will be sent an email that VPNs are not allowed and their registration will be deleted",
       "promptBanTitle": "Ban",
       "promptBanReasonLabel": "The user will receive this in their ban email",
       "promptBanReasonDescription": "The user will receive this in their ban email",
