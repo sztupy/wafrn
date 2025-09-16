@@ -28,14 +28,23 @@ async function getCacheAtDids(forceUpdate = false): Promise<{
   let cacheResult = forceUpdate ? undefined : superCache
   if (!cacheResult) {
     const follows = await Follows.findAll({
+      include: [
+        {
+          model: User,
+          as: 'followed',
+          where: {
+            bskyDid: {
+              [Op.ne]: null
+            }
+          },
+          required: true
+        }
+      ],
       attributes: ['followedId'],
-      group: ['followedId'],
+      //group: ['followedId'],
       where: {
-        followedId: {
-          [Op.notIn]: await getAllLocalUserIds()
-        },
-        bskyUri: {
-          [Op.ne]: null
+        followerId: {
+          [Op.in]: await getAllLocalUserIds()
         }
       }
     })
@@ -70,7 +79,7 @@ async function getCacheAtDids(forceUpdate = false): Promise<{
     )
     const followedDids = new Set<string>([
       ...dids.map((elem) => elem.bskyDid || '').filter((elem) => elem != ''),
-      ...localUserDids
+      ...Array.from(localUserDids)
     ])
 
     const followedHashtagsQuery = await UserFollowHashtags.findAll({

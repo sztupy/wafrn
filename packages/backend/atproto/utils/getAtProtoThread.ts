@@ -36,65 +36,22 @@ const adminUser = User.findOne({
 
 async function getAtProtoThread(
   uri: string,
-  operation?: { operation: CreateOrUpdateOp; remoteUser: User },
-  forceUpdate?: boolean
+  forceUpdate?: boolean,
+  ignoreDescendents?: boolean
 ): Promise<string | undefined> {
-  if (operation) {
-    const postExisting = await Post.findOne({
-      where: {
-        bskyUri: uri
-      }
-    })
-    if (postExisting) {
-      return postExisting.id
-    } else {
-      let record = operation.operation.record as any
-      const postObject: PostView = {
-        record: record,
-        cid: operation.operation.cid,
-        uri: uri,
-        labels: record.labels ? record.labels.values : [],
-        indexedAt: new Date().toISOString(),
-        author: {
-          did: operation.remoteUser.bskyDid as string,
-          handle: operation.remoteUser.longHandle,
-          displayName: operation.remoteUser.name
+  const postExisting = forceUpdate
+    ? undefined
+    : await Post.findOne({
+        where: {
+          bskyUri: uri
         }
-      }
-      if (operation.remoteUser.description == null) {
-        // wait this user bio is empty
-        await getAtprotoUser(operation.remoteUser.bskyDid as string, (await adminUser) as User)
-      }
-      if (record.reply) {
-        const parentFound = await Post.findOne({
-          where: {
-            bskyUri: record.reply.parent.uri
-          }
-        })
-        if (parentFound) {
-          return (await processSinglePost(postObject, parentFound.id)) as string
-        } else {
-          const thread = await getPostThreadSafe({
-            uri: record.reply.parent.uri,
-            depth: 0,
-            parentHeight: 1000
-          })
-          if (thread) {
-            const parentThread: ThreadViewPost = thread.data.thread as ThreadViewPost
-            //const dids = getDidsFromThread(parentThread)
-            //await forcePopulateUsers(dids, (await adminUser) as Model<any, any>)
-            const parentId = (await processParents(parentThread as ThreadViewPost)) as string
-            return (await processSinglePost(postObject, parentId, forceUpdate)) as string
-          }
-        }
-      } else {
-        return (await processSinglePost(postObject, undefined, forceUpdate)) as string
-      }
-    }
+      })
+  if (postExisting) {
+    return postExisting.id
   }
 
   // TODO optimize this a bit if post is not in reply to anything that we dont have
-  const preThread = await getPostThreadSafe({ uri: uri, depth: 50, parentHeight: 1000 })
+  const preThread = await getPostThreadSafe({ uri: uri, depth: ignoreDescendents ? 0 : 50, parentHeight: 1000 })
   if (preThread) {
     const thread: ThreadViewPost = preThread.data.thread as ThreadViewPost
     //const tmpDids = getDidsFromThread(thread)

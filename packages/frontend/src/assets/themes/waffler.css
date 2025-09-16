@@ -186,9 +186,10 @@ app-avatar-small:not(.ask-avatar) .avatar {
 		z-index: 2;
 		.ribbon-container {
 			display: grid !important;
-			grid-template-columns: calc(var(--avatar-size) + 12px) minmax(0, max-content) auto;
+			grid-template-columns: calc(var(--avatar-size) + 12px) minmax(0, max-content) 1fr;
 			grid-template-rows: auto auto;
 			gap: 0 !important;
+			white-space: nowrap;
 			app-avatar-small {
 				grid-row: 1 / span 2;
 				& + p {
@@ -198,10 +199,17 @@ app-avatar-small:not(.ask-avatar) .avatar {
 			.user-link {
 				grid-row: 1;
 				grid-column: 2 / span 3;
+				max-width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			.text-sm {
 				grid-row: 2;
 				font-size: .875rem !important;
+			}
+			.post-action {
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			.ribbon-date {
 				grid-row: 2;
@@ -216,49 +224,52 @@ app-avatar-small:not(.ask-avatar) .avatar {
 		}
 	}
 	app-post-header > div {
-		gap: 20px;
+		gap: 10px;
 		position: relative;
 		isolation: isolate;
+		align-items: flex-start;
 		/* left column */
-		> div:first-child {
-			display: grid !important;
-			grid-template-columns: calc(var(--avatar-size) + 12px) minmax(0, max-content) auto;
-			grid-template-rows: auto auto;
-			gap: 0 !important;
-			height: max-content !important;
-			flex-grow: 1;
-			.gap-2, .user-link {
-				display: contents !important;
-			}
-			app-avatar-small {
-				grid-row: 1 / span 2;
-				grid-column: 1;
-			}
-			.user-name {
-				grid-column: 2 / span 3;
-				grid-row: 1;
-				pointer-events: none;
-				align-self: flex-end;
-				span {
-					pointer-events: all;
+		@media (min-width: 600px) {
+			> div:first-child {
+				display: grid !important;
+				grid-template-columns: calc(var(--avatar-size) + 12px) minmax(0, max-content) auto;
+				grid-template-rows: auto auto;
+				gap: 0 !important;
+				height: max-content !important;
+				flex-grow: 1;
+				.gap-2, .user-link {
+					display: contents !important;
 				}
-			}
-			.user-url {
-				grid-column: 2;
-				grid-row: 2;
-				align-self: flex-start
-			}
-			.date-line {
-				grid-row: 2;
-				white-space: nowrap;
-				z-index: -1;
-				align-self: flex-start;
-				a:not(:hover):not(:focus) {
-					text-decoration: none;
+				app-avatar-small {
+					grid-row: 1 / span 2;
+					grid-column: 1;
 				}
-				&::before {
-					content: "·";
-					margin-inline-start: .375rem;
+				.user-name {
+					grid-column: 2 / span 3;
+					grid-row: 1;
+					pointer-events: none;
+					align-self: flex-end;
+					span {
+						pointer-events: all;
+					}
+				}
+				.user-url {
+					grid-column: 2;
+					grid-row: 2;
+					align-self: flex-start
+				}
+				.date-line {
+					grid-row: 2;
+					white-space: nowrap;
+					z-index: -1;
+					align-self: flex-start;
+					a:not(:hover):not(:focus) {
+						text-decoration: none;
+					}
+					&::before {
+						content: "·";
+						margin-inline-start: .375rem;
+					}
 				}
 			}
 		}
@@ -275,6 +286,11 @@ app-avatar-small:not(.ask-avatar) .avatar {
 				background: var(--mat-menu-container-color) !important;
 				margin-inline-end: 4px;
 				white-space: nowrap;
+			}
+			@media (max-width: 600px) {
+				.follow-button {
+					display: none !important;
+				}
 			}
 			app-post-actions, #post-actions {
 				display: contents !important;
@@ -378,13 +394,11 @@ app-avatar-small:not(.ask-avatar) .avatar {
 		margin-inline: -16px;
 	}
 	.media-carousel {
-		flex-direction: column !important;
-		gap: 4px !important;
 		--mat-sys-corner-large: 0;
+		gap: 4px !important;
+		align-items: stretch;
 		.carousel-media {
-			width: 100% !important;
-			max-width: unset !important;
-			border-radius: 0 !important;
+			display: flex;
 		}
 	}
 	.media-content-container {
@@ -414,13 +428,15 @@ app-avatar-small:not(.ask-avatar) .avatar {
 }
 
 /*** PROFILE */
-mat-drawer-content:has(app-view-blog:not(.snappy-hide)) {
-	position: relative;
-	margin-block: 14px !important;
-	border-radius: 12px !important;
-	border: 0;
-	margin-inline: 20px !important;
-	background-color: var(--mat-sys-surface-container-highest);
+@media (min-width: 800px) {
+	mat-drawer-content:has(app-view-blog:not(.snappy-hide)) {
+		position: relative;
+		margin-block: 14px !important;
+		border-radius: 12px !important;
+		border: 0;
+		margin-inline: 20px !important;
+		background-color: var(--mat-sys-surface-container-highest);
+	}
 }
 .blog-header.blog-header {
 	position: static;
@@ -518,6 +534,7 @@ mat-drawer-content:has(app-view-blog:not(.snappy-hide)) {
 		margin: 0 !important;
 		font-size: .9em;
 		border: 0 !important;
+		flex-wrap: wrap;
 		a {
 			flex-direction: row !important;
 			text-decoration: none;

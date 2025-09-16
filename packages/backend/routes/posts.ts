@@ -429,8 +429,8 @@ export default function postsRoutes(app: Application) {
         const content_warning = req.body.content_warning
           ? req.body.content_warning.trim()
           : posterUser?.NSFW
-          ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
-          : ''
+            ? 'This user has been marked as NSFW and the post has been labeled automatically as NSFW'
+            : ''
         let mediaToAdd: any[] = []
         const avaiableEmojis = await getAvaiableEmojis()
         // we parse the content and we search emojis:
@@ -818,7 +818,7 @@ export default function postsRoutes(app: Application) {
         }
       }
       if (remotePost?.bskyUri) {
-        await getAtProtoThread(remotePost.bskyUri, undefined, true)
+        await getAtProtoThread(remotePost.bskyUri, true)
       }
     } catch (error) {
       logger.debug({ message: 'error getting external responses', post: req.query.id, error: error })
