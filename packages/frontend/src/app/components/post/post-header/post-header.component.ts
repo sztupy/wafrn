@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, Input, OnChanges, Signal, SimpleChanges, input } from '@angular/core'
+import { Component, OnChanges, Signal, SimpleChanges, input } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
@@ -51,8 +51,7 @@ import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
   styleUrl: './post-header.component.scss'
 })
 export class PostHeaderComponent implements OnChanges {
-  @Input() fragment!: ProcessedPost
-  @Input() post!: ProcessedPost[]
+  fragment = input.required<ProcessedPost>()
   readonly simplified = input<boolean>(true)
   readonly disableLink = input<boolean>(false)
   readonly headerText = input<string>('')
@@ -97,10 +96,10 @@ export class PostHeaderComponent implements OnChanges {
     this.privacyOptions[20] = { level: 20, name: 'Link only', icon: faNewspaper }
     this.loggedIn = loginService.loggedIn
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    const relative = DateTime.fromJSDate(this.fragment.createdAt).setLocale('en').toRelative()
+  ngOnChanges(): void {
+    const relative = DateTime.fromJSDate(this.fragment().createdAt).setLocale('en').toRelative()
     this.timeAgo = relative ? relative : 'Error with date'
-    this.edited = this.fragment.updatedAt.getTime() - this.fragment.createdAt.getTime() > 6000
+    this.edited = this.fragment().updatedAt.getTime() - this.fragment().createdAt.getTime() > 6000
   }
 
   async followUser(id: string) {

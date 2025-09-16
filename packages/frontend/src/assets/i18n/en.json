@@ -408,6 +408,27 @@
     "additionalOptions": "Additional Options",
     "smoothScroll": "Smooth scroll"
   },
+  "post-actions": {
+    "shareUrl": "Share with Wafrn",
+    "shareExternalUrl": "Share external URL",
+    "viewOnBluesky": "View on Bluesky",
+    "forceRefederate": "Force refederate post",
+    "viewOriginalPost": "View original post",
+    "replyPost": "Reply to post",
+    "rewootPost": "Rewoot post",
+    "deleteRewootPost": "Delete rewoot",
+    "quotePost": "Quote post",
+    "bookmarkPost": "Bookmark post",
+    "unbookmarkPost": "Unbookmark post",
+    "likePost": "Like post",
+    "dislikePost": "Dislike post",
+    "reportPost": "Report post",
+    "editPost": "Edit post",
+    "deletePost": "Delete post",
+    "silenceInteractions": "Silence interactions",
+    "silenceReplyNotifications": "Silence interactions and replies",
+    "unsilenceReplyNotifications": "Unsilence replies and interactions"
+  },
   "post-fragment": {
     "mutedWords": "Post contains muted words:",
     "replyingTo": "mentions: "
