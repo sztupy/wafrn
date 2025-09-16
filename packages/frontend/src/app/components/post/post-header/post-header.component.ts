@@ -32,6 +32,7 @@ import { PostsService } from '../../../services/posts.service'
 import { AvatarSmallComponent } from '../../avatar-small/avatar-small.component'
 import { PostActionsComponent } from '../../post-actions/post-actions.component'
 import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
+import { TranslatePipe } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-post-header',
@@ -45,7 +46,8 @@ import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
     MatButtonModule,
     MatTooltipModule,
     PostLinkModule,
-    BlogLinkModule
+    BlogLinkModule,
+    TranslatePipe
   ],
   templateUrl: './post-header.component.html',
   styleUrl: './post-header.component.scss'
@@ -108,12 +110,14 @@ export class PostHeaderComponent implements OnChanges {
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You now follow this user!'
+        summary: 'dialog.post-header.followMessageSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet conectivity and try again'
+        summary: 'dialog.post-header.followMessageError',
+        translate: true
       })
     }
   }

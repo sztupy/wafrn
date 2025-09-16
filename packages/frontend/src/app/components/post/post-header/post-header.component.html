@@ -44,12 +44,12 @@
         style="text-wrap: nowrap"
         (click)="followUser(fragment.userId)"
       >
-        Follow
+        {{ 'post-header.follow' | translate }}
       </button>
     }
     @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
       <button mat-button color="accent" class="text-sm follow-button" (click)="unfollowUser(fragment.userId)">
-        Awaiting Approval
+        {{ 'post-header.awaitingApproval' | translate }}
       </button>
     }
   </div>

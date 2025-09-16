@@ -393,6 +393,10 @@
       "confirmNSFWContent": "All posts by this user will be content warned",
       "confirmIgnoreTitle": "Confirm ignore report of",
       "confirmIgnoreContent": "Post was reported for reason:"
+    },
+    "post-header": {
+      "followMessageSuccess": "You now follow this user!",
+      "followMessageError": "Something went wrong! Check your internet connectivity and try again."
     }
   },
   "ask-dialog-content": {
@@ -420,6 +424,10 @@
     "unbound": "unbound",
     "additionalOptions": "Additional Options",
     "smoothScroll": "Smooth scroll"
+  },
+  "post-header": {
+    "follow": "Follow",
+    "awaitingApproval": "Awaiting approval"
   },
   "post-fragment": {
     "mutedWords": "Post contains muted words:",
