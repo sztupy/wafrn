@@ -1,3 +1,4 @@
+@let post = this.post();
 <div class="flex gap-0 flex-nowrap" id="post-actions">
   <button
     aria-label="Share post"
@@ -25,7 +26,7 @@
         <fa-icon class="mr-2" [icon]="shareIcon"></fa-icon>Share with wafrn
       </span>
     </button>
-    @if (content.remotePostId && content.user.url.startsWith('@')) {
+    @if (post.remotePostId && post.user.url.startsWith('@')) {
       <button (click)="shareOriginalPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon class="mr-2" [icon]="shareExternalIcon"></fa-icon>
@@ -33,7 +34,7 @@
         </span>
       </button>
     }
-    @if (content.bskyUri) {
+    @if (post.bskyUri) {
       <button (click)="viewOnBsky()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon class="mr-2" [icon]="bskyIcon"></fa-icon>
@@ -41,7 +42,7 @@
         </span>
       </button>
     }
-    @if (myId == content.userId && content.privacy != 2) {
+    @if (myId == post.userId && post.privacy != 2) {
       <button (click)="forceRefederate()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon class="mr-2" [icon]="globeIcon"></fa-icon>
@@ -49,7 +50,7 @@
         </span>
       </button>
     }
-    @if (content.user.url.startsWith('@') && content.privacy !== 1 && content.privacy !== 10) {
+    @if (post.user.url.startsWith('@') && post.privacy !== 1 && post.privacy !== 10) {
       <button (click)="viewOriginalPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon class="mr-2" [icon]="goExternalPost"></fa-icon>
@@ -58,7 +59,7 @@
       </button>
     }
     @if (loggedIn()) {
-      <button [disabled]="!content.canReply" (click)="replyPost()" mat-menu-item>
+      <button [disabled]="!post.canReply" (click)="replyPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon class="mr-2" [icon]="reblogIcon"></fa-icon>
           Reply woot
@@ -72,8 +73,8 @@
           </span>
         </button>
       } @else {
-        @if (content.privacy !== 10 && content.privacy !== 1) {
-          <button [disabled]="!content.canReblog" (click)="quickReblog()" mat-menu-item>
+        @if (post.privacy !== 10 && post.privacy !== 1) {
+          <button [disabled]="!post.canReblog" (click)="quickReblog()" mat-menu-item>
             <span class="post-actions-menu-span-content">
               <fa-icon class="mr-2" [icon]="quickReblogIcon"></fa-icon>
               Rewoot
@@ -81,8 +82,8 @@
           </button>
         }
       }
-      @if (content.privacy !== 10 && content.privacy !== 1 && content.privacy !== 2) {
-        <button [disabled]="!content.canQuote" (click)="quoteWoot()" mat-menu-item>
+      @if (post.privacy !== 10 && post.privacy !== 1 && post.privacy !== 2) {
+        <button [disabled]="!post.canQuote" (click)="quoteWoot()" mat-menu-item>
           <span class="post-actions-menu-span-content">
             <fa-icon class="mr-2" [icon]="quoteIcon"></fa-icon>
             Quote woot
@@ -104,8 +105,8 @@
           </span>
         </button>
       }
-      @if (content.userId !== myId) {
-        @if (content.userLikesPostRelations.includes(myId)) {
+      @if (post.userId !== myId) {
+        @if (post.userLikesPostRelations.includes(myId)) {
           <button (click)="unlikePost()" mat-menu-item>
             <span class="post-actions-menu-span-content">
               <fa-icon class="mr-2" [icon]="clearHeartIcon"></fa-icon>
@@ -113,7 +114,7 @@
             </span>
           </button>
         } @else {
-          <button [disabled]="!content.canLike" (click)="likePost()" mat-menu-item>
+          <button [disabled]="!post.canLike" (click)="likePost()" mat-menu-item>
             <span class="post-actions-menu-span-content">
               <fa-icon class="mr-2" [icon]="solidHeartIcon"></fa-icon>
               Like woot

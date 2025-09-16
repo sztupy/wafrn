@@ -3,8 +3,6 @@ import {
   computed,
   EventEmitter,
   input,
-  Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
@@ -37,7 +35,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { EnvironmentService } from 'src/app/services/environment.service'
-import { Subject } from 'rxjs'
+import { Subject, Subscription } from 'rxjs'
 import { BottomReplyBarComponent } from '../bottom-reply-bar/bottom-reply-bar.component'
 import { HotkeyAction } from 'src/app/services/hotkey.service'
 
@@ -47,43 +45,53 @@ import { HotkeyAction } from 'src/app/services/hotkey.service'
   styleUrls: ['./post.component.scss'],
   standalone: false
 })
-export class PostComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() post!: ProcessedPost[]
-  actionSubscription = input<Subject<HotkeyAction>>()
+export class PostComponent implements OnInit, OnDestroy {
+  post = input.required<ProcessedPost[]>()
+  postSliced: ProcessedPost[] = []
+
   active = input<boolean>(false)
   showFull: boolean = false
   postCanExpand = computed(() => {
     let textLength = 0
-    if (this.originalPostContent) {
-      textLength = this.originalPostContent.map((elem) => elem.content).join('').length
-      this.originalPostContent.map((block) => block.content).join('').length
+    if (this.post()) {
+      textLength = this.post()
+        .map((elem) => elem.content)
+        .join('').length
+      this.post()
+        .map((block) => block.content)
+        .join('').length
     }
     return (
-      ((textLength > 2500 || !this.showFull) && !this.expanded()) ||
-      !(this.post.length === this.originalPostContent.length)
+      ((textLength > 2500 || !this.showFull) && !this.expanded()) || !(this.postSliced.length === this.post().length)
     )
   })
   postsExpanded = EnvironmentService.environment.shortenPosts
   expanded = signal(false)
-  originalPostContent: ProcessedPost[] = []
-  finalPosts: ProcessedPost[] = []
-  ready = false
+  finalPosts = computed(() => this.post().slice(-5))
   mediaBaseUrl = EnvironmentService.environment.baseMediaUrl
   cacheurl = EnvironmentService.environment.externalCacheurl
   loggedIn: Signal<boolean>
   followedUsers: string[] = []
   notYetAcceptedFollows: string[] = []
-  notes: string = '---'
-  headerText: string = ''
+  notes = computed(() => this.uniquePost().notes.toString())
+  headerText = computed(() => (this.isEmptyReblog() ? 'rewooted' : 'replied'))
   quickReblogBeingDone = false
   quickReblogDoneSuccessfully = false
   reblogging = false
   myId: string = ''
   loadingAction = false
   // 0 no display at all 1 display like 2 display dislike
-  showLikeFinalPost: number = 0
-  uniquePost: ProcessedPost | undefined // ID unique to post (cover empty reblogs)
-  finalPost!: ProcessedPost
+  showLikeFinalPost = computed(() =>
+    this.finalPost().userId === this.myId ? (this.finalPost().userLikesPostRelations.includes(this.myId) ? 2 : 1) : 0
+  )
+  // Last post including empty reblog
+  uniquePost = computed(() => this.post()[this.post().length - 1])
+  // Last non-empty reblog post
+  finalPost = computed(() =>
+    this.isEmptyReblog() && this.post().length > 1
+      ? this.post()[this.post().length - 2]
+      : this.post()[this.post().length - 1]
+  )
 
   // icons
   shareIcon = faShareNodes
@@ -109,7 +117,8 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
 
   // subscriptions
   updateFollowersSubscription
-  updateLikesSubscription
+  updateLikesSubscription: Subscription | undefined
+  actionSubscription = input<Subject<HotkeyAction>>()
 
   // post seen
   @Output() seenEmitter: EventEmitter<boolean> = new EventEmitter<boolean>()
@@ -134,55 +143,50 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
       this.followedUsers = this.postService.followedUserIds
       this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
     })
-
-    this.updateLikesSubscription = this.postService.postLiked.subscribe((likeEvent) => {
-      if (this.post && likeEvent.id === this.post[this.post.length - 1].id) {
-        if (likeEvent.like) {
-          this.originalPostContent[this.originalPostContent.length - 1].userLikesPostRelations = [
-            this.loginService.getLoggedUserUUID()
-          ]
-        } else {
-          this.originalPostContent[this.originalPostContent.length - 1].userLikesPostRelations = []
-        }
-      }
-    })
   }
 
   ngOnDestroy(): void {
     this.updateFollowersSubscription.unsubscribe()
-    this.updateLikesSubscription.unsubscribe()
+    this.updateLikesSubscription?.unsubscribe()
   }
 
   ngOnInit(): void {
     this.followedUsers = this.postService.followedUserIds
     this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
-    this.originalPostContent = this.post
-    this.finalPosts = this.originalPostContent.slice(-5)
-    this.uniquePost = this.post.at(-1)
 
     if (!this.showFull) {
-      this.post = this.post.slice(0, EnvironmentService.environment.shortenPosts)
+      this.postSliced = this.post().slice(0, EnvironmentService.environment.shortenPosts)
 
-      if (this.originalPostContent.length === this.post.length) {
+      if (this.post().length === this.postSliced.length) {
         this.showFull = true
       }
     }
-    this.ribbonUser = this.originalPostContent[this.originalPostContent.length - 1].user
-    this.ribbonIcon = this.headerText === 'replied' ? this.replyIcon : this.reblogIcon
-    this.ribbonTime = this.originalPostContent[this.originalPostContent.length - 1].createdAt
+    this.ribbonUser = this.uniquePost().user
+    this.ribbonIcon = this.headerText() === 'replied' ? this.replyIcon : this.reblogIcon
+    this.ribbonTime = this.uniquePost().createdAt
     // If user has marked autoexpand we force 1 expand. Doing full could cause EXPLOSIONS
     if (localStorage.getItem('automaticalyExpandPosts') === 'true') {
       this.expandPost()
     }
 
+    this.updateLikesSubscription = this.postService.postLiked.subscribe((likeEvent) => {
+      if (this.post() && likeEvent.id === this.uniquePost().id) {
+        if (likeEvent.like) {
+          this.uniquePost().userLikesPostRelations = [this.loginService.getLoggedUserUUID()]
+        } else {
+          this.uniquePost().userLikesPostRelations = []
+        }
+      }
+    })
+
     this.actionSubscription()?.subscribe((action) => this.handlePostActions(action))
   }
 
   isEmptyReblog() {
-    const finalOne = this.post[this.post.length - 1]
+    const finalOne = this.uniquePost()
     return !finalOne
       ? true
-      : this.post &&
+      : this.post() &&
           finalOne.content == '' &&
           finalOne.tags.length == 0 &&
           finalOne.quotes.length == 0 &&
@@ -190,28 +194,11 @@ export class PostComponent implements OnInit, OnDestroy, OnChanges {
           finalOne.medias?.length == 0
   }
 
-  ngOnChanges() {
-    this.ready = true
-    const notes = this.post[this.post.length - 1].notes
-    this.notes = notes.toString()
-
-    // if the last post is an EMPTY reblog we evaluate the like of the parent.
-    const postToEvaluate =
-      this.isEmptyReblog() && this.post.length > 1 ? this.post[this.post.length - 2] : this.post[this.post.length - 1]
-    this.finalPost = postToEvaluate
-    this.headerText = this.isEmptyReblog() ? 'rewooted' : 'replied'
-
-    this.showLikeFinalPost = postToEvaluate.userLikesPostRelations.includes(this.myId) ? 2 : 1
-
-    if (postToEvaluate.userId === this.myId) {
-      this.showLikeFinalPost = 0
-    }
-  }
-
+  // Adds 50 more posts to the sliced list
   expandPost() {
     this.expanded.set(true)
-    this.postsExpanded = this.postsExpanded + 50
-    this.post = this.originalPostContent.slice(0, this.postsExpanded)
+    this.postsExpanded += 50
+    this.postSliced = this.post().slice(0, this.postsExpanded)
   }
 
   async handlePostActions(action: HotkeyAction) {

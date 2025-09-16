@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Signal, signal } from '@angular/core'
+import { Component, computed, input, OnChanges, Signal } from '@angular/core'
 import { ProcessedPost } from '../../interfaces/processed-post'
 import { MessageService } from '../../services/message.service'
 
@@ -43,12 +43,12 @@ import { faBluesky } from '@fortawesome/free-brands-svg-icons'
   styleUrl: './post-actions.component.scss'
 })
 export class PostActionsComponent implements OnChanges {
-  @Input() content!: ProcessedPost
+  post = input.required<ProcessedPost>()
   loggedIn: Signal<boolean>
   myId: string = 'user-00000000-0000-0000-0000-000000000000 '
   postSilenced = false
   myRewootsIncludePost = false
-  bookmarked = signal<boolean>(false)
+  bookmarked = computed(() => this.post().bookmarkers.includes(this.myId))
 
   // icons
   shareIcon = faShareNodes
@@ -87,17 +87,13 @@ export class PostActionsComponent implements OnChanges {
     }
   }
 
-  ngOnInit(): void {
-    this.bookmarked.set(this.content.bookmarkers.includes(this.myId))
-  }
-
   ngOnChanges(): void {
-    this.myRewootsIncludePost = this.postService.rewootedPosts.includes(this.content.id)
+    this.myRewootsIncludePost = this.postService.rewootedPosts.includes(this.post().id)
     this.checkPostSilenced()
   }
 
   sharePost() {
-    navigator.clipboard.writeText(`${EnvironmentService.environment.frontUrl}/fediverse/post/${this.content.id}`)
+    navigator.clipboard.writeText(`${EnvironmentService.environment.frontUrl}/fediverse/post/${this.post().id}`)
     this.messages.add({
       severity: 'success',
       summary: 'The woot URL was copied to your clipboard!'
@@ -105,9 +101,10 @@ export class PostActionsComponent implements OnChanges {
   }
 
   shareOriginalPost() {
-    let remoteId = this.content.remotePostId
-    if (this.content.bskyUri) {
-      const parts = this.content.bskyUri.split('/app.bsky.feed.post/')
+    let remoteId = this.post().remotePostId
+    const bskyUri = this.post().bskyUri
+    if (bskyUri) {
+      const parts = bskyUri.split('/app.bsky.feed.post/')
       const userDid = parts[0].split('at://')[1]
       remoteId = `https://bsky.app/profile/${userDid}/post/${parts[1]}`
     }
@@ -119,9 +116,10 @@ export class PostActionsComponent implements OnChanges {
   }
 
   viewOriginalPost() {
-    let remoteId = this.content.remotePostId
-    if (this.content.bskyUri) {
-      const parts = this.content.bskyUri.split('/app.bsky.feed.post/')
+    let remoteId = this.post().remotePostId
+    const bskyUri = this.post().bskyUri
+    if (bskyUri) {
+      const parts = bskyUri.split('/app.bsky.feed.post/')
       const userDid = parts[0].split('at://')[1]
       remoteId = `https://bsky.app/profile/${userDid}/post/${parts[1]}`
     }
@@ -129,19 +127,20 @@ export class PostActionsComponent implements OnChanges {
   }
 
   viewOnBsky() {
-    if (this.content.bskyUri) {
-      const parts = this.content.bskyUri.split('/app.bsky.feed.post/')
+    const bskyUri = this.post().bskyUri
+    if (bskyUri) {
+      const parts = bskyUri.split('/app.bsky.feed.post/')
       const userDid = parts[0].split('at://')[1]
       window.open(`https://bsky.app/profile/${userDid}/post/${parts[1]}`, '_blank')
     }
   }
 
   async quickReblog() {
-    if (this.content?.privacy !== 10) {
+    if (this.post()?.privacy !== 10) {
       const response = await this.editor.createPost({
         mentionedUsers: [],
         content: '',
-        idPostToReblog: this.content.id,
+        idPostToReblog: this.post().id,
         privacy: 0,
         media: []
       })
@@ -164,14 +163,14 @@ export class PostActionsComponent implements OnChanges {
   }
 
   replyPost() {
-    this.editor.replyPost(this.content)
+    this.editor.replyPost(this.post())
   }
   quoteWoot() {
-    this.editor.quotePost(this.content)
+    this.editor.quotePost(this.post())
   }
   async unlikePost() {
-    if (await this.postService.unlikePost(this.content.id)) {
-      this.content.userLikesPostRelations = this.content.userLikesPostRelations.filter((elem) => elem != this.myId)
+    if (await this.postService.unlikePost(this.post().id)) {
+      this.post().userLikesPostRelations = this.post().userLikesPostRelations.filter((elem) => elem != this.myId)
       this.messages.add({
         severity: 'success',
         summary: 'You successfully unliked this woot'
@@ -184,8 +183,8 @@ export class PostActionsComponent implements OnChanges {
     }
   }
   async likePost() {
-    if (await this.postService.likePost(this.content.id)) {
-      this.content.userLikesPostRelations.push(this.myId)
+    if (await this.postService.likePost(this.post().id)) {
+      this.post().userLikesPostRelations.push(this.myId)
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
@@ -201,9 +200,8 @@ export class PostActionsComponent implements OnChanges {
     }
   }
   async unbookmarkPost() {
-    if (await this.postService.unbookmarkPost(this.content.id)) {
-      this.content.bookmarkers = this.content.bookmarkers.filter((elem) => elem != this.myId)
-      this.bookmarked.set(false)
+    if (await this.postService.unbookmarkPost(this.post().id)) {
+      this.post().bookmarkers = this.post().bookmarkers.filter((elem) => elem != this.myId)
       this.messages.add({
         severity: 'success',
         summary: 'You successfully unbookmarked this woot'
@@ -216,10 +214,9 @@ export class PostActionsComponent implements OnChanges {
     }
   }
   async bookmarkPost() {
-    if (await this.postService.bookmarkPost(this.content.id)) {
-      this.content.bookmarkers.push(this.myId)
+    if (await this.postService.bookmarkPost(this.post().id)) {
+      this.post().bookmarkers.push(this.myId)
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
-      this.bookmarked.set(true)
       this.messages.add({
         severity: 'success',
         summary: 'You successfully bookmarked this woot',
@@ -233,16 +230,16 @@ export class PostActionsComponent implements OnChanges {
     }
   }
   reportPost() {
-    this.reportService.openReportPostDialog(this.content)
+    this.reportService.openReportPostDialog(this.post())
   }
   editPost() {
-    this.editor.replyPost(this.content, true)
+    this.editor.replyPost(this.post(), true)
   }
   deletePost() {
-    this.deletePostService.openDeletePostDialog(this.content.id)
+    this.deletePostService.openDeletePostDialog(this.post().id)
   }
   async silencePost(superMute: boolean = false) {
-    if (await this.postService.silencePost(this.content.id, superMute)) {
+    if (await this.postService.silencePost(this.post().id, superMute)) {
       this.messages.add({
         severity: 'success',
         summary: 'You successfully silenced the notifications for this woot'
@@ -257,7 +254,7 @@ export class PostActionsComponent implements OnChanges {
   }
 
   async deleteRewoots() {
-    const success = await firstValueFrom(this.deletePostService.deleteRewoots(this.content.id))
+    const success = await firstValueFrom(this.deletePostService.deleteRewoots(this.post().id))
     if (success) {
       this.myRewootsIncludePost = false
       this.messages.add({
@@ -273,7 +270,7 @@ export class PostActionsComponent implements OnChanges {
   }
 
   async unsilencePost() {
-    if (await this.postService.unsilencePost(this.content.id)) {
+    if (await this.postService.unsilencePost(this.post().id)) {
       this.messages.add({
         severity: 'success',
         summary: 'You successfully reactivated the notifications for this woot'
@@ -288,14 +285,14 @@ export class PostActionsComponent implements OnChanges {
   }
 
   private async checkPostSilenced() {
-    this.postSilenced = (await this.utilsService.getSilencedPostIds()).includes(this.content.id)
+    this.postSilenced = (await this.utilsService.getSilencedPostIds()).includes(this.post().id)
   }
 
   async forceRefederate() {
-    await this.postService.forceRefederate(this.content.id)
+    await this.postService.forceRefederate(this.post().id)
   }
 
   showAdminInfo() {
-    console.log(this.content.user)
+    console.log(this.post()?.user)
   }
 }

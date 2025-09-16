@@ -13,7 +13,7 @@ import { PostComponent } from '../post/post.component'
   styleUrl: './post-list.component.scss'
 })
 export class PostListComponent {
-  posts = input<ProcessedPost[][]>([])
+  posts = input.required<ProcessedPost[][]>()
   visible = input<boolean>(true) // Disables keybinds, required due to SnappyRouter so we do not act off screen
   loading = input.required<boolean>()
   loadPosts = output<void>()

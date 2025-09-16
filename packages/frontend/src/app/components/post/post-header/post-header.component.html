@@ -1,3 +1,4 @@
+@let fragment = this.fragment();
 <div class="flex justify-content-between mb-3">
   <div class="flex flex-column gap-2 min-w-0">
     <div class="flex gap-2 min-w-0">
@@ -33,7 +34,7 @@
     </div>
     <div class="flex flex-column align-items-center">
       @if (!simplified()) {
-        <app-post-actions [content]="fragment" class="align-self-end"></app-post-actions>
+        <app-post-actions [post]="fragment" class="align-self-end"></app-post-actions>
       }
       @if (
         !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
