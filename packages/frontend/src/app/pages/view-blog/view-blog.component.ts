@@ -18,7 +18,6 @@ import { LoginService } from 'src/app/services/login.service'
 import { ThemeService } from 'src/app/services/theme.service'
 
 import { MatDialog } from '@angular/material/dialog'
-import { AcceptThemeComponent } from 'src/app/components/accept-theme/accept-theme.component'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
