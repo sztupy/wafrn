@@ -1,3 +1,7 @@
+.post-action-buttons {
+  --mat-menu-item-hover-state-layer-color: transparent;
+}
+
 .post-actions > button {
   aspect-ratio: 1 / 1;
 }
@@ -22,4 +26,8 @@
   // evil method to break out of mat-button's relative
   margin-inline: calc(-1 * var(--mat-button-text-horizontal-padding, 12px));
   margin-block: calc(-1 / 2 * ((var(--mat-button-text-container-height, 40px) - 24px)));
+}
+
+fa-icon {
+  color: var(--mat-sys-primary);
 }

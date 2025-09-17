@@ -20,7 +20,9 @@ import {
   faClose,
   faBookmark,
   faBookBookmark,
-  faCommentSlash
+  faCommentSlash,
+  faLink,
+  faPaperPlane
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
 import { MatMenuModule } from '@angular/material/menu'
@@ -37,10 +39,11 @@ import { firstValueFrom } from 'rxjs'
 import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { TranslateModule } from '@ngx-translate/core'
 import { SettingsService } from 'src/app/services/settings.service'
+import { PostActionButtonsComponent } from '../post-action-buttons/post-action-buttons.component'
 
 @Component({
   selector: 'app-post-actions',
-  imports: [MatButtonModule, MatMenuModule, FontAwesomeModule, TranslateModule],
+  imports: [PostActionButtonsComponent, MatButtonModule, MatMenuModule, FontAwesomeModule, TranslateModule],
   templateUrl: './post-actions.component.html',
   styleUrl: './post-actions.component.scss'
 })
@@ -63,7 +66,8 @@ export class PostActionsComponent implements OnChanges {
   externalUrl = computed<string>(() => (this.post().bskyUri ? this.bskyUrl() : this.post().remotePostId))
 
   // icons
-  shareIcon = faShareNodes
+  shareIcon = faLink
+  shareMenuIcon = faShareNodes
   expandDownIcon = faChevronDown
   solidHeartIcon = faHeart
   clearHeartIcon = faHeartBroken
@@ -82,7 +86,7 @@ export class PostActionsComponent implements OnChanges {
   quoteIcon = faQuoteLeft
   bookmarkIcon = faBookmark
   unbookmarkIcon = faBookBookmark
-  globeIcon = faGlobe
+  refederateIcon = faPaperPlane
 
   constructor(
     private messages: MessageService,

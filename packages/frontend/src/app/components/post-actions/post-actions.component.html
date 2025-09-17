@@ -1,25 +1,31 @@
 @let post = this.post();
+@let isBskyPost = !!post.bskyUri;
+@let isExternalPost = post.user.url.startsWith('@') && post.privacy !== 1 && post.privacy !== 10;
+@let isMyPost = myId == post.userId && post.privacy != 2;
+@let hasPostActions = isBskyPost || isExternalPost || isMyPost || loggedIn();
 <div class="flex gap-0 flex-nowrap" id="post-actions">
   <button
     aria-label="Share post"
     mat-button
     class="split-button-left"
-    (click)="sharePost()"
+    [matMenuTriggerFor]="shareMenu"
     matTooltip="Copy Wafrn link"
   >
-    <fa-icon [icon]="shareIcon"></fa-icon>
+    <fa-icon [icon]="shareMenuIcon"></fa-icon>
   </button>
-  <button
-    aria-label="Post actions"
-    mat-button
-    class="relative split-button-right"
-    matTooltip="Post actions"
-    [matMenuTriggerFor]="menu"
-  >
-    <fa-icon [icon]="expandDownIcon"></fa-icon>
-  </button>
+  @if (hasPostActions) {
+    <button
+      aria-label="Post actions"
+      mat-button
+      class="relative split-button-right"
+      matTooltip="Post actions"
+      [matMenuTriggerFor]="menu"
+    >
+      <fa-icon [icon]="expandDownIcon"></fa-icon>
+    </button>
+  }
 </div>
-<mat-menu #menu="matMenu" xPosition="before" id="post-actions-menu">
+<mat-menu #shareMenu="matMenu" xPosition="before" id="post-actions-menu">
   <ng-template matMenuContent>
     <button (click)="sharePost()" mat-menu-item>
       <span class="post-actions-menu-span-content">
@@ -27,7 +33,7 @@
         {{ 'post-actions.shareUrl' | translate }}
       </span>
     </button>
-    @if (post.remotePostId && post.user.url.startsWith('@')) {
+    @if (true || (post.remotePostId && post.user.url.startsWith('@'))) {
       <a (click)="shareOriginalPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="shareExternalIcon"></fa-icon>
@@ -35,7 +41,15 @@
         </span>
       </a>
     }
-    @if (post.bskyUri) {
+  </ng-template>
+</mat-menu>
+<mat-menu #menu="matMenu" xPosition="before" id="post-actions-menu">
+  <ng-template matMenuContent>
+    <div class="post-action-buttons" mat-menu-item>
+      <app-post-action-buttons [fragment]="post" settingKey="postActionsButtonBarOrder"></app-post-action-buttons>
+    </div>
+    <hr class="my-0" />
+    @if (isBskyPost) {
       <a [href]="bskyUrl()" target="_blank" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="bskyIcon"></fa-icon>
@@ -43,7 +57,7 @@
         </span>
       </a>
     }
-    @if (post.user.url.startsWith('@') && post.privacy !== 1 && post.privacy !== 10) {
+    @if (isExternalPost) {
       <a [href]="this.externalUrl()" target="_blank" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="goExternalPost"></fa-icon>
@@ -51,97 +65,15 @@
         </span>
       </a>
     }
-    @if (myId == post.userId && post.privacy != 2) {
+    @if (isMyPost) {
       <button (click)="forceRefederate()" mat-menu-item>
         <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="globeIcon"></fa-icon>
+          <fa-icon [fixedWidth]="true" [icon]="refederateIcon"></fa-icon>
           {{ 'post-actions.forceRefederate' | translate }}
         </span>
       </button>
     }
     @if (loggedIn()) {
-      <button [disabled]="!post.canReply" (click)="replyPost()" mat-menu-item>
-        <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="reblogIcon"></fa-icon>
-          {{ 'post-actions.replyPost' | translate }}
-        </span>
-      </button>
-      @if (myRewootsIncludePost) {
-        <button (click)="deleteRewoots()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="closeIcon"></fa-icon>
-            {{ 'post-actions.deleteRewootPost' | translate }}
-          </span>
-        </button>
-      } @else {
-        @if (post.privacy !== 10 && post.privacy !== 1) {
-          <button [disabled]="!post.canReblog" (click)="quickReblog()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon [fixedWidth]="true" [icon]="quickReblogIcon"></fa-icon>
-              {{ 'post-actions.rewootPost' | translate }}
-            </span>
-          </button>
-        }
-      }
-      @if (post.privacy !== 10 && post.privacy !== 1 && post.privacy !== 2) {
-        <button [disabled]="!post.canQuote" (click)="quoteWoot()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="quoteIcon"></fa-icon>
-            {{ 'post-actions.quotePost' | translate }}
-          </span>
-        </button>
-      }
-      @if (bookmarked()) {
-        <button (click)="unbookmarkPost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="unbookmarkIcon"></fa-icon>
-            {{ 'post-actions.unbookmarkPost' | translate }}
-          </span>
-        </button>
-      } @else {
-        <button (click)="bookmarkPost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="bookmarkIcon"></fa-icon>
-            {{ 'post-actions.bookmarkPost' | translate }}
-          </span>
-        </button>
-      }
-      @if (post.userId !== myId) {
-        @if (post.userLikesPostRelations.includes(myId)) {
-          <button (click)="unlikePost()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon [fixedWidth]="true" [icon]="clearHeartIcon"></fa-icon>
-              {{ 'post-actions.dislikePost' | translate }}
-            </span>
-          </button>
-        } @else {
-          <button [disabled]="!post.canLike" (click)="likePost()" mat-menu-item>
-            <span class="post-actions-menu-span-content">
-              <fa-icon [fixedWidth]="true" [icon]="solidHeartIcon"></fa-icon>
-              {{ 'post-actions.likePost' | translate }}
-            </span>
-          </button>
-        }
-        <button (click)="reportPost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="reportIcon"></fa-icon>
-            {{ 'post-actions.reportPost' | translate }}
-          </span>
-        </button>
-      } @else {
-        <button (click)="editPost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="editedIcon"></fa-icon>
-            {{ 'post-actions.editPost' | translate }}
-          </span>
-        </button>
-        <button (click)="deletePost()" mat-menu-item>
-          <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="deleteIcon"></fa-icon>
-            {{ 'post-actions.deletePost' | translate }}
-          </span>
-        </button>
-      }
       @if (!postSilenced) {
         <button (click)="silencePost()" mat-menu-item>
           <span class="post-actions-menu-span-content">

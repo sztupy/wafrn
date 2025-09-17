@@ -382,7 +382,9 @@
       "like": "Like",
       "edit": "Edit",
       "delete": "Delete"
-    }
+    },
+    "postActionsButtonBarOrder": "Post actions menu button icon order",
+    "postActionsButtonBarOrderDescription": "Items show in the post actions menu. Some items are shown depending on you are the poster."
   },
   "dialog": {
     "confirm": "Confirm",
@@ -440,8 +442,8 @@
     "smoothScroll": "Smooth scroll"
   },
   "post-actions": {
-    "shareUrl": "Share with Wafrn",
-    "shareExternalUrl": "Share external URL",
+    "shareUrl": "Copy Wafrn URL",
+    "shareExternalUrl": "Copy external URL",
     "viewOnAtproto": "View on Atproto",
     "forceRefederate": "Force refederate post",
     "viewOriginalPost": "View original post",

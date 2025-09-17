@@ -34,7 +34,7 @@ import { SettingDeleteAccountComponent } from '../components/setting-delete-acco
 import { SettingChangePasswordComponent } from '../components/setting-change-password/setting-change-password.component'
 import { SettingDropListComponent } from '../components/setting-drop-list/setting-drop-list.component'
 import { SETTINGS_TOKEN } from '../pages/settings/settings.component'
-import { replyBarItems } from '../components/bottom-reply-bar/bottom-reply-bar.component'
+import { replyBarItems } from '../components/post-action-buttons/post-action-buttons.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -72,6 +72,7 @@ const settingKeyVariants = [
   'replaceAIWithCocaine',
   'replaceAIWord',
   'postReplyBarOrder',
+  'postActionsButtonBarOrder',
   'atprotoLinkDestination'
 ] as const
 type SettingKeyTuple = typeof settingKeyVariants
@@ -454,6 +455,27 @@ export class SettingsService {
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo
     },
+    postActionsButtonBarOrder: {
+      key: 'postActionsButtonBarOrder',
+      translationKey: 'settings.postActionsButtonBarOrder',
+      translationDescriptionKey: 'settings.postActionsButtonBarOrderDescription',
+      serverKey: 'wafrn.postActionsButtonBarOrder',
+      localStorageKey: 'postActionsButtonBarOrder',
+      type: 'list',
+      default: this.convertToListDefault([...replyBarItems]),
+      dropListData: {
+        // Duplicate from above
+        quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
+        rewoot: { icon: faRepeat, translationKey: 'settings.postReplyBarOrderOptions.rewoot' },
+        reply: { icon: faReply, translationKey: 'settings.postReplyBarOrderOptions.reply' },
+        bookmark: { icon: faBookmark, translationKey: 'settings.postReplyBarOrderOptions.bookmark' },
+        like: { icon: faHeart, translationKey: 'settings.postReplyBarOrderOptions.like' },
+        edit: { icon: faPen, translationKey: 'settings.postReplyBarOrderOptions.edit' },
+        delete: { icon: faTrash, translationKey: 'settings.postReplyBarOrderOptions.delete' }
+      },
+      convertFromStorage: this.convertListFrom,
+      convertToStorage: this.convertListTo
+    },
     atprotoLinkDestination: {
       key: 'atprotoLinkDestination',
       translationKey: 'settings.atprotoLinkDestination',
@@ -518,6 +540,14 @@ export class SettingsService {
             SettingDropListComponent,
             null,
             this.makeInject({ settingKey: 'postReplyBarOrder' })
+          )
+        },
+        {
+          type: 'component',
+          value: new ComponentPortal(
+            SettingDropListComponent,
+            null,
+            this.makeInject({ settingKey: 'postActionsButtonBarOrder' })
           )
         },
         { type: 'separator' },
