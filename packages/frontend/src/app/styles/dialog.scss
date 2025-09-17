@@ -1,6 +1,11 @@
 :root {
   --mat-dialog-container-max-width: 1200px;
   --mat-dialog-container-shape: var(--mat-sys-corner-large);
+
+  // Smaller sized dialog
+  --mat-dialog-actions-padding: 0;
+  --mat-dialog-headline-padding: 0 12px 7px;
+  --mat-dialog-with-actions-content-padding: 12px 12px;
 }
 
 :root .mat-mdc-dialog-surface {
