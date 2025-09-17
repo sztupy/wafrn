@@ -36,6 +36,7 @@ import { EnvironmentService } from '../../services/environment.service'
 import { firstValueFrom } from 'rxjs'
 import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { TranslateModule } from '@ngx-translate/core'
+import { SettingsService } from 'src/app/services/settings.service'
 
 @Component({
   selector: 'app-post-actions',
@@ -50,6 +51,16 @@ export class PostActionsComponent implements OnChanges {
   postSilenced = false
   myRewootsIncludePost = false
   bookmarked = computed(() => this.post().bookmarkers.includes(this.myId))
+
+  bskyUrl = computed<string>(() => {
+    this.settingsService.settingsModified() // evil fix to update correctly
+    const bskyUri = this.post().bskyUri
+    if (!bskyUri) return ''
+    const parts = bskyUri.split('/app.bsky.feed.post/')
+    const userDid = parts[0].split('at://')[1]
+    return `https://${this.settingsService.values.atprotoLinkDestination}/profile/${userDid}/post/${parts[1]}`
+  })
+  externalUrl = computed<string>(() => (this.post().bskyUri ? this.bskyUrl() : this.post().remotePostId))
 
   // icons
   shareIcon = faShareNodes
@@ -80,7 +91,8 @@ export class PostActionsComponent implements OnChanges {
     loginService: LoginService,
     private reportService: ReportService,
     private deletePostService: DeletePostService,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private settingsService: SettingsService
   ) {
     this.loggedIn = loginService.loggedIn
     if (this.loggedIn()) {
@@ -102,38 +114,11 @@ export class PostActionsComponent implements OnChanges {
   }
 
   shareOriginalPost() {
-    let remoteId = this.post().remotePostId
-    const bskyUri = this.post().bskyUri
-    if (bskyUri) {
-      const parts = bskyUri.split('/app.bsky.feed.post/')
-      const userDid = parts[0].split('at://')[1]
-      remoteId = `https://bsky.app/profile/${userDid}/post/${parts[1]}`
-    }
-    navigator.clipboard.writeText(remoteId)
+    navigator.clipboard.writeText(this.externalUrl())
     this.messages.add({
       severity: 'success',
       summary: 'The woot original URL was copied to your clipboard!'
     })
-  }
-
-  viewOriginalPost() {
-    let remoteId = this.post().remotePostId
-    const bskyUri = this.post().bskyUri
-    if (bskyUri) {
-      const parts = bskyUri.split('/app.bsky.feed.post/')
-      const userDid = parts[0].split('at://')[1]
-      remoteId = `https://bsky.app/profile/${userDid}/post/${parts[1]}`
-    }
-    window.open(remoteId, '_blank')
-  }
-
-  viewOnBsky() {
-    const bskyUri = this.post().bskyUri
-    if (bskyUri) {
-      const parts = bskyUri.split('/app.bsky.feed.post/')
-      const userDid = parts[0].split('at://')[1]
-      window.open(`https://bsky.app/profile/${userDid}/post/${parts[1]}`, '_blank')
-    }
   }
 
   async quickReblog() {

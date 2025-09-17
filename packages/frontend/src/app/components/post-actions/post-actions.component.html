@@ -28,34 +28,34 @@
       </span>
     </button>
     @if (post.remotePostId && post.user.url.startsWith('@')) {
-      <button (click)="shareOriginalPost()" mat-menu-item>
+      <a (click)="shareOriginalPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="shareExternalIcon"></fa-icon>
           {{ 'post-actions.shareExternalUrl' | translate }}
         </span>
-      </button>
+      </a>
     }
     @if (post.bskyUri) {
-      <button (click)="viewOnBsky()" mat-menu-item>
+      <a [href]="bskyUrl()" target="_blank" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="bskyIcon"></fa-icon>
-          {{ 'post-actions.viewOnBsky' | translate }}
+          {{ 'post-actions.viewOnAtproto' | translate }}
         </span>
-      </button>
+      </a>
+    }
+    @if (post.user.url.startsWith('@') && post.privacy !== 1 && post.privacy !== 10) {
+      <a [href]="this.externalUrl()" target="_blank" mat-menu-item>
+        <span class="post-actions-menu-span-content">
+          <fa-icon [fixedWidth]="true" [icon]="goExternalPost"></fa-icon>
+          {{ 'post-actions.viewOriginalPost' | translate }}
+        </span>
+      </a>
     }
     @if (myId == post.userId && post.privacy != 2) {
       <button (click)="forceRefederate()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="globeIcon"></fa-icon>
           {{ 'post-actions.forceRefederate' | translate }}
-        </span>
-      </button>
-    }
-    @if (post.user.url.startsWith('@') && post.privacy !== 1 && post.privacy !== 10) {
-      <button (click)="viewOriginalPost()" mat-menu-item>
-        <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="goExternalPost"></fa-icon>
-          {{ 'post-actions.viewOriginalPost' | translate }}
         </span>
       </button>
     }

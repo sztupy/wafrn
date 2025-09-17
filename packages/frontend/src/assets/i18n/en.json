@@ -339,6 +339,8 @@
     },
     "automaticallyExpandPosts": "Automatically expand all posts",
     "expandQuotes": "Do not collapse quotes",
+    "atprotoLinkDestination": "Atproto link destination",
+    "atprotoLinkDestinationDescription": "Atproto site to view posts externally. Default is 'bsky.app'.",
     "disableCW": "Disable CW unless post contains muted words",
     "disableNSFWFilter": "Disable NSFW images filter",
     "hideNoDescriptionMedia": "Automatically CW media with no alt text",
@@ -440,7 +442,7 @@
   "post-actions": {
     "shareUrl": "Share with Wafrn",
     "shareExternalUrl": "Share external URL",
-    "viewOnBluesky": "View on Bluesky",
+    "viewOnAtproto": "View on Atproto",
     "forceRefederate": "Force refederate post",
     "viewOriginalPost": "View original post",
     "replyPost": "Reply to post",

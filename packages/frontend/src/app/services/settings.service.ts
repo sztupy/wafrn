@@ -71,7 +71,8 @@ const settingKeyVariants = [
   'hideQuotes',
   'replaceAIWithCocaine',
   'replaceAIWord',
-  'postReplyBarOrder'
+  'postReplyBarOrder',
+  'atprotoLinkDestination'
 ] as const
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
@@ -452,6 +453,17 @@ export class SettingsService {
       },
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo
+    },
+    atprotoLinkDestination: {
+      key: 'atprotoLinkDestination',
+      translationKey: 'settings.atprotoLinkDestination',
+      translationDescriptionKey: 'settings.atprotoLinkDestinationDescription',
+      serverKey: 'wafrn.atprotoLinkDestination',
+      localStorageKey: 'atprotoLinkDestination',
+      type: 'input',
+      default: 'bsky.app',
+      convertFromStorage: this.convertStringFrom,
+      convertToStorage: this.convertStringTo
     }
   }
   // Generates settings sidebar links and gives the settings-loader pages their data through values
@@ -531,6 +543,7 @@ export class SettingsService {
         { type: 'key', value: 'defaultDashboard' },
         { type: 'key', value: 'automaticallyExpandPosts' },
         { type: 'key', value: 'expandQuotes' },
+        { type: 'key', value: 'atprotoLinkDestination' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.cwBehavior' },
         { type: 'key', value: 'disableCW' },
