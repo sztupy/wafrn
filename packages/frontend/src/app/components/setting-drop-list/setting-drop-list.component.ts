@@ -81,7 +81,7 @@ export class SettingDropListComponent {
 
   syncList() {
     this.itemList = [...this.itemList] // update DOM hack
-    this.settingsService.values.postReplyBarOrder = this.itemList
+    this.settingsService.values[this.settingKey] = this.itemList
     this.settingsService.settingsModified.set(true)
   }
 
