@@ -8,7 +8,7 @@
       <mat-checkbox
         [class.mat-checkbox-top]="settingTranslationDescription !== undefined"
         (change)="updateCheckbox(setting().key, $event)"
-        [checked]="settingValues === true"
+        [checked]="(settingValues ?? setting().default) === true"
         >{{ settingTranslation | translate }}
         @if (settingTranslationDescription) {
           <div class="setting-description">{{ settingTranslationDescription | translate }}</div>
