@@ -75,6 +75,7 @@ export class SettingDropListComponent {
     )
     if (listDiffers) {
       this.itemList = JSON.parse(JSON.stringify(this.defaultOrder))
+      this.syncList()
       this.settingsService.settingsModified.set(true)
     }
   }
