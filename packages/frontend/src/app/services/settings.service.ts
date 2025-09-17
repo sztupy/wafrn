@@ -389,7 +389,7 @@ export class SettingsService {
       serverKey: 'wafrn.mutedWords',
       localStorageKey: 'mutedWords',
       type: 'textarea',
-      default: '""',
+      default: '',
       convertFromStorage: this.convertCommaListFrom,
       convertToStorage: this.convertCommaListTo
     },
@@ -400,7 +400,7 @@ export class SettingsService {
       serverKey: 'wafrn.superMutedWords',
       localStorageKey: 'superMutedWords',
       type: 'textarea',
-      default: '""',
+      default: '',
       convertFromStorage: this.convertCommaListFrom,
       convertToStorage: this.convertCommaListTo
     },
