@@ -64,6 +64,7 @@ $theme: mat.define-theme(
 :root,
 body,
 html {
+  --mat-menu-item-label-text-font: Inter, sans-serif;
   font-family: Inter, sans-serif !important;
   font-feature-settings:
     'liga' 1,
@@ -79,6 +80,7 @@ html {
   :root,
   body,
   html {
+    --mat-menu-item-label-text-font: InterVariable, sans-serif;
     font-family: InterVariable, sans-serif !important;
     font-feature-settings:
       'liga' 1,
