@@ -22,12 +22,13 @@ import {
   faBookBookmark,
   faCommentSlash,
   faLink,
-  faPaperPlane
+  faPaperPlane,
+  faUserSlash,
+  faVolumeMute
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
 import { MatMenuModule } from '@angular/material/menu'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
-import { EditorService } from '../../services/editor.service'
 import { LoginService } from '../../services/login.service'
 
 import { ReportService } from '../../services/report.service'
@@ -40,6 +41,7 @@ import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { TranslateModule } from '@ngx-translate/core'
 import { SettingsService } from 'src/app/services/settings.service'
 import { PostActionButtonsComponent } from '../post-action-buttons/post-action-buttons.component'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-post-actions',
@@ -87,16 +89,18 @@ export class PostActionsComponent implements OnChanges {
   bookmarkIcon = faBookmark
   unbookmarkIcon = faBookBookmark
   refederateIcon = faPaperPlane
+  muteIcon = faVolumeMute
+  blockIcon = faUserSlash
 
   constructor(
     private messages: MessageService,
-    private editor: EditorService,
     private postService: PostsService,
     loginService: LoginService,
     private reportService: ReportService,
     private deletePostService: DeletePostService,
     private utilsService: UtilsService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private simpleDialog: SimpleDialogService
   ) {
     this.loggedIn = loginService.loggedIn
     if (this.loggedIn()) {
@@ -125,110 +129,16 @@ export class PostActionsComponent implements OnChanges {
     })
   }
 
-  async quickReblog() {
-    if (this.post()?.privacy !== 10) {
-      const response = await this.editor.createPost({
-        mentionedUsers: [],
-        content: '',
-        idPostToReblog: this.post().id,
-        privacy: 0,
-        media: []
-      })
-      if (response) {
-        const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
-        this.myRewootsIncludePost = true
-        this.messages.add({
-          severity: 'success',
-          summary: 'You rewooted the woot!',
-          confettiEmojis: disableConfetti ? [] : ['🔁'],
-          soundName: 'sendWoot'
-        })
-      }
-    } else {
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Sorry, this woot is not rebloggeable as requested by the user'
-      })
-    }
-  }
-
-  replyPost() {
-    this.editor.replyPost(this.post())
-  }
-  quoteWoot() {
-    this.editor.quotePost(this.post())
-  }
-  async unlikePost() {
-    if (await this.postService.unlikePost(this.post().id)) {
-      this.post().userLikesPostRelations = this.post().userLikesPostRelations.filter((elem) => elem != this.myId)
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully unliked this woot'
-      })
-    } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
-    }
-  }
-  async likePost() {
-    if (await this.postService.likePost(this.post().id)) {
-      this.post().userLikesPostRelations.push(this.myId)
-      const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully liked this woot',
-        confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
-        soundName: 'like'
-      })
-    } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
-    }
-  }
-  async unbookmarkPost() {
-    if (await this.postService.unbookmarkPost(this.post().id)) {
-      this.post().bookmarkers = this.post().bookmarkers.filter((elem) => elem != this.myId)
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully unbookmarked this woot'
-      })
-    } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
-    }
-  }
-  async bookmarkPost() {
-    if (await this.postService.bookmarkPost(this.post().id)) {
-      this.post().bookmarkers.push(this.myId)
-      const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully bookmarked this woot',
-        confettiEmojis: disableConfetti ? [] : ['💾']
-      })
-    } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
-    }
-  }
-  reportPost() {
-    this.reportService.openReportPostDialog(this.post())
-  }
-  editPost() {
-    this.editor.replyPost(this.post(), true)
-  }
-  deletePost() {
-    this.deletePostService.openDeletePostDialog(this.post().id)
-  }
   async silencePost(superMute: boolean = false) {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: !superMute ? 'dialog.post-header.silenceInteractionsTitle' : 'dialog.post-header.silenceReplyTitle',
+      content: !superMute
+        ? 'dialog.post-header.silenceInteractionsDescription'
+        : 'dialog.post-header.silenceReplyDescription'
+    })
+
+    if (!confirm) return
+
     if (await this.postService.silencePost(this.post().id, superMute)) {
       this.messages.add({
         severity: 'success',
@@ -280,5 +190,32 @@ export class PostActionsComponent implements OnChanges {
 
   async forceRefederate() {
     await this.postService.forceRefederate(this.post().id)
+  }
+
+  // Dangerous options
+  async muteAccount() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.muteAccountTitle',
+      content: 'dialog.post-header.muteAccountDescription'
+    })
+
+    if (!confirm) return
+
+    console.log('Muted')
+  }
+
+  async blockAccount() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.blockAccountTitle',
+      content: 'dialog.post-header.blockAccountDescription'
+    })
+
+    if (!confirm) return
+
+    console.log('Blocked')
+  }
+
+  reportPost() {
+    this.reportService.openReportPostDialog(this.post())
   }
 }

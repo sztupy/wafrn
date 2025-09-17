@@ -2,42 +2,39 @@
 @let isBskyPost = !!post.bskyUri;
 @let isExternalPost = post.user.url.startsWith('@') && post.privacy !== 1 && post.privacy !== 10;
 @let isMyPost = myId == post.userId && post.privacy != 2;
-@let hasPostActions = isBskyPost || isExternalPost || isMyPost || loggedIn();
 <div class="flex gap-0 flex-nowrap" id="post-actions">
   <button
     aria-label="Share post"
     mat-button
-    class="split-button-left"
+    class="mat-circle-button split-button-left"
     [matMenuTriggerFor]="shareMenu"
     matTooltip="Copy Wafrn link"
   >
     <fa-icon [icon]="shareMenuIcon"></fa-icon>
   </button>
-  @if (hasPostActions) {
-    <button
-      aria-label="Post actions"
-      mat-button
-      class="relative split-button-right"
-      matTooltip="Post actions"
-      [matMenuTriggerFor]="menu"
-    >
-      <fa-icon [icon]="expandDownIcon"></fa-icon>
-    </button>
-  }
+  <button
+    aria-label="Post actions"
+    mat-button
+    class="mat-circle-button split-button-right"
+    matTooltip="Post actions"
+    [matMenuTriggerFor]="menu"
+  >
+    <fa-icon [icon]="expandDownIcon"></fa-icon>
+  </button>
 </div>
 <mat-menu #shareMenu="matMenu" xPosition="before" id="post-actions-menu">
   <ng-template matMenuContent>
     <button (click)="sharePost()" mat-menu-item>
       <span class="post-actions-menu-span-content">
-        <fa-icon [fixedWidth]="true" [icon]="shareIcon"></fa-icon>
         {{ 'post-actions.shareUrl' | translate }}
+        <fa-icon [fixedWidth]="true" [icon]="shareIcon"></fa-icon>
       </span>
     </button>
     @if (post.remotePostId && post.user.url.startsWith('@')) {
       <a (click)="shareOriginalPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="shareExternalIcon"></fa-icon>
           {{ 'post-actions.shareExternalUrl' | translate }}
+          <fa-icon [fixedWidth]="true" [icon]="shareExternalIcon"></fa-icon>
         </span>
       </a>
     }
@@ -45,31 +42,33 @@
 </mat-menu>
 <mat-menu #menu="matMenu" xPosition="before" id="post-actions-menu">
   <ng-template matMenuContent>
-    <div class="post-action-buttons" mat-menu-item>
-      <app-post-action-buttons [fragment]="post" settingKey="postActionsButtonBarOrder"></app-post-action-buttons>
-    </div>
+    @if (loggedIn()) {
+      <div class="post-action-buttons" mat-menu-item>
+        <app-post-action-buttons [fragment]="post" settingKey="postActionsButtonBarOrder"></app-post-action-buttons>
+      </div>
+    }
     <hr class="my-0" />
     @if (isBskyPost) {
       <a [href]="bskyUrl()" target="_blank" mat-menu-item>
         <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="bskyIcon"></fa-icon>
           {{ 'post-actions.viewOnAtproto' | translate }}
+          <fa-icon size="lg" [fixedWidth]="true" [icon]="bskyIcon"></fa-icon>
         </span>
       </a>
     }
     @if (isExternalPost) {
       <a [href]="this.externalUrl()" target="_blank" mat-menu-item>
         <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="goExternalPost"></fa-icon>
           {{ 'post-actions.viewOriginalPost' | translate }}
+          <fa-icon size="lg" [fixedWidth]="true" [icon]="goExternalPost"></fa-icon>
         </span>
       </a>
     }
     @if (isMyPost) {
       <button (click)="forceRefederate()" mat-menu-item>
         <span class="post-actions-menu-span-content">
-          <fa-icon [fixedWidth]="true" [icon]="refederateIcon"></fa-icon>
           {{ 'post-actions.forceRefederate' | translate }}
+          <fa-icon size="lg" [fixedWidth]="true" [icon]="refederateIcon"></fa-icon>
         </span>
       </button>
     }
@@ -77,27 +76,48 @@
       @if (!postSilenced) {
         <button (click)="silencePost()" mat-menu-item>
           <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="silenceIcon"></fa-icon>
             {{ 'post-actions.silenceInteractions' | translate }}
+            <fa-icon size="lg" [fixedWidth]="true" [icon]="silenceIcon"></fa-icon>
           </span>
         </button>
       }
       @if (!postSilenced) {
         <button (click)="silencePost(true)" mat-menu-item>
           <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="silenceReplyIcon"></fa-icon>
             {{ 'post-actions.silenceReplyNotifications' | translate }}
+            <fa-icon size="lg" [fixedWidth]="true" [icon]="silenceReplyIcon"></fa-icon>
           </span>
         </button>
       }
       @if (postSilenced) {
         <button (click)="unsilencePost()" mat-menu-item>
           <span class="post-actions-menu-span-content">
-            <fa-icon [fixedWidth]="true" [icon]="unsilenceIcon"></fa-icon>
             {{ 'post-actions.unsilenceReplyNotifications' | translate }}
+            <fa-icon size="lg" [fixedWidth]="true" [icon]="unsilenceIcon"></fa-icon>
           </span>
         </button>
       }
+    }
+    @if (!isMyPost) {
+      <hr class="my-0" />
+      <button (click)="muteAccount()" mat-menu-item class="dangerous-option">
+        <span class="post-actions-menu-span-content">
+          Mute account
+          <fa-icon size="lg" [fixedWidth]="true" [icon]="muteIcon"></fa-icon>
+        </span>
+      </button>
+      <button (click)="blockAccount()" mat-menu-item class="dangerous-option">
+        <span class="post-actions-menu-span-content">
+          Block account
+          <fa-icon size="lg" [fixedWidth]="true" [icon]="blockIcon"></fa-icon>
+        </span>
+      </button>
+      <button (click)="reportPost()" mat-menu-item class="dangerous-option">
+        <span class="post-actions-menu-span-content">
+          {{ 'post-actions.reportPost' | translate }}
+          <fa-icon size="lg" [fixedWidth]="true" [icon]="reportIcon"></fa-icon>
+        </span>
+      </button>
     }
   </ng-template>
 </mat-menu>
