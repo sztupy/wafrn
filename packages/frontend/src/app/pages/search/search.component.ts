@@ -49,12 +49,10 @@ export class SearchComponent implements OnInit, OnDestroy {
     private messages: MessageService,
     public postService: PostsService,
     loginService: LoginService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private themeService: ThemeService
+    router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     this.loggedIn = loginService.loggedIn
-    this.themeService.setMyTheme()
     this.navigationSubscription = router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {

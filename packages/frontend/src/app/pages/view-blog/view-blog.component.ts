@@ -25,6 +25,8 @@ import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { snappyInject, SnappyRouter } from 'src/app/components/snappy/snappy-router.component'
 import { SnappyBlogData } from 'src/app/directives/blog-link/blog-link.directive'
 import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
+import { SettingsService } from 'src/app/services/settings.service'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-view-blog',
@@ -44,7 +46,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   blogDetails = signal<BlogDetails | undefined>(undefined)
   loggedIn: Signal<boolean>
   paramSubscription!: Subscription
-  showModalTheme = false
   viewedPostsIds: string[] = []
   intersectionObserverForLoadPosts!: IntersectionObserver
 
@@ -76,7 +77,9 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     private readonly themeService: ThemeService,
     public readonly blockService: BlocksService,
     private readonly dialog: MatDialog,
-    private readonly snappy: SnappyRouter
+    private readonly snappy: SnappyRouter,
+    private settingService: SettingsService,
+    private simpleDialog: SimpleDialogService
   ) {
     this.loggedIn = loginService.loggedIn
   }
@@ -89,11 +92,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   snOnHide(): void {
-    if (this.loggedIn()) {
-      this.themeService.setMyTheme()
-    } else {
-      this.themeService.setCustomCSS('')
-    }
+    this.themeService.customCSS.set('')
     this.postsVisible = false
   }
 
@@ -175,29 +174,38 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     )
   }
 
-  handleTheme(blogDetails: BlogDetails) {
+  async handleTheme(blogDetails: BlogDetails) {
     const userHasCustomTheme = !blogDetails.url.startsWith('@')
+    const userIsSelf = blogDetails.id === this.loginService.currentAccount()?.id
+    if (!userHasCustomTheme || userIsSelf) return
 
-    if (userHasCustomTheme) {
-      let userResponseToCustomThemes = this.themeService.hasUserAcceptedCustomThemes()
+    // Easiest case, they want custom CSS
+    if (this.settingService.values.useOtherUserCustomThemes) {
+      this.themeService.customCSS.set(blogDetails.id)
+      return
+    }
 
-      if (userResponseToCustomThemes === 2) {
-        this.themeService.setCustomCSS(blogDetails.id)
+    // Check if we should ask
+    if (!this.settingService.values.askToUseOtherUserCustomThemes) return
+
+    const res = await this.simpleDialog.createCustomOptionDialog({
+      title: 'dialog.blog.customThemeTitle',
+      content: 'dialog.blog.customThemeDescription',
+      options: {
+        cancelRemember: { type: 'cancel', text: "No, don't ask again" },
+        cancel: { type: 'cancel', text: 'No' },
+        confirm: { type: 'confirm', text: 'Yes' }
       }
+    })
 
-      if (userResponseToCustomThemes === 0) {
-        const dialogRef = this.dialog.open(AcceptThemeComponent, {
-          autoFocus: false
-        })
-        dialogRef.afterClosed().subscribe(() => {
-          userResponseToCustomThemes = this.themeService.hasUserAcceptedCustomThemes()
-          if (userResponseToCustomThemes === 2) {
-            this.themeService.setCustomCSS(blogDetails.id)
-          }
-        })
-      }
-    } else {
-      this.themeService.setCustomCSS('')
+    if (res === 'confirm') {
+      this.settingService.values.useOtherUserCustomThemes = true
+      this.settingService.forceUpdateValue('useOtherUserCustomThemes')
+      this.themeService.customCSS.set(blogDetails.id)
+    }
+    if (res === 'cancelRemember') {
+      this.settingService.values.askToUseOtherUserCustomThemes = false
+      this.settingService.forceUpdateValue('askToUseOtherUserCustomThemes')
     }
   }
 

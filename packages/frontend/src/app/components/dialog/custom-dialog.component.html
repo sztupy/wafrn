@@ -1,0 +1,30 @@
+<h2 class="dialog-title" mat-dialog-title
+  >{{ data.title | translate }} <strong class="dialog-title-suffix">{{ textData.titleSuffix }}</strong>
+</h2>
+@if (textData.content || textData.contentSuffix) {
+  <mat-dialog-content>
+    @if (textData.content) {
+      <p [innerHTML]="textData.content | translate"></p>
+    }
+
+    @if (textData.contentSuffix) {
+      <p>
+        <strong class="dialog-content-suffix" [innerHTML]="textData.contentSuffix | translate"></strong>
+      </p>
+    }
+  </mat-dialog-content>
+}
+<mat-dialog-actions>
+  @for (option of textData.options | KeyValue; track $index) {
+    @if (option.value.type === 'cancel') {
+      <button mat-stroked-button class="dialog-cancel-button" (click)="onSelect(option.key)">
+        {{ option.value.text | translate }}
+      </button>
+    }
+    @if (option.value.type === 'confirm') {
+      <button mat-flat-button class="dialog-confirm-button" (click)="onSelect(option.key)" cdkFocusInitial>
+        {{ option.value.text | translate }}
+      </button>
+    }
+  }
+</mat-dialog-actions>

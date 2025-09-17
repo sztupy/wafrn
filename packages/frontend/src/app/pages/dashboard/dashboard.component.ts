@@ -12,7 +12,6 @@ import { DashboardService } from 'src/app/services/dashboard.service'
 import { JwtService } from 'src/app/services/jwt.service'
 import { MessageService } from 'src/app/services/message.service'
 import { PostsService } from 'src/app/services/posts.service'
-import { ThemeService } from 'src/app/services/theme.service'
 
 @Component({
   selector: 'app-dashboard',
@@ -47,10 +46,8 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     private messages: MessageService,
     private titleService: Title,
     private metaTagService: Meta,
-    private themeService: ThemeService,
     private readonly viewportScroller: ViewportScroller
   ) {
-    this.themeService.setMyTheme()
     this.titleService.setTitle(GlobalData.appDefaultTitle)
     this.metaTagService.addTags([
       {

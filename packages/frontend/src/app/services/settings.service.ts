@@ -50,6 +50,8 @@ const settingKeyVariants = [
   'theme', // This and v
   'lightDarkMode', // this option are weirdly named in localStorage because legacy reasons
   'additionalStyleModes',
+  'useOtherUserCustomThemes',
+  'askToUseOtherUserCustomThemes',
   'rssOptions',
   'alsoKnownAs',
   'forceClassicLogo',
@@ -255,6 +257,24 @@ export class SettingsService {
       default: [],
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo
+    },
+    useOtherUserCustomThemes: {
+      key: 'useOtherUserCustomThemes',
+      translationKey: 'settings.useOtherUserCustomThemes',
+      translationDescriptionKey: 'settings.useOtherUserCustomThemesDescription',
+      serverKey: 'wafrn.useOtherUserCustomThemes',
+      localStorageKey: 'useOtherUserCustomThemes',
+      type: 'checkbox',
+      default: false
+    },
+    askToUseOtherUserCustomThemes: {
+      key: 'askToUseOtherUserCustomThemes',
+      translationKey: 'settings.askToUseOtherUserCustomThemes',
+      translationDescriptionKey: 'settings.askToUseOtherUserCustomThemesDescription',
+      serverKey: 'wafrn.askToUseOtherUserCustomThemes',
+      localStorageKey: 'askToUseOtherUserCustomThemes',
+      type: 'checkbox',
+      default: true
     },
     forceClassicLogo: {
       key: 'forceClassicLogo',
@@ -564,6 +584,8 @@ export class SettingsService {
       values: [
         { type: 'header', value: 'settings.header.appearance' },
         { type: 'component', value: new ComponentPortal(SettingThemeSwitcherComponent) },
+        { type: 'key', value: 'useOtherUserCustomThemes' },
+        { type: 'key', value: 'askToUseOtherUserCustomThemes' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.userInterface' },
         { type: 'component', value: new ComponentPortal(SettingLanguageSwitcherComponent) },
@@ -737,7 +759,7 @@ export class SettingsService {
     toObservable(loginService.loggedIn)
       .pipe(filter((logged) => logged))
       .subscribe(() => {
-        this.values = this.getLocalStorageValues()
+        this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
         this.settingsLoadedFromLogin.next()
       })
 
@@ -745,7 +767,7 @@ export class SettingsService {
     fromEvent(window, 'storage')
       .pipe(debounceTime(500))
       .subscribe(() => {
-        this.values = this.getLocalStorageValues()
+        this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
       })
   }
 

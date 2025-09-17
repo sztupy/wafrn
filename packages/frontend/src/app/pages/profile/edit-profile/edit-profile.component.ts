@@ -138,7 +138,7 @@ export class EditProfileComponent implements OnInit {
     private mediaService: MediaService,
     private loginService: LoginService,
     private messages: MessageService,
-    private themeService: ThemeService,
+    themeService: ThemeService,
     private translationService: TranslateService
   ) {
     this.colorScheme = themeService.theme
@@ -155,8 +155,6 @@ export class EditProfileComponent implements OnInit {
     this.setAdditionalStyleMode = themeService.setAdditionalStyleMode
 
     this.colorSchemeGroupList = themeGroupList
-
-    this.themeService.setCustomCSS('')
 
     this.allLanguages = this.translationService.langs
     this.appLanguage = this.translationService.currentLang
