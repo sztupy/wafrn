@@ -33,7 +33,7 @@
         {{ 'post-actions.shareUrl' | translate }}
       </span>
     </button>
-    @if (true || (post.remotePostId && post.user.url.startsWith('@'))) {
+    @if (post.remotePostId && post.user.url.startsWith('@')) {
       <a (click)="shareOriginalPost()" mat-menu-item>
         <span class="post-actions-menu-span-content">
           <fa-icon [fixedWidth]="true" [icon]="shareExternalIcon"></fa-icon>
