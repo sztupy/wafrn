@@ -252,7 +252,7 @@ services:
       <<: *default_backend_build
       args:
         <<: *default_backend_build_args
-    command: "npm exec tsx fediverse.ts"
+    command: "npm exec tsx index.ts"
 
 volumes:
   dbpg:
