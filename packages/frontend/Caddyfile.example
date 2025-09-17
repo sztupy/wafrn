@@ -48,10 +48,16 @@ ${{DOMAIN_NAME}} {
         # Cache-Control: no-cache, no-store, must-revalidate
     }
 
-    @api path /api* /fediverse* /contexts* /post* /blog* /.well-known*
+    @api path /api*  /post* /blog*
 
     handle @api {
         reverse_proxy backend:9000
+    }
+
+    @fediverse /fediverse* /contexts* /.well-known*
+
+    handle @fediverse {
+      reverse_proxy fediverse:9000
     }
 
     handle_path /adminer* {

@@ -179,7 +179,13 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-
+  fediverse:
+    <<: *default_backend
+    build:
+      <<: *default_backend_build
+      args:
+        <<: *default_backend_build_args
+    command: "npm exec tsx fediverse.ts"
   prometheus:
     restart: unless-stopped
     image: prom/prometheus:latest
