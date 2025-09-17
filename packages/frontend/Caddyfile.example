@@ -54,8 +54,9 @@ ${{DOMAIN_NAME}} {
         reverse_proxy backend:9000
     }
 
+    @fediverse path /fediverse* /contexts* /.well-known*
 
-    handle /fediverse* /contexts* /.well-known* {
+    handle @fediverse {
       reverse_proxy fediverse:9000
     }
 
