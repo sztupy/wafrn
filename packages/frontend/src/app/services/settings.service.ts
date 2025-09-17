@@ -429,7 +429,7 @@ export class SettingsService {
       serverKey: 'wafrn.replaceAIWord',
       localStorageKey: 'replaceAIWord',
       type: 'input',
-      default: '"cocaine"',
+      default: 'cocaine',
       convertFromStorage: this.convertStringFrom,
       convertToStorage: this.convertStringTo
     },
