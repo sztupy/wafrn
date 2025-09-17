@@ -102,13 +102,13 @@
       <hr class="my-0" />
       <button (click)="muteAccount()" mat-menu-item class="dangerous-option">
         <span class="post-actions-menu-span-content">
-          Mute account
+          {{ 'post-actions.muteUser' | translate }}
           <fa-icon size="lg" [fixedWidth]="true" [icon]="muteIcon"></fa-icon>
         </span>
       </button>
       <button (click)="blockAccount()" mat-menu-item class="dangerous-option">
         <span class="post-actions-menu-span-content">
-          Block account
+          {{ 'post-actions.blockUser' | translate }}
           <fa-icon size="lg" [fixedWidth]="true" [icon]="blockIcon"></fa-icon>
         </span>
       </button>

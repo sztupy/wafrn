@@ -468,7 +468,9 @@
     "deletePost": "Delete post",
     "silenceInteractions": "Silence post",
     "silenceReplyNotifications": "Silence post and replies",
-    "unsilenceReplyNotifications": "Unsilence post"
+    "unsilenceReplyNotifications": "Unsilence post",
+    "muteUser": "Mute user",
+    "blockUser": "Block user"
   },
   "post-header": {
     "follow": "Follow",
