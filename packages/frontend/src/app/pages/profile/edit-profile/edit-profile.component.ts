@@ -12,12 +12,12 @@ import { MessageService } from 'src/app/services/message.service'
 import {
   AdditionalStyleMode,
   additionalStyleModesData,
-  ColorScheme,
-  colorSchemeData,
-  ColorSchemeGroupList,
-  colorSchemeGroupList,
-  ColorTheme,
-  colorThemeData,
+  Theme,
+  themeData,
+  ThemeGroupList,
+  themeGroupList,
+  LightDarkMode,
+  lightDarkModeData,
   ThemeService
 } from 'src/app/services/theme.service'
 import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -109,9 +109,9 @@ export class EditProfileComponent implements OnInit {
   survivedTimeout: ReturnType<typeof setTimeout> | undefined
   lockout = false
 
-  colorScheme: Signal<ColorScheme>
+  colorScheme: Signal<Theme>
   colorSchemeSelect = ''
-  theme: Signal<ColorTheme>
+  theme: Signal<LightDarkMode>
   themeSelect = ''
   additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> }
   additionalStyleModesSelect: AdditionalStyleMode[]
@@ -120,8 +120,8 @@ export class EditProfileComponent implements OnInit {
   appLanguage: string
 
   // Data copies
-  colorSchemeData = colorSchemeData
-  colorThemeData = colorThemeData
+  colorSchemeData = themeData
+  colorThemeData = lightDarkModeData
   additionalStyleModesData = additionalStyleModesData
 
   // Function copies
@@ -130,7 +130,7 @@ export class EditProfileComponent implements OnInit {
   setAdditionalStyleMode: Function
 
   // Theme categories
-  colorSchemeGroupList: ColorSchemeGroupList
+  colorSchemeGroupList: ThemeGroupList
 
   constructor(
     private jwtService: JwtService,
@@ -141,20 +141,20 @@ export class EditProfileComponent implements OnInit {
     private themeService: ThemeService,
     private translationService: TranslateService
   ) {
-    this.colorScheme = themeService.colorScheme
+    this.colorScheme = themeService.theme
     this.colorSchemeSelect = this.colorScheme()
-    this.theme = themeService.theme
+    this.theme = themeService.lightDarkMode
     this.themeSelect = this.theme()
     this.additionalStyleModes = themeService.additionalStyleModes
     this.additionalStyleModesSelect = Object.entries(this.additionalStyleModes)
       .filter(([_, enabled]) => enabled())
       .map(([val, _]) => val) as AdditionalStyleMode[]
 
-    this.setColorScheme = themeService.setColorScheme
-    this.setTheme = themeService.setTheme
+    this.setColorScheme = themeService.setTheme
+    this.setTheme = themeService.setLightDarkMode
     this.setAdditionalStyleMode = themeService.setAdditionalStyleMode
 
-    this.colorSchemeGroupList = colorSchemeGroupList
+    this.colorSchemeGroupList = themeGroupList
 
     this.themeService.setCustomCSS('')
 
@@ -211,7 +211,7 @@ export class EditProfileComponent implements OnInit {
       const alsoKnownAs = publicOptions.find((elem) => elem.optionName == 'fediverse.public.alsoKnownAs')
       try {
         this.editProfileForm.controls['alsoKnownAs'].patchValue(JSON.parse(alsoKnownAs?.optionValue || ''))
-      } catch (_) { }
+      } catch (_) {}
       const askLevel = publicOptions.find((elem) => elem.optionName == 'wafrn.public.asks')
       this.editProfileForm.controls['asksLevel'].patchValue(askLevel ? parseInt(askLevel.optionValue) : 2)
       this.editProfileForm.controls['forceClassicAudioPlayer'].patchValue(
@@ -269,7 +269,7 @@ export class EditProfileComponent implements OnInit {
       if (fediAttachments) {
         try {
           this.fediAttachments = JSON.parse(fediAttachments.optionValue)
-        } catch (error) { }
+        } catch (error) {}
       }
       const localStorageNotificationsFrom = localStorage.getItem('notificationsFrom')
       if (localStorageNotificationsFrom) {

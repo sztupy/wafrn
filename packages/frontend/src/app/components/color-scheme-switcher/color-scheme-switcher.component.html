@@ -5,7 +5,7 @@
   title="Change color scheme"
   aria-label="Change color scheme"
   [ngClass]="iconClass"
-  matTooltip="{{ colorThemeData[theme()] }} mode"
+  matTooltip="{{ lightDarkModeData[theme()] }} mode"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +35,7 @@
   </svg>
 </button>
 <mat-menu #themeMenu="matMenu">
-  @for (entry of colorThemeData | keyvalue: null; track entry.key) {
+  @for (entry of lightDarkModeData | keyvalue: null; track entry.key) {
     <button
       class="theme-selector-button"
       [class.selected]="theme() === entry.key"
@@ -53,7 +53,7 @@
   class="theme-toggle"
   title="Toggle theme"
   aria-label="Toggle theme"
-  matTooltip="{{ colorSchemeData[colorScheme()].name }} theme"
+  matTooltip="{{ themeData[colorScheme()].name }} theme"
 >
   <fa-icon [icon]="paletteIcon"></fa-icon>
 </button>
@@ -76,7 +76,7 @@
         (click)="setColorScheme(variant)"
         [class.selected]="colorScheme() === variant"
       >
-        {{ $any(colorSchemeData)[variant].name }}
+        {{ $any(themeData)[variant].name }}
       </button>
     }
   </ng-template>
