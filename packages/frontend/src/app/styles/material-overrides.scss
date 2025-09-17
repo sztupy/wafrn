@@ -98,6 +98,7 @@
 }
 :root .mat-mdc-menu-panel {
   overflow: unset;
+  max-width: 360px;
 }
 
 // Make menu selections not have block padding

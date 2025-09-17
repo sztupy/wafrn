@@ -75,13 +75,14 @@ export class SettingDropListComponent {
     )
     if (listDiffers) {
       this.itemList = JSON.parse(JSON.stringify(this.defaultOrder))
+      this.syncList()
       this.settingsService.settingsModified.set(true)
     }
   }
 
   syncList() {
     this.itemList = [...this.itemList] // update DOM hack
-    this.settingsService.values.postReplyBarOrder = this.itemList
+    this.settingsService.values[this.settingKey] = this.itemList
     this.settingsService.settingsModified.set(true)
   }
 

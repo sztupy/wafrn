@@ -339,6 +339,8 @@
     },
     "automaticallyExpandPosts": "Automatically expand all posts",
     "expandQuotes": "Do not collapse quotes",
+    "atprotoLinkDestination": "Atproto link destination",
+    "atprotoLinkDestinationDescription": "Atproto site to view posts externally. Default is 'bsky.app'.",
     "disableCW": "Disable CW unless post contains muted words",
     "disableNSFWFilter": "Disable NSFW images filter",
     "hideNoDescriptionMedia": "Automatically CW media with no alt text",
@@ -380,7 +382,9 @@
       "like": "Like",
       "edit": "Edit",
       "delete": "Delete"
-    }
+    },
+    "postActionsButtonBarOrder": "Post actions menu button icon order",
+    "postActionsButtonBarOrderDescription": "Items show in the post actions menu. Some items are shown depending on you are the poster."
   },
   "dialog": {
     "confirm": "Confirm",
@@ -402,7 +406,15 @@
       "confirmIgnoreContent": "Post was reported for reason:"
     },
     "post-header": {
-      "followTitle": "Follow user"
+      "followTitle": "Follow user",
+      "silenceInteractionsTitle": "Silence post",
+      "silenceInteractionsDescription": "Silence notifications from likes, rewoots, and reacts of this post.",
+      "silenceReplyTitle": "Silence post and replies",
+      "silenceReplyDescription": "Silence notifications from likes, rewoots, reacts, and replies of this post.",
+      "muteAccountTitle": "Mute account",
+      "muteAccountDescription": "Hide posts and replies by this user. They will still be able to interact with your posts.",
+      "blockAccountTitle": "Block account",
+      "blockAccountDescription": "Hide posts and replies by this user or posts and replies mentioning this user. They will not be able to interact with your posts."
     }
   },
   "ask-dialog-content": {
@@ -438,9 +450,9 @@
     "smoothScroll": "Smooth scroll"
   },
   "post-actions": {
-    "shareUrl": "Share with Wafrn",
-    "shareExternalUrl": "Share external URL",
-    "viewOnBluesky": "View on Bluesky",
+    "shareUrl": "Copy link",
+    "shareExternalUrl": "Copy remote link",
+    "viewOnAtproto": "View on Atproto",
     "forceRefederate": "Force refederate post",
     "viewOriginalPost": "View original post",
     "replyPost": "Reply to post",
@@ -454,9 +466,11 @@
     "reportPost": "Report post",
     "editPost": "Edit post",
     "deletePost": "Delete post",
-    "silenceInteractions": "Silence interactions",
-    "silenceReplyNotifications": "Silence interactions and replies",
-    "unsilenceReplyNotifications": "Unsilence replies and interactions"
+    "silenceInteractions": "Silence post",
+    "silenceReplyNotifications": "Silence post and replies",
+    "unsilenceReplyNotifications": "Unsilence post",
+    "muteUser": "Mute user",
+    "blockUser": "Block user"
   },
   "post-header": {
     "follow": "Follow",

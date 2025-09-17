@@ -55,7 +55,6 @@ export class ConfirmDialogComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) protected data: ConfirmDialogData) {
     this.textData = Object.assign(data, this.defaultTextData)
-    console.log(this.textData)
   }
 
   onInput(event: InputEvent): void {

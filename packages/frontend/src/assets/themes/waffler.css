@@ -1,6 +1,6 @@
-/* 
+/*
 Waffler theme by @freeplay@app.wafrn.net (freeplay.floof.company)
-Source repo: https://git.gay/freeplay/UserStyles/src/branch/wah/wafrn 
+Source repo: https://git.gay/freeplay/UserStyles/src/branch/wah/wafrn
 */
 
 :root {
@@ -294,11 +294,6 @@ app-avatar-small:not(.ask-avatar) .avatar {
 			}
 			app-post-actions, #post-actions {
 				display: contents !important;
-			}
-			#post-actions {
-				> :not(:last-child) {
-					display: none;
-				}
 			}
 		}
 	}

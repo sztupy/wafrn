@@ -29,29 +29,25 @@
       </div>
     }
   </div>
-  <div class="flex flex-column align-items-center">
-    @if (!simplified()) {
-      <app-post-actions [post]="fragment" class="align-self-end"></app-post-actions>
-    }
-    @if (
-      !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
-      !postService.followedUserIds.includes(fragment.userId) &&
-      loggedIn()
-    ) {
-      <button
-        mat-button
-        color="accent"
-        class="text-sm follow-button"
-        style="text-wrap: nowrap"
-        (click)="followUser(fragment)"
-      >
-        Follow
-      </button>
-    }
-    @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
-      <button mat-button color="accent" class="text-sm follow-button" (click)="cancelFollowUser(fragment)">
-        Awaiting approval
-      </button>
-    }
+  <div>
+    <div class="flex gap-2 align-items-center">
+      @if (
+        !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
+        !postService.followedUserIds.includes(fragment.userId) &&
+        loggedIn()
+      ) {
+        <button mat-button class="text-sm follow-button" style="text-wrap: nowrap" (click)="followUser(fragment)">
+          {{ 'post-header.follow' | translate }}
+        </button>
+      }
+      @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
+        <button mat-button class="text-sm follow-button" (click)="cancelFollowUser(fragment)">
+          {{ 'post-header.awaitingApproval' | translate }}
+        </button>
+      }
+      @if (!simplified()) {
+        <app-post-actions [post]="fragment"></app-post-actions>
+      }
+    </div>
   </div>
 </div>
