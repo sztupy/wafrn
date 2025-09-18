@@ -63,7 +63,7 @@ export class PostActionsComponent implements OnChanges {
     if (!bskyUri) return ''
     const parts = bskyUri.split('/app.bsky.feed.post/')
     const userDid = parts[0].split('at://')[1]
-    return `https://${this.settingsService.values.atprotoLinkDestination}/profile/${userDid}/post/${parts[1]}`
+    return `https://${this.settingsService.values.atprotoLinkDestination || 'bsky.app'}/profile/${userDid}/post/${parts[1]}`
   })
   externalUrl = computed<string>(() => (this.post().bskyUri ? this.bskyUrl() : this.post().remotePostId))
 
