@@ -42,6 +42,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { SettingsService } from 'src/app/services/settings.service'
 import { PostActionButtonsComponent } from '../post-action-buttons/post-action-buttons.component'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
+import { BlocksService } from 'src/app/services/blocks.service'
 
 @Component({
   selector: 'app-post-actions',
@@ -99,7 +100,8 @@ export class PostActionsComponent implements OnChanges {
     private reportService: ReportService,
     private utilsService: UtilsService,
     private settingsService: SettingsService,
-    private simpleDialog: SimpleDialogService
+    private simpleDialog: SimpleDialogService,
+    private blockService: BlocksService
   ) {
     this.loggedIn = loginService.loggedIn
     if (this.loggedIn()) {
@@ -195,7 +197,7 @@ export class PostActionsComponent implements OnChanges {
 
     if (!confirm) return
 
-    console.log('Muted')
+    this.blockService.muteUser(this.post().userId)
   }
 
   async blockAccount() {
@@ -206,7 +208,7 @@ export class PostActionsComponent implements OnChanges {
 
     if (!confirm) return
 
-    console.log('Blocked')
+    this.blockService.blockUser(this.post().userId)
   }
 
   reportPost() {
