@@ -26,25 +26,25 @@
         <span class="text-xs" matTooltip="{{ privacyOptions[fragment.privacy].name }}">
           <fa-icon [icon]="privacyOptions[fragment.privacy].icon"></fa-icon>
         </span>
+        @if (
+          !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
+          !postService.followedUserIds.includes(fragment.userId) &&
+          loggedIn()
+        ) {
+          <button mat-button class="text-sm follow-button-2" style="text-wrap: nowrap" (click)="followUser(fragment)">
+            {{ 'post-header.follow' | translate }}
+          </button>
+        }
+        @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
+          <button mat-button class="text-sm follow-button-2" (click)="cancelFollowUser(fragment)">
+            {{ 'post-header.awaitingApproval' | translate }}
+          </button>
+        }
       </div>
     }
   </div>
   <div>
     <div class="flex gap-2 align-items-center">
-      @if (
-        !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
-        !postService.followedUserIds.includes(fragment.userId) &&
-        loggedIn()
-      ) {
-        <button mat-button class="text-sm follow-button" style="text-wrap: nowrap" (click)="followUser(fragment)">
-          {{ 'post-header.follow' | translate }}
-        </button>
-      }
-      @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
-        <button mat-button class="text-sm follow-button" (click)="cancelFollowUser(fragment)">
-          {{ 'post-header.awaitingApproval' | translate }}
-        </button>
-      }
       @if (!simplified()) {
         <app-post-actions [post]="fragment"></app-post-actions>
       }
