@@ -68,6 +68,9 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+    deploy:
+      mode: replicated
+      replicas: 3
     volumes:
       - ./packages/backend/uploads:/app/packages/backend/uploads
       - ./packages/backend/cache:/app/packages/backend/cache
@@ -83,6 +86,9 @@ services:
       frontend:
         condition: service_started
     restart: no
+    deploy:
+      mode: replicated
+      replicas: 1
     command: "npm exec tsx migrate.ts init-container"
 
   frontend:
@@ -100,6 +106,7 @@ services:
         FRONTEND_LONG_TITLE: ${FRONTEND_LONG_TITLE:-}
         FRONTEND_DESCRIPTION: ${FRONTEND_DESCRIPTION:-}
         CACHE_HOST: "cache:9000"
+        BACKEND_HOST: "wafrn-backend-1:9000 wafrn-backend-2:9000 wafrn-backend-3:9000"
     ports:
       - 80:80
       - 443:443
@@ -159,10 +166,16 @@ services:
     <<: *default_backend
     profiles:
       - bluesky
+    deploy:
+      mode: replicated
+      replicas: 1
     command: "npm exec tsx atproto.ts"
 
   cache:
     <<: *default_backend
+    deploy:
+      mode: replicated
+      replicas: 1
 
   workers:
     <<: *default_backend
@@ -174,13 +187,6 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-  fediverse:
-    <<: *default_backend
-    build:
-      <<: *default_backend_build
-      args:
-        <<: *default_backend_build_args
-    command: "npm exec tsx index.ts"
 
 volumes:
   dbpg:
