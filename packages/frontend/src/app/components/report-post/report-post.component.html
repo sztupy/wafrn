@@ -1,17 +1,37 @@
-<p class="text-2xl">Before we can report the post we need more information</p>
-<form [formGroup]="reportForm" (submit)="submit()">
+<h2 class="dialog-title" mat-dialog-title>{{
+  (data.type === 'user' ? 'dialog.report.reportUserTitle' : 'dialog.report.reportPostTitle') | translate
+}}</h2>
+<mat-dialog-content>
   <mat-form-field class="w-full">
-    <mat-label>Type of post</mat-label>
-    <mat-select [required]="true" formControlName="severity">
-      @for (option of reportOptions; track $index) {
-        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+    <mat-label>{{ 'dialog.report.reportTypeLabel' | translate }}</mat-label>
+    <mat-select required [(value)]="reportSeverity">
+      @for (option of reportOptions | KeyValue; track $index) {
+        <mat-option [value]="option.key">{{ option.value | translate }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="w-full">
-    <mat-label>Description</mat-label>
-    <textarea required matNativeControl formControlName="description"></textarea>
+    <mat-label>{{ 'dialog.report.reportDescription' | translate }}</mat-label>
+    <textarea
+      [value]="reportDescription()"
+      (input)="onInput($event)"
+      required
+      matNativeControl
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="3"
+    ></textarea>
   </mat-form-field>
-  <mat-checkbox class="w-full mb-3" formControlName="block">Block this user</mat-checkbox>
-  <button mat-flat-button class="w-full" type="submit" [disabled]="!reportForm.valid">Report</button>
-</form>
+  <div>
+    <mat-checkbox class="w-full" (change)="onCheck($event)">{{
+      'dialog.report.reportBlockUser' | translate
+    }}</mat-checkbox>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button class="dialog-cancel-button" (click)="onCancel()">{{
+    'dialog.cancel' | translate
+  }}</button>
+  <button mat-flat-button class="dialog-confirm-button" [disabled]="!formValid()" (click)="onConfirm()">{{
+    'dialog.report.reportConfirm' | translate
+  }}</button>
+</mat-dialog-actions>

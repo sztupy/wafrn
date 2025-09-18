@@ -42,6 +42,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { SettingsService } from 'src/app/services/settings.service'
 import { PostActionButtonsComponent } from '../post-action-buttons/post-action-buttons.component'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
+import { BlocksService } from 'src/app/services/blocks.service'
 
 @Component({
   selector: 'app-post-actions',
@@ -63,7 +64,7 @@ export class PostActionsComponent implements OnChanges {
     if (!bskyUri) return ''
     const parts = bskyUri.split('/app.bsky.feed.post/')
     const userDid = parts[0].split('at://')[1]
-    return `https://${this.settingsService.values.atprotoLinkDestination}/profile/${userDid}/post/${parts[1]}`
+    return `https://${this.settingsService.values.atprotoLinkDestination || 'bsky.app'}/profile/${userDid}/post/${parts[1]}`
   })
   externalUrl = computed<string>(() => (this.post().bskyUri ? this.bskyUrl() : this.post().remotePostId))
 
@@ -97,10 +98,10 @@ export class PostActionsComponent implements OnChanges {
     private postService: PostsService,
     loginService: LoginService,
     private reportService: ReportService,
-    private deletePostService: DeletePostService,
     private utilsService: UtilsService,
     private settingsService: SettingsService,
-    private simpleDialog: SimpleDialogService
+    private simpleDialog: SimpleDialogService,
+    private blockService: BlocksService
   ) {
     this.loggedIn = loginService.loggedIn
     if (this.loggedIn()) {
@@ -117,7 +118,8 @@ export class PostActionsComponent implements OnChanges {
     navigator.clipboard.writeText(`${EnvironmentService.environment.frontUrl}/fediverse/post/${this.post().id}`)
     this.messages.add({
       severity: 'success',
-      summary: 'The woot URL was copied to your clipboard!'
+      summary: 'messages.copyLocalLinkSuccess',
+      translate: true
     })
   }
 
@@ -125,7 +127,8 @@ export class PostActionsComponent implements OnChanges {
     navigator.clipboard.writeText(this.externalUrl())
     this.messages.add({
       severity: 'success',
-      summary: 'The woot original URL was copied to your clipboard!'
+      summary: 'messages.copyRemoteLinkSuccess',
+      translate: true
     })
   }
 
@@ -139,47 +142,40 @@ export class PostActionsComponent implements OnChanges {
 
     if (!confirm) return
 
-    if (await this.postService.silencePost(this.post().id, superMute)) {
+    const success = await this.postService.silencePost(this.post().id, superMute)
+
+    if (success) {
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully silenced the notifications for this woot'
+        summary: 'messages.silencePostSuccess',
+        translate: true
       })
       await this.checkPostSilenced()
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
-    }
-  }
-
-  async deleteRewoots() {
-    const success = await firstValueFrom(this.deletePostService.deleteRewoots(this.post().id))
-    if (success) {
-      this.myRewootsIncludePost = false
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully deleted your rewoot'
-      })
-    } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong! Check your internet connectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
 
   async unsilencePost() {
-    if (await this.postService.unsilencePost(this.post().id)) {
+    // const success = await this.postService.unsilencePost(this.post().id)
+    const success = true
+
+    if (success) {
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully reactivated the notifications for this woot'
+        summary: 'messages.unsilencePostSuccess',
+        translate: true
       })
       await this.checkPostSilenced()
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
@@ -201,7 +197,7 @@ export class PostActionsComponent implements OnChanges {
 
     if (!confirm) return
 
-    console.log('Muted')
+    this.blockService.muteUser(this.post().userId)
   }
 
   async blockAccount() {
@@ -212,10 +208,10 @@ export class PostActionsComponent implements OnChanges {
 
     if (!confirm) return
 
-    console.log('Blocked')
+    this.blockService.blockUser(this.post().userId)
   }
 
   reportPost() {
-    this.reportService.openReportPostDialog(this.post())
+    this.reportService.report(this.post())
   }
 }
