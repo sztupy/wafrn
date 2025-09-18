@@ -11,6 +11,7 @@ import {
   ConfirmDialogData,
   ConfirmDialogResult
 } from '../components/dialog/confirm-dialog.component'
+import { CustomDialogComponent, CustomDialogData } from '../components/dialog/custom-dialog.component'
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,16 @@ export class SimpleDialogService {
     )
 
     // Can possibly return undefined if some massive error happens I guess
+    const res = await lastValueFrom(ref.afterClosed())
+    return res
+  }
+
+  public async createCustomOptionDialog<T extends string>(data: CustomDialogData<T>): Promise<T | undefined> {
+    const ref = this.dialog.open<CustomDialogComponent<T>, CustomDialogData<T>, T | undefined>(CustomDialogComponent, {
+      width: '600px',
+      data
+    })
+
     const res = await lastValueFrom(ref.afterClosed())
     return res
   }

@@ -21,7 +21,7 @@ import {
 import { UtilsService } from './utils.service'
 import { HttpClient } from '@angular/common/http'
 import { EnvironmentService } from './environment.service'
-import { catchError, debounceTime, fromEvent, lastValueFrom, of, timeout } from 'rxjs'
+import { catchError, debounceTime, filter, fromEvent, lastValueFrom, of, Subject, timeout } from 'rxjs'
 import { PostsService } from './posts.service'
 import { MessageService } from './message.service'
 import { LoginService } from './login.service'
@@ -35,6 +35,7 @@ import { SettingChangePasswordComponent } from '../components/setting-change-pas
 import { SettingDropListComponent } from '../components/setting-drop-list/setting-drop-list.component'
 import { SETTINGS_TOKEN } from '../pages/settings/settings.component'
 import { replyBarItems } from '../components/post-action-buttons/post-action-buttons.component'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -46,6 +47,11 @@ const settingKeyVariants = [
   'hideProfileNotLoggedIn',
   'disableEmailNotifications',
   // everything else - stored in the options table
+  'theme', // This and v
+  'lightDarkMode', // this option are weirdly named in localStorage because legacy reasons
+  'additionalStyleModes',
+  'useOtherUserCustomThemes',
+  'askToUseOtherUserCustomThemes',
   'rssOptions',
   'alsoKnownAs',
   'forceClassicLogo',
@@ -78,7 +84,8 @@ const settingKeyVariants = [
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
 
-export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea' | 'user' | 'list'
+// 'user' and 'raw' are modified by specific components
+export type SettingFormTypes = 'checkbox' | 'select' | 'input' | 'textarea' | 'user' | 'list' | 'raw'
 
 export type SettingListItem = {
   value: string
@@ -87,7 +94,7 @@ export type SettingListItem = {
 
 // Setting type cannot be numbers because of a bug with mat-select
 // Simply write your numbers as strings (agony)
-export type SettingValueType = string | boolean | SettingListItem[]
+export type SettingValueType = string | boolean | SettingListItem[] | string[]
 export interface SettingDataEntry {
   key: SettingKey // Copy of key for components to use
   translationKey: string
@@ -222,6 +229,52 @@ export class SettingsService {
       localStorageKey: 'public.alsoKnownAs',
       type: 'user',
       default: ''
+    },
+    theme: {
+      key: 'theme',
+      translationKey: 'settings.theme',
+      serverKey: 'wafrn.colorScheme', // Legacy
+      localStorageKey: 'colorScheme', // Legacy
+      type: 'raw', // Not actually used
+      default: 'default',
+      convertFromStorage: this.convertRawStringFrom
+    },
+    lightDarkMode: {
+      key: 'lightDarkMode',
+      translationKey: 'settings.lightDarkMode',
+      serverKey: 'wafrn.theme', // Legacy
+      localStorageKey: 'theme', // Legacy
+      type: 'raw', // Not actually used
+      default: 'auto',
+      convertFromStorage: this.convertRawStringFrom
+    },
+    additionalStyleModes: {
+      key: 'additionalStyleModes',
+      translationKey: 'settings.additionalStyleModes',
+      serverKey: 'wafrn.additionalStyleModes',
+      localStorageKey: 'additionalStyleModes',
+      type: 'list',
+      default: [],
+      convertFromStorage: this.convertListFrom,
+      convertToStorage: this.convertListTo
+    },
+    useOtherUserCustomThemes: {
+      key: 'useOtherUserCustomThemes',
+      translationKey: 'settings.useOtherUserCustomThemes',
+      translationDescriptionKey: 'settings.useOtherUserCustomThemesDescription',
+      serverKey: 'wafrn.useOtherUserCustomThemes',
+      localStorageKey: 'useOtherUserCustomThemes',
+      type: 'checkbox',
+      default: false
+    },
+    askToUseOtherUserCustomThemes: {
+      key: 'askToUseOtherUserCustomThemes',
+      translationKey: 'settings.askToUseOtherUserCustomThemes',
+      translationDescriptionKey: 'settings.askToUseOtherUserCustomThemesDescription',
+      serverKey: 'wafrn.askToUseOtherUserCustomThemes',
+      localStorageKey: 'askToUseOtherUserCustomThemes',
+      type: 'checkbox',
+      default: true
     },
     forceClassicLogo: {
       key: 'forceClassicLogo',
@@ -442,7 +495,7 @@ export class SettingsService {
       serverKey: 'wafrn.postReplyBarOrder',
       localStorageKey: 'postReplyBarOrder',
       type: 'list',
-      default: this.convertToListDefault([...replyBarItems]),
+      default: this.convertToOrderListDefault([...replyBarItems]),
       dropListData: {
         quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
         rewoot: { icon: faRepeat, translationKey: 'settings.postReplyBarOrderOptions.rewoot' },
@@ -462,7 +515,7 @@ export class SettingsService {
       serverKey: 'wafrn.postActionsButtonBarOrder',
       localStorageKey: 'postActionsButtonBarOrder',
       type: 'list',
-      default: this.convertToListDefault([...replyBarItems]),
+      default: this.convertToOrderListDefault([...replyBarItems]),
       dropListData: {
         // Duplicate from above
         quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
@@ -531,6 +584,8 @@ export class SettingsService {
       values: [
         { type: 'header', value: 'settings.header.appearance' },
         { type: 'component', value: new ComponentPortal(SettingThemeSwitcherComponent) },
+        { type: 'key', value: 'useOtherUserCustomThemes' },
+        { type: 'key', value: 'askToUseOtherUserCustomThemes' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.userInterface' },
         { type: 'component', value: new ComponentPortal(SettingLanguageSwitcherComponent) },
@@ -659,6 +714,7 @@ export class SettingsService {
 
   public settingsModified = signal(false)
   public settingsLoading = signal(false)
+  public settingsLoadedFromLogin = new Subject<void>()
 
   constructor(
     private dashboardService: DashboardService,
@@ -699,11 +755,19 @@ export class SettingsService {
       })
     }
 
+    // Update settings when logging in (and notify everyone)
+    toObservable(loginService.loggedIn)
+      .pipe(filter((logged) => logged))
+      .subscribe(() => {
+        this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
+        this.settingsLoadedFromLogin.next()
+      })
+
     // Update settings on other tabs change
     fromEvent(window, 'storage')
       .pipe(debounceTime(500))
       .subscribe(() => {
-        this.values = this.getLocalStorageValues()
+        this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
       })
   }
 
@@ -753,19 +817,7 @@ export class SettingsService {
 
   async updateProfile(): Promise<boolean> {
     // Map the non-required options into a specific key of the payload
-    const options: { name: string; value: string }[] = Object.entries(this.data)
-      .filter(([_key, entry]) => entry.profileOption !== true && entry.serverKey !== undefined)
-      .map(([_key, entry]) => {
-        const rawValue = this.values[entry.key] ?? ''
-        let convertedValue: string = ''
-        if (entry.convertToStorage) {
-          convertedValue = entry.convertToStorage(rawValue)
-        } else {
-          convertedValue = this.values[entry.key]!.toString()
-        }
-
-        return { name: entry.serverKey!, value: convertedValue }
-      })
+    const options: { name: string; value: string }[] = this.getSettingsAsOptions()
 
     // Add Fediverse attachments
     // Ignore attachment if it doesn't have both fields
@@ -811,6 +863,22 @@ export class SettingsService {
     }
   }
 
+  private getSettingsAsOptions(): { name: string; value: string }[] {
+    return Object.entries(this.data)
+      .filter(([_key, entry]) => entry.profileOption !== true && entry.serverKey !== undefined)
+      .map(([_key, entry]) => ({ name: entry.serverKey!, value: this.getSettingValueAsString(entry.key) }))
+  }
+
+  private getSettingValueAsString(key: SettingKey): string {
+    const value = this.values[key]
+    if (value === undefined) return ''
+    if (this.data[key].convertToStorage) {
+      return this.data[key].convertToStorage(value)
+    } else {
+      return value.toString()
+    }
+  }
+
   async updateMultipleAccountData() {
     // Update multiple account saved data
     const currentBlog = this.loginService.currentAccount()
@@ -824,12 +892,59 @@ export class SettingsService {
     }
   }
 
+  /**
+   * @description Force updates a value, optionally writing it to localStorage and then to the server.
+   *
+   * Default is to update localStorage
+   *
+   * Used for when you need immediate setting propagation and saving like themes.
+   *
+   * @returns whether the server was able to save your value
+   */
+  async forceUpdateValue(keyOrKeys: SettingKey | SettingKey[], updateLocalStorage: boolean = true): Promise<boolean> {
+    let keyList: SettingKey[]
+    if (Array.isArray(keyOrKeys)) {
+      keyList = keyOrKeys
+    } else {
+      keyList = [keyOrKeys]
+    }
+
+    // Optionally write to localStorage
+    if (updateLocalStorage) {
+      keyList.forEach((key) => {
+        const localStorageKey = this.data[key].localStorageKey
+        const newValue = this.values[key]
+        if (localStorageKey && newValue !== undefined) {
+          localStorage.setItem(localStorageKey, this.getSettingValueAsString(key))
+        }
+      })
+    }
+
+    // Write options to the server
+    if (this.loginService.loggedIn()) {
+      const options: { name: string; value: string }[] = this.getSettingsAsOptions()
+      const res = await lastValueFrom(
+        this.http.post<{ success: boolean }>(`${EnvironmentService.environment.baseUrl}/editOptions`, { options }).pipe(
+          timeout(60000), // if it doesn't return in a full minute you've got problems
+          catchError((_err) => of({ success: false }))
+        )
+      )
+      if (res.success) {
+        return true
+      } else {
+        return false
+      }
+    }
+    return false
+  }
+
   makeInject(data: any) {
     return Injector.create({ providers: [{ provide: SETTINGS_TOKEN, useValue: data }] })
   }
 
   // Drop list conversion for default orderings
-  convertToListDefault(list: string[]): SettingListItem[] {
+  // ONLY for type SettingListItem type
+  convertToOrderListDefault(list: string[]): SettingListItem[] {
     return list.map((item) => ({
       value: item,
       enabled: true
@@ -848,6 +963,11 @@ export class SettingsService {
     return `"${list}"`
   }
 
+  // Evil
+  convertRawStringFrom(value: string): string {
+    return value
+  }
+
   convertCommaListFrom(list: string): string {
     try {
       return JSON.parse(list).replaceAll(',', '\n')
@@ -860,6 +980,7 @@ export class SettingsService {
     return `"${list.replaceAll('\n', ',')}"`
   }
 
+  // Generic for array-like types
   convertListFrom(list: string): SettingValueType {
     try {
       return JSON.parse(list)

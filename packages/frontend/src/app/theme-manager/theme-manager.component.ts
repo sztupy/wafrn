@@ -1,5 +1,5 @@
 import { Component, Signal, WritableSignal } from '@angular/core'
-import { AdditionalStyleMode, ColorScheme, ColorTheme, ThemeService } from '../services/theme.service'
+import { AdditionalStyleMode, Theme, LightDarkMode, ThemeService } from '../services/theme.service'
 
 @Component({
   selector: 'app-theme-manager',
@@ -8,13 +8,13 @@ import { AdditionalStyleMode, ColorScheme, ColorTheme, ThemeService } from '../s
   styleUrl: './theme-manager.component.scss'
 })
 export class ThemeManagerComponent {
-  colorScheme: Signal<ColorScheme>
-  theme: Signal<ColorTheme>
+  colorScheme: Signal<Theme>
+  theme: Signal<LightDarkMode>
   additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> }
 
   constructor(themeService: ThemeService) {
-    this.colorScheme = themeService.colorScheme
-    this.theme = themeService.theme
+    this.colorScheme = themeService.theme
+    this.theme = themeService.lightDarkMode
     this.additionalStyleModes = themeService.additionalStyleModes
   }
 }

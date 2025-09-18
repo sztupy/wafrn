@@ -9,12 +9,12 @@ import { faPalette } from '@fortawesome/free-solid-svg-icons'
 import {
   AdditionalStyleMode,
   additionalStyleModesData,
-  ColorScheme,
-  colorSchemeData,
-  colorSchemeGroupList,
-  ColorSchemeGroupList,
-  ColorTheme,
-  colorThemeData,
+  Theme,
+  themeData,
+  themeGroupList,
+  ThemeGroupList,
+  LightDarkMode,
+  lightDarkModeData,
   ThemeService
 } from 'src/app/services/theme.service'
 
@@ -37,13 +37,13 @@ import {
   styleUrl: './color-scheme-switcher.component.scss'
 })
 export class ColorSchemeSwitcherComponent {
-  colorScheme: Signal<ColorScheme>
-  theme: Signal<ColorTheme>
+  colorScheme: Signal<Theme>
+  theme: Signal<LightDarkMode>
   additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> }
 
   // Data copies
-  colorSchemeData = colorSchemeData
-  colorThemeData = colorThemeData
+  themeData = themeData
+  lightDarkModeData = lightDarkModeData
   additionalStyleModesData = additionalStyleModesData
 
   // Function copies
@@ -52,7 +52,7 @@ export class ColorSchemeSwitcherComponent {
   toggleAdditionalStyleMode: Function
 
   // Theme categories
-  colorSchemeGroupList: ColorSchemeGroupList
+  colorSchemeGroupList: ThemeGroupList
 
   // Icons
   paletteIcon = faPalette
@@ -61,15 +61,15 @@ export class ColorSchemeSwitcherComponent {
   iconClass = ''
 
   constructor(themeService: ThemeService) {
-    this.colorScheme = themeService.colorScheme
-    this.theme = themeService.theme
+    this.colorScheme = themeService.theme
+    this.theme = themeService.lightDarkMode
     this.additionalStyleModes = themeService.additionalStyleModes
 
-    this.setColorScheme = themeService.setColorScheme.bind(themeService)
-    this.setTheme = themeService.setTheme.bind(themeService)
+    this.setColorScheme = themeService.setTheme.bind(themeService)
+    this.setTheme = themeService.setLightDarkMode.bind(themeService)
     this.toggleAdditionalStyleMode = themeService.toggleAdditionalStyleMode.bind(themeService)
 
-    this.colorSchemeGroupList = colorSchemeGroupList
+    this.colorSchemeGroupList = themeGroupList
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.updateIconTheme.bind(this))
   }

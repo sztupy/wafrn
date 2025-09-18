@@ -1,6 +1,6 @@
 <mat-form-field class="block w-full mat-form-field-no-padding" floatLabel="always">
   <mat-label>{{ 'settings.theme' | translate }}</mat-label>
-  <mat-select [value]="colorScheme()" (selectionChange)="setColorScheme($event)">
+  <mat-select [value]="colorScheme()" (selectionChange)="setTheme($event)">
     @for (group of colorSchemeGroupList | KeyValue; track $index) {
       <mat-optgroup [label]="group.value.name" class="theme-group">
         @for (entry of group.value.entries; track $index) {
@@ -13,7 +13,7 @@
 <p class="setting-description">{{ 'settings.themeDescription' | translate }}</p>
 <mat-form-field class="block w-full mat-form-field-no-padding" floatLabel="always">
   <mat-label>{{ 'settings.lightDarkMode' | translate }}</mat-label>
-  <mat-select [value]="colorTheme()" (selectionChange)="setColorTheme($event)">
+  <mat-select [value]="lightDarkMode()" (selectionChange)="setLightDarkMode($event)">
     @for (entry of colorThemeData | KeyValue; track $index) {
       <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
     }

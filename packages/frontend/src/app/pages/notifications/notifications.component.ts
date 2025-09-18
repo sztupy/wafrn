@@ -6,7 +6,6 @@ import { Reblog } from 'src/app/interfaces/reblog'
 import { SimplifiedUser } from 'src/app/interfaces/simplified-user'
 import { UserNotifications } from 'src/app/interfaces/user-notifications'
 import { NotificationsService } from 'src/app/services/notifications.service'
-import { ThemeService } from 'src/app/services/theme.service'
 
 @Component({
   selector: 'app-notifications',
@@ -36,10 +35,8 @@ export class NotificationsComponent implements OnInit {
 
   constructor(
     private notificationsService: NotificationsService,
-    private themeService: ThemeService,
     private cdr: ChangeDetectorRef
   ) {
-    this.themeService.setMyTheme()
     this.observer = new IntersectionObserver((intersectionEntries: IntersectionObserverEntry[]) => {
       if (intersectionEntries.some((elem) => elem.isIntersecting)) {
         this.page = this.page + 1

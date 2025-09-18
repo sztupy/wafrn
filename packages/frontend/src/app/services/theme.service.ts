@@ -4,28 +4,28 @@ import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter, firstValueFrom, fromEvent, merge } from 'rxjs'
 import { EnvironmentService } from './environment.service'
 import { toObservable } from '@angular/core/rxjs-interop'
+import { SettingListItem, SettingsService } from './settings.service'
+import { ActivatedRoute } from '@angular/router'
 
 // !! NOTE FOR ADDING THEMES !! //
 //
 // If you want to add a theme, you must:
-// - Add it to `colorSchemeVariants`
-// - Fill out its `colorSchemeData` (name data and if the theme forces light/dark) entry
+// - Add it to `themeVariants`
+// - Fill out its `themeData` (name data and if the theme forces light/dark) entry
 //   - Compatibility allows you to force dark/light if you need.
 //   - Auto Reset makes the theme be reset to default on reload
 // - Add the theme as a CSS file in `/assets/themes/name.css`
 // - Add a link file to it in theme-manager.component.html
-// - Add your theme to a group in `colorSchemeGroupList`
+// - Add your theme to a group in `themeGroupList`
 
 // !! NOTE FOR ADDING MODES !! //
 //
 // If you want to add a style mode, you must:
 // - Add it to `additionalStyleModeVariants`
 // - Fill out its `additionalStyleModesData`
-//
-// Note: This uses the raw names of the mode setting.
-// DO NOT OVERRIDE OTHER LOCAL STORAGE ENTRIES! There is no check :3
+// - Add a link file to it in theme-manager.component.html
 
-const colorSchemeVariants = [
+const themeVariants = [
   'default',
   'tan',
   'green',
@@ -48,18 +48,18 @@ const colorSchemeVariants = [
   'catppuccin_macchiato',
   'catppuccin_mocha'
 ] as const
-type ColorSchemeTuple = typeof colorSchemeVariants
-export type ColorScheme = ColorSchemeTuple[number]
+type ThemeTuple = typeof themeVariants
+export type Theme = ThemeTuple[number]
 
-type ColorSchemeData = {
-  [key in ColorScheme]: {
+type ThemeData = {
+  [key in Theme]: {
     name: string
     compatibility: 'light' | 'dark' | 'both'
     autoReset?: boolean
   }
 }
 
-export const colorSchemeData: ColorSchemeData = {
+export const themeData: ThemeData = {
   default: { name: 'Default', compatibility: 'both' },
   tan: { name: 'Tan', compatibility: 'both' },
   green: { name: 'Green', compatibility: 'both' },
@@ -83,22 +83,17 @@ export const colorSchemeData: ColorSchemeData = {
   catppuccin_mocha: { name: 'Catppuccin Mocha', compatibility: 'both' }
 }
 
-const colorSchemeGroupVariants = [
-  'defaultThemes',
-  'computeryThemes',
-  'experimentalThemes',
-  'programmersThemes'
-] as const
-type ColorSchemeGroupTuple = typeof colorSchemeGroupVariants
-export type ColorSchemeGroup = ColorSchemeGroupTuple[number]
-export type ColorSchemeGroupList = {
-  [key in ColorSchemeGroup]: {
+const themeGroupVariants = ['defaultThemes', 'computeryThemes', 'experimentalThemes', 'programmersThemes'] as const
+type ThemeGroupTuple = typeof themeGroupVariants
+export type ThemeGroup = ThemeGroupTuple[number]
+export type ThemeGroupList = {
+  [key in ThemeGroup]: {
     name: string
-    entries: ColorScheme[]
+    entries: Theme[]
   }
 }
 
-export const colorSchemeGroupList: ColorSchemeGroupList = {
+export const themeGroupList: ThemeGroupList = {
   defaultThemes: {
     name: 'Default theme variants',
     entries: ['default', 'tan', 'green', 'gold', 'red', 'pink', 'purple', 'blue']
@@ -117,24 +112,29 @@ export const colorSchemeGroupList: ColorSchemeGroupList = {
   }
 }
 
-const colorThemeVariants = ['light', 'dark', 'auto'] as const
-type ColorThemeTuple = typeof colorThemeVariants
-export type ColorTheme = ColorThemeTuple[number]
+const lightDarkModeVariants = ['light', 'dark', 'auto'] as const
+type lightDarkModeTuple = typeof lightDarkModeVariants
+export type LightDarkMode = lightDarkModeTuple[number]
 
-export type ColorThemeData = { [key in ColorTheme]: string }
-export const colorThemeData: ColorThemeData = {
+export type LightDarkModeData = { [key in LightDarkMode]: string }
+export const lightDarkModeData: LightDarkModeData = {
   light: 'Light',
   dark: 'Dark',
   auto: 'Auto'
 }
 
 // Verifying that a theme/scheme is real
-function isColorTheme(value: string): value is ColorTheme {
-  return colorThemeVariants.includes(value as ColorTheme)
+function isLightDarkMode(value: string | undefined): value is LightDarkMode {
+  return value !== undefined && lightDarkModeVariants.includes(value as LightDarkMode)
 }
 
-function isColorScheme(value: string): value is ColorScheme {
-  return colorSchemeVariants.includes(value as ColorScheme)
+function isTheme(value: string | undefined): value is Theme {
+  return value !== undefined && themeVariants.includes(value as Theme)
+}
+
+// Covers SettingListItem[] because type jank
+function isAdditionalStyleMode(value: string[] | SettingListItem[]): value is AdditionalStyleMode[] {
+  return !value.some((mode) => !additionalStyleModeVariants.includes(mode as AdditionalStyleMode))
 }
 
 // More styles!
@@ -168,8 +168,8 @@ export const additionalStyleModesData: AdditionalStyleModeData = {
   providedIn: 'root'
 })
 export class ThemeService {
-  public colorScheme = signal<ColorScheme>('default')
-  public theme = signal<ColorTheme>('auto')
+  public theme = signal<Theme>('default')
+  public lightDarkMode = signal<LightDarkMode>('auto')
   public additionalStyleModes: { [key in AdditionalStyleMode]: WritableSignal<boolean> } = {
     centerLayout: signal(false),
     topToolbar: signal(false),
@@ -178,72 +178,100 @@ export class ThemeService {
     oldTags: signal(false),
     colorfulTags: signal(false)
   }
+  public customCSS = signal<string>('') // Empty string is own theme, otherwise is the theme of the viewed blog
+  public customCSSEnabled = signal(true) // Allows pages to disable it and re-enable on snappy hide
 
   constructor(
     private loginService: LoginService,
-    private http: HttpClient
+    private http: HttpClient,
+    private settingService: SettingsService,
+    private activatedRoute: ActivatedRoute
   ) {
-    // Setup when logging in or out and run once (yay signals)
+    // Setup when logging out, completing setting sync, and also run once (yay signals)
     // Also watches change from other tabs
     merge(
-      toObservable(loginService.loggedIn),
+      toObservable(loginService.loggedIn).pipe(filter((logged) => !logged)),
+      this.settingService.settingsLoadedFromLogin.asObservable(),
       fromEvent(window, 'storage').pipe(
         filter((event) => ['theme', 'colorScheme'].includes((<StorageEvent>event).key ?? '')),
-        debounceTime(500)
+        debounceTime(200)
       )
     ).subscribe(() => this.setup())
+
+    // Load and sync user custom CSS
+    this.syncCustomCSS()
+    effect(() => {
+      this.syncCustomCSS()
+    })
   }
 
   setup() {
-    const savedScheme = localStorage?.getItem('colorScheme') ?? 'default'
-    if (isColorScheme(savedScheme)) this.setColorScheme(savedScheme)
+    const theme = this.settingService.values.theme
+    if (typeof theme === 'string' && isTheme(theme)) {
+      this.setTheme(theme)
+    }
 
-    const savedTheme = localStorage?.getItem('theme') ?? 'auto'
-    if (isColorTheme(savedTheme)) this.setTheme(savedTheme)
+    const darkLightMode = this.settingService.values.lightDarkMode
+    if (typeof darkLightMode === 'string' && isLightDarkMode(darkLightMode)) {
+      this.setLightDarkMode(darkLightMode)
+    }
 
-    Object.entries(this.additionalStyleModes).forEach(([mode, value]) => {
-      const savedMode = localStorage?.getItem(mode) ?? 'false'
-      value.set(savedMode === 'true')
-    })
+    const settingAdditionalStyleModes = this.settingService.values.additionalStyleModes
+    if (Array.isArray(settingAdditionalStyleModes) && isAdditionalStyleMode(settingAdditionalStyleModes)) {
+      additionalStyleModeVariants.forEach((mode) => {
+        const enabled = settingAdditionalStyleModes.includes(mode)
+        this.additionalStyleModes[mode].set(enabled)
+      })
+    }
 
     // Fan theme fallback for old browsers
     const chromeVersionForCompatibilityReasons = this.getChromeVersion()
     if (chromeVersionForCompatibilityReasons && chromeVersionForCompatibilityReasons < 122) {
       // we force the fan theme on old browsers
-      this.setColorScheme('fan', true)
+      this.setTheme('fan', true)
     }
   }
 
-  public setColorScheme = async (scheme: ColorScheme, doNotSavePreference = false) => {
-    this.colorScheme.set(scheme)
-    localStorage?.setItem('colorScheme', scheme)
-
-    // Forced theme
-    if (colorSchemeData[scheme]?.compatibility === 'light') await this.setTheme('light')
-    if (colorSchemeData[scheme]?.compatibility === 'dark') await this.setTheme('dark')
-
-    // User settings
-    if (doNotSavePreference) return
-    return await this.loginService.updateUserOptions([{ name: 'wafrn.colorScheme', value: scheme }])
-  }
-
-  public setTheme = async (theme: ColorTheme, doNotSavePreference = false) => {
+  public setTheme = async (theme: Theme, doNotSavePreference = false) => {
     this.theme.set(theme)
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage?.setItem('theme', theme)
+    this.settingService.values.theme = theme
 
-    // User settings
-    if (doNotSavePreference) return
-    return await this.loginService.updateUserOptions([{ name: 'wafrn.theme', value: theme }])
+    // Forced lightDarkMode
+    if (themeData[theme]?.compatibility === 'light') await this.setLightDarkMode('light')
+    if (themeData[theme]?.compatibility === 'dark') await this.setLightDarkMode('dark')
+
+    this.settingService.forceUpdateValue('theme', !doNotSavePreference)
   }
 
+  public setLightDarkMode = async (lightDarkMode: LightDarkMode, doNotSavePreference = false) => {
+    this.lightDarkMode.set(lightDarkMode)
+    this.settingService.values.lightDarkMode = lightDarkMode
+
+    document.documentElement.setAttribute('data-theme', lightDarkMode)
+    this.settingService.forceUpdateValue('lightDarkMode', !doNotSavePreference)
+  }
+
+  // When setting additionalStyleMode either call the set method here or modify and call sync afterwards if modifying many settings at once.
   public setAdditionalStyleMode = async (mode: AdditionalStyleMode, value: boolean, doNotSavePreference = false) => {
     this.additionalStyleModes[mode].set(value)
-    localStorage?.setItem(mode, value.toString())
+    this.syncAdditionalStyleModeSettings()
 
-    // User settings
-    if (doNotSavePreference) return
-    return await this.loginService.updateUserOptions([{ name: `wafrn.${mode}`, value: value.toString() }])
+    this.settingService.forceUpdateValue('additionalStyleModes', !doNotSavePreference)
+  }
+
+  public syncAdditionalStyleMode() {
+    this.syncAdditionalStyleModeSettings()
+
+    this.settingService.forceUpdateValue('additionalStyleModes')
+  }
+
+  // Helper to sync up the settings service values and theme service values
+  private syncAdditionalStyleModeSettings() {
+    const modes = Object.entries(this.additionalStyleModes)
+      .filter(([_, enabled]) => enabled())
+      .map(([val, _]) => val)
+
+    this.settingService.values.additionalStyleModes = modes
   }
 
   public async toggleAdditionalStyleMode(mode: AdditionalStyleMode, doNotSavePreference = false) {
@@ -256,97 +284,82 @@ export class ThemeService {
     return raw ? parseInt(raw[2], 10) : false
   }
 
+  //
   // CUSTOM CSS STUFF
-  setMyTheme() {
-    if (this.loginService.getLoggedUserUUID()) {
-      this.setCustomCSS(this.loginService.getLoggedUserUUID())
+  //
+
+  async syncCustomCSS() {
+    const isOwnCSS = this.customCSS() === ''
+    if (isOwnCSS && this.loginService.loggedIn()) {
+      this.customCSSLinkElement().href = this.getThemeUrl(this.loginService.getLoggedUserUUID())
+      return
     }
+
+    // Someone else's CSS, check if we want to use it and if it exists
+    if (this.settingService.values.useOtherUserCustomThemes !== true) return
+
+    const themeExists = await this.themeExists(this.customCSS())
+    if (!themeExists) return
+
+    // We want to use it and it exists
+    this.customCSSLinkElement().href = this.getThemeUrl(this.customCSS())
   }
+
+  // Get or create custom CSS link element
+  private customCSSLinkElement(): HTMLLinkElement {
+    // If it exists, return it
+    const existingElement = document.getElementById(this.linkElementID())
+    if (existingElement) return <HTMLLinkElement>existingElement
+
+    // Otherwise, create it and return it
+    const linkEl = document.createElement('link')
+    linkEl.setAttribute('rel', 'stylesheet')
+    linkEl.id = this.linkElementID()
+    document.head.appendChild(linkEl)
+    return linkEl
+  }
+
+  // arbitrary ID to give the theme link element
+  // If it collides with some random extension element just add more text
+  private linkElementID(): string {
+    return 'app-custom-css-link'
+  }
+
+  // Shorthand for the theme location in the media URL
+  private getThemeUrl(theme: string): string {
+    return `${EnvironmentService.environment.baseUrl}/uploads/themes/${theme}.css`
+  }
+
+  async themeExists(theme: string): Promise<boolean> {
+    const res = await firstValueFrom(
+      this.http.get(`${EnvironmentService.environment.baseUrl}/uploads/themes/${theme}.css`, {
+        responseType: 'text'
+      })
+    )
+    return res !== undefined && res.length > 0
+  }
+
+  // CSS editor stuff
 
   updateTheme(newTheme: string) {
     return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/updateCSS`, { css: newTheme }))
   }
 
-  // 0 no data 1 does not want custom css 2 accepts custom css
-  hasUserAcceptedCustomThemes(): number {
-    let res = 0
-    try {
-      const storedResponse = localStorage.getItem('acceptsCustomThemes')
-      res = storedResponse ? parseInt(storedResponse) : 0
-    } catch (error) {}
-    return res
-  }
-
-  async checkThemeExists(theme: string): Promise<boolean> {
-    let res = false
-    try {
-      const response = await firstValueFrom(
-        this.http.get(`${EnvironmentService.environment.baseMediaUrl}/themes/${theme}.css`, {
-          responseType: 'text'
-        })
-      )
-      if (response && response.length > 0) {
-        res = true
-      }
-    } catch (error) {}
-    return res
-  }
-
   async getMyThemeAsSting(): Promise<string> {
     let res = ''
     try {
-      const themeResponse = await this.http
-        .get(`${EnvironmentService.environment.baseUrl}/uploads/themes/${this.loginService.getLoggedUserUUID()}.css`, {
-          responseType: 'text'
-        })
-        .toPromise()
+      const themeResponse = await firstValueFrom(
+        this.http.get(
+          `${EnvironmentService.environment.baseUrl}/uploads/themes/${this.loginService.getLoggedUserUUID()}.css`,
+          {
+            responseType: 'text'
+          }
+        )
+      )
       if (themeResponse && themeResponse.length > 0) {
         res = themeResponse
       }
     } catch (error) {}
     return res
-  }
-
-  setCustomCSS(themeToSet: string) {
-    try {
-      this.setStyle('customUserTheme', `${EnvironmentService.environment.baseUrl}/uploads/themes/${themeToSet}.css`)
-    } catch (error) {}
-  }
-
-  private getLinkElementForKey(key: string) {
-    return this.getExistingLinkElementByKey(key) || this.createLinkElementWithKey(key)
-  }
-
-  private getExistingLinkElementByKey(key: string) {
-    return document.head.querySelector(`link[rel="stylesheet"].${this.getClassNameForKey(key)}`)
-  }
-
-  private createLinkElementWithKey(key: string) {
-    const linkEl = document.createElement('link')
-    linkEl.setAttribute('rel', 'stylesheet')
-    linkEl.classList.add(this.getClassNameForKey(key))
-    document.head.appendChild(linkEl)
-    return linkEl
-  }
-
-  private getClassNameForKey(key: string) {
-    return `app-${key}`
-  }
-
-  /**
-   * Set the stylesheet with the specified key.
-   */
-  private setStyle(key: string, href: string) {
-    this.getLinkElementForKey(key).setAttribute('href', href)
-  }
-
-  /**
-   * Remove the stylesheet with the specified key.
-   */
-  private removeStyle(key: string) {
-    const existingLinkElement = this.getExistingLinkElementByKey(key)
-    if (existingLinkElement) {
-      document.head.removeChild(existingLinkElement)
-    }
   }
 }
