@@ -19,6 +19,7 @@ export class ReportListComponent implements OnInit {
 
   reportMap: { [index: number]: string } = {
     1: 'SPAM',
+    3: 'Unlabeled NSFW',
     5: 'Hate',
     10: 'Illegal'
   }

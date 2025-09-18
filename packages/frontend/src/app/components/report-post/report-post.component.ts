@@ -45,6 +45,7 @@ export class ReportPostComponent {
 
   reportOptions: Record<number, string> = {
     1: 'Spam',
+    3: 'Unlabeled NSFW',
     5: 'Inciting hate against a person or collective',
     10: 'Illegal content'
   }
