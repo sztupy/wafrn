@@ -39,21 +39,33 @@
         }
         <mat-menu #menu="matMenu" xPosition="before">
           @if (!blog.muted) {
-            <button mat-menu-item (click)="blockService.muteUser(blog.id)">
-              <fa-icon class="mr-2" [icon]="muteUserIcon"></fa-icon>Mute user
+            <button (click)="muteAccount()" mat-menu-item class="dangerous-option">
+              <span class="flex gap-2">
+                <fa-icon [fixedWidth]="true" [icon]="muteUserIcon"></fa-icon>
+                {{ 'post-actions.muteUser' | translate }}
+              </span>
             </button>
           } @else {
-            <button (click)="blockService.unmuteUser(blog.id)" mat-menu-item>
-              <fa-icon class="mr-2" [icon]="unmuteUserIcon"></fa-icon>Unmute user
+            <button (click)="unmuteAccount()" mat-menu-item class="dangerous-option">
+              <span class="flex gap-2">
+                <fa-icon [fixedWidth]="true" [icon]="unmuteUserIcon"></fa-icon>
+                {{ 'post-actions.unmuteUser' | translate }}
+              </span>
             </button>
           }
           @if (!blog.blocked) {
-            <button mat-menu-item (click)="blockService.blockUser(blog.id)">
-              <fa-icon class="mr-2" [icon]="blockUserIcon"></fa-icon>Block user
+            <button (click)="blockAccount()" mat-menu-item class="dangerous-option">
+              <span class="flex gap-2">
+                <fa-icon [fixedWidth]="true" [icon]="blockUserIcon"></fa-icon>
+                {{ 'post-actions.blockUser' | translate }}
+              </span>
             </button>
           } @else {
-            <button mat-menu-item (click)="blockService.unblockUser(blog.id)">
-              <fa-icon class="mr-2" [icon]="userIcon"></fa-icon>Unblock user
+            <button (click)="unblockAccount()" mat-menu-item class="dangerous-option">
+              <span class="flex gap-2">
+                <fa-icon [fixedWidth]="true" [icon]="userIcon"></fa-icon>
+                {{ 'post-actions.unblockUser' | translate }}
+              </span>
             </button>
           }
           @if (blog.url.startsWith('@')) {
@@ -95,8 +107,15 @@
               </button>
             }
           }
-          <button mat-menu-item (click)="reportService.openReportPostDialog({ userId: blog.id })">
-            <fa-icon class="mr-2" [icon]="reportUserIcon"></fa-icon>Report user
+          <button
+            (click)="reportService.openReportPostDialog({ userId: blog.id })"
+            mat-menu-item
+            class="dangerous-option"
+          >
+            <span class="flex gap-2">
+              <fa-icon [fixedWidth]="true" [icon]="reportUserIcon"></fa-icon>
+              {{ 'post-actions.reportUser' | translate }}
+            </span>
           </button>
         </mat-menu>
       }

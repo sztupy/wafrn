@@ -486,7 +486,10 @@
     "silenceReplyNotifications": "Silence post and replies",
     "unsilenceReplyNotifications": "Unsilence post",
     "muteUser": "Mute user",
-    "blockUser": "Block user"
+    "unmuteUser": "Unmute user",
+    "blockUser": "Block user",
+    "unblockUser": "Unblock user",
+    "reportUser": "Report user"
   },
   "post-header": {
     "follow": "Follow",
