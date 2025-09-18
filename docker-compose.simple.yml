@@ -159,13 +159,7 @@ services:
     profiles:
       - bluesky
     command: "npm exec tsx atproto.ts"
-  fediverse:
-    <<: *default_backend
-    build:
-      <<: *default_backend_build
-      args:
-        <<: *default_backend_build_args
-    command: "npm exec tsx index.ts"
+
 volumes:
   dbpg:
   caddy:
