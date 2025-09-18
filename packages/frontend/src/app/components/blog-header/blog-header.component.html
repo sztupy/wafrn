@@ -107,11 +107,7 @@
               </button>
             }
           }
-          <button
-            (click)="reportService.openReportPostDialog({ userId: blog.id })"
-            mat-menu-item
-            class="dangerous-option"
-          >
+          <button (click)="reportService.report(blog.id)" mat-menu-item class="dangerous-option">
             <span class="flex gap-2">
               <fa-icon [fixedWidth]="true" [icon]="reportUserIcon"></fa-icon>
               {{ 'post-actions.reportUser' | translate }}

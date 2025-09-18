@@ -212,6 +212,6 @@ export class PostActionsComponent implements OnChanges {
   }
 
   reportPost() {
-    this.reportService.openReportPostDialog(this.post())
+    this.reportService.report(this.post())
   }
 }

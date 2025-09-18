@@ -415,6 +415,17 @@
       "muteAccountDescription": "Hide posts and replies by this user. They will still be able to interact with your posts.",
       "blockAccountTitle": "Block account",
       "blockAccountDescription": "Hide posts and replies by this user or posts and replies mentioning this user. They will not be able to interact with your posts."
+    },
+    "report": {
+      "reportUserTitle": "Report User",
+      "reportPostTitle": "Report Post",
+      "reportTypeLabel": "Report Type",
+      "reportTypeOptions": {
+        "spam": "Spam"
+      },
+      "reportDescription": "Description",
+      "reportBlockUser": "Block this user",
+      "reportConfirm": "Report"
     }
   },
   "ask-dialog-content": {
@@ -441,6 +452,8 @@
     "muteUserSuccess": "You muted this user.",
     "unmuteUserSuccess": "You unmuted this user.",
     "blockServerSuccess": "You blocked this server.",
+    "reportUserSuccess": "The user was successfully reported.",
+    "reportPostSuccess": "The post was successfully reported.",
     "genericError": "Something went wrong! Check your internet connectivity and try again.",
     "notRewootableError": "The woot was not rebloggeable as requested by the user."
   },

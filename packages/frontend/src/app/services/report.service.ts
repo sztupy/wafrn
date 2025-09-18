@@ -1,49 +1,76 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { UntypedFormGroup } from '@angular/forms'
-import { ReplaySubject } from 'rxjs'
-
 import { ProcessedPost } from '../interfaces/processed-post'
 import { MatDialog } from '@angular/material/dialog'
 import { EnvironmentService } from './environment.service'
+import { lastValueFrom } from 'rxjs'
+import { ReportDialogData, ReportPostComponent } from '../components/report-post/report-post.component'
+import { UserReport } from '../interfaces/report'
+import { BlocksService } from './blocks.service'
+import { MessageService } from './message.service'
+
+type UserId = string
 
 @Injectable({
   providedIn: 'any'
 })
 export class ReportService {
-  public launchReportScreen: ReplaySubject<Array<ProcessedPost>> = new ReplaySubject()
-
   constructor(
-    private http: HttpClient, //private messages: MessageService
-    private dialogService: MatDialog
+    private http: HttpClient,
+    private dialogService: MatDialog,
+    private messages: MessageService,
+    private blockService: BlocksService
   ) {}
 
-  async reportPost(post: ProcessedPost[] | undefined, report: UntypedFormGroup, userId: string): Promise<boolean> {
-    let success = false
-    try {
-      const formData = {
-        ...report.value,
-        userId: userId,
-        postId: post ? post[post.length - 1].id : undefined
-      }
-      await this.http.post(`${EnvironmentService.environment.baseUrl}/reportPost`, formData).toPromise()
-      success = true
-    } catch (error) {
-      console.error(error)
-      //this.messages.add({ severity: 'error', summary: 'Something went wrong reporting the post! Check your internet conectivity and try again.' });
+  async report(data: ProcessedPost | UserId) {
+    let res: (UserReport & { block: boolean }) | undefined
+    if (typeof data === 'object') {
+      res = await this.openReportPostDialog({ type: 'post', post: data })
+    } else {
+      res = await this.openReportPostDialog({ type: 'user', userId: data })
     }
 
-    return success
+    if (res === undefined) return
+
+    if (res.block && res.userId) {
+      // HACK: this is not coupled with the report so you can possibly block but not report.
+      this.blockService.blockUser(res.userId)
+    }
+
+    const reportData: UserReport = res
+    const reportRes = await lastValueFrom(
+      this.http.post<{ success: boolean }>(`${EnvironmentService.environment.baseUrl}/reportPost`, reportData)
+    )
+
+    // HACK: reportPost endpoint API is weird
+    if (reportRes.success !== false) {
+      this.messages.add({
+        severity: 'success',
+        summary: typeof data === 'object' ? 'messages.reportPostSuccess' : 'messages.reportUserSuccess',
+        translate: true
+      })
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'messages.genericError',
+        translate: true
+      })
+    }
   }
 
-  async getReportComponent(): Promise<typeof ReportPostComponent> {
+  async openReportPostDialog(data: ReportDialogData) {
     const { ReportPostComponent } = await import('../components/report-post/report-post.component')
-    return ReportPostComponent
-  }
-
-  async openReportPostDialog(data: { post: ProcessedPost } | { userId: string }) {
-    this.dialogService.open(await this.getReportComponent(), {
-      data: { data }
+    const ref = this.dialogService.open<
+      ReportPostComponent,
+      ReportDialogData,
+      (UserReport & { block: boolean }) | undefined
+    >(ReportPostComponent, {
+      width: '600px',
+      data
     })
+
+    const res = await lastValueFrom(ref.afterClosed())
+    return res
   }
 }
