@@ -17,8 +17,8 @@
       <div class="post-action-buttons" mat-menu-item>
         <app-post-action-buttons [fragment]="post" settingKey="postActionsButtonBarOrder"></app-post-action-buttons>
       </div>
+      <hr class="my-0" />
     }
-    <hr class="my-0" />
     <button (click)="sharePost()" mat-menu-item>
       <span class="post-actions-menu-span-content">
         {{ 'post-actions.shareUrl' | translate }}
@@ -84,19 +84,21 @@
       }
     }
     @if (!isMyPost) {
-      <hr class="my-0" />
-      <button (click)="muteAccount()" mat-menu-item class="dangerous-option">
-        <span class="post-actions-menu-span-content">
-          {{ 'post-actions.muteUser' | translate }}
-          <fa-icon size="lg" [fixedWidth]="true" [icon]="muteIcon"></fa-icon>
-        </span>
-      </button>
-      <button (click)="blockAccount()" mat-menu-item class="dangerous-option">
-        <span class="post-actions-menu-span-content">
-          {{ 'post-actions.blockUser' | translate }}
-          <fa-icon size="lg" [fixedWidth]="true" [icon]="blockIcon"></fa-icon>
-        </span>
-      </button>
+      @if (loggedIn()) {
+        <hr class="my-0" />
+        <button (click)="muteAccount()" mat-menu-item class="dangerous-option">
+          <span class="post-actions-menu-span-content">
+            {{ 'post-actions.muteUser' | translate }}
+            <fa-icon size="lg" [fixedWidth]="true" [icon]="muteIcon"></fa-icon>
+          </span>
+        </button>
+        <button (click)="blockAccount()" mat-menu-item class="dangerous-option">
+          <span class="post-actions-menu-span-content">
+            {{ 'post-actions.blockUser' | translate }}
+            <fa-icon size="lg" [fixedWidth]="true" [icon]="blockIcon"></fa-icon>
+          </span>
+        </button>
+      }
       <button (click)="reportPost()" mat-menu-item class="dangerous-option">
         <span class="post-actions-menu-span-content">
           {{ 'post-actions.reportPost' | translate }}
