@@ -135,12 +135,14 @@ export class PostActionButtonsComponent implements OnChanges {
       this.myRewootsIncludePost = false
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully deleted your rewoot'
+        summary: 'messages.deleteRewootSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong! Check your internet connectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     this.loadingAction = false

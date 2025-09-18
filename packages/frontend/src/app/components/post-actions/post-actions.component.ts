@@ -97,7 +97,6 @@ export class PostActionsComponent implements OnChanges {
     private postService: PostsService,
     loginService: LoginService,
     private reportService: ReportService,
-    private deletePostService: DeletePostService,
     private utilsService: UtilsService,
     private settingsService: SettingsService,
     private simpleDialog: SimpleDialogService
@@ -117,7 +116,8 @@ export class PostActionsComponent implements OnChanges {
     navigator.clipboard.writeText(`${EnvironmentService.environment.frontUrl}/fediverse/post/${this.post().id}`)
     this.messages.add({
       severity: 'success',
-      summary: 'The woot URL was copied to your clipboard!'
+      summary: 'messages.copyLocalLinkSuccess',
+      translate: true
     })
   }
 
@@ -125,7 +125,8 @@ export class PostActionsComponent implements OnChanges {
     navigator.clipboard.writeText(this.externalUrl())
     this.messages.add({
       severity: 'success',
-      summary: 'The woot original URL was copied to your clipboard!'
+      summary: 'messages.copyRemoteLinkSuccess',
+      translate: true
     })
   }
 
@@ -139,47 +140,40 @@ export class PostActionsComponent implements OnChanges {
 
     if (!confirm) return
 
-    if (await this.postService.silencePost(this.post().id, superMute)) {
+    const success = await this.postService.silencePost(this.post().id, superMute)
+
+    if (success) {
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully silenced the notifications for this woot'
+        summary: 'messages.silencePostSuccess',
+        translate: true
       })
       await this.checkPostSilenced()
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
-      })
-    }
-  }
-
-  async deleteRewoots() {
-    const success = await firstValueFrom(this.deletePostService.deleteRewoots(this.post().id))
-    if (success) {
-      this.myRewootsIncludePost = false
-      this.messages.add({
-        severity: 'success',
-        summary: 'You successfully deleted your rewoot'
-      })
-    } else {
-      this.messages.add({
-        severity: 'error',
-        summary: 'Something went wrong! Check your internet connectivity and try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }
 
   async unsilencePost() {
-    if (await this.postService.unsilencePost(this.post().id)) {
+    // const success = await this.postService.unsilencePost(this.post().id)
+    const success = true
+
+    if (success) {
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully reactivated the notifications for this woot'
+        summary: 'messages.unsilencePostSuccess',
+        translate: true
       })
       await this.checkPostSilenced()
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
   }

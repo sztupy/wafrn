@@ -426,6 +426,16 @@
     "followMessageSuccess": "You now follow this user!",
     "cancelFollowMessageSuccess": "Your follow request has been canceled.",
     "unfollowMessageSuccess": "You no longer follow this user!",
+    "copyLocalLinkSuccess": "Copied link to clipboard.",
+    "copyRemoteLinkSuccess": "Copied remote link to clipboard.",
+    "deleteRewootSuccess": "You successfully deleted your rewoot.",
+    "silencePostSuccess": "You successfully silenced the notifications for this woot.",
+    "unsilencePostSuccess": "You successfully unsilenced the notifications for this woot.",
+    "blockUserSuccess": "You blocked this user.",
+    "unblockUserSuccess": "You unblocked this user.",
+    "muteUserSuccess": "You muted this user.",
+    "unmuteUserSuccess": "You unmuted this user.",
+    "blockServerSuccess": "You blocked this server.",
     "genericError": "Something went wrong! Check your internet connectivity and try again."
   },
   "keyboard-shortcuts": {
