@@ -90,6 +90,7 @@ export function getPostHtml(
       hr: ['style'],
       span: ['title', 'style', 'lang'],
       th: ['colspan', 'rowspan'],
+      marquee: ['behavior', 'bgcolor', 'direction', 'loop', 'height', 'width', 'scrolldelay'],
       '*': ['title', 'lang', 'style']
     },
     allowedStyles: {
