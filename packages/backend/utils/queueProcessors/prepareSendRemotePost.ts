@@ -51,7 +51,7 @@ const sendPostBskyQueue = new Queue('sendPostBsky', {
     attempts: 3,
     backoff: {
       type: 'fixed',
-      delay: 25000
+      delay: 500
     },
     removeOnFail: true
   }
