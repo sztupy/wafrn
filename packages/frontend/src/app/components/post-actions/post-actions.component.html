@@ -41,8 +41,8 @@
         </span>
       </a>
     }
-    @if (isExternalPost) {
-      <a [href]="this.externalUrl()" target="_blank" mat-menu-item>
+    @if (isExternalPost && externalUrl() !== bskyUrl()) {
+      <a [href]="externalUrl()" target="_blank" mat-menu-item>
         <span class="post-actions-menu-span-content">
           {{ 'post-actions.viewOriginalPost' | translate }}
           <fa-icon size="lg" [fixedWidth]="true" [icon]="goExternalPost"></fa-icon>
