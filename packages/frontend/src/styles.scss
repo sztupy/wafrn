@@ -425,7 +425,7 @@ mat-tab-header {
   position: fixed;
   bottom: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 10;
   justify-content: space-between;
   box-shadow: var(--mat-sys-level4);
   border-top: 1px solid var(--mat-sys-outline-variant);
