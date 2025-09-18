@@ -423,12 +423,17 @@
     "askButtonText": "Ask"
   },
   "messages": {
+    "deleteRewootSuccess": "You successfully deleted your rewoot.",
+    "likePostSuccess": "You successfully liked this woot.",
+    "unlikePostSuccess": "You no longer like this woot.",
+    "bookmarkPostSuccess": "You successfully bookmarked this woot.",
+    "unbookmarkPostSuccess": "You successfully unbookmarked this woot.",
+    "rewootPostSuccess": "You rewooted the woot!",
     "followMessageSuccess": "You now follow this user!",
     "cancelFollowMessageSuccess": "Your follow request has been canceled.",
     "unfollowMessageSuccess": "You no longer follow this user!",
     "copyLocalLinkSuccess": "Copied link to clipboard.",
     "copyRemoteLinkSuccess": "Copied remote link to clipboard.",
-    "deleteRewootSuccess": "You successfully deleted your rewoot.",
     "silencePostSuccess": "You successfully silenced the notifications for this woot.",
     "unsilencePostSuccess": "You successfully unsilenced the notifications for this woot.",
     "blockUserSuccess": "You blocked this user.",
@@ -436,7 +441,8 @@
     "muteUserSuccess": "You muted this user.",
     "unmuteUserSuccess": "You unmuted this user.",
     "blockServerSuccess": "You blocked this server.",
-    "genericError": "Something went wrong! Check your internet connectivity and try again."
+    "genericError": "Something went wrong! Check your internet connectivity and try again.",
+    "notRewootableError": "The woot was not rebloggeable as requested by the user."
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",

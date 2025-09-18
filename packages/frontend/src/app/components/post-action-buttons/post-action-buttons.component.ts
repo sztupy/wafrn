@@ -166,14 +166,16 @@ export class PostActionButtonsComponent implements OnChanges {
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully liked this woot',
+        summary: 'messages.likePostSuccess',
+        translate: true,
         confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
         soundName: 'like'
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     this.loadingAction = false
@@ -187,12 +189,14 @@ export class PostActionButtonsComponent implements OnChanges {
       )
       this.messages.add({
         severity: 'success',
-        summary: 'You no longer like this woot'
+        summary: 'messages.unlikePostSuccess',
+        translate: true
       })
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     this.loadingAction = false
@@ -213,14 +217,16 @@ export class PostActionButtonsComponent implements OnChanges {
       const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully bookmarked this woot',
+        summary: 'messages.bookmarkPostSuccess',
+        translate: true,
         confettiEmojis: disableConfetti ? [] : ['💾']
       })
       this.bookmarked.set(true)
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     this.loadingAction = false
@@ -232,13 +238,15 @@ export class PostActionButtonsComponent implements OnChanges {
       this.fragment().bookmarkers = this.fragment().bookmarkers.filter((elem) => elem != this.myId)
       this.messages.add({
         severity: 'success',
-        summary: 'You successfully unbookmarked this woot'
+        summary: 'messages.unbookmarkPostSuccess',
+        translate: true
       })
       this.bookmarked.set(false)
     } else {
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong. Please try again'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     this.loadingAction = false
@@ -268,7 +276,8 @@ export class PostActionButtonsComponent implements OnChanges {
         this.myRewootsIncludePost = true
         this.messages.add({
           severity: 'success',
-          summary: 'You rewooted the woot!',
+          summary: 'messages.rewootPostSuccess',
+          translate: true,
           confettiEmojis: disableConfetti ? [] : ['🔁'],
           soundName: 'sendWoot'
         })
@@ -276,7 +285,8 @@ export class PostActionButtonsComponent implements OnChanges {
     } else {
       this.messages.add({
         severity: 'warn',
-        summary: 'Sorry, this woot is not rebloggeable as requested by the user'
+        summary: 'messages.notRewootableError',
+        translate: true
       })
     }
     this.loadingAction = false
