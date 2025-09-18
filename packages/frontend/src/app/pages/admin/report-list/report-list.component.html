@@ -14,9 +14,11 @@
         <th mat-header-cell mat-sort-header *matHeaderCellDef>User</th>
         <td mat-cell *matCellDef="let element">
           <a [routerLink]="'/blog/' + element.user.url">
-            <app-avatar-small [user]="element.user"></app-avatar-small>
-            {{ element.user.url }}</a
-          >
+            <div class="flex gap-2 align-items-start">
+              <app-avatar-small [user]="element.user"></app-avatar-small>
+              {{ element.user.url }}
+            </div>
+          </a>
         </td>
       </ng-container>
       <ng-container matColumnDef="reportedUser">
@@ -24,10 +26,20 @@
         <td mat-cell *matCellDef="let element">
           <a
             [routerLink]="element.post ? ['/fediverse/post/' + element.post.id] : ['/blog/' + element.reportedUser.url]"
+            class="subtle-link"
           >
-            <app-avatar-small [user]="element.reportedUser"></app-avatar-small>
-            {{ element.reportedUser.url }}</a
-          >
+            <div class="flex gap-2 align-items-start line-height-2">
+              <app-avatar-small [user]="element.reportedUser"></app-avatar-small>
+              <div class="flex flex-column">
+                {{ element.reportedUser.url }}
+                @if (element.post) {
+                  <span class="report-type">(post)</span>
+                } @else {
+                  <span class="report-type">(account)</span>
+                }
+              </div>
+            </div>
+          </a>
         </td>
       </ng-container>
       <ng-container matColumnDef="type">

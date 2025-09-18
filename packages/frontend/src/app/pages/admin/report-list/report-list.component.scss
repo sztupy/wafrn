@@ -4,6 +4,11 @@
   display: inline-flex;
 }
 
+.report-type {
+  color: var(--mat-sys-on-surface);
+  font-size: 0.8rem;
+}
+
 .report-description {
   max-width: 45ch;
 }

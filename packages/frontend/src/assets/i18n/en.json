@@ -428,6 +428,17 @@
         "cancel": "No",
         "cancelRemember": "No, don't ask again"
       }
+    },
+    "report": {
+      "reportUserTitle": "Report User",
+      "reportPostTitle": "Report Post",
+      "reportTypeLabel": "Report Type",
+      "reportTypeOptions": {
+        "spam": "Spam"
+      },
+      "reportDescription": "Description",
+      "reportBlockUser": "Block this user",
+      "reportConfirm": "Report"
     }
   },
   "ask-dialog-content": {
@@ -436,10 +447,28 @@
     "askButtonText": "Ask"
   },
   "messages": {
+    "deleteRewootSuccess": "You successfully deleted your rewoot.",
+    "likePostSuccess": "You successfully liked this woot.",
+    "unlikePostSuccess": "You no longer like this woot.",
+    "bookmarkPostSuccess": "You successfully bookmarked this woot.",
+    "unbookmarkPostSuccess": "You successfully unbookmarked this woot.",
+    "rewootPostSuccess": "You rewooted the woot!",
     "followMessageSuccess": "You now follow this user!",
     "cancelFollowMessageSuccess": "Your follow request has been canceled.",
     "unfollowMessageSuccess": "You no longer follow this user!",
-    "genericError": "Something went wrong! Check your internet connectivity and try again."
+    "copyLocalLinkSuccess": "Copied link to clipboard.",
+    "copyRemoteLinkSuccess": "Copied remote link to clipboard.",
+    "silencePostSuccess": "You successfully silenced the notifications for this woot.",
+    "unsilencePostSuccess": "You successfully unsilenced the notifications for this woot.",
+    "blockUserSuccess": "You blocked this user.",
+    "unblockUserSuccess": "You unblocked this user.",
+    "muteUserSuccess": "You muted this user.",
+    "unmuteUserSuccess": "You unmuted this user.",
+    "blockServerSuccess": "You blocked this server.",
+    "reportUserSuccess": "The user was successfully reported.",
+    "reportPostSuccess": "The post was successfully reported.",
+    "genericError": "Something went wrong! Check your internet connectivity and try again.",
+    "notRewootableError": "The woot was not rebloggeable as requested by the user."
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",
@@ -483,7 +512,10 @@
     "silenceReplyNotifications": "Silence post and replies",
     "unsilenceReplyNotifications": "Unsilence post",
     "muteUser": "Mute user",
-    "blockUser": "Block user"
+    "unmuteUser": "Unmute user",
+    "blockUser": "Block user",
+    "unblockUser": "Unblock user",
+    "reportUser": "Report user"
   },
   "post-header": {
     "follow": "Follow",

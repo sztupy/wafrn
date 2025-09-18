@@ -1,104 +1,86 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
-import { ReportService } from 'src/app/services/report.service'
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
-import { ProcessedPost } from 'src/app/interfaces/processed-post'
-import { BlocksService } from 'src/app/services/blocks.service'
-import { MessageService } from 'src/app/services/message.service'
-
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { Component, computed, signal, Inject } from '@angular/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
+import {
+  MatDialogActions,
+  MatDialogTitle,
+  MatDialogContent,
+  MatDialogRef,
+  MAT_DIALOG_DATA
+} from '@angular/material/dialog'
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
-import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatButtonModule } from '@angular/material/button'
+import { TranslatePipe } from '@ngx-translate/core'
+import { ProcessedPost } from 'src/app/interfaces/processed-post'
+import { UserReport } from 'src/app/interfaces/report'
+import { KeyValueTypedPipe } from 'src/app/pipes/keyvaluetyped.pipe'
+
+export type ReportDialogData = { type: 'post'; post: ProcessedPost } | { type: 'user'; userId: string }
+
 @Component({
   selector: 'app-report-post',
   templateUrl: './report-post.component.html',
   styleUrls: ['./report-post.component.scss'],
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
-    MatButtonModule
-]
-})
-export class ReportPostComponent implements OnDestroy {
-  loading = false
-  visible = false
-  reportForm: UntypedFormGroup
-  postToReport: ProcessedPost[] | undefined
-  userToReport: string = ''
-  launchreportScreenSubscription
-
-  reportOptions: Array<{ label: string; value: number }> = [
-    {
-      label: 'SPAM',
-      value: 1
-    },
-    {
-      label: 'Inciting hate against a person or collective',
-      value: 5
-    },
-    {
-      label: 'Illegal content',
-      value: 10
-    }
+    MatButtonModule,
+    MatDialogActions,
+    MatDialogTitle,
+    MatDialogContent,
+    TranslatePipe,
+    KeyValueTypedPipe
   ]
+})
+export class ReportPostComponent {
+  formValid = computed<boolean>(() => this.reportSeverity() !== null && this.reportDescription().length > 0)
+  postId: string | undefined
+  userId: string
+
+  reportSeverity = signal<number | null>(null)
+  reportDescription = signal<string>('')
+
+  blockUser = false
+
+  reportOptions: Record<number, string> = {
+    1: 'Spam',
+    3: 'Unlabeled NSFW',
+    5: 'Inciting hate against a person or collective',
+    10: 'Illegal content'
+  }
 
   constructor(
-    private reportService: ReportService,
-    private messages: MessageService,
-    private readonly formBuilder: UntypedFormBuilder,
-    private blockService: BlocksService,
-    private dialogRef: MatDialogRef<ReportPostComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { data: { post?: ProcessedPost; userId?: string } }
+    private readonly dialogRef: MatDialogRef<ReportPostComponent, UserReport | undefined>,
+    @Inject(MAT_DIALOG_DATA) public data: ReportDialogData
   ) {
-    this.postToReport = data.data.post ? [data.data.post] : undefined
-    this.userToReport = data.data.userId ? data.data.userId : (this.postToReport as [ProcessedPost])[0].userId
-    // I could call clearForm, but that will calm typescript typechecker
-    this.reportForm = this.formBuilder.group({
-      description: ['', [Validators.required]],
-      severity: ['', [Validators.required]],
-      block: ['']
-    })
-    this.launchreportScreenSubscription = this.reportService.launchReportScreen.subscribe((reportedPost) => {
-      if (reportedPost) {
-        this.postToReport = reportedPost
-      }
-    })
-  }
-  ngOnDestroy(): void {
-    this.launchreportScreenSubscription.unsubscribe()
+    this.postId = data.type === 'post' ? data.post.id : undefined
+    this.userId = data.type === 'user' ? data.userId : data.post.userId
   }
 
-  async submit() {
-    const reportDone = this.reportService.reportPost(this.postToReport, this.reportForm, this.userToReport)
-    if (this.reportForm.value['block'].length === 1) {
-      const userBlocked = this.blockService.blockUser(this.userToReport)
-      Promise.all([reportDone, userBlocked])
-    }
-    if (await reportDone) {
-      this.messages.add({
-        severity: 'success',
-        summary: 'The post has been reported and we will take action against it'
-      })
-
-      this.dialogRef.close()
-      this.clearForm()
+  onInput(event: Event) {
+    const target = event.target
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+      this.reportDescription.set(target.value)
     }
   }
 
-  cancelReport() {
-    this.dialogRef.close()
-    this.clearForm()
+  onCheck(event: MatCheckboxChange) {
+    this.blockUser = event.checked
   }
 
-  clearForm() {
-    this.reportForm = this.formBuilder.group({
-      description: ['', [Validators.required]],
-      severity: ['', [Validators.required]],
-      block: ['']
-    })
+  onCancel() {
+    this.dialogRef.close(undefined)
+  }
+
+  onConfirm() {
+    const report: UserReport & { block: boolean } = {
+      postId: this.postId,
+      userId: this.userId,
+      severity: this.reportSeverity() as number,
+      description: this.reportDescription(),
+      block: this.blockUser
+    }
+    this.dialogRef.close(report)
   }
 }

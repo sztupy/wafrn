@@ -25,14 +25,16 @@ export class BlocksService {
       const response = await this.http.post(`${EnvironmentService.environment.baseUrl}/block`, formData).toPromise()
       this.messages.add({
         severity: 'success',
-        summary: 'You blocked this user.'
+        summary: 'messages.blockUserSuccess',
+        translate: true
       })
       success = true
     } catch (error) {
       console.error(error)
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong blocking the user! Check your internet conectivity and try again.'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     return success
@@ -62,7 +64,8 @@ export class BlocksService {
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You unblocked this user'
+        summary: 'messages.unblockUserSuccess',
+        translate: true
       })
     }
     return response ? this.processResponse(response, 'blocked') : []
@@ -77,7 +80,8 @@ export class BlocksService {
       const response = await this.http.post(`${EnvironmentService.environment.baseUrl}/mute`, formData).toPromise()
       this.messages.add({
         severity: 'success',
-        summary: 'You muted this user'
+        summary: 'messages.muteUserSuccess',
+        translate: true
       })
 
       success = true
@@ -85,7 +89,8 @@ export class BlocksService {
       console.error(error)
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong blocking the user! Check your internet conectivity and try again.'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     return success
@@ -102,7 +107,8 @@ export class BlocksService {
     if (response) {
       this.messages.add({
         severity: 'success',
-        summary: 'You unmuted this user'
+        summary: 'messages.unmuteUserSuccess',
+        translate: true
       })
     }
     return response ? this.processResponse(response, 'muted') : []
@@ -127,7 +133,8 @@ export class BlocksService {
         .toPromise()
       this.messages.add({
         severity: 'success',
-        summary: 'You blocked this server'
+        summary: 'messages.blockServerSuccess',
+        translate: true
       })
 
       success = true
@@ -135,7 +142,8 @@ export class BlocksService {
       console.error(error)
       this.messages.add({
         severity: 'error',
-        summary: 'Something went wrong blocking the server! Check your internet conectivity and try again.'
+        summary: 'messages.genericError',
+        translate: true
       })
     }
     return success

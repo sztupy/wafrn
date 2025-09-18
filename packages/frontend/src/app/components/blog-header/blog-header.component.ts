@@ -28,6 +28,8 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 import { InfoCardComponent } from '../info-card/info-card.component'
 import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { ReportService } from 'src/app/services/report.service'
+import { TranslatePipe } from '@ngx-translate/core'
+import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 
 @Component({
   selector: 'app-blog-header',
@@ -39,7 +41,8 @@ import { ReportService } from 'src/app/services/report.service'
     MatButtonModule,
     MatTooltipModule,
     RouterModule,
-    InfoCardComponent
+    InfoCardComponent,
+    TranslatePipe
   ],
   templateUrl: './blog-header.component.html',
   styleUrl: './blog-header.component.scss'
@@ -93,7 +96,8 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     public dialogService: MatDialog,
     public activatedRoute: ActivatedRoute,
     public environmentService: EnvironmentService,
-    public reportService: ReportService
+    public reportService: ReportService,
+    public simpleDialog: SimpleDialogService
   ) {
     this.loggedIn = loginService.loggedIn
   }
@@ -161,6 +165,66 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
         summary: 'messages.genericError',
         translate: true
       })
+    }
+  }
+
+  async muteAccount() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.muteAccountTitle',
+      content: 'dialog.post-header.muteAccountDescription'
+    })
+
+    if (!confirm) return
+
+    const blog = this.blogDetails()
+    if (blog) {
+      blog.muted = (await this.blockService.muteUser(blog.id)) === true
+    }
+  }
+
+  async unmuteAccount() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.unmuteAccountTitle',
+      content: 'dialog.post-header.unmuteAccountDescription'
+    })
+
+    if (!confirm) return
+
+    const blog = this.blogDetails()
+    if (blog) {
+      // very silly API
+      const res = await this.blockService.unmuteUser(blog.id)
+      blog.muted = res !== undefined && res.length !== 0
+    }
+  }
+
+  async blockAccount() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.blockAccountTitle',
+      content: 'dialog.post-header.blockAccountDescription'
+    })
+
+    if (!confirm) return
+
+    const blog = this.blogDetails()
+    if (blog) {
+      blog.blocked = (await this.blockService.blockUser(blog.id)) === true
+    }
+  }
+
+  async unblockAccount() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.unblockAccountTitle',
+      content: 'dialog.post-header.unblockAccountDescription'
+    })
+
+    if (!confirm) return
+
+    const blog = this.blogDetails()
+    if (blog) {
+      // very silly API
+      const res = await this.blockService.unblockUser(blog.id)
+      blog.blocked = res !== undefined && res.length !== 0
     }
   }
 
