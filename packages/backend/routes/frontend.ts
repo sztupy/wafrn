@@ -341,10 +341,7 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
   const defaultSeoData = completeEnvironment.defaultSEOData
   let res: MetaTagOptions & { content?: string } = {
     title: defaultSeoData.title,
-    description: defaultSeoData.description,
-    image: {
-      url: defaultSeoData.img
-    }
+    description: defaultSeoData.description
   }
 
   const post = await Post.findOne(await postSearchAttributes({ id }))
@@ -428,10 +425,6 @@ async function getBlogSEOCache(url: string): Promise<MetaTagOptions & { content:
   let res: MetaTagOptions & { content: string } = {
     title: defaultSeoData.title,
     description: defaultSeoData.description,
-    image: {
-      url: defaultSeoData.img,
-      small: true // User avatars should be small
-    },
     content: ''
   }
 
@@ -456,9 +449,10 @@ async function getBlogSEOCache(url: string): Promise<MetaTagOptions & { content:
   res.description = sanitizeStringForSEO(user.description).substring(0, 200)
   res.url = sanitizeStringForSEO(user.url).substring(0, 65)
   // Do not overwrite the value of small
-  res.image = Object.assign(res.image ?? {}, {
-    url: sanitizeStringForSEO(user.avatarFullUrl)
-  })
+  res.image = {
+    url: sanitizeStringForSEO(user.avatarFullUrl),
+    small: true // User avatars should be small
+  }
 
   res.content = getBlogMicroformat(user)
 
