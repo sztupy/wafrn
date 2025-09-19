@@ -620,7 +620,7 @@ function formatIndexSeo(indexRaw: string, options: MetaTagOptions) {
         { property: 'og:video', content: urlSanitized },
         { property: 'twitter:player:stream', content: urlSanitized },
         { property: 'twitter:player:stream:content_type', content: typeSanitized },
-        { property: 'twitter:card', content: 'summary' }
+        { property: 'twitter:card', content: 'summary_large_image' }
       ]
     )
     // Width and height separate
