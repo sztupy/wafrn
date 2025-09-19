@@ -333,10 +333,10 @@ const postSearchAttributes = async function (options?: { id?: string; onlyArticl
 }
 
 async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?: string }> {
-  // const cachedResData = await redisCache.get('postSeoCache:' + id)
-  // if (cachedResData) {
-  //   return JSON.parse(cachedResData)
-  // }
+  const cachedResData = await redisCache.get('postSeoCache:' + id)
+  if (cachedResData) {
+    return JSON.parse(cachedResData)
+  }
 
   const defaultSeoData = completeEnvironment.defaultSEOData
   let res: MetaTagOptions & { content?: string } = {
