@@ -383,7 +383,7 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
         const nameSanitized = sanitizeStringForSEO(quotedPost.user.name).substring(0, 65)
         const urlSanitized = sanitizeStringForSEO(quotedPost.user.url).substring(0, 65)
         const contentSanitized = sanitizeStringForSEO(quotedPost.content)
-        quotedPostContent = `\n\nQuoting ${nameSanitized} (${urlSanitized})\n\n${contentSanitized}`
+        quotedPostContent = `\n\nQuoting ${nameSanitized} (${urlSanitized}${quotedPost.user.isRemoteUser ? '' : '@' + completeEnvironment.instanceUrl}))\n\n${contentSanitized}`
       }
     }
 
