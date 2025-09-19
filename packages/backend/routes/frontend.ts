@@ -396,7 +396,8 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
       res.image = {
         url: firstSafeMedia.fullUrl,
         width: firstSafeMedia.width?.toString(),
-        height: firstSafeMedia.height?.toString()
+        height: firstSafeMedia.height?.toString(),
+        large: true // User avatars should be small
       }
     } else {
       res.video = {
@@ -450,8 +451,7 @@ async function getBlogSEOCache(url: string): Promise<MetaTagOptions & { content:
   res.url = sanitizeStringForSEO(user.url).substring(0, 65)
   // Do not overwrite the value of small
   res.image = {
-    url: sanitizeStringForSEO(user.avatarFullUrl),
-    small: true // User avatars should be small
+    url: sanitizeStringForSEO(user.avatarFullUrl)
   }
 
   res.content = getBlogMicroformat(user)
@@ -495,7 +495,7 @@ type MetaTagOptions = {
     width?: string
     height?: string
     alt?: string
-    small?: true // Whether to use the big image on the twitter meta property
+    large?: true // Whether to use the big image on the twitter meta property
   }
   video?: {
     url: string
@@ -581,7 +581,7 @@ function formatIndexSeo(indexRaw: string, options: MetaTagOptions) {
         ]
       )
     }
-    if (options.image.small !== true) {
+    if (options.image.large === true) {
       optionsClean.push(
         { property: 'twitter:card', content: 'summary_large_image' } // Makes the images display large!
       )
