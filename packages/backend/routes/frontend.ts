@@ -1,6 +1,6 @@
 import express, { Request, Application, Response } from 'express'
 import { Op } from 'sequelize'
-import { Emoji, FederatedHost, Media, Post, Quotes, User, UserOptions, sequelize } from '../models/index.js'
+import { Ask, Emoji, FederatedHost, Media, Post, Quotes, User, UserOptions, sequelize } from '../models/index.js'
 import fs from 'fs'
 import dompurify from 'isomorphic-dompurify'
 import { redisCache } from '../utils/redis.js'
@@ -384,7 +384,28 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
       }
     }
 
-    res.description = `${contentSanitized}${quotedPostContent}`.substring(0, 190)
+    // Attach asks if possible
+    let askedPostContent = ''
+    const askedPost = await Ask.findOne({
+      where: {
+        postId: post.id
+      }
+    })
+    if (askedPost) {
+      const askerUser = await User.findOne({
+        where: {
+          id: askedPost.userAsker
+        }
+      })
+      if (askerUser) {
+        const nameSanitized = sanitizeStringForSEO(askerUser.name).substring(0, 65)
+        const urlSanitized = sanitizeStringForSEO(askerUser.url).substring(0, 65)
+        const contentSanitized = sanitizeStringForSEO(askedPost.question)
+        askedPostContent = `\n\n> Ask from ${nameSanitized} (${urlSanitized}${askerUser.isRemoteUser ? '' : '@' + completeEnvironment.instanceUrl}))\n>\n> ${contentSanitized}`
+      }
+    }
+
+    res.description = `${contentSanitized}${quotedPostContent}${askedPostContent}`.substring(0, 190)
   }
 
   const safeMedia = post.medias.filter((media) => media.NSFW === false)
