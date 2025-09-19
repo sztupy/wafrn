@@ -146,7 +146,7 @@ function wellKnownRoutes(app: Application) {
       redisCache.set('nodeinfo:activeSixMonths', activeUsersSixMonths, 'EX', 3600 * 24)
     }
     if (!activeOneMonthCache) {
-      redisCache.set('nodeinfo:activeUsersLastMonth', localUsers, 'EX', 3600 * 24)
+      redisCache.set('nodeinfo:activeOneMonth', localUsers, 'EX', 3600 * 24)
     }
     res.send({
       version: '2.0',
