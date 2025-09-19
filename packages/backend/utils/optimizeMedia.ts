@@ -23,16 +23,17 @@ export default async function optimizeMedia(
   const doNotDelete = options?.keep ? options.keep : false
   switch (originalExtension) {
     case 'pdf':
-      break
-    case 'mp4':
-      fileAndExtension[0] = fileAndExtension[0] + '_processed'
-    case 'webm':
+    // TODO make a conversion for audio files
     case 'ogg':
     case 'aac':
     case 'mp3':
     case 'wav':
     case 'oga':
     case 'm4a':
+      break
+    case 'mp4':
+      fileAndExtension[0] = fileAndExtension[0] + '_processed'
+    case 'webm':
     case 'mov':
     case 'mkv':
     case 'av1':
