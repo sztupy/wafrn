@@ -380,7 +380,7 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
         const nameSanitized = sanitizeStringForSEO(quotedPost.user.name).substring(0, 65)
         const urlSanitized = sanitizeStringForSEO(quotedPost.user.url).substring(0, 65)
         const contentSanitized = sanitizeStringForSEO(quotedPost.content)
-        quotedPostContent = `\n\n> Quoting ${nameSanitized} (${urlSanitized}${quotedPost.user.isRemoteUser ? '' : '@' + completeEnvironment.instanceUrl}))\n>\n> ${contentSanitized}`
+        quotedPostContent = `&#10;&#10;> Quoting ${nameSanitized} (${urlSanitized}${quotedPost.user.isRemoteUser ? '' : '@' + completeEnvironment.instanceUrl}))&#10;>&#10;> ${contentSanitized}`
       }
     }
 
@@ -401,7 +401,7 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
         const nameSanitized = sanitizeStringForSEO(askerUser.name).substring(0, 65)
         const urlSanitized = sanitizeStringForSEO(askerUser.url).substring(0, 65)
         const contentSanitized = sanitizeStringForSEO(askedPost.question)
-        askedPostContent = `\n\n> Ask from ${nameSanitized} (${urlSanitized}${askerUser.isRemoteUser ? '' : '@' + completeEnvironment.instanceUrl}))\n>\n> ${contentSanitized}`
+        askedPostContent = `&#10;&#10;> Ask from ${nameSanitized} (${urlSanitized}${askerUser.isRemoteUser ? '' : '@' + completeEnvironment.instanceUrl}))&#10;>&#10;> ${contentSanitized}`
       }
     }
 
