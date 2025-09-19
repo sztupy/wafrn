@@ -197,14 +197,11 @@ function frontend(app: Application) {
         return await handlePostRequest(req, res)
       }
 
-      console.log('id')
       if (!req.params?.id) return res.send(getIndexFormatted(defaultSeoDataMetaTag))
 
       try {
-        console.log('data')
         const postData = await getPostSEOCache(req.params.id)
         if (postData) {
-          console.log('data yes')
           return res.send(getIndexFormatted(postData, postData.content))
         }
       } catch (error) {
@@ -365,7 +362,6 @@ async function getPostSEOCache(id: string): Promise<MetaTagOptions & { content?:
     res.description = `Post has content warning: ${sanitizeStringForSEO(post.content_warning)}`.substring(0, 190)
   } else {
     const contentSanitized = sanitizeStringForSEO(post.content)
-    console.log('post')
 
     // Attach quotes if possible
     let quotedPostContent = ''
