@@ -99,7 +99,7 @@ case $1 in
       docker compose pull
       docker compose build
 
-      rm -f packages/backend/cache/ && mkdir packages/backend/cache/
+      rm -rf packages/backend/cache/ && mkdir packages/backend/cache/
 
       docker compose up --build -d
       docker compose logs -t -n 50 -f
@@ -156,7 +156,7 @@ case $1 in
     ;;
   clean)
     pushd "$SCRIPT_DIR/.."
-    rm -f packages/backend/cache/*
+    rm -rf packages/backend/cache/ && mkdir packages/backend/cache/
     popd
     ;;
   logs)
