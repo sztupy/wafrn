@@ -79,7 +79,7 @@
   /* SIDE MENU */
 
   .instance-logo {
-    content: url('api/cache?media=https%3A%2F%2Fmedia.wafrn.net%2F1758156049860_f04a906b9c6b976889ce48031157348f0eb1ac8f_processed.webp');
+    content: url('/api/cache?media=https%3A%2F%2Fmedia.wafrn.net%2F1758156049860_f04a906b9c6b976889ce48031157348f0eb1ac8f_processed.webp');
   }
   /* ^ use a wafrn upload link here too */
 
