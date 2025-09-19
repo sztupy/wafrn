@@ -67,7 +67,7 @@ function wellKnownRoutes(app: Application) {
     res.end()
   })
 
-  app.get('/.well-known/nodeinfo', (req, res) => {
+  app.get('/.well-known/nodeinfo', cacher.cache('hours', 24), (req, res) => {
     res.send({
       links: [
         {
@@ -79,7 +79,7 @@ function wellKnownRoutes(app: Application) {
     res.end()
   })
 
-  app.get('/.well-known/nodeinfo/2.0', async (req, res) => {
+  app.get('/.well-known/nodeinfo/2.0', cacher.cache('hours', 24), async (req, res) => {
     const localUsersIds = await getAllLocalUserIds()
     const localUsersCountCache = await redisCache.get('nodeinfo:localUserCount')
     const localUsers = localUsersCountCache
