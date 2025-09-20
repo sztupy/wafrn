@@ -1,4 +1,5 @@
 @let blog = blogDetails();
+@let loggedIn = loginService.loggedIn.value;
 <mat-card class="mb-6 overflow-hidden wafrn-container post-card blog-header">
   <div class="h-14rem mb-3 blog-header-image" [style.background-image]="'url(' + headerUrl + ')'"></div>
   <div class="flex flex-column gap-3 justify-content-between">
@@ -6,8 +7,8 @@
       <div>
         <img [src]="avatarUrl()" alt="user avatar" class="blog-avatar-image" />
       </div>
-      @if (loggedIn() && !isMe && blog) {
-        @if (loggedIn()) {
+      @if (loggedIn && !isMe && blog) {
+        @if (loggedIn) {
           <div class="flex">
             @if (!postService.notYetAcceptedFollowedUsersIds.includes(blog.id)) {
               <button
@@ -21,7 +22,7 @@
                 {{ postService.followedUserIds.indexOf(blog.id) === -1 ? 'Follow' : 'Unfollow' }}
               </button>
             }
-            @if (postService.notYetAcceptedFollowedUsersIds.includes(blog.id) && loggedIn()) {
+            @if (postService.notYetAcceptedFollowedUsersIds.includes(blog.id) && loggedIn) {
               <button mat-stroked-button color="accent" class="split-button-left" (click)="unfollowUser(blog.id)">
                 Awaiting approval
               </button>
@@ -174,9 +175,9 @@
     </details>
   }
   @if (blog?.url?.startsWith('@')) {
-    <app-info-card [type]="loggedIn() ? 'info' : 'caution'">
+    <app-info-card [type]="loggedIn ? 'info' : 'caution'">
       {{
-        loggedIn()
+        loggedIn
           ? 'As this user is from a remote instance, the shown information may be incomplete.'
           : 'To see external users you need to be logged in. You can view their profile on their actual instance.'
       }}

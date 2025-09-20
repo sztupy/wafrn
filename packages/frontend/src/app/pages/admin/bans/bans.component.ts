@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core'
 import { AvatarSmallComponent } from 'src/app/components/avatar-small/avatar-small.component'
 import { AdminService, UserBan } from 'src/app/services/admin.service'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-bans',
@@ -43,8 +44,11 @@ export class BansComponent {
 
   constructor(
     private adminService: AdminService,
-    private simpleDialog: SimpleDialogService
-  ) {}
+    private simpleDialog: SimpleDialogService,
+    simpleTitle: SimpleTitleService
+  ) {
+    simpleTitle.set('menu.admin.bans')
+  }
 
   async ngOnInit() {
     const res: { users: UserBan[] } = await this.adminService.banList()

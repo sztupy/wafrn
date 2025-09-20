@@ -1,15 +1,4 @@
-import {
-  Component,
-  computed,
-  EventEmitter,
-  input,
-  OnDestroy,
-  OnInit,
-  Output,
-  Signal,
-  signal,
-  viewChild
-} from '@angular/core'
+import { Component, computed, EventEmitter, input, OnDestroy, OnInit, Output, signal, viewChild } from '@angular/core'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { LoginService } from 'src/app/services/login.service'
 import { PostsService } from 'src/app/services/posts.service'
@@ -70,7 +59,6 @@ export class PostComponent implements OnInit, OnDestroy {
   finalPosts = computed(() => this.post().slice(-5))
   mediaBaseUrl = EnvironmentService.environment.baseMediaUrl
   cacheurl = EnvironmentService.environment.externalCacheurl
-  loggedIn: Signal<boolean>
   followedUsers: string[] = []
   notYetAcceptedFollows: string[] = []
   notes = computed(() => this.uniquePost().notes.toString())
@@ -135,8 +123,7 @@ export class PostComponent implements OnInit, OnDestroy {
     public postService: PostsService,
     private readonly loginService: LoginService
   ) {
-    this.loggedIn = loginService.loggedIn
-    if (this.loggedIn()) {
+    if (this.loginService.loggedIn.value) {
       this.myId = loginService.getLoggedUserUUID()
     }
     this.updateFollowersSubscription = this.postService.updateFollowers.subscribe(() => {

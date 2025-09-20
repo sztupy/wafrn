@@ -1,4 +1,5 @@
 @let fragment = this.fragment();
+@let loggedIn = this.loginService.loggedIn.value;
 <div class="flex justify-content-between mb-3">
   <div class="flex flex-column gap-2 min-w-0">
     <div class="flex gap-2 min-w-0">
@@ -29,13 +30,13 @@
         @if (
           !postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) &&
           !postService.followedUserIds.includes(fragment.userId) &&
-          loggedIn()
+          loggedIn
         ) {
           <button mat-button class="text-sm follow-button" style="text-wrap: nowrap" (click)="followUser(fragment)">
             {{ 'post-header.follow' | translate }}
           </button>
         }
-        @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn()) {
+        @if (postService.notYetAcceptedFollowedUsersIds.includes(fragment.userId) && loggedIn) {
           <button mat-button class="text-sm follow-button" (click)="cancelFollowUser(fragment)">
             {{ 'post-header.awaitingApproval' | translate }}
           </button>

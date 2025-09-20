@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router'
 import { TranslatePipe } from '@ngx-translate/core'
 import { AvatarSmallComponent } from 'src/app/components/avatar-small/avatar-small.component'
 import { AdminService, AdminUserBlocks, ServerBlock, UserBlock } from 'src/app/services/admin.service'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-blocks',
@@ -43,7 +44,12 @@ export class BlocksComponent {
   userServerBlocksSort = viewChild.required<MatSort>('userServerBlocksSort')
   userServerBlocksColumns = ['userBlocker', 'blockedServer', 'createdAt']
 
-  constructor(private adminService: AdminService) {}
+  constructor(
+    private adminService: AdminService,
+    simpleTitle: SimpleTitleService
+  ) {
+    simpleTitle.set('menu.admin.blocklist')
+  }
 
   async ngOnInit() {
     const res: AdminUserBlocks = await this.adminService.getBlocks()

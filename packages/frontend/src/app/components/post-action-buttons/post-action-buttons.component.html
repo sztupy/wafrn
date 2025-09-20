@@ -1,4 +1,4 @@
-@if (loggedIn()) {
+@if (loginService.loggedIn.value) {
   @let fragment = this.fragment();
   <div class="flex flex-wrap justify-content-evenly gap-1 action-list" aria-label="Action list">
     @for (button of buttonList; track $index) {

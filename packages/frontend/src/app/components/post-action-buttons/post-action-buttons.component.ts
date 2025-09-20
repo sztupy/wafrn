@@ -1,4 +1,4 @@
-import { Component, input, OnChanges, Signal, signal } from '@angular/core'
+import { Component, input, OnChanges, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
@@ -48,7 +48,6 @@ export class PostActionButtonsComponent implements OnChanges {
   fragment = input.required<ProcessedPost>()
   settingKey = input.required<SettingKey>()
 
-  loggedIn: Signal<boolean>
   isEmptyReblog = false
   myId = ''
   loadingAction = false
@@ -88,8 +87,7 @@ export class PostActionButtonsComponent implements OnChanges {
     private readonly editor: EditorService,
     private settingsService: SettingsService
   ) {
-    this.loggedIn = loginService.loggedIn
-    if (this.loggedIn()) {
+    if (loginService.loggedIn.value) {
       this.myId = loginService.getLoggedUserUUID()
     }
   }
