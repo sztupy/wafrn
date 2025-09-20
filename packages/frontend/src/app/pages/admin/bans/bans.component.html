@@ -33,11 +33,7 @@
       <tr mat-row *matRowDef="let row; columns: bannedUsersColumns"></tr>
     </table>
   </div>
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 25, 50, 100]"
-    showFirstLastButtons
-    aria-label="Select server block list page"
-  >
+  <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons aria-label="Select ban list page">
   </mat-paginator>
 </mat-card>
 <!--
