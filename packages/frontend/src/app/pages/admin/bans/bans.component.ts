@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { MatSortModule } from '@angular/material/sort'
 import { MatTableDataSource, MatTableModule } from '@angular/material/table'
 import { RouterModule } from '@angular/router'
@@ -24,6 +25,7 @@ import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
     MatSortModule,
     MatPaginatorModule,
     AvatarSmallComponent,
+    MatProgressBarModule,
     TranslatePipe
   ],
   templateUrl: './bans.component.html',
@@ -31,9 +33,13 @@ import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 })
 export class BansComponent {
   showBans = true
-  bannedUsers = new MatTableDataSource<UserBan, MatPaginator>([])
+  bannedUsers = new MatTableDataSource<UserBan | null, MatPaginator>(undefined)
   bannedUsersPaginator = viewChild.required<MatPaginator>(MatPaginator)
   bannedUsersColumns = ['user', 'actions']
+
+  placeholderData = [null]
+
+  loading = true
 
   constructor(
     private adminService: AdminService,
@@ -44,8 +50,10 @@ export class BansComponent {
     const res: { users: UserBan[] } = await this.adminService.banList()
 
     this.bannedUsers.data = res.users
-    this.bannedUsers.filterPredicate = (ban, filter) => ban.url.startsWith(filter)
+    this.bannedUsers.filterPredicate = (ban, filter) => ban?.url?.startsWith(filter) ?? false
     this.bannedUsers.paginator = this.bannedUsersPaginator()
+
+    this.loading = false
   }
 
   onChange(event: Event) {
@@ -58,13 +66,17 @@ export class BansComponent {
   async unban(ban: UserBan) {
     const confirm = await this.simpleDialog.createConfirmDialog({
       title: 'dialog.admin.confirmUnbanTitle',
-      titleSuffix: ban.url,
+      titleSuffix: ban.url ?? '',
       content: 'dialog.admin.confirmUnbanContent'
     })
 
     if (!confirm) return
 
-    const res: { users: UserBan[] } = await this.adminService.unbanUser(ban.id)
-    this.bannedUsers.data = res.users
+    this.loading = true
+    if (ban.id) {
+      const res: { users: UserBan[] } = await this.adminService.unbanUser(ban.id)
+      this.bannedUsers.data = res.users
+    }
+    this.loading = false
   }
 }

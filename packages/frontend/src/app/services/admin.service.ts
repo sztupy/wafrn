@@ -51,9 +51,9 @@ export type ServerBlock = {
 }
 
 export type UserBan = {
-  id: string
-  avatar: string
-  url: string
+  id: string | null
+  avatar: string | null
+  url: string | null
 }
 
 export type AdminUserBlocks = {
