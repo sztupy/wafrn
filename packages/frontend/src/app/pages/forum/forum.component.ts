@@ -58,7 +58,6 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
   subscription!: Subscription
   updateFollowsSubscription: Subscription
   navigationStart!: Subscription
-  loggedIn: Signal<boolean>
   myId = ''
   notYetAcceptedFollows: string[] = []
   followedUsers: string[] = []
@@ -91,7 +90,6 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
       this.followedUsers = this.postService.followedUserIds
       this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
     })
-    this.loggedIn = loginService.loggedIn
   }
 
   snOnCreate(): void {
@@ -119,7 +117,7 @@ export class ForumComponent implements OnInit, OnDestroy, SnappyCreate {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => { })
 
-    if (this.loggedIn()) {
+    if (this.loginService.loggedIn.value) {
       this.myId = this.loginService.getLoggedUserUUID()
     }
 

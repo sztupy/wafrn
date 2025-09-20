@@ -1,4 +1,3 @@
-
 import { Component, Inject, OnInit, Signal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -23,12 +22,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox'
     MatButtonModule,
     TranslateModule,
     MatCheckboxModule
-],
+  ],
   templateUrl: './ask-dialog-content.component.html',
   styleUrl: './ask-dialog-content.component.scss'
 })
 export class AskDialogContentComponent implements OnInit {
-  loggedIn: Signal<boolean>
   allowAnons = false
   constructor(
     private dialogRef: MatDialogRef<AskDialogContentComponent>,
@@ -38,10 +36,9 @@ export class AskDialogContentComponent implements OnInit {
       details: BlogDetails
     },
     private blogService: BlogService,
-    loginService: LoginService
+    protected loginService: LoginService
   ) {
-    this.loggedIn = loginService.loggedIn
-    this.askForm.controls['anonymous'].patchValue(!this.loggedIn)
+    this.askForm.controls['anonymous'].patchValue(!this.loginService.loggedIn.value)
   }
   ngOnInit(): void {
     const allowAnonsOption = this.data.details.publicOptions.find((elem) => elem.optionName === 'wafrn.public.asks')

@@ -6,7 +6,7 @@ import { UntypedFormGroup } from '@angular/forms'
 import { UtilsService } from './utils.service'
 import { JwtService, JwtTokenDecoded } from './jwt.service'
 import { PostsService } from './posts.service'
-import { filter, firstValueFrom, fromEvent } from 'rxjs'
+import { BehaviorSubject, filter, firstValueFrom, fromEvent } from 'rxjs'
 import { EnvironmentService } from './environment.service'
 import { MessageService } from './message.service'
 import { TranslateService } from '@ngx-translate/core'
@@ -22,7 +22,7 @@ export type AccountData = {
   providedIn: 'root'
 })
 export class LoginService {
-  public loggedIn: WritableSignal<boolean>
+  public loggedIn: BehaviorSubject<boolean>
   public currentAccount: Signal<BlogDetails | undefined> = computed(() => this.accountList()[0]?.blog)
   public accountList: WritableSignal<AccountData[]> = signal([])
 
@@ -36,14 +36,14 @@ export class LoginService {
     private translate: TranslateService,
     private dashboardService: DashboardService
   ) {
-    this.loggedIn = signal(this.jwt.tokenValid())
+    this.loggedIn = new BehaviorSubject(this.jwt.tokenValid())
 
     this.getLocalStorageAccounts()
 
     // Update account on other tab change
     fromEvent(window, 'storage')
       .pipe(filter((event) => (<StorageEvent>event).key === 'accountList'))
-      .subscribe(async (event) => {
+      .subscribe(async () => {
         this.getLocalStorageAccounts()
         await this.handleSuccessfulLogin()
       })
@@ -53,7 +53,7 @@ export class LoginService {
     const savedAccountList: AccountData[] = localStorage.getItem('accountList')
       ? JSON.parse(localStorage.getItem('accountList') as string)
       : []
-    if (this.loggedIn() && savedAccountList.length === 0) {
+    if (this.loggedIn.value && savedAccountList.length === 0) {
       let url = (this.jwt.getTokenData() as JwtTokenDecoded)['url']
       this.dashboardService.getBlogDetails(url, false).then((res) => {
         savedAccountList.push({
@@ -118,7 +118,7 @@ export class LoginService {
 
     // Don't record double logins
     if (this.currentAccount()?.id === blog.id) {
-      if (this.loggedIn()) {
+      if (this.loggedIn.value) {
         this.messagesService.add({
           severity: 'warn',
           summary: this.translate.instant('login.alreadyLoggedIn')
@@ -151,7 +151,7 @@ export class LoginService {
   logOut() {
     localStorage.clear()
     this.router.navigate(['/'])
-    this.loggedIn.set(false)
+    this.loggedIn.next(false)
     this.accountList.set([])
   }
 
@@ -393,7 +393,7 @@ export class LoginService {
   }
 
   async updateUserOptions(options: { name: string; value: string }[]): Promise<boolean> {
-    if (!this.loggedIn()) return false
+    if (!this.loggedIn.value) return false
     let success = false
     try {
       const payload: FormData = new FormData()
@@ -454,7 +454,7 @@ export class LoginService {
 
   async handleSuccessfulLogin() {
     await this.postsService.loadFollowers()
-    this.loggedIn.set(true)
+    this.loggedIn.next(true)
   }
 
   getLoggedUserUUID(): string {

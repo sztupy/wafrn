@@ -13,9 +13,9 @@ export class WebsocketService {
   private socket$!: WebSocketSubject<any>
   constructor(
     private loginService: LoginService,
-    private dashboardService: DashboardService,
+    private dashboardService: DashboardService
   ) {
-    if (loginService.loggedIn()) {
+    if (loginService.loggedIn.value) {
       this.connectSocket()
     }
   }
@@ -38,13 +38,13 @@ export class WebsocketService {
             delay: 3000
           })
         )
-        .subscribe((obs: { message: 'update_notifications', type: string }) => {
+        .subscribe((obs: { message: 'update_notifications'; type: string }) => {
           try {
             switch (obs.message) {
               case 'update_notifications': {
                 this.dashboardService.scrollEventEmitter.next('scroll')
                 console.log(obs)
-                if(obs.type == 'LIKE' && localStorage.getItem('enableConfettiRecivingLike') == 'true'){
+                if (obs.type == 'LIKE' && localStorage.getItem('enableConfettiRecivingLike') == 'true') {
                   MessageService.confetti.addConfetti({
                     emojis: ['❤️', '💚', '💙']
                   })

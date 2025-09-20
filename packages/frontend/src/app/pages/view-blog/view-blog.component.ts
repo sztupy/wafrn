@@ -43,7 +43,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   blogUrl: string = ''
   avatarUrl = ''
   blogDetails = signal<BlogDetails | undefined>(undefined)
-  loggedIn: Signal<boolean>
   paramSubscription!: Subscription
   viewedPostsIds: string[] = []
   intersectionObserverForLoadPosts!: IntersectionObserver
@@ -79,9 +78,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     private readonly snappy: SnappyRouter,
     private settingService: SettingsService,
     private simpleDialog: SimpleDialogService
-  ) {
-    this.loggedIn = loginService.loggedIn
-  }
+  ) {}
   snOnShow(): void {
     const blogDetails = this.blogDetails()
     if (blogDetails) {
@@ -223,7 +220,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     if (this.blogUrl === '' || !this.blogDetails()) {
       return
     }
-    if (!this.loggedIn() && this.blogDetails()!.url.startsWith('@')) {
+    if (!this.loginService.loggedIn.value && this.blogDetails()!.url.startsWith('@')) {
       this.loading.set(false)
       this.noMorePosts = true
       return

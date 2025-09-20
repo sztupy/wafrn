@@ -31,13 +31,12 @@
             }
           }
         }
-        @if (loggedIn()) {
+        @if (loginService.loggedIn.value) {
           <a
             class="my-4 new-woot-button"
             routerLink="/editor"
             mat-list-item
             (click)="hideMenu(); openEditor()"
-            (keydown)="handleWootKeydown($event)"
             tabIndex="0"
           >
             <div class="flex align-items-center justify-content-start">
