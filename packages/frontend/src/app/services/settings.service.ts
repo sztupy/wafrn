@@ -35,7 +35,6 @@ import { SettingChangePasswordComponent } from '../components/setting-change-pas
 import { SettingDropListComponent } from '../components/setting-drop-list/setting-drop-list.component'
 import { SETTINGS_TOKEN } from '../pages/settings/settings.component'
 import { replyBarItems } from '../components/post-action-buttons/post-action-buttons.component'
-import { toObservable } from '@angular/core/rxjs-interop'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -756,12 +755,10 @@ export class SettingsService {
     }
 
     // Update settings when logging in (and notify everyone)
-    toObservable(loginService.loggedIn)
-      .pipe(filter((logged) => logged))
-      .subscribe(() => {
-        this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
-        this.settingsLoadedFromLogin.next()
-      })
+    loginService.loggedIn.pipe(filter((logged) => logged)).subscribe(() => {
+      this.values = Object.assign(this.getDefaultSettings(), this.getLocalStorageValues())
+      this.settingsLoadedFromLogin.next()
+    })
 
     // Update settings on other tabs change
     fromEvent(window, 'storage')
@@ -921,7 +918,7 @@ export class SettingsService {
     }
 
     // Write options to the server
-    if (this.loginService.loggedIn()) {
+    if (this.loginService.loggedIn.value) {
       const options: { name: string; value: string }[] = this.getSettingsAsOptions()
       const res = await lastValueFrom(
         this.http.post<{ success: boolean }>(`${EnvironmentService.environment.baseUrl}/editOptions`, { options }).pipe(

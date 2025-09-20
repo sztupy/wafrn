@@ -1,3 +1,4 @@
+@let loggedIn = this.loginService.loggedIn.value;
 @if (!loading() && !found) {
   <app-pagenotfound />
 } @else {
@@ -13,9 +14,9 @@
       <div>
         <p class="mb-4 text-lg">No more posts...</p>
         @if (blogDetails()?.url?.startsWith('@')) {
-          <app-info-card [type]="loggedIn() ? 'info' : 'caution'">
+          <app-info-card [type]="loggedIn ? 'info' : 'caution'">
             {{
-              loggedIn()
+              loggedIn
                 ? 'As this user is from a remote instance, the shown information may be incomplete.'
                 : 'To see external users you need to be logged in. You can check the user in their original instance'
             }}

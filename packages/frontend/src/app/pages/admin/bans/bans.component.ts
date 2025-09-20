@@ -1,5 +1,6 @@
 import { Component } from '@angular/core'
 import { AdminService } from 'src/app/services/admin.service'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-bans',
@@ -10,7 +11,12 @@ import { AdminService } from 'src/app/services/admin.service'
 export class BansComponent {
   bannedUsers: any[] = []
   ready = false
-  constructor(private adminService: AdminService) {
+  constructor(
+    private adminService: AdminService,
+    simpleTitle: SimpleTitleService
+  ) {
+    simpleTitle.set('menu.admin.bans')
+
     this.adminService.banList().then((res: any) => {
       this.bannedUsers = this.processUsers(res.users)
       this.ready = true

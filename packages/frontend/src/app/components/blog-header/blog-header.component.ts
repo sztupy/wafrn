@@ -59,7 +59,6 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
           encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
   })
   headerUrl = ''
-  loggedIn: Signal<boolean>
   isMe = false
   expandDownIcon = faChevronDown
   muteUserIcon = faVolumeMute
@@ -89,7 +88,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
   })
 
   constructor(
-    private loginService: LoginService,
+    protected loginService: LoginService,
     public postService: PostsService,
     private messages: MessageService,
     public blockService: BlocksService,
@@ -98,9 +97,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     public environmentService: EnvironmentService,
     public reportService: ReportService,
     public simpleDialog: SimpleDialogService
-  ) {
-    this.loggedIn = loginService.loggedIn
-  }
+  ) {}
   ngOnChanges(changes: SimpleChanges): void {
     const blog = this.blogDetails()
     if (blog === undefined) return
@@ -113,7 +110,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     if (blog.url.startsWith('@')) {
       askLevel = 3
     }
-    this.allowAsk = this.loginService.loggedIn() ? [1, 2].includes(askLevel) : askLevel == 1
+    this.allowAsk = this.loginService.loggedIn.value ? [1, 2].includes(askLevel) : askLevel == 1
     this.allowAsk = this.allowAsk && this.loginService.getLoggedUserUUID() != blog.id
     this.allowRemoteAsk = askLevel != 3 && this.loginService.getLoggedUserUUID() != blog.id
     this.isMe = blog.id == this.loginService.getLoggedUserUUID()

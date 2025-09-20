@@ -12,6 +12,8 @@ import { DashboardService } from 'src/app/services/dashboard.service'
 import { JwtService } from 'src/app/services/jwt.service'
 import { MessageService } from 'src/app/services/message.service'
 import { PostsService } from 'src/app/services/posts.service'
+import { TranslateService } from '@ngx-translate/core'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-dashboard',
@@ -28,7 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
   currentPage = 0
   level = 1
   timestamp = new Date().getTime()
-  title = ''
+  title = 'menu.dashboard'
   updateFollowersSubscription?: Subscription
   navigationSubscription!: Subscription
   scroll = 0
@@ -44,11 +46,12 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     private router: Router,
     private postService: PostsService,
     private messages: MessageService,
-    private titleService: Title,
     private metaTagService: Meta,
-    private readonly viewportScroller: ViewportScroller
+    private readonly viewportScroller: ViewportScroller,
+    private simpleTitle: SimpleTitleService
   ) {
-    this.titleService.setTitle(GlobalData.appDefaultTitle)
+    simpleTitle.set('menu.dashboard')
+
     this.metaTagService.addTags([
       {
         name: 'description',
@@ -86,6 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
       this.level = 50
       this.title = 'My bookmarked posts'
     }
+    this.simpleTitle.set(this.title)
   }
 
   snOnShow(): void {
@@ -98,6 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
   }
 
   ngOnInit(): void {
+    this.simpleTitle.set(this.title)
     // If the user clicks on the explore button while already on the page,
     // reload posts.
     this.navigationSubscription = this.router.events

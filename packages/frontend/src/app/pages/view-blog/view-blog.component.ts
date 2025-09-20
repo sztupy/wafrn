@@ -26,6 +26,8 @@ import { SnappyBlogData } from 'src/app/directives/blog-link/blog-link.directive
 import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 import { SettingsService } from 'src/app/services/settings.service'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
+import { GlobalData } from 'src/app/services/global-data.service'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-view-blog',
@@ -43,7 +45,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   blogUrl: string = ''
   avatarUrl = ''
   blogDetails = signal<BlogDetails | undefined>(undefined)
-  loggedIn: Signal<boolean>
   paramSubscription!: Subscription
   viewedPostsIds: string[] = []
   intersectionObserverForLoadPosts!: IntersectionObserver
@@ -71,17 +72,15 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     private readonly dashboardService: DashboardService,
     readonly loginService: LoginService,
     private readonly router: Router,
-    private readonly titleService: Title,
     private readonly metaTagService: Meta,
     private readonly themeService: ThemeService,
     public readonly blockService: BlocksService,
     private readonly dialog: MatDialog,
     private readonly snappy: SnappyRouter,
     private settingService: SettingsService,
-    private simpleDialog: SimpleDialogService
-  ) {
-    this.loggedIn = loginService.loggedIn
-  }
+    private simpleDialog: SimpleDialogService,
+    private simpleTitle: SimpleTitleService
+  ) {}
   snOnShow(): void {
     const blogDetails = this.blogDetails()
     if (blogDetails) {
@@ -146,7 +145,8 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       const blogDetails = blogResponse
       this.blogDetails.set(blogDetails)
       this.avatarUrl = this.getAvatarUrl(blogResponse)
-      this.titleService.setTitle(`${this.blogDetails()!.url}'s blog`)
+
+      this.simpleTitle.set(`${this.blogDetails()?.nameMarkdown ?? this.blogDetails()?.url}'s blog`)
       this.metaTagService.addTags([
         {
           name: 'description',
@@ -223,7 +223,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     if (this.blogUrl === '' || !this.blogDetails()) {
       return
     }
-    if (!this.loggedIn() && this.blogDetails()!.url.startsWith('@')) {
+    if (!this.loginService.loggedIn.value && this.blogDetails()!.url.startsWith('@')) {
       this.loading.set(false)
       this.noMorePosts = true
       return
@@ -256,6 +256,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       id: usr.id,
       url: usr.url,
       name: usr.name,
+      nameMarkdown: usr.nameMarkdown ?? usr.name,
       createdAt: '',
       description: '',
       descriptionMarkdown: '',

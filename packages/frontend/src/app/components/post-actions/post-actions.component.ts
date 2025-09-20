@@ -52,7 +52,6 @@ import { BlocksService } from 'src/app/services/blocks.service'
 })
 export class PostActionsComponent implements OnChanges {
   post = input.required<ProcessedPost>()
-  loggedIn: Signal<boolean>
   myId: string = 'user-00000000-0000-0000-0000-000000000000 '
   postSilenced = false
   myRewootsIncludePost = false
@@ -96,15 +95,14 @@ export class PostActionsComponent implements OnChanges {
   constructor(
     private messages: MessageService,
     private postService: PostsService,
-    loginService: LoginService,
+    protected loginService: LoginService,
     private reportService: ReportService,
     private utilsService: UtilsService,
     private settingsService: SettingsService,
     private simpleDialog: SimpleDialogService,
     private blockService: BlocksService
   ) {
-    this.loggedIn = loginService.loggedIn
-    if (this.loggedIn()) {
+    if (loginService.loggedIn.value) {
       this.myId = loginService.getLoggedUserUUID()
     }
   }

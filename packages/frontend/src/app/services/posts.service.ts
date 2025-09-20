@@ -346,6 +346,7 @@ export class PostsService {
       avatar: '',
       url: 'ERROR',
       name: 'ERROR',
+      nameMarkdown: 'ERROR',
       id: '42'
     }
     this.rewootedPosts = this.rewootedPosts.concat(unlinked.rewootIds)
@@ -359,6 +360,7 @@ export class PostsService {
       : []
     if (user.name) {
       user.name = user.name.replaceAll('‏', '')
+      user.nameMarkdown = user.name
     }
     if (userEmojis && userEmojis.length && user && user.name) {
       userEmojis.forEach((usrEmoji) => {
