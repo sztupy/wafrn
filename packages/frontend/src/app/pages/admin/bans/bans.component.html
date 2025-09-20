@@ -11,7 +11,7 @@
     <input (input)="onChange($event)" matNativeControl spellcheck="false" />
   </mat-form-field>
   <div class="w-full overflow-x-auto">
-    <table mat-table matSort [dataSource]="bannedUsers.data.length > 0 ? bannedUsers.data : placeholderData">
+    <table mat-table matSort [dataSource]="!loading ? bannedUsers.data : placeholderData">
       <ng-container matColumnDef="user">
         <th mat-header-cell mat-sort-header *matHeaderCellDef>User</th>
         <td mat-cell *matCellDef="let row">
