@@ -50,6 +50,12 @@ export type ServerBlock = {
   createdAt: string
 }
 
+export type UserBan = {
+  id: string
+  avatar: string
+  url: string
+}
+
 export type AdminUserBlocks = {
   userBlocks: UserBlock[]
   userServerBlocks: ServerBlock[]
@@ -101,10 +107,14 @@ export class AdminService {
   }
 
   async banList() {
-    return firstValueFrom(this.http.get(`${EnvironmentService.environment.baseUrl}/admin/getBannedUsers`))
+    return firstValueFrom(
+      this.http.get<{ users: UserBan[] }>(`${EnvironmentService.environment.baseUrl}/admin/getBannedUsers`)
+    )
   }
-  async pardonUser(id: string) {
-    return firstValueFrom(this.http.post(`${EnvironmentService.environment.baseUrl}/admin/unbanUser`, { id: id }))
+  async unbanUser(id: string) {
+    return firstValueFrom(
+      this.http.post<{ users: UserBan[] }>(`${EnvironmentService.environment.baseUrl}/admin/unbanUser`, { id: id })
+    )
   }
 
   async getPendingActivationUsers(): Promise<SimplifiedUser[]> {

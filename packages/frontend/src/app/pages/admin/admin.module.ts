@@ -17,7 +17,7 @@ const routes: Route[] = [
   },
   {
     path: 'bans',
-    loadChildren: () => import('./bans/bans.module').then((m) => m.BansModule)
+    loadComponent: () => import('./bans/bans.component').then((c) => c.BansComponent)
   },
   {
     path: 'activate-users',
