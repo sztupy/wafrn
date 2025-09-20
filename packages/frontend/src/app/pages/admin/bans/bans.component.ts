@@ -33,7 +33,7 @@ import { SimpleTitleService } from 'src/app/services/simple-title.service'
   styleUrls: ['./bans.component.scss']
 })
 export class BansComponent {
-  showBans = true
+  showBans = false
   bannedUsers = new MatTableDataSource<UserBan | null, MatPaginator>(undefined)
   bannedUsersPaginator = viewChild.required<MatPaginator>(MatPaginator)
   bannedUsersColumns = ['user', 'actions']
