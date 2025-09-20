@@ -20,6 +20,41 @@ export type UserReport = {
   reportedUser: SimplifiedUser
 }
 
+export type UserBlock = {
+  blockedId: string
+  blocked: {
+    avatar: string
+    url: string
+  }
+  blockerId: string
+  blocker: {
+    avatar: string
+    url: string
+  }
+  bskyPath: string | null
+  remoteBlockId: string | null
+  reason: string | null
+  createdAt: string
+}
+
+export type ServerBlock = {
+  blockedServerId: string
+  blockedServer: {
+    displayName: string
+  }
+  userBlockerId: string
+  userBlocker: {
+    avatar: string
+    url: string
+  }
+  createdAt: string
+}
+
+export type AdminUserBlocks = {
+  userBlocks: UserBlock[]
+  userServerBlocks: ServerBlock[]
+}
+
 @Injectable({
   providedIn: 'root'
 })

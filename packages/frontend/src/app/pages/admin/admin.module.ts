@@ -9,7 +9,7 @@ const routes: Route[] = [
   },
   {
     path: 'user-blocks',
-    loadChildren: () => import('./blocks/blocks.module').then((m) => m.BlocksModule)
+    loadComponent: () => import('./blocks/blocks.component').then((c) => c.BlocksComponent)
   },
   {
     path: 'user-reports',
