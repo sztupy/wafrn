@@ -407,7 +407,9 @@
       "confirmNSFWTitle": "Confirm muting",
       "confirmNSFWContent": "All posts by this user will be content warned.",
       "confirmIgnoreTitle": "Confirm ignoring report of",
-      "confirmIgnoreContent": "Post was reported for reason:"
+      "confirmIgnoreContent": "Post was reported for reason:",
+      "confirmUnbanTitle": "Confirm unbanning",
+      "confirmUnbanContent": "We do not yet store ban information but it will be here eventually:"
     },
     "post-header": {
       "followTitle": "Follow user",
