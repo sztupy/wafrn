@@ -217,7 +217,11 @@ function frontend(app: Application) {
 }
 
 function sanitizeStringForSEO(unsanitized: string): string {
-  return dompurify.sanitize(unsanitized, { ALLOWED_TAGS: [] }).replaceAll('"', "'")
+  return dompurify
+    .sanitize(unsanitized, { ALLOWED_TAGS: [] })
+    .replaceAll('"', "'")
+    .replaceAll('$', '')
+    .replaceAll('\\', '')
 }
 
 function getPostMicroformat(post: Post, includeBlog: boolean = false, mainImage?: string): string {
