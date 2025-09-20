@@ -214,15 +214,13 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     this.currentPage = 0
     this.viewedPosts = 0
     this.viewedPostsIds = []
-    this.loadPosts(this.currentPage)
+    const timeScrollStart = this.activatedRoute.snapshot.queryParams['startScrollDate']
+    this.loadPosts(this.currentPage, timeScrollStart)
   }
 
-  async loadPosts(page: number) {
+  async loadPosts(page: number, timeScrollStart?: number) {
     this.currentPage += 1
-    if (this.blogUrl === '') {
-      return
-    }
-    if (!this.blogDetails()) {
+    if (this.blogUrl === '' || !this.blogDetails()) {
       return
     }
     if (!this.loggedIn() && this.blogDetails()!.url.startsWith('@')) {
@@ -232,8 +230,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     }
 
     this.loading.set(true)
-
-    const tmpPosts = await this.dashboardService.getBlogPage(page, this.blogUrl)
+    const tmpPosts = await this.dashboardService.getBlogPage(page, this.blogUrl, timeScrollStart)
     const filteredPosts = tmpPosts.filter((post: ProcessedPost[]) => {
       let allFragmentsSeen = true
       post.forEach((component) => {

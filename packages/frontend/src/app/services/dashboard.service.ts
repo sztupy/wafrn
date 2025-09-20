@@ -111,12 +111,12 @@ export class DashboardService {
     return success
   }
 
-  async getBlogPage(page: number, blogId: string): Promise<ProcessedPost[][]> {
+  async getBlogPage(page: number, blogId: string, startScrollDate?: number): Promise<ProcessedPost[][]> {
     try {
       let result: ProcessedPost[][] = []
       if (page === 0) {
         //if we are starting the scroll, we store the current date
-        this.startScrollDate = new Date()
+        this.startScrollDate = new Date(startScrollDate ? parseInt(startScrollDate.toString()) : new Date().getTime())
       }
       let petitionData: HttpParams = new HttpParams()
       petitionData = petitionData.set('page', page.toString())
@@ -165,7 +165,9 @@ export class DashboardService {
   }
 
   async getArticle(slug: string, userUrl?: string): Promise<ProcessedPost[]> {
-    const petition = await firstValueFrom(this.http.get<unlinkedPosts>(`${this.baseUrl}/article/${userUrl ? `${userUrl}/` : ''}${slug}`))
+    const petition = await firstValueFrom(
+      this.http.get<unlinkedPosts>(`${this.baseUrl}/article/${userUrl ? `${userUrl}/` : ''}${slug}`)
+    )
 
     const result = this.postService.processPostNew(petition)
 
@@ -205,6 +207,6 @@ export class DashboardService {
     return blog.url.startsWith('@')
       ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.avatar)
       : EnvironmentService.environment.externalCacheurl +
-      encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
+          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
   }
 }

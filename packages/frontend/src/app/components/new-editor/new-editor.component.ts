@@ -248,7 +248,12 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     }
 
     if (this.editing && this.data?.post) {
-      this.postCreatorForm.controls['content'].patchValue(this.data.post.markdownContent)
+      if (this.data.post.markdownContent) {
+        this.postCreatorForm.controls['content'].patchValue(this.data.post.markdownContent)
+      } else {
+        this.messages.add({ severity: 'warn', summary: 'This post is an old post and you are editing the HTML raw.' })
+        this.postCreatorForm.controls['content'].patchValue(this.data.post.content)
+      }
       this.contentWarning = this.data.post.content_warning
       this.tags = this.data.post.tags.map((tag) => tag.tagName).join(',')
       this.uploadedMedias = this.data.post.medias ? this.data.post.medias.filter((elem) => elem.mediaOrder < 9999) : []
