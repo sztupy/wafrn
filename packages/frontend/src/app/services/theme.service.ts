@@ -189,7 +189,7 @@ export class ThemeService {
     // Setup when logging out and completing setting sync
     // Also watches change from other tabs
     merge(
-      loginService.loggedIn.pipe(filter((loggedIn) => !loggedIn)),
+      loginService.loggedIn,
       fromEvent(window, 'storage').pipe(
         filter((event) => ['theme', 'colorScheme'].includes((<StorageEvent>event).key ?? '')),
         debounceTime(200)
