@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common'
 import { Component, viewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -25,8 +24,7 @@ import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
     MatSortModule,
     MatPaginatorModule,
     AvatarSmallComponent,
-    TranslatePipe,
-    DatePipe
+    TranslatePipe
   ],
   templateUrl: './bans.component.html',
   styleUrls: ['./bans.component.scss']
@@ -44,7 +42,6 @@ export class BansComponent {
 
   async ngOnInit() {
     const res: { users: UserBan[] } = await this.adminService.banList()
-    console.log(res)
 
     this.bannedUsers.data = res.users
     this.bannedUsers.filterPredicate = (ban, filter) => ban.url.startsWith(filter)
