@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator'
 import { MatTableDataSource } from '@angular/material/table'
 import { AdminService, UserReport } from 'src/app/services/admin.service'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-report-list',
@@ -26,8 +27,11 @@ export class ReportListComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private simpleDialog: SimpleDialogService
+    private simpleDialog: SimpleDialogService,
+    simpleTitle: SimpleTitleService
   ) {
+    simpleTitle.set('menu.admin.reports')
+
     this.loadReports()
   }
 

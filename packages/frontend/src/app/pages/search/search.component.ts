@@ -10,6 +10,7 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 import { LoginService } from 'src/app/services/login.service'
 import { MessageService } from 'src/app/services/message.service'
 import { PostsService } from 'src/app/services/posts.service'
+import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
   selector: 'app-search',
@@ -48,8 +49,11 @@ export class SearchComponent implements OnInit, OnDestroy {
     public postService: PostsService,
     protected loginService: LoginService,
     router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    simpleTitle: SimpleTitleService
   ) {
+    simpleTitle.set('menu.search')
+
     this.navigationSubscription = router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {

@@ -155,6 +155,7 @@ export class DashboardService {
       this.http.get<BlogDetails>(`${EnvironmentService.environment.baseUrl}/user`, { params: petitionData })
     )
     res.name = res.name.replaceAll('‏', '')
+    res.nameMarkdown = res.name
     if (res.emojis && !ignoreEmojis) {
       res.emojis.forEach((emoji: Emoji) => {
         res.name = res.name.replaceAll(emoji.name, this.postService.emojiToHtml(emoji))
