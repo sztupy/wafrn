@@ -32,13 +32,13 @@ import { AdminService, AdminUserBlocks, ServerBlock, UserBlock } from 'src/app/s
 })
 export class BlocksComponent {
   showUserBlocks = false
-  userBlocks = new MatTableDataSource<UserBlock, MatPaginator>([])
+  userBlocks = new MatTableDataSource<UserBlock, MatPaginator>(undefined)
   userBlocksPaginator = viewChild.required<MatPaginator>('userBlocksPaginator')
   userBlocksSort = viewChild.required<MatSort>('userBlocksSort')
   userBlocksColumns = ['blocker', 'blocked', 'reason', 'createdAt']
 
   showUserServerBlocks = false
-  userServerBlocks = new MatTableDataSource<ServerBlock, MatPaginator>([])
+  userServerBlocks = new MatTableDataSource<ServerBlock, MatPaginator>(undefined)
   userServerBlocksPaginator = viewChild.required<MatPaginator>('userServerBlocksPaginator')
   userServerBlocksSort = viewChild.required<MatSort>('userServerBlocksSort')
   userServerBlocksColumns = ['userBlocker', 'blockedServer', 'createdAt']
