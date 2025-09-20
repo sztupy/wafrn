@@ -56,7 +56,7 @@ export class NotificationsService {
     private postService: PostsService,
     private settings: SettingsService,
     private audioService: AudioService,
-    loginService: LoginService
+    private loginService: LoginService
   ) {
     // Initial notifications load when logging in
     loginService.loggedIn.pipe(filter((logged) => logged)).subscribe(() => {
@@ -65,11 +65,13 @@ export class NotificationsService {
   }
 
   /**
-   * @description Gets the number of notifications from the server.
+   * @description Gets the number of notifications from the server if the user is logged in.
    *
    * The server does not mark notifications as read when checked this way.
    */
   async updateCount(): Promise<void> {
+    if (!this.loginService.loggedIn.value) return
+
     let res: NotificationData = {
       notifications: 0,
       reports: 0,
