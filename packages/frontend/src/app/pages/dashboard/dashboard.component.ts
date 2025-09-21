@@ -71,23 +71,23 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     const purePath = this.router.url.split('?')[0]
     if (purePath.endsWith('explore')) {
       this.level = 0
-      this.title = 'Wafrn and friends'
+      this.title = 'menu.exploreFediverse'
     }
     if (purePath.endsWith('exploreLocal')) {
       this.level = 2
-      this.title = 'Explore WAFRN'
+      this.title = 'menu.exploreWafrn'
     }
     if (purePath.endsWith('private')) {
       this.level = 10
-      this.title = 'Private messages'
+      this.title = 'menu.privateMessages'
     }
     if (purePath.endsWith('silencedPosts')) {
       this.level = 25
-      this.title = 'My silenced posts'
+      this.title = 'menu.siencedPosts'
     }
     if (purePath.endsWith('bookmarkedPosts')) {
       this.level = 50
-      this.title = 'My bookmarked posts'
+      this.title = 'menu.bookmarkedPosts'
     }
     this.simpleTitle.set(this.title)
   }
