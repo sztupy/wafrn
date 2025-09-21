@@ -421,7 +421,13 @@
       "muteAccountTitle": "Mute account",
       "muteAccountDescription": "Hide posts and replies by this user. They will still be able to interact with your posts.",
       "blockAccountTitle": "Block account",
-      "blockAccountDescription": "Hide posts and replies by this user or posts and replies mentioning this user. They will not be able to interact with your posts."
+      "muteAccountLabel": "Reason (optional)",
+      "unmuteAccountTitle": "Unmute account",
+      "unmuteAccountDescription": "Posts and replies by this user will be shown again.",
+      "blockAccountDescription": "Hide posts and replies by this user or posts and replies mentioning this user. They will not be able to interact with your posts.",
+      "blockAccountLabel": "Reason (optional)",
+      "unblockAccountTitle": "Unblock account",
+      "unblockAccountDescription": "Posts, replies by this user, and replies mentioning this user will be shown again. They will be able to interact with your posts."
     },
     "blog": {
       "customThemeTitle": "Custom Styles",

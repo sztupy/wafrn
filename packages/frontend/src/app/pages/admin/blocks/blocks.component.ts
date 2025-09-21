@@ -10,7 +10,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table'
 import { RouterModule } from '@angular/router'
 import { TranslatePipe } from '@ngx-translate/core'
 import { AvatarSmallComponent } from 'src/app/components/avatar-small/avatar-small.component'
-import { AdminService, AdminUserBlocks, ServerBlock, UserBlock } from 'src/app/services/admin.service'
+import { AdminService, AdminUserBlocks, ServerBlock, AdminUserBlock } from 'src/app/services/admin.service'
 import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
@@ -33,7 +33,7 @@ import { SimpleTitleService } from 'src/app/services/simple-title.service'
 })
 export class BlocksComponent {
   showUserBlocks = false
-  userBlocks = new MatTableDataSource<UserBlock, MatPaginator>(undefined)
+  userBlocks = new MatTableDataSource<AdminUserBlock, MatPaginator>(undefined)
   userBlocksPaginator = viewChild.required<MatPaginator>('userBlocksPaginator')
   userBlocksSort = viewChild.required<MatSort>('userBlocksSort')
   userBlocksColumns = ['blocker', 'blocked', 'reason', 'createdAt']

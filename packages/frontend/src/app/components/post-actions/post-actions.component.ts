@@ -188,25 +188,11 @@ export class PostActionsComponent implements OnChanges {
 
   // Dangerous options
   async muteAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.muteAccountTitle',
-      content: 'dialog.post-header.muteAccountDescription'
-    })
-
-    if (!confirm) return
-
-    this.blockService.muteUser(this.post().userId)
+    this.blockService.promptMuteUser(this.post().userId)
   }
 
   async blockAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.blockAccountTitle',
-      content: 'dialog.post-header.blockAccountDescription'
-    })
-
-    if (!confirm) return
-
-    this.blockService.blockUser(this.post().userId)
+    this.blockService.promptBlockUser(this.post().userId)
   }
 
   reportPost() {

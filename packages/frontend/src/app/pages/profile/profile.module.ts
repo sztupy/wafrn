@@ -24,7 +24,7 @@ import { MyServerBlocksComponent } from './my-server-blocks/my-server-blocks.com
       },
       {
         path: 'blocks',
-        loadChildren: () => import('./my-blocks/my-blocks.module').then((m) => m.MyBlocksModule)
+        loadComponent: () => import('./my-blocks/my-blocks.component').then((c) => c.MyBlocksComponent)
       },
       {
         path: 'serverBlocks',
@@ -32,7 +32,7 @@ import { MyServerBlocksComponent } from './my-server-blocks/my-server-blocks.com
       },
       {
         path: 'mutes',
-        loadChildren: () => import('./my-mutes/my-mutes.module').then((m) => m.MyMutesModule)
+        loadComponent: () => import('./my-mutes/my-mutes.component').then((c) => c.MyMutesComponent)
       },
       {
         path: 'silencedPosts',
