@@ -119,6 +119,12 @@ export class PostComponent implements OnInit, OnDestroy {
   ribbonIcon = this.replyIcon
   ribbonTime = new Date(0)
 
+  // detect is safari ios because flicker bug on webkit https://stackoverflow.com/questions/3007480/determine-if-user-navigated-from-mobile-safaris
+  ua = window.navigator.userAgent
+  iOS = !!this.ua.match(/iPad/i) || !!this.ua.match(/iPhone/i)
+  webkit = !!this.ua.match(/WebKit/i)
+  iOSSafari = this.iOS && this.webkit && !this.ua.match(/CriOS/i)
+
   constructor(
     public postService: PostsService,
     private readonly loginService: LoginService
