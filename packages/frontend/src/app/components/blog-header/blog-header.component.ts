@@ -207,7 +207,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     if (blog) {
       // very silly API
       const res = await this.blockService.promptUnblockUser(blog.id)
-      blog.blocked = res !== undefined && res.length !== 0
+      blog.blocked = res === undefined || res.length === 0
     }
   }
 
