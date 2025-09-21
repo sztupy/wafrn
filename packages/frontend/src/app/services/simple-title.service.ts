@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { GlobalData } from './global-data.service'
 import { NotificationsService } from './notifications.service'
 import { toObservable } from '@angular/core/rxjs-interop'
+import { merge } from 'rxjs'
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class SimpleTitleService {
     private translate: TranslateService,
     private notifications: NotificationsService
   ) {
-    toObservable(this.title).subscribe(() => {
+    merge(toObservable(this.notifications.totalNotifications), toObservable(this.title)).subscribe(() => {
       this.syncTitle()
     })
   }
