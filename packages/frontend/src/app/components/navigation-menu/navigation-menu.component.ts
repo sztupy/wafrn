@@ -50,7 +50,11 @@ import {
   faUsers,
   faPlus,
   faShuffle,
-  faInbox
+  faInbox,
+  faUserShield,
+  faVolumeXmark,
+  faBellSlash,
+  faRoadBarrier
 } from '@fortawesome/free-solid-svg-icons'
 import { MenuItem, MenuLink } from 'src/app/interfaces/menu-item'
 import { EnvironmentService } from 'src/app/services/environment.service'
@@ -475,6 +479,42 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
             icon: faBookmark,
             visible: () => this.loginService.loggedIn.value,
             routerLink: '/profile/bookmarkedPosts',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.silencedPosts',
+            icon: faBellSlash,
+            visible: () => this.loginService.loggedIn.value,
+            routerLink: '/profile/silencedPosts',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.mutedUsers',
+            icon: faVolumeXmark,
+            visible: () => this.loginService.loggedIn.value,
+            routerLink: '/profile/mutes',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.myBlockedServers',
+            icon: faRoadBarrier,
+            visible: () => this.loginService.loggedIn.value,
+            routerLink: '/profile/serverBlocks',
+            command: () => {
+              this.hideMenu()
+            }
+          },
+          {
+            label: 'menu.settings.myBlockedUsers',
+            icon: faBan,
+            visible: () => this.loginService.loggedIn.value,
+            routerLink: '/profile/blocks',
             command: () => {
               this.hideMenu()
             }
