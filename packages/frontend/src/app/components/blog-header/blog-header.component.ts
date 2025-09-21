@@ -166,32 +166,18 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
   }
 
   async muteAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.muteAccountTitle',
-      content: 'dialog.post-header.muteAccountDescription'
-    })
-
-    if (!confirm) return
-
     const blog = this.blogDetails()
     if (blog) {
-      blog.muted = (await this.blockService.muteUser(blog.id)) === true
+      blog.muted = (await this.blockService.promptMuteUser(blog.id)) === true
     }
   }
 
   async unmuteAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.unmuteAccountTitle',
-      content: 'dialog.post-header.unmuteAccountDescription'
-    })
-
-    if (!confirm) return
-
     const blog = this.blogDetails()
     if (blog) {
       // very silly API
-      const res = await this.blockService.unmuteUser(blog.id)
-      blog.muted = res !== undefined && res.length !== 0
+      const res = await this.blockService.promptUnmuteUser(blog.id)
+      blog.muted = res === undefined || res.length === 0
     }
   }
 

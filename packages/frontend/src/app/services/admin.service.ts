@@ -61,7 +61,8 @@ export type AdminUserBlocks = {
   userServerBlocks: ServerBlock[]
 }
 
-export type UserBlock = {
+// Either a block or a mute (same type)
+export type UserBlockMute = {
   avatar: string
   id: string
   reason: string

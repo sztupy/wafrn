@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router'
 import { TranslatePipe } from '@ngx-translate/core'
 import { AvatarSmallComponent } from 'src/app/components/avatar-small/avatar-small.component'
 import { BlogLinkModule } from 'src/app/directives/blog-link/blog-link.module'
-import { UserBlock } from 'src/app/services/admin.service'
+import { UserBlockMute } from 'src/app/services/admin.service'
 import { BlocksService } from 'src/app/services/blocks.service'
 import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
@@ -35,7 +35,7 @@ import { SimpleTitleService } from 'src/app/services/simple-title.service'
   styleUrls: ['./my-blocks.component.scss']
 })
 export class MyBlocksComponent {
-  blocks = new MatTableDataSource<UserBlock | null, MatPaginator>(undefined)
+  blocks = new MatTableDataSource<UserBlockMute | null, MatPaginator>(undefined)
 
   displayedColumns = ['user', 'reason', 'date', 'actions']
 

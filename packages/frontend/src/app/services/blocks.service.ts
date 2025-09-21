@@ -5,7 +5,7 @@ import { MessageService } from './message.service'
 import { EnvironmentService } from './environment.service'
 import { SimpleDialogService } from './simple-dialog.service'
 import { firstValueFrom } from 'rxjs'
-import { UserBlock } from './admin.service'
+import { UserBlockMute } from './admin.service'
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +63,7 @@ export class BlocksService {
     return success
   }
 
-  processResponse(serverResponse: Array<any>, key: string): UserBlock[] {
+  processResponse(serverResponse: Array<any>, key: string): UserBlockMute[] {
     return serverResponse.map((userBlocked) => {
       return {
         avatar: userBlocked[key].url.startsWith('@')
@@ -76,14 +76,14 @@ export class BlocksService {
       }
     })
   }
-  async getBlockList(): Promise<UserBlock[]> {
+  async getBlockList(): Promise<UserBlockMute[]> {
     const response = await firstValueFrom(
       this.http.get<Array<any>>(`${EnvironmentService.environment.baseUrl}/myBlocks`)
     )
     return response ? this.processResponse(response, 'blocked') : []
   }
 
-  async promptUnblockUser(id: string): Promise<UserBlock[] | undefined> {
+  async promptUnblockUser(id: string): Promise<UserBlockMute[] | undefined> {
     const confirm = await this.simpleDialog.createConfirmDialog({
       title: 'dialog.post-header.unblockAccountTitle',
       content: 'dialog.post-header.unblockAccountDescription'
@@ -94,7 +94,7 @@ export class BlocksService {
     return await this.unblockUser(id)
   }
 
-  async unblockUser(id: string): Promise<UserBlock[] | undefined> {
+  async unblockUser(id: string): Promise<UserBlockMute[] | undefined> {
     const response = await firstValueFrom(
       this.http.post<Array<any>>(
         `${EnvironmentService.environment.baseUrl}/unblock-user?id=${encodeURIComponent(id)}`,
@@ -111,11 +111,25 @@ export class BlocksService {
     return response ? this.processResponse(response, 'blocked') : undefined
   }
 
-  async muteUser(id: string): Promise<boolean> {
+  async promptMuteUser(id: string): Promise<Boolean> {
+    const blockReason = await this.simpleDialog.createPromptDialog({
+      title: 'dialog.post-header.muteAccountTitle',
+      content: 'dialog.post-header.muteAccountDescription',
+      label: 'dialog.post-header.muteAccountLabel',
+      optional: true
+    })
+
+    if (!blockReason?.confirmed) return false
+
+    return await this.muteUser(id, blockReason.value)
+  }
+
+  async muteUser(id: string, reason?: string): Promise<boolean> {
     let success = false
     try {
       const formData = {
-        userId: id
+        userId: id,
+        reason: reason
       }
       const response = await this.http.post(`${EnvironmentService.environment.baseUrl}/mute`, formData).toPromise()
       this.messages.add({
@@ -138,6 +152,17 @@ export class BlocksService {
   async getMuteList(): Promise<Array<any>> {
     const response = await this.http.get<Array<any>>(`${EnvironmentService.environment.baseUrl}/myMutes`).toPromise()
     return response ? this.processResponse(response, 'muted') : []
+  }
+
+  async promptUnmuteUser(id: string): Promise<UserBlockMute[] | undefined> {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.post-header.unmuteAccountTitle',
+      content: 'dialog.post-header.unmuteAccountDescription'
+    })
+
+    if (!confirm) return undefined
+
+    return await this.unmuteUser(id)
   }
 
   async unmuteUser(id: string): Promise<Array<any>> {
