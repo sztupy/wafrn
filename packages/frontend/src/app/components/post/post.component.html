@@ -3,7 +3,7 @@
   [id]="'post-element-' + uniquePost().id"
   class="wafrn-container post-card"
   [class.active]="active()"
-  [ngClass]="{ 'top-bar': post.length > 1, 'post-card-iios': iOSSafari }"
+  [ngClass]="{ 'top-bar': post.length > 1, 'post-card-ios': iOSSafari }"
 >
   @if (post.length > 1) {
     <app-post-ribbon
