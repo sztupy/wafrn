@@ -199,14 +199,7 @@ export class PostActionsComponent implements OnChanges {
   }
 
   async blockAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.blockAccountTitle',
-      content: 'dialog.post-header.blockAccountDescription'
-    })
-
-    if (!confirm) return
-
-    this.blockService.blockUser(this.post().userId)
+    this.blockService.promptBlockUser(this.post().userId)
   }
 
   reportPost() {

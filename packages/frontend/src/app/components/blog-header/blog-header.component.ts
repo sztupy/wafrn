@@ -196,31 +196,17 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
   }
 
   async blockAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.blockAccountTitle',
-      content: 'dialog.post-header.blockAccountDescription'
-    })
-
-    if (!confirm) return
-
     const blog = this.blogDetails()
     if (blog) {
-      blog.blocked = (await this.blockService.blockUser(blog.id)) === true
+      blog.blocked = (await this.blockService.promptBlockUser(blog.id)) === true
     }
   }
 
   async unblockAccount() {
-    const confirm = await this.simpleDialog.createConfirmDialog({
-      title: 'dialog.post-header.unblockAccountTitle',
-      content: 'dialog.post-header.unblockAccountDescription'
-    })
-
-    if (!confirm) return
-
     const blog = this.blogDetails()
     if (blog) {
       // very silly API
-      const res = await this.blockService.unblockUser(blog.id)
+      const res = await this.blockService.promptUnblockUser(blog.id)
       blog.blocked = res !== undefined && res.length !== 0
     }
   }

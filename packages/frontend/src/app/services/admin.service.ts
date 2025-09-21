@@ -20,7 +20,7 @@ export type UserReport = {
   reportedUser: SimplifiedUser
 }
 
-export type UserBlock = {
+export type AdminUserBlock = {
   blockedId: string
   blocked: {
     avatar: string
@@ -57,8 +57,16 @@ export type UserBan = {
 }
 
 export type AdminUserBlocks = {
-  userBlocks: UserBlock[]
+  userBlocks: AdminUserBlock[]
   userServerBlocks: ServerBlock[]
+}
+
+export type UserBlock = {
+  avatar: string
+  id: string
+  reason: string
+  url: string
+  createdAt: string
 }
 
 @Injectable({
