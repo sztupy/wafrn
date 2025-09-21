@@ -65,5 +65,5 @@ export const down: Migration = async (params) => {
   await queryInterface.sequelize.query(`DROP INDEX emojiReactions_userId`)
   await queryInterface.sequelize.query(`DROP INDEX emojiReactions_postid`)
   await queryInterface.sequelize.query(`DROP INDEX asks_userAsker`)
-  await queryInterface.sequelize.query(`DROP INDEX asks_userAsker`)
+  await queryInterface.sequelize.query(`DROP INDEX asks_userAsked`)
 }
