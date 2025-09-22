@@ -89,7 +89,7 @@ async function getAtprotoUser(
       url: '@' + (data.handle === 'handle.invalid' ? `handle.invalid${data.did}` : data.handle),
       name: data.displayName ? data.displayName : data.handle,
       avatar: avatarString,
-      description: data.description as string,
+      description: data.description ? data.description as string : "",
       followingCount: data.followsCount as number,
       followerCount: data.followersCount as number,
       headerImage: data.banner as string,
