@@ -142,6 +142,10 @@
     "usernameLabel": "Posting as",
     "noResults": "No results."
   },
+  "blog": {
+    "tabWoots": "Woot",
+    "tabMedia": "Media"
+  },
   "profile": {
     "profile": {
       "chooseAvatar": "Choose another avatar",

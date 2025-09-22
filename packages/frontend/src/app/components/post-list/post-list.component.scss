@@ -1,3 +1,25 @@
 .visibility-hidden {
   visibility: hidden;
 }
+
+mat-grid-tile {
+  border-radius: var(--mat-sys-corner-small);
+  background: var(--mat-sys-surface-container);
+  box-shadow: var(--mat-sys-level1);
+
+  &:hover mat-grid-tile-footer,
+  &:hover mat-grid-tile-header {
+    opacity: 1;
+  }
+}
+
+mat-grid-tile-footer,
+mat-grid-tile-header {
+  opacity: 0.5;
+  z-index: 1;
+  transition: 100ms ease-out;
+}
+
+.cw-text {
+  color: var(--mat-sys-on-surface);
+}

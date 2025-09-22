@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, Signal, signal, WritableSignal } from '@angular/core'
-import { Meta, Title } from '@angular/platform-browser'
+import { Component, computed, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core'
+import { Meta } from '@angular/platform-browser'
 import { ActivatedRoute, Router } from '@angular/router'
 import {
   faArrowUpRightFromSquare,
@@ -26,7 +26,6 @@ import { SnappyBlogData } from 'src/app/directives/blog-link/blog-link.directive
 import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 import { SettingsService } from 'src/app/services/settings.service'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
-import { GlobalData } from 'src/app/services/global-data.service'
 import { SimpleTitleService } from 'src/app/services/simple-title.service'
 
 @Component({
@@ -67,20 +66,27 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
 
   postsVisible = true
 
+  // HACK: Currently we do not have a special path for media posts so
+  // this is just filtering them manually, though it causes a lot of API calls
+  //
+  // We should replace this with a separate route when that is implemented
+  mediaFilteredPosts() {
+    return this.posts.filter((thread) => (thread.at(-1)?.medias.length ?? 0) > 0)
+  }
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly dashboardService: DashboardService,
     readonly loginService: LoginService,
-    private readonly router: Router,
     private readonly metaTagService: Meta,
     private readonly themeService: ThemeService,
     public readonly blockService: BlocksService,
-    private readonly dialog: MatDialog,
     private readonly snappy: SnappyRouter,
     private settingService: SettingsService,
     private simpleDialog: SimpleDialogService,
     private simpleTitle: SimpleTitleService
   ) {}
+
   snOnShow(): void {
     const blogDetails = this.blogDetails()
     if (blogDetails) {
@@ -99,7 +105,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   async ngOnInit() {
-    this.paramSubscription = this.activatedRoute.params.subscribe((e) => {
+    this.paramSubscription = this.activatedRoute.params.subscribe(() => {
       this.currentPage = 0
       this.blogUrl = ''
       this.avatarUrl = ''
@@ -242,9 +248,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       })
       return !allFragmentsSeen
     })
-    filteredPosts.forEach((post) => {
-      this.posts.push(post)
-    })
+    this.posts = [...this.posts, ...filteredPosts]
     this.loading.set(false)
     if (tmpPosts.length === 0) {
       this.noMorePosts = true

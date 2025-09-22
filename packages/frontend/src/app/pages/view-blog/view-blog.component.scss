@@ -1,0 +1,9 @@
+::ng-deep .mat-mdc-tab-header {
+  margin-bottom: 1rem;
+}
+
+@media screen and (min-width: 992px) {
+  ::ng-deep .mat-mdc-tab-header {
+    margin-inline: 1.5rem;
+  }
+}

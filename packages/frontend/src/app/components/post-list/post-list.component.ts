@@ -5,14 +5,23 @@ import { LoaderComponent } from '../loader/loader.component'
 import { HotkeyAction, HotkeyService } from 'src/app/services/hotkey.service'
 import { fromEvent, Subject, take, throttleTime } from 'rxjs'
 import { PostComponent } from '../post/post.component'
+import { MatGridListModule } from '@angular/material/grid-list'
+import { DatePipe } from '@angular/common'
+import { WafrnMediaModule } from '../wafrn-media/wafrn-media.module'
+import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
+import { TranslatePipe } from '@ngx-translate/core'
+import { GlobalData } from 'src/app/services/global-data.service'
+
+export type DisplayMode = 'card' | 'grid'
 
 @Component({
   selector: 'app-post-list',
-  imports: [PostModule, LoaderComponent],
+  imports: [PostModule, LoaderComponent, MatGridListModule, WafrnMediaModule, PostLinkModule, TranslatePipe, DatePipe],
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.scss'
 })
 export class PostListComponent {
+  displayMode = input<DisplayMode>('card')
   posts = input.required<ProcessedPost[][]>()
   visible = input<boolean>(true) // Disables keybinds, required due to SnappyRouter so we do not act off screen
   loading = input.required<boolean>()
@@ -27,11 +36,22 @@ export class PostListComponent {
   postIsActive = signal<boolean>(false)
 
   selectedPost: number = 0
-
   postActionSubject = new Subject<HotkeyAction>()
 
-  constructor(hotkeyService: HotkeyService) {
+  colCount: number
+
+  constructor(
+    hotkeyService: HotkeyService,
+    private globalData: GlobalData
+  ) {
     hotkeyService.hotkeySubscription.subscribe((type) => this.handleHotkeys(type))
+
+    this.colCount = this.calculateMediaColumns()
+    fromEvent(window, 'resize')
+      .pipe(throttleTime(50))
+      .subscribe(() => {
+        this.colCount = this.calculateMediaColumns()
+      })
   }
 
   ngOnInit() {
@@ -140,5 +160,12 @@ export class PostListComponent {
 
   afterPostScroll() {
     this.postIsActive.set(true)
+  }
+
+  calculateMediaColumns() {
+    if (this.globalData.mobile()) {
+      return Math.max(2, Math.floor(window.innerWidth / 200))
+    }
+    return 4
   }
 }
