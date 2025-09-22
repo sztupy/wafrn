@@ -7,19 +7,19 @@
     ></app-post>
   }
 } @else if (displayMode() === 'grid') {
-  <mat-grid-list [cols]="colCount" gutterSize="0.5rem" class="mx-2 lg:mx-4">
+  <mat-grid-list [cols]="colCount" gutterSize="0.5rem" class="lg:mx-4 media-grid">
     @for (thread of posts(); track $index) {
       @let post = thread[thread.length - 1];
       @let media = post.medias.at(0);
       @let mediaType = media?.mediaType?.split('/')?.at(0);
       @if (media && mediaType && ['image', 'video'].includes(mediaType)) {
         <mat-grid-tile>
-          <a class="h-full w-full subtle-link" [postLink]="post">
+          <a class="h-full w-full no-underline" [postLink]="post">
             <mat-grid-tile-header>
               <span>{{ post.createdAt | date: 'mediumDate' }}</span>
             </mat-grid-tile-header>
             @if (post.content_warning || post.muted_words_cw || mediaType === 'video') {
-              <div class="p-2 h-full w-full flex align-items-center justify-content-center cw-text">
+              <div class="p-2 h-full w-full flex align-items-center justify-content-center grid-alt-text">
                 @if (post.muted_words_cw) {
                   <div class="muted-words content-warning-text">
                     {{ 'post-fragment.mutedWords' | translate }} {{ post.muted_words_cw }}
@@ -37,7 +37,7 @@
               <mat-grid-tile-footer class="py-1">
                 <div class="relative w-full h-full"
                   ><span class="absolute top-0 left-0 right-0 bottom-0 line-height-2">{{
-                    post.markdownContent.slice(0, 100)
+                    post.markdownContent.slice(0, 128)
                   }}</span></div
                 >
               </mat-grid-tile-footer>
