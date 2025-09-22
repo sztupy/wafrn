@@ -34,13 +34,23 @@
               </div>
             } @else {
               <app-wafrn-media fitMode="cover" [data]="media" [altTextButtons]="false"></app-wafrn-media>
-              <mat-grid-tile-footer class="py-1">
-                <div class="relative w-full h-full"
-                  ><span class="absolute top-0 left-0 right-0 bottom-0 line-height-2">{{
-                    post.markdownContent.slice(0, 128)
-                  }}</span></div
-                >
-              </mat-grid-tile-footer>
+              @if (post.markdownContent || post.tags.length > 0) {
+                @let tags = mapTags(post.tags);
+                <mat-grid-tile-footer class="py-1">
+                  <div class="relative w-full h-full">
+                    @if (post.markdownContent) {
+                      <span class="absolute top-0 left-0 right-0 bottom-0 line-height-2 footer-content">
+                        @if (tags) {
+                          {{ tags }}<br /><br />
+                        }
+                        {{ post.markdownContent.slice(0, 128) }}</span
+                      >
+                    } @else if (tags) {
+                      <span class="absolute top-0 left-0 right-0 bottom-0 line-height-2 footer-tags">{{ tags }}</span>
+                    }
+                  </div>
+                </mat-grid-tile-footer>
+              }
             }
           </a>
         </mat-grid-tile>

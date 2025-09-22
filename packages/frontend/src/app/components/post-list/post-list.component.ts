@@ -11,6 +11,7 @@ import { WafrnMediaModule } from '../wafrn-media/wafrn-media.module'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
 import { TranslatePipe } from '@ngx-translate/core'
 import { GlobalData } from 'src/app/services/global-data.service'
+import { Tag } from 'src/app/interfaces/tag'
 
 export type DisplayMode = 'card' | 'grid'
 
@@ -167,5 +168,9 @@ export class PostListComponent {
       return Math.max(2, Math.floor(window.innerWidth / 200))
     }
     return 4
+  }
+
+  mapTags(tagList: Tag[]): string {
+    return tagList.map((tag) => `#${tag.tagName}`).join(' ')
   }
 }
