@@ -18,7 +18,7 @@
             <mat-grid-tile-header>
               <span>{{ post.createdAt | date: 'mediumDate' }}</span>
             </mat-grid-tile-header>
-            @if (post.content_warning || post.muted_words_cw || mediaType === 'video') {
+            @if (post.content_warning || post.muted_words_cw || media.NSFW || mediaType === 'video') {
               <div class="p-2 h-full w-full flex align-items-center justify-content-center grid-alt-text">
                 @if (post.muted_words_cw) {
                   <div class="muted-words content-warning-text">
@@ -26,7 +26,15 @@
                   </div>
                 }
                 @if (post.content_warning) {
-                  <div class="content-warning-text" [innerHTML]="post.content_warning"></div>
+                  <div class="content-warning-text"
+                    >{{ 'post-fragment.mediaContentWarning' | translate }}
+                    <span [innerHTML]="post.content_warning"></span
+                  ></div>
+                }
+                @if (media.NSFW) {
+                  <div class="content-warning-text">
+                    {{ 'post-fragment.mediaNsfw' | translate }}
+                  </div>
                 }
                 @if (mediaType === 'video') {
                   <div>video</div>

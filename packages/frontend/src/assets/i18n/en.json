@@ -536,6 +536,8 @@
   },
   "post-fragment": {
     "mutedWords": "Post contains muted words:",
+    "mediaContentWarning": "Post has content warning:",
+    "mediaNsfw": "Media is NSFW",
     "replyingTo": "mentions: "
   },
   "media": {
