@@ -33,7 +33,9 @@ mat-grid-tile-footer,
 mat-grid-tile-header {
   opacity: 0.5;
   z-index: 1;
-  transition: 100ms ease-out;
+  transition:
+    opacity 100ms ease-out,
+    height 100ms ease-out;
 }
 
 .grid-alt-text {
