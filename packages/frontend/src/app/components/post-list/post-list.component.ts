@@ -22,12 +22,23 @@ import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
 import { TranslatePipe } from '@ngx-translate/core'
 import { GlobalData } from 'src/app/services/global-data.service'
 import { Tag } from 'src/app/interfaces/tag'
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
+import { faPhotoFilm } from '@fortawesome/free-solid-svg-icons'
 
 export type DisplayMode = 'card' | 'grid'
 
 @Component({
   selector: 'app-post-list',
-  imports: [PostModule, LoaderComponent, MatGridListModule, WafrnMediaModule, PostLinkModule, TranslatePipe, DatePipe],
+  imports: [
+    PostModule,
+    LoaderComponent,
+    MatGridListModule,
+    WafrnMediaModule,
+    FontAwesomeModule,
+    PostLinkModule,
+    TranslatePipe,
+    DatePipe
+  ],
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.scss'
 })
@@ -54,6 +65,8 @@ export class PostListComponent {
   postActionSubject = new Subject<HotkeyAction>()
 
   colCount: number
+
+  videoIcon = faPhotoFilm
 
   constructor(
     hotkeyService: HotkeyService,

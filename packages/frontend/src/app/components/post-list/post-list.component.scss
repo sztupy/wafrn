@@ -6,6 +6,10 @@
   margin-inline: 0.5rem;
 }
 
+.video-icon {
+  color: var(--mat-sys-outline);
+}
+
 @media screen and (max-width: 992px) {
   .media-grid {
     & mat-grid-tile-footer,
