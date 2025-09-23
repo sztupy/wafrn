@@ -1,4 +1,14 @@
-import { Component, computed, ElementRef, input, output, signal, viewChild, viewChildren } from '@angular/core'
+import {
+  afterRenderEffect,
+  Component,
+  computed,
+  ElementRef,
+  input,
+  output,
+  signal,
+  viewChild,
+  viewChildren
+} from '@angular/core'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { PostModule } from '../post/post.module'
 import { LoaderComponent } from '../loader/loader.component'
@@ -28,6 +38,10 @@ export class PostListComponent {
   loading = input.required<boolean>()
   loadPosts = output<void>()
 
+  // Evil way of doing this because signals
+  visiblePreviousState: boolean = false
+  loadingPreviousState: boolean = false
+
   bottomPageElementRef = viewChild<ElementRef<HTMLElement>>('bottom')
   bottomPageElement = computed(() => this.bottomPageElementRef()?.nativeElement)
   bottomPageObserver: IntersectionObserver | undefined
@@ -53,10 +67,33 @@ export class PostListComponent {
       .subscribe(() => {
         this.colCount = this.calculateMediaColumns()
       })
+
+    // Reload if loading finished but the observer is still visible
+    afterRenderEffect(() => {
+      const becameVisible = !this.visible() && this.visiblePreviousState
+      this.visiblePreviousState = this.visible()
+      if (!this.visible() || becameVisible) return
+
+      const finishedLoading = !this.loading() && this.loadingPreviousState
+      this.loadingPreviousState = this.loading()
+      if (!finishedLoading) return
+
+      const rect = this.bottomPageElement()?.getBoundingClientRect()
+      if (!rect) return
+      const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight)
+      if (rect.bottom < 0 || rect.top - viewHeight >= 0) return
+
+      console.log('still intersecting')
+      this.loadPosts.emit()
+    })
   }
 
   ngOnInit() {
+    this.visiblePreviousState = this.visible()
+    this.loadingPreviousState = this.loading()
+
     this.bottomPageObserver = new IntersectionObserver((entries) => {
+      if (!this.visible()) return
       const entry = entries[0]
 
       // Do not send the signal if we're already loading or just loaded

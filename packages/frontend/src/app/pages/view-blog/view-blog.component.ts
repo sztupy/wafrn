@@ -27,6 +27,7 @@ import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 import { SettingsService } from 'src/app/services/settings.service'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
 import { SimpleTitleService } from 'src/app/services/simple-title.service'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
   selector: 'app-view-blog',
@@ -64,7 +65,9 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
 
   test = snappyInject(SnappyBlogData)
 
+  // evil
   postsVisible = true
+  mediaVisible = false
 
   // HACK: Currently we do not have a special path for media posts so
   // this is just filtering them manually, though it causes a lot of API calls
@@ -283,6 +286,19 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       disableEmailNotifications: false,
       hideFollows: false,
       hideProfileNotLoggedIn: false
+    }
+  }
+  handleTabChange(event: MatTabChangeEvent) {
+    console.log('tab is now', event.index)
+    switch (event.index) {
+      case 0:
+        this.postsVisible = true
+        this.mediaVisible = false
+        break
+      case 1:
+        this.postsVisible = false
+        this.mediaVisible = true
+        break
     }
   }
 }

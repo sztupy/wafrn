@@ -3,7 +3,12 @@
   <app-pagenotfound />
 } @else {
   <app-blog-header class="block" [blogDetails]="blogDetails()"></app-blog-header>
-  <mat-tab-group [dynamicHeight]="true" [preserveContent]="true" [mat-stretch-tabs]="true">
+  <mat-tab-group
+    [dynamicHeight]="true"
+    [preserveContent]="true"
+    [mat-stretch-tabs]="true"
+    (selectedTabChange)="handleTabChange($event)"
+  >
     <mat-tab [label]="'blog.tabWoots' | translate">
       <app-post-list
         [posts]="posts"
@@ -12,19 +17,19 @@
         (loadPosts)="loadPosts(currentPage)"
       ></app-post-list>
     </mat-tab>
-    <mat-tab [label]="'blog.tabMedia' | translate" bodyClass="mb-6">
+    <mat-tab [label]="'blog.tabMedia' | translate">
       <app-post-list
         displayMode="grid"
         [posts]="mediaFilteredPosts()"
-        [visible]="postsVisible"
+        [visible]="mediaVisible"
         [loading]="loading() && !noMorePosts"
         (loadPosts)="loadPosts(currentPage)"
       ></app-post-list>
     </mat-tab>
   </mat-tab-group>
 }
-<footer class="p-4 text-center wafrn-container">
-  @if (noMorePosts) {
+@if (noMorePosts) {
+  <footer class="p-4 text-center wafrn-container">
     <div>
       <p class="mb-4 text-lg">No more posts...</p>
       @if (blogDetails()?.url?.startsWith('@')) {
@@ -46,5 +51,5 @@
         </app-info-card>
       }
     </div>
-  }
-</footer>
+  </footer>
+}
