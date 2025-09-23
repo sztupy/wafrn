@@ -18,7 +18,7 @@
             <mat-grid-tile-header>
               <span>{{ post.createdAt | date: 'mediumDate' }}</span>
             </mat-grid-tile-header>
-            @if (post.content_warning || post.muted_words_cw || media.NSFW || mediaType === 'video') {
+            @if (post.content_warning || post.muted_words_cw || media.NSFW) {
               <div class="p-2 h-full w-full flex align-items-center justify-content-center grid-alt-text">
                 @if (post.muted_words_cw) {
                   <div class="muted-words content-warning-text">
@@ -36,12 +36,15 @@
                     {{ 'post-fragment.mediaNsfw' | translate }}
                   </div>
                 }
-                @if (mediaType === 'video') {
-                  <div><fa-icon [icon]="videoIcon" size="2xl" [fixedWidth]="true" class="video-icon"></fa-icon></div>
-                }
               </div>
             } @else {
-              <app-wafrn-media fitMode="cover" [data]="media" [altTextButtons]="false"></app-wafrn-media>
+              @if (mediaType === 'image') {
+                <app-wafrn-media fitMode="cover" [data]="media" [altTextButtons]="false"></app-wafrn-media>
+              } @else if (mediaType === 'video') {
+                <div class="h-full w-full flex align-items-center justify-content-center"
+                  ><fa-icon [icon]="videoIcon" size="3x" [fixedWidth]="true" class="video-icon"></fa-icon
+                ></div>
+              }
               @if (post.markdownContent || post.tags.length > 0) {
                 @let tags = mapTags(post.tags);
                 <mat-grid-tile-footer class="py-1">
@@ -53,7 +56,8 @@
                         }
                         {{ post.markdownContent.slice(0, 128) }}</span
                       >
-                    } @else if (tags) {
+                    }
+                    @if (tags) {
                       <span class="absolute top-0 left-0 right-0 bottom-0 line-height-2 footer-tags">{{ tags }}</span>
                     }
                   </div>
