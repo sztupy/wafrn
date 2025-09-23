@@ -12,14 +12,13 @@
       @let post = thread[thread.length - 1];
       @let media = post.medias.at(0);
       @let mediaType = media?.mediaType?.split('/')?.at(0);
-      <!-- Videos thumbnails not implemented yet so they are disabled -->
-      @if (media && mediaType && ['image'].includes(mediaType)) {
+      @if (media && mediaType && ['image', 'video'].includes(mediaType)) {
         <mat-grid-tile>
           <a class="h-full w-full no-underline" [postLink]="post">
             <mat-grid-tile-header>
               <span>{{ post.createdAt | date: 'mediumDate' }}</span>
             </mat-grid-tile-header>
-            @if (post.content_warning || post.muted_words_cw || media.NSFW) {
+            @if (post.content_warning || post.muted_words_cw || media.NSFW || mediaType === 'video') {
               <div class="p-2 h-full w-full flex align-items-center justify-content-center grid-alt-text">
                 @if (post.muted_words_cw) {
                   <div class="muted-words content-warning-text">
@@ -36,6 +35,9 @@
                   <div class="content-warning-text">
                     {{ 'post-fragment.mediaNsfw' | translate }}
                   </div>
+                }
+                @if (mediaType === 'video') {
+                  <div>video</div>
                 }
               </div>
             } @else {
