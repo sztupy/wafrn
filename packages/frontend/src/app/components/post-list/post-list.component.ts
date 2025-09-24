@@ -49,9 +49,10 @@ export class PostListComponent {
   loading = input.required<boolean>()
   loadPosts = output<void>()
 
-  // Evil way of doing this because signals
+  // Evil way of doing this because signals and jank
   visiblePreviousState: boolean = false
   loadingPreviousState: boolean = false
+  loadedPageCount = 0
 
   bottomPageElementRef = viewChild<ElementRef<HTMLElement>>('bottom')
   bottomPageElement = computed(() => this.bottomPageElementRef()?.nativeElement)
@@ -91,12 +92,14 @@ export class PostListComponent {
       this.loadingPreviousState = this.loading()
       if (!finishedLoading) return
 
+      this.loadedPageCount += 1
+      if (this.loadedPageCount === 1) return
+
       const rect = this.bottomPageElement()?.getBoundingClientRect()
       if (!rect) return
       const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight)
       if (rect.bottom < 0 || rect.top - viewHeight >= 0) return
 
-      console.log('still intersecting')
       this.loadPosts.emit()
     })
   }
