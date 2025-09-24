@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, Signal, signal, WritableSignal } from '@angular/core'
-import { Meta, Title } from '@angular/platform-browser'
+import { Component, computed, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core'
+import { Meta } from '@angular/platform-browser'
 import { ActivatedRoute, Router } from '@angular/router'
 import {
   faArrowUpRightFromSquare,
@@ -10,7 +10,7 @@ import {
   faReply,
   faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons'
-import { Subscription } from 'rxjs'
+import { asyncScheduler, Subject, Subscription, throttleTime } from 'rxjs'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { BlocksService } from 'src/app/services/blocks.service'
 import { DashboardService } from 'src/app/services/dashboard.service'
@@ -26,8 +26,8 @@ import { SnappyBlogData } from 'src/app/directives/blog-link/blog-link.directive
 import { SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 import { SettingsService } from 'src/app/services/settings.service'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
-import { GlobalData } from 'src/app/services/global-data.service'
 import { SimpleTitleService } from 'src/app/services/simple-title.service'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
   selector: 'app-view-blog',
@@ -47,7 +47,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   blogDetails = signal<BlogDetails | undefined>(undefined)
   paramSubscription!: Subscription
   viewedPostsIds: string[] = []
-  intersectionObserverForLoadPosts!: IntersectionObserver
 
   simpleUser?: SimplifiedUser
   useSimple = signal<boolean>(false)
@@ -65,22 +64,39 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
 
   test = snappyInject(SnappyBlogData)
 
+  // evil
   postsVisible = true
+  mediaVisible = false
+
+  // HACK: Currently we do not have a special path for media posts so
+  // this is just filtering them manually, though it causes a lot of API calls
+  //
+  // We should replace this with a separate route when that is implemented
+  mediaFilteredPosts() {
+    return this.posts.filter((thread) => (thread.at(-1)?.medias.length ?? 0) > 0)
+  }
+
+  rateLimitLoadSubject = new Subject<void>()
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly dashboardService: DashboardService,
     readonly loginService: LoginService,
-    private readonly router: Router,
     private readonly metaTagService: Meta,
     private readonly themeService: ThemeService,
     public readonly blockService: BlocksService,
-    private readonly dialog: MatDialog,
     private readonly snappy: SnappyRouter,
     private settingService: SettingsService,
     private simpleDialog: SimpleDialogService,
     private simpleTitle: SimpleTitleService
-  ) {}
+  ) {
+    this.rateLimitLoadSubject
+      .pipe(throttleTime(5000, asyncScheduler, { leading: true, trailing: true }))
+      .subscribe(() => {
+        this.loadPosts(this.currentPage)
+      })
+  }
+
   snOnShow(): void {
     const blogDetails = this.blogDetails()
     if (blogDetails) {
@@ -99,7 +115,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   }
 
   async ngOnInit() {
-    this.paramSubscription = this.activatedRoute.params.subscribe((e) => {
+    this.paramSubscription = this.activatedRoute.params.subscribe(() => {
       this.currentPage = 0
       this.blogUrl = ''
       this.avatarUrl = ''
@@ -162,15 +178,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       this.useSimple.set(false)
       this.handleTheme(blogDetails)
     }
-
-    this.intersectionObserverForLoadPosts = new IntersectionObserver(
-      (intersectionEntries: IntersectionObserverEntry[]) => {
-        if (intersectionEntries[0].isIntersecting) {
-          this.currentPage++
-          this.loadPosts(this.currentPage)
-        }
-      }
-    )
   }
 
   async handleTheme(blogDetails: BlogDetails) {
@@ -218,6 +225,11 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     this.loadPosts(this.currentPage, timeScrollStart)
   }
 
+  rateLimitLoadPosts() {
+    this.loading.set(true)
+    this.rateLimitLoadSubject.next()
+  }
+
   async loadPosts(page: number, timeScrollStart?: number) {
     this.currentPage += 1
     if (this.blogUrl === '' || !this.blogDetails()) {
@@ -242,9 +254,7 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       })
       return !allFragmentsSeen
     })
-    filteredPosts.forEach((post) => {
-      this.posts.push(post)
-    })
+    this.posts = [...this.posts, ...filteredPosts]
     this.loading.set(false)
     if (tmpPosts.length === 0) {
       this.noMorePosts = true
@@ -279,6 +289,19 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       disableEmailNotifications: false,
       hideFollows: false,
       hideProfileNotLoggedIn: false
+    }
+  }
+  handleTabChange(event: MatTabChangeEvent) {
+    console.log('tab is now', event.index)
+    switch (event.index) {
+      case 0:
+        this.postsVisible = true
+        this.mediaVisible = false
+        break
+      case 1:
+        this.postsVisible = false
+        this.mediaVisible = true
+        break
     }
   }
 }

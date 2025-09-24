@@ -7,7 +7,7 @@
   [posts]="posts"
   [visible]="snActive"
   [loading]="loadingPosts"
-  (loadPosts)="loadPosts(currentPage)"
+  (loadPosts)="rateLimitLoadPosts()"
 ></app-post-list>
 
 @if (noMorePosts) {

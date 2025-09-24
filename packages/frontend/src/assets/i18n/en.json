@@ -142,6 +142,10 @@
     "usernameLabel": "Posting as",
     "noResults": "No results."
   },
+  "blog": {
+    "tabWoots": "Woots",
+    "tabMedia": "Media"
+  },
   "profile": {
     "profile": {
       "chooseAvatar": "Choose another avatar",
@@ -532,6 +536,8 @@
   },
   "post-fragment": {
     "mutedWords": "Post contains muted words:",
+    "mediaContentWarning": "Post has content warning:",
+    "mediaNsfw": "Media is NSFW",
     "replyingTo": "mentions: "
   },
   "media": {

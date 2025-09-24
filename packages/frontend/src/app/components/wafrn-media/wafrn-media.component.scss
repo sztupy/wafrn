@@ -125,3 +125,12 @@ video {
 audio {
   width: 100%;
 }
+
+.media-container.fit-cover {
+  height: 100%;
+
+  .displayed-image {
+    height: 100%;
+    object-fit: cover;
+  }
+}

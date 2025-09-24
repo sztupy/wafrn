@@ -4,8 +4,8 @@ import { Meta, Title } from '@angular/platform-browser'
 import { NavigationSkipped, Router } from '@angular/router'
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 import { GlobalData } from 'src/app/services/global-data.service'
-import { Subscription } from 'rxjs'
-import { filter } from 'rxjs/operators'
+import { asyncScheduler, Subject, Subscription } from 'rxjs'
+import { filter, throttleTime } from 'rxjs/operators'
 import { SnappyCreate, SnappyHide, SnappyShow } from 'src/app/components/snappy/snappy-life'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { DashboardService } from 'src/app/services/dashboard.service'
@@ -36,6 +36,8 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
   scroll = 0
   hideQuotesLevel = localStorage.getItem('hideQuotes') ? parseInt(localStorage.getItem('hideQuotes') as string) : 1
 
+  rateLimitLoadSubject = new Subject<void>()
+
   // I don't think this is actually needed, but just in case!
   // Would like to have this a bit more cleanly integrated though
   snActive: boolean = false
@@ -62,7 +64,14 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
         content: 'Explore the posts in wafrn and if it looks cool join us!'
       }
     ])
+
+    this.rateLimitLoadSubject
+      .pipe(throttleTime(5000, asyncScheduler, { leading: true, trailing: true }))
+      .subscribe(() => {
+        this.loadPosts(this.currentPage)
+      })
   }
+
   snOnHide(): void {
     this.snActive = false
   }
@@ -142,7 +151,13 @@ export class DashboardComponent implements OnInit, OnDestroy, SnappyCreate, Snap
     this.loadPosts(this.currentPage)
   }
 
+  rateLimitLoadPosts() {
+    this.loadingPosts = true
+    this.rateLimitLoadSubject.next()
+  }
+
   async loadPosts(page: number) {
+    console.log('loading')
     this.currentPage += 1
     this.loadingPosts = true
     let scrollDate = new Date(this.timestamp)

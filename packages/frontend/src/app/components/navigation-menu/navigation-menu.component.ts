@@ -61,6 +61,7 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 import { ThemeService } from 'src/app/services/theme.service'
 import packageJson from '../../../../package.json'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
+import { GlobalData } from 'src/app/services/global-data.service'
 
 @Component({
   selector: 'app-navigation-menu',
@@ -164,6 +165,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   frontendVersion = packageJson.version
 
   constructor(
+    globalData: GlobalData,
     private editorService: EditorService,
     private router: Router,
     public jwtService: JwtService,
@@ -195,7 +197,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
     fromEvent(document, 'keydown').subscribe(() => (this.keyboardActive = true))
     fromEvent(document, 'click').subscribe(() => (this.keyboardActive = false))
 
-    this.mobile = signal(window.innerWidth <= 992)
+    this.mobile = globalData.mobile
     this.horizontalMenuMode = themeService.additionalStyleModes.horizontalMenu
     const topToolbarMode = themeService.additionalStyleModes.topToolbar
     this.offsetTopArea = computed(() => (this.mobile() || this.horizontalMenuMode()) && topToolbarMode())
