@@ -10,7 +10,7 @@ import {
   faReply,
   faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons'
-import { Subscription } from 'rxjs'
+import { asyncScheduler, Subject, Subscription, throttleTime } from 'rxjs'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { BlocksService } from 'src/app/services/blocks.service'
 import { DashboardService } from 'src/app/services/dashboard.service'
@@ -47,7 +47,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
   blogDetails = signal<BlogDetails | undefined>(undefined)
   paramSubscription!: Subscription
   viewedPostsIds: string[] = []
-  intersectionObserverForLoadPosts!: IntersectionObserver
 
   simpleUser?: SimplifiedUser
   useSimple = signal<boolean>(false)
@@ -77,6 +76,8 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     return this.posts.filter((thread) => (thread.at(-1)?.medias.length ?? 0) > 0)
   }
 
+  rateLimitLoadSubject = new Subject<void>()
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly dashboardService: DashboardService,
@@ -88,7 +89,13 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     private settingService: SettingsService,
     private simpleDialog: SimpleDialogService,
     private simpleTitle: SimpleTitleService
-  ) {}
+  ) {
+    this.rateLimitLoadSubject
+      .pipe(throttleTime(5000, asyncScheduler, { leading: true, trailing: true }))
+      .subscribe(() => {
+        this.loadPosts(this.currentPage)
+      })
+  }
 
   snOnShow(): void {
     const blogDetails = this.blogDetails()
@@ -171,15 +178,6 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
       this.useSimple.set(false)
       this.handleTheme(blogDetails)
     }
-
-    this.intersectionObserverForLoadPosts = new IntersectionObserver(
-      (intersectionEntries: IntersectionObserverEntry[]) => {
-        if (intersectionEntries[0].isIntersecting) {
-          this.currentPage++
-          this.loadPosts(this.currentPage)
-        }
-      }
-    )
   }
 
   async handleTheme(blogDetails: BlogDetails) {
@@ -225,6 +223,11 @@ export class ViewBlogComponent implements OnInit, OnDestroy, SnappyHide, SnappyS
     this.viewedPostsIds = []
     const timeScrollStart = this.activatedRoute.snapshot.queryParams['startScrollDate']
     this.loadPosts(this.currentPage, timeScrollStart)
+  }
+
+  rateLimitLoadPosts() {
+    this.loading.set(true)
+    this.rateLimitLoadSubject.next()
   }
 
   async loadPosts(page: number, timeScrollStart?: number) {

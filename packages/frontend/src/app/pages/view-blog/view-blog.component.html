@@ -15,7 +15,7 @@
           [posts]="posts"
           [visible]="postsVisible"
           [loading]="loading() && !noMorePosts"
-          (loadPosts)="loadPosts(currentPage)"
+          (loadPosts)="rateLimitLoadPosts()"
         >
         </app-post-list>
       </ng-template>
@@ -27,7 +27,7 @@
           [posts]="mediaFilteredPosts()"
           [visible]="mediaVisible"
           [loading]="loading() && !noMorePosts"
-          (loadPosts)="loadPosts(currentPage)"
+          (loadPosts)="rateLimitLoadPosts()"
         ></app-post-list>
       </ng-template>
     </mat-tab>
