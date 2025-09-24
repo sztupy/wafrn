@@ -12,6 +12,7 @@ import { MessageService } from './message.service'
 import { TranslateService } from '@ngx-translate/core'
 import { DashboardService } from './dashboard.service'
 import { BlogDetails } from '../interfaces/blogDetails'
+import { SimpleDialogService } from './simple-dialog.service'
 
 export type AccountData = {
   token: string
@@ -34,7 +35,8 @@ export class LoginService {
     private postsService: PostsService,
     private messagesService: MessageService,
     private translate: TranslateService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private simpleDialog: SimpleDialogService
   ) {
     this.loggedIn = new BehaviorSubject(this.jwt.tokenValid())
 
@@ -499,5 +501,22 @@ export class LoginService {
     await this.postsService.loadFollowers()
 
     window.location.reload()
+  }
+
+  async getBskyInviteCode() {
+    const confirm = await this.simpleDialog.createConfirmDialog({
+      title: 'dialog.bluesky.generateInviteCodeWarningTitle',
+      titleSuffix: '',
+      content: 'dialog.bluesky.generateInviteCodeWarning'
+    })
+    let result = ''
+    if (confirm) {
+      result = (
+        await firstValueFrom(
+          this.http.get<{ code: string }>(EnvironmentService.environment.baseUrl + '/get-bsky-invite-code')
+        )
+      ).code
+    }
+    return result
   }
 }

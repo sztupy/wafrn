@@ -1193,9 +1193,9 @@ function userRoutes(app: Application) {
         user.enableBsky = false
         await user.save()
       }
-      const inviteCodesReply: { code: string } = await axios.post(
+      const inviteCodesReply: { data: { code: string } } = await axios.post(
         'https://' + completeEnvironment.bskyPdsUrl + '/xrpc/com.atproto.server.createInviteCode',
-        { count: 1 },
+        { useCount: 1 },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -1203,9 +1203,9 @@ function userRoutes(app: Application) {
           }
         }
       )
-      user.bskyInviteCode = inviteCodesReply.code
+      user.bskyInviteCode = inviteCodesReply.data.code
       await user.save()
-      return res.send({ code: inviteCodesReply.code })
+      return res.send({ code: inviteCodesReply.data.code })
     }
   })
 
