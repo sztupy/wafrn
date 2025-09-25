@@ -2,7 +2,8 @@
   "common": {
     "commaSeparation": "Separated with commas",
     "characters": "characters",
-    "default": "Default"
+    "default": "Default",
+    "commit": "commit"
   },
   "login": {
     "title": "Log in",

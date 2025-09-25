@@ -62,6 +62,7 @@ import { ThemeService } from 'src/app/services/theme.service'
 import packageJson from '../../../../package.json'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import { GlobalData } from 'src/app/services/global-data.service'
+import buildData from '../../../buildData.json'
 
 @Component({
   selector: 'app-navigation-menu',
@@ -162,7 +163,7 @@ export class NavigationMenuComponent implements OnInit, OnDestroy {
   horizontalMenuMode: Signal<boolean>
   offsetTopArea: Signal<boolean>
 
-  frontendVersion = packageJson.version
+  buildData = buildData
 
   constructor(
     globalData: GlobalData,
