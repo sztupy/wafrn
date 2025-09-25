@@ -65,6 +65,7 @@ import axios from 'axios'
 import { getAtprotoUser } from '../atproto/utils/getAtprotoUser.js'
 import { getAllLocalUserIds } from '../utils/cacheGetters/getAllLocalUserIds.js'
 import { syncBskyFollowersAndFollowing } from '../utils/atproto/syncBskyFollowersAndFollowing.js'
+import { getAdminUser } from '../utils/getAdminAndDeletedUser.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -1225,7 +1226,7 @@ function userRoutes(app: Application) {
     const pasword = req.body.password
     if (user && bskyUrl && pasword) {
       const localIds = await getAllLocalUserIds()
-      const bskyUser = await getAtprotoUser(bskyUrl, user)
+      const bskyUser = await getAtprotoUser(bskyUrl, await getAdminUser())
       if (bskyUser && bskyUser.bskyDid && !localIds.includes(bskyUser.id)) {
         const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
           ? completeEnvironment.bskyPds
