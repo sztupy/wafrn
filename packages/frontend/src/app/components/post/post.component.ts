@@ -37,6 +37,7 @@ import { HotkeyAction } from 'src/app/services/hotkey.service'
 export class PostComponent implements OnInit, OnDestroy {
   post = input.required<ProcessedPost[]>()
   postSliced: ProcessedPost[] = []
+  startExpanded = input<boolean>(false)
 
   active = input<boolean>(false)
   showFull: boolean = false
@@ -50,9 +51,10 @@ export class PostComponent implements OnInit, OnDestroy {
         .map((block) => block.content)
         .join('').length
     }
-    return (
-      ((textLength > 2500 || !this.showFull) && !this.expanded()) || !(this.postSliced.length === this.post().length)
-    )
+    const textIsLong = textLength > 2500
+    const postIsNotExpanded = !this.expanded() && !this.startExpanded()
+    const threadHasMorePosts = this.postSliced.length !== this.post().length
+    return ((textIsLong || !this.showFull) && postIsNotExpanded) || threadHasMorePosts
   })
   postsExpanded = EnvironmentService.environment.shortenPosts
   expanded = signal(false)
