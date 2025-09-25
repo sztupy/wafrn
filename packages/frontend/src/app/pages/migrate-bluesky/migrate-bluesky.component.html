@@ -50,4 +50,8 @@
       <span class="flex gap-2">Link account</span>
     </button>
   </form>
+  @if(loading) {
+    <app-loader>
+    </app-loader>
+  }
 </mat-card>

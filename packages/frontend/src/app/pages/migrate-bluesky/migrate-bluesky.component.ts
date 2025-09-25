@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { LoaderComponent } from 'src/app/components/loader/loader.component'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { LoginService } from 'src/app/services/login.service'
 import { MessageService } from 'src/app/services/message.service'
@@ -21,7 +22,8 @@ import { MessageService } from 'src/app/services/message.service'
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    LoaderComponent
   ],
   templateUrl: './migrate-bluesky.component.html',
   styleUrl: './migrate-bluesky.component.scss'
