@@ -1,4 +1,16 @@
-import { Component, computed, EventEmitter, input, OnDestroy, OnInit, Output, signal, viewChild } from '@angular/core'
+import {
+  Component,
+  computed,
+  ElementRef,
+  EventEmitter,
+  input,
+  OnDestroy,
+  OnInit,
+  Output,
+  signal,
+  viewChild,
+  viewChildren
+} from '@angular/core'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
 import { LoginService } from 'src/app/services/login.service'
 import { PostsService } from 'src/app/services/posts.service'
@@ -27,6 +39,7 @@ import { EnvironmentService } from 'src/app/services/environment.service'
 import { Subject, Subscription } from 'rxjs'
 import { BottomReplyBarComponent } from '../bottom-reply-bar/bottom-reply-bar.component'
 import { HotkeyAction } from 'src/app/services/hotkey.service'
+import { PostFragmentComponent } from '../post-fragment/post-fragment.component'
 
 @Component({
   selector: 'app-post',
@@ -37,7 +50,6 @@ import { HotkeyAction } from 'src/app/services/hotkey.service'
 export class PostComponent implements OnInit, OnDestroy {
   post = input.required<ProcessedPost[]>()
   postSliced: ProcessedPost[] = []
-  startExpanded = input<boolean>(false)
 
   active = input<boolean>(false)
   showFull: boolean = false
@@ -47,10 +59,13 @@ export class PostComponent implements OnInit, OnDestroy {
       .join('').length
 
     const textIsLong = textLength > 2500
-    const postIsNotExpanded = !this.expanded() && !this.startExpanded()
     const threadHasMorePosts = this.postSliced.length !== this.post().length
-    return ((textIsLong || !this.showFull) && postIsNotExpanded) || threadHasMorePosts
+
+    return (((textIsLong || !this.showFull) && !this.expanded()) || threadHasMorePosts) && !this.startExpanded()
   })
+  startExpanded = input<boolean>(false)
+  scrollToPost = input<boolean>(false)
+
   postsExpanded = EnvironmentService.environment.shortenPosts
   expanded = signal(false)
   finalPosts = computed(() => this.post().slice(-5))
@@ -77,6 +92,10 @@ export class PostComponent implements OnInit, OnDestroy {
       ? this.post()[this.post().length - 2]
       : this.post()[this.post().length - 1]
   )
+
+  postElemRefs = viewChildren<PostFragmentComponent, ElementRef<HTMLElement>>(PostFragmentComponent, {
+    read: ElementRef<HTMLElement>
+  })
 
   // icons
   shareIcon = faShareNodes
@@ -144,13 +163,18 @@ export class PostComponent implements OnInit, OnDestroy {
     this.followedUsers = this.postService.followedUserIds
     this.notYetAcceptedFollows = this.postService.notYetAcceptedFollowedUsersIds
 
-    if (!this.showFull) {
+    // Do not auto-expand ultra-hell threads
+    const threadIsExtremelyLong = this.post().length - this.postsExpanded > 50
+    if (this.startExpanded() && !threadIsExtremelyLong) {
+      this.postSliced = this.post()
+    } else {
       this.postSliced = this.post().slice(0, EnvironmentService.environment.shortenPosts)
-
-      if (this.post().length === this.postSliced.length) {
-        this.showFull = true
-      }
     }
+
+    if (this.post().length === this.postSliced.length) {
+      this.showFull = true
+    }
+
     this.ribbonUser = this.uniquePost().user
     this.ribbonIcon = this.headerText() === 'replied' ? this.replyIcon : this.reblogIcon
     this.ribbonTime = this.uniquePost().createdAt
@@ -170,6 +194,12 @@ export class PostComponent implements OnInit, OnDestroy {
     })
 
     this.actionSubscription()?.subscribe((action) => this.handlePostActions(action))
+  }
+
+  ngAfterViewInit() {
+    console.log('hi', this.postElemRefs())
+    const lastPost = this.postElemRefs().at(-1)
+    lastPost?.nativeElement.scrollIntoView({ behavior: 'instant', block: 'center' })
   }
 
   isEmptyReblog() {
