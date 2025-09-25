@@ -89,6 +89,12 @@ const generateUserKeyPairQueue = new Queue('generateUserKeyPair', {
   }
 })
 
+const serviceUrl = completeEnvironment.bskyPds
+  ? completeEnvironment.bskyPds.startsWith('http')
+    ? completeEnvironment.bskyPds
+    : 'https://' + completeEnvironment.bskyPds
+  : ''
+
 const deletePostQueue = new Queue('deletePostQueue', {
   connection: completeEnvironment.bullmqConnection,
   defaultJobOptions: {
@@ -485,10 +491,6 @@ function userRoutes(app: Application) {
           // also update the bluesky password
           if (user.enableBsky && user.bskyDid) {
             await updateBskyPassword(user, req.body.password)
-            const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
-              ? completeEnvironment.bskyPds
-              : 'https://' + completeEnvironment.bskyPds
-
             const agent = new AtpAgent({
               service: serviceUrl
             })
@@ -1085,11 +1087,6 @@ function userRoutes(app: Application) {
           message: `Contact the administrator: no master invite code available`
         })
       }
-
-      const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
-        ? completeEnvironment.bskyPds
-        : 'https://' + completeEnvironment.bskyPds
-
       const agent = new AtpAgent({
         service: serviceUrl
       })
@@ -1180,7 +1177,7 @@ function userRoutes(app: Application) {
       const authString = Buffer.from('admin:' + completeEnvironment.bskyPdsAdminPassword).toString('base64')
       if (user.bskyDid) {
         const deleteAccountReply = await axios.post(
-          'https://' + completeEnvironment.bskyPdsUrl + '/xrpc/com.atproto.admin.deleteAccount',
+          serviceUrl + '/xrpc/com.atproto.admin.deleteAccount',
           { did: user.bskyDid },
           {
             headers: {
@@ -1193,19 +1190,24 @@ function userRoutes(app: Application) {
         user.enableBsky = false
         await user.save()
       }
-      const inviteCodesReply: { data: { code: string } } = await axios.post(
-        'https://' + completeEnvironment.bskyPdsUrl + '/xrpc/com.atproto.server.createInviteCode',
-        { useCount: 1 },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Basic ' + authString
+      try {
+        const inviteCodesReply: { data: { code: string } } = await axios.post(
+          serviceUrl + '/xrpc/com.atproto.server.createInviteCode',
+          { useCount: 1 },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Basic ' + authString
+            }
           }
-        }
-      )
-      user.bskyInviteCode = inviteCodesReply.data.code
-      await user.save()
-      return res.send({ code: inviteCodesReply.data.code })
+        )
+        user.bskyInviteCode = inviteCodesReply.data.code
+        await user.save()
+        return res.send({ code: inviteCodesReply.data.code })
+      } catch (error) {
+        logger.error(error)
+        return res.sendStatus(500)
+      }
     }
   })
 
@@ -1842,7 +1844,7 @@ async function createBskyPassword(user: User, agent: AtpAgent) {
 async function updateBskyPassword(user: User, password: string) {
   const authString = Buffer.from('admin:' + completeEnvironment.bskyPdsAdminPassword).toString('base64')
   return await axios.post(
-    'https://' + completeEnvironment.bskyPdsUrl + '/xrpc/com.atproto.admin.updateAccountPassword',
+    serviceUrl + '/xrpc/com.atproto.admin.updateAccountPassword',
     { did: user.bskyDid, password: password },
     {
       headers: {
