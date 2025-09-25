@@ -519,4 +519,10 @@ export class LoginService {
     }
     return result
   }
+
+  async linkBskyAccount(account: string, password: string) {
+    await firstValueFrom(
+      this.http.post(EnvironmentService.environment.baseUrl + '/connect-bsky-account', { url: account, password })
+    )
+  }
 }

@@ -1231,13 +1231,20 @@ function userRoutes(app: Application) {
         const agent = new AtpAgent({
           service: serviceUrl
         })
-        const loginBskySuccess = (
+        try {
           await agent.sessionManager.login({
             identifier: bskyUser.bskyDid as string,
             password: pasword
           })
-        ).success
-        if (loginBskySuccess) {
+        } catch (error) {
+          res.status(500)
+          return res.send({
+            success: false,
+            error: error
+          })
+        }
+
+        if (agent.did) {
           // ok now time to update stuff
           const newDid = bskyUser.bskyDid
           bskyUser.bskyDid = `INVALID_${bskyUser.bskyDid}`
@@ -1258,7 +1265,10 @@ function userRoutes(app: Application) {
           )
           await syncBskyFollowersAndFollowing(user.id)
           await forceUpdateCacheDidsAtThread()
+          return res.send({ success: true })
         }
+      } else {
+        return res.sendStatus(404)
       }
     }
   })

@@ -9,6 +9,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { EnvironmentService } from 'src/app/services/environment.service'
 import { LoginService } from 'src/app/services/login.service'
+import { MessageService } from 'src/app/services/message.service'
 
 @Component({
   selector: 'app-migrate-bluesky',
@@ -41,7 +42,8 @@ export class MigrateBlueskyComponent {
 
   constructor(
     private environmentService: EnvironmentService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private messageService: MessageService
   ) {}
 
   loadInviteCode() {
@@ -56,5 +58,28 @@ export class MigrateBlueskyComponent {
 
   async linkBskyAccount() {
     this.loading = true
+    try {
+      await this.loginService.linkBskyAccount(this.bskyForm.value.account, this.bskyForm.value.password)
+    } catch (error: any) {
+      if (error.status == 404) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Account not found, try wihout the @'
+        })
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Account found, but please do check password'
+        })
+      }
+      this.loading = false
+      console.log(error)
+      return
+    }
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Account sincronized succesfuly'
+    })
   }
 }
