@@ -42,15 +42,10 @@ export class PostComponent implements OnInit, OnDestroy {
   active = input<boolean>(false)
   showFull: boolean = false
   postCanExpand = computed(() => {
-    let textLength = 0
-    if (this.post()) {
-      textLength = this.post()
-        .map((elem) => elem.content)
-        .join('').length
-      this.post()
-        .map((block) => block.content)
-        .join('').length
-    }
+    const textLength = this.post()
+      .map((elem) => elem.content)
+      .join('').length
+
     const textIsLong = textLength > 2500
     const postIsNotExpanded = !this.expanded() && !this.startExpanded()
     const threadHasMorePosts = this.postSliced.length !== this.post().length
