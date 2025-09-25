@@ -398,6 +398,10 @@
   "dialog": {
     "confirm": "Confirm",
     "cancel": "Cancel",
+    "bluesky":  {
+      "generateInviteCodeWarningTitle": "Attention",
+      "generateInviteCodeWarning": "Generating an invite code will delete IRREVERSIBLY any associated bsky account"
+    },
     "admin": {
       "requireExtraStepsTitle": "Require extra steps from user",
       "requireExtraStepsDescription": "User will be sent an email with additional steps.",
