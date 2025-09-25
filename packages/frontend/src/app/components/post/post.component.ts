@@ -197,9 +197,12 @@ export class PostComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('hi', this.postElemRefs())
-    const lastPost = this.postElemRefs().at(-1)
-    lastPost?.nativeElement.scrollIntoView({ behavior: 'instant', block: 'center' })
+    if (this.startExpanded()) {
+      const lastPost = this.postElemRefs().at(-1)
+      requestAnimationFrame(() => {
+        lastPost?.nativeElement.scrollIntoView({ behavior: 'instant', block: 'start' })
+      })
+    }
   }
 
   isEmptyReblog() {
