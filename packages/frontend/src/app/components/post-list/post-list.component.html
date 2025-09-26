@@ -7,7 +7,7 @@
     ></app-post>
   }
 } @else if (displayMode() === 'grid') {
-  <mat-grid-list [cols]="colCount" gutterSize="0.5rem" class="lg:mx-4 media-grid wafrn-container">
+  <mat-grid-list [cols]="colCount" gutterSize="0.5rem" class="media-grid wafrn-container">
     @for (thread of posts(); track $index) {
       @let post = thread[thread.length - 1];
       @let media = post.medias.at(0);
