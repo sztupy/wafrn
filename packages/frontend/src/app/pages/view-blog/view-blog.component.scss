@@ -3,6 +3,12 @@
   max-width: 800px;
 }
 
+::ng-deep .mat-mdc-tab-body-wrapper {
+  box-sizing: content-box;
+  max-width: 800px;
+  padding-inline: 1.5rem;
+}
+
 @media screen and (min-width: 992px) {
   ::ng-deep .mat-mdc-tab-header {
     margin-inline: 1.5rem;
