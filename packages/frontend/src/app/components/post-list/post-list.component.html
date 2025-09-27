@@ -7,7 +7,7 @@
     ></app-post>
   }
 } @else if (displayMode() === 'grid') {
-  <div class="media-grid wafrn-container">
+  <div class="p-0 media-grid wafrn-container post-card">
     @for (thread of posts(); track $index) {
       @let post = thread[thread.length - 1];
       @let media = post.medias.at(0);
