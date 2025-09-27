@@ -36,12 +36,6 @@
     opacity: 1;
     height: calc(100% - 48px);
   }
-  &:hover .footer-content {
-    opacity: 1;
-  }
-  &:hover .footer-tags {
-    opacity: 0;
-  }
 }
 
 .media-grid-footer,
@@ -77,15 +71,4 @@
 
 .content-warning-text {
   color: var(--mat-sys-outline);
-}
-
-.footer-content,
-.footer-tags {
-  transition: opacity 100ms ease-out;
-}
-:has(.footer-tags) > .footer-content {
-  opacity: 0;
-}
-.footer-tags {
-  opacity: 1;
 }
