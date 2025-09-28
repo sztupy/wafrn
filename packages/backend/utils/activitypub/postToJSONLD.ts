@@ -96,8 +96,9 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
   // we remove the wafrnmedia from the post for the outside world, as they get this on the attachments
   processedContent = processedContent.replaceAll(wafrnMediaRegex, '')
   if (ask) {
-    processedContent = `<p>${getUserName(userAsker)} <a href="${completeEnvironment.frontendUrl + '/fediverse/post/' + post.id
-      }">asked</a> </p> <blockquote>${ask.question}</blockquote> ${processedContent}`
+    processedContent = `<p>${getUserName(userAsker)} <a href="${
+      completeEnvironment.frontendUrl + '/fediverse/post/' + post.id
+    }">asked</a> </p> <blockquote>${ask.question}</blockquote> ${processedContent}`
   }
   const mentions: string[] = post.mentionPost.map((elem: any) => elem.id)
   const fediMentions: fediverseTag[] = []
@@ -233,6 +234,12 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
           next: `${completeEnvironment.frontendUrl}/fediverse/post/${post.id}/replies?page=1`,
           items: []
         }
+      },
+      interactionPolicy: {
+        canQuote: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
+        canLike: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
+        canReply: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
+        canAnnounce: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] }
       }
     }
   }
@@ -295,7 +302,7 @@ function getToAndCC(
       break
     }
     default: {
-      ; (to = mentionedUsers), (cc = [])
+      ;((to = mentionedUsers), (cc = []))
     }
   }
   return {

@@ -506,4 +506,4 @@ function getPostInteractionLevels(
   }
 }
 
-export { getAtProtoThread }
+export { getAtProtoThread, getQuotedPostUri }
