@@ -14,9 +14,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
-import { ThemeManagerComponent } from './theme-manager/theme-manager.component'
 import { HotkeyManagerComponent } from './components/hotkey-manager/hotkey-manager.component'
 import buildData from '../buildData.json'
+import { ThemeManagerComponent } from './components/theme-manager/theme-manager.component'
 
 const globalRippleConfig: RippleGlobalOptions = {
   disabled: true,
