@@ -104,8 +104,9 @@ export class ParticleService {
       }
     })
   }
-  imageReact(image: string) {
+  imageReact(image: string, event?: MouseEvent, scroll?: { x: number; y: number }) {
     this.confetti({
+      location: { event, scroll },
       config: {
         shapes: ['image'],
         shapeOptions: {

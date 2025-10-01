@@ -345,7 +345,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     return ['♥️', '❤', '♥'].includes(emojiReaction)
   }
 
-  async toggleEmojiReact(emojiReaction: EmojiReaction) {
+  async toggleEmojiReact(emojiReaction: EmojiReaction, event: MouseEvent) {
     if (this.fragment().userId === this.userId) {
       this.messages.add({
         severity: 'error',
@@ -358,6 +358,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
       return
     }
 
+    const scrollPos = { x: window.scrollX, y: window.scrollY }
     this.reactionLoading.set(true)
     const reactionIsToggled = emojiReaction.users.some((usr) => usr.id === this.userId)
     if (this.isLike(emojiReaction.content)) {
@@ -390,6 +391,12 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
             summary: `Reacted with ${emojiReaction.name} successfully`,
             soundName: 'like'
           })
+
+          if (emojiReaction.img) {
+            this.particle.imageReact(emojiReaction.img, event, scrollPos)
+          } else {
+            this.particle.emojiReact(emojiReaction.content)
+          }
         }
       }
 

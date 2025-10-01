@@ -118,7 +118,7 @@
             <button
               [disabled]="userCannotReact() || fragmentType() === 'quote'"
               [class.reacted]="emoji.includesMe"
-              (click)="toggleEmojiReact(emoji)"
+              (click)="toggleEmojiReact(emoji, $event)"
               mat-raised-button
               matTooltipTouchGestures="on"
               class="emojireact-button"
