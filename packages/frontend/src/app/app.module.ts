@@ -16,6 +16,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { ThemeManagerComponent } from './theme-manager/theme-manager.component'
 import { HotkeyManagerComponent } from './components/hotkey-manager/hotkey-manager.component'
+import buildData from '../buildData.json'
 
 const globalRippleConfig: RippleGlobalOptions = {
   disabled: true,
@@ -63,5 +64,5 @@ const globalRippleConfig: RippleGlobalOptions = {
 export class AppModule {}
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-  return new TranslateHttpLoader(http, '/assets/i18n/', '.json')
+  return new TranslateHttpLoader(http, '/assets/i18n/', `.json?v=${buildData.git.fullHash}`)
 }
