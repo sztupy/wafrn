@@ -371,7 +371,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
           summary: 'You successfully liked this woot',
           soundName: 'like'
         })
-        this.particle.like()
+        this.particle.like(event, scrollPos)
       }
     } else {
       let response = false
