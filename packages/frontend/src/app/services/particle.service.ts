@@ -31,7 +31,6 @@ export class ParticleService {
             particleCount: 10,
             spread: 360,
             startVelocity: 20,
-            gravity: 2,
             origin: {
               x: normalizedX,
               y: normalizedY
@@ -48,27 +47,26 @@ export class ParticleService {
     // No location = generic confetti
     const conf = Object.assign(
       {
-        particleCount: 8,
+        particleCount: 10,
         spread: 60,
         startVelocity: 60,
-        gravity: 2,
         scalar: 8
       },
       opts.config
     )
     confetti({
-      angle: 30,
+      angle: 45,
       origin: {
         x: 0,
-        y: 0.66
+        y: 0.8
       },
       ...conf
     })
     confetti({
-      angle: 180 - 30,
+      angle: 180 - 45,
       origin: {
         x: 1,
-        y: 0.66
+        y: 0.8
       },
       ...conf
     })
@@ -112,7 +110,7 @@ export class ParticleService {
         shapeOptions: {
           image: [{ src: image, width: 32, height: 32 }]
         },
-        scalar: 6
+        scalar: 5
       }
     })
   }
