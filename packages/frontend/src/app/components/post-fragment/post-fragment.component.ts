@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { Component, computed, ElementRef, input, OnChanges, OnDestroy, output, signal, viewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
-import { RouterModule } from '@angular/router'
+import { Router, RouterModule } from '@angular/router'
 import { ProcessedPost } from '../../interfaces/processed-post'
 import { SimplifiedUser } from '../../interfaces/simplified-user'
 import { PollModule } from '../poll/poll.module'
@@ -25,6 +25,8 @@ import { TranslateModule } from '@ngx-translate/core'
 import { Subscription } from 'rxjs'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
 import Viewer from 'viewerjs'
+
+type FragmentType = 'post' | 'quote'
 
 type EmojiReaction = {
   id: string
@@ -59,6 +61,8 @@ type EmojiReaction = {
 export class PostFragmentComponent implements OnChanges, OnDestroy {
   fragment = input.required<ProcessedPost>()
   forceExpand = output<boolean>()
+  fragmentType = input<FragmentType>('post')
+
   showSensitiveContent = signal<boolean>(false)
   emojiCollection = signal<EmojiReaction[]>([])
   isLocalUser = true
@@ -151,7 +155,8 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     private postService: PostsService,
     private loginService: LoginService,
     private jwtService: JwtService,
-    private readonly messages: MessageService
+    private readonly messages: MessageService,
+    private router: Router
   ) {
     this.userId = this.loginService.getLoggedUserUUID()
   }

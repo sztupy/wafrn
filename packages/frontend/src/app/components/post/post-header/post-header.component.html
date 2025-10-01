@@ -1,6 +1,6 @@
 @let fragment = this.fragment();
 @let loggedIn = this.loginService.loggedIn.value;
-<div class="flex justify-content-between mb-3">
+<div class="flex gap-3 justify-content-between mb-3">
   <div class="flex flex-column gap-2 min-w-0">
     <div class="flex gap-2 min-w-0">
       <div class="flex gap-2 mr-auto min-w-0">
@@ -44,11 +44,17 @@
       </div>
     }
   </div>
-  <div>
-    <div class="flex gap-2 align-items-center">
-      @if (!simplified()) {
-        <app-post-actions [post]="fragment"></app-post-actions>
-      }
-    </div>
+  <div class="flex gap-3 h-full align-items-center">
+    @if (!simplified()) {
+      <app-post-actions [post]="fragment"></app-post-actions>
+    } @else {
+      <a
+        [href]="'/fediverse/post/' + fragment.id"
+        [routerLink]="'/fediverse/post/' + fragment.id"
+        mat-button
+        class="subtle-link text-sm quote-view-original"
+        >View post</a
+      >
+    }
   </div>
 </div>
