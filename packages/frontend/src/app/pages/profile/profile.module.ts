@@ -56,6 +56,11 @@ import { MyServerBlocksComponent } from './my-server-blocks/my-server-blocks.com
           import('../../pages/enable-bluesky/enable-bluesky.component').then((c) => c.EnableBlueskyComponent)
       },
       {
+        path: 'migrate-bluesky',
+        loadComponent: () =>
+          import('../../pages/migrate-bluesky/migrate-bluesky.component').then((c) => c.MigrateBlueskyComponent)
+      },
+      {
         path: 'manageFollowedHashtags',
         loadComponent: () =>
           import('../../pages/manage-followed-hashtags/manage-followed-hashtags.component').then(
