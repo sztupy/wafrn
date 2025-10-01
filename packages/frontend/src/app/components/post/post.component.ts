@@ -199,8 +199,12 @@ export class PostComponent implements OnInit, OnDestroy {
   ngAfterViewInit() {
     if (this.startExpanded()) {
       const lastPost = this.postElemRefs().at(-1)
-      requestAnimationFrame(() => {
-        lastPost?.nativeElement.scrollIntoView({ behavior: 'instant', block: 'start' })
+
+      // Scroll as component is loaded and queue up another scroll once the page is fully loaded (evil)
+      // Causes mild screen flash
+      lastPost?.nativeElement.scrollIntoView({ behavior: 'instant', block: 'center' })
+      setTimeout(() => {
+        lastPost?.nativeElement.scrollIntoView({ behavior: 'instant', block: 'center' })
       })
     }
   }
