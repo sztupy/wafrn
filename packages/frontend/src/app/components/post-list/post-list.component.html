@@ -7,17 +7,17 @@
     ></app-post>
   }
 } @else if (displayMode() === 'grid') {
-  <mat-grid-list [cols]="colCount" gutterSize="0.5rem" class="lg:mx-4 media-grid">
+  <div class="p-0 media-grid wafrn-container post-card">
     @for (thread of posts(); track $index) {
       @let post = thread[thread.length - 1];
       @let media = post.medias.at(0);
       @let mediaType = media?.mediaType?.split('/')?.at(0);
       @if (media && mediaType && ['image', 'video'].includes(mediaType)) {
-        <mat-grid-tile>
+        <div class="media-grid-tile">
           <a class="h-full w-full no-underline" [postLink]="post">
-            <mat-grid-tile-header>
+            <div class="media-grid-header">
               <span>{{ post.createdAt | date: 'mediumDate' }}</span>
-            </mat-grid-tile-header>
+            </div>
             @if (post.content_warning || post.muted_words_cw || media.NSFW) {
               <div class="p-2 h-full w-full flex align-items-center justify-content-center grid-alt-text">
                 @if (post.muted_words_cw) {
@@ -47,7 +47,7 @@
               }
               @if (post.markdownContent || post.tags.length > 0) {
                 @let tags = mapTags(post.tags);
-                <mat-grid-tile-footer class="py-1">
+                <div class="media-grid-footer">
                   <div class="relative w-full h-full">
                     @if (post.markdownContent) {
                       <span class="absolute top-0 left-0 right-0 bottom-0 line-height-2 footer-content">
@@ -61,14 +61,14 @@
                       <span class="absolute top-0 left-0 right-0 bottom-0 line-height-2 footer-tags">{{ tags }}</span>
                     }
                   </div>
-                </mat-grid-tile-footer>
+                </div>
               }
             }
           </a>
-        </mat-grid-tile>
+        </div>
       }
     }
-  </mat-grid-list>
+  </div>
 }
 @if (loading()) {
   <app-loader>posts</app-loader>
