@@ -28,7 +28,7 @@ export class ParticleService {
       if (updatedX >= 0 && updatedY >= 0) {
         const confettiConfig = Object.assign(
           {
-            particleCount: 15,
+            particleCount: 10,
             spread: 360,
             startVelocity: 20,
             gravity: 2,
@@ -48,7 +48,7 @@ export class ParticleService {
     // No location = generic confetti
     const conf = Object.assign(
       {
-        particleCount: 30,
+        particleCount: 8,
         spread: 60,
         startVelocity: 60,
         gravity: 2,
