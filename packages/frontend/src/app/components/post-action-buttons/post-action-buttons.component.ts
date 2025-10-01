@@ -31,6 +31,7 @@ import { DeletePostService } from 'src/app/services/delete-post.service'
 import { EditorService } from 'src/app/services/editor.service'
 import { LoginService } from 'src/app/services/login.service'
 import { MessageService } from 'src/app/services/message.service'
+import { ParticleService } from 'src/app/services/particle.service'
 import { PostsService } from 'src/app/services/posts.service'
 import { SettingKey, SettingListItem, SettingsService } from 'src/app/services/settings.service'
 
@@ -85,7 +86,8 @@ export class PostActionButtonsComponent implements OnChanges {
     private readonly deletePostService: DeletePostService,
     private readonly messages: MessageService,
     private readonly editor: EditorService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private particle: ParticleService
   ) {
     if (loginService.loggedIn.value) {
       this.myId = loginService.getLoggedUserUUID()
@@ -157,18 +159,18 @@ export class PostActionButtonsComponent implements OnChanges {
     }
   }
 
-  async likePost() {
+  async likePost(event?: MouseEvent) {
+    const scrollPos = { x: window.scrollX, y: window.scrollY }
     this.loadingAction = true
     if (await this.postService.likePost(this.fragment().id)) {
       this.fragment().userLikesPostRelations.push(this.myId)
-      const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
         summary: 'messages.likePostSuccess',
         translate: true,
-        confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
         soundName: 'like'
       })
+      this.particle.like(event, scrollPos)
     } else {
       this.messages.add({
         severity: 'error',
@@ -208,17 +210,17 @@ export class PostActionButtonsComponent implements OnChanges {
     }
   }
 
-  async bookmarkPost() {
+  async bookmarkPost(event?: MouseEvent) {
+    const scrollPos = { x: window.scrollX, y: window.scrollY }
     this.loadingAction = true
     if (await this.postService.bookmarkPost(this.fragment().id)) {
       this.fragment().bookmarkers.push(this.myId)
-      const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
         summary: 'messages.bookmarkPostSuccess',
-        translate: true,
-        confettiEmojis: disableConfetti ? [] : ['💾']
+        translate: true
       })
+      this.particle.emojiReact('💾', event, scrollPos)
       this.bookmarked.set(true)
     } else {
       this.messages.add({
@@ -269,16 +271,14 @@ export class PostActionButtonsComponent implements OnChanges {
         media: []
       })
       if (response) {
-        const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
-
         this.myRewootsIncludePost = true
         this.messages.add({
           severity: 'success',
           summary: 'messages.rewootPostSuccess',
           translate: true,
-          confettiEmojis: disableConfetti ? [] : ['🔁'],
           soundName: 'sendWoot'
         })
+        this.particle.emojiReact('🔁')
       }
     } else {
       this.messages.add({

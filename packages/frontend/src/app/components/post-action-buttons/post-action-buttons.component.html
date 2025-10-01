@@ -67,7 +67,7 @@
               <button
                 aria-label="Bookmark woot"
                 mat-button
-                (click)="bookmarkPost()"
+                (click)="bookmarkPost($event)"
                 class="cursor-pointer mat-circle-button unlike-icon"
                 [disabled]="loadingAction"
               >
@@ -92,7 +92,7 @@
                   aria-label="Like woot"
                   [disabled]="!fragment.canLike"
                   mat-button
-                  (click)="likePost()"
+                  (click)="likePost($event)"
                   class="cursor-pointer mat-circle-button like-icon"
                   [disabled]="loadingAction"
                 >

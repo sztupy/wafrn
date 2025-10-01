@@ -25,6 +25,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { Subscription } from 'rxjs'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
 import Viewer from 'viewerjs'
+import { ParticleService } from 'src/app/services/particle.service'
 
 type EmojiReaction = {
   id: string
@@ -151,7 +152,8 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     private postService: PostsService,
     private loginService: LoginService,
     private jwtService: JwtService,
-    private readonly messages: MessageService
+    private readonly messages: MessageService,
+    private particle: ParticleService
   ) {
     this.userId = this.loginService.getLoggedUserUUID()
   }
@@ -359,13 +361,12 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
         await this.postService.unlikePost(postId)
       } else {
         await this.postService.likePost(postId)
-        const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
         this.messages.add({
           severity: 'success',
           summary: 'You successfully liked this woot',
-          confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
           soundName: 'like'
         })
+        this.particle.like()
       }
     } else {
       let response = false
