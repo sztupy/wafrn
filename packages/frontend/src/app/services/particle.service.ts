@@ -110,8 +110,9 @@ export class ParticleService {
       config: {
         shapes: ['image'],
         shapeOptions: {
-          image: [{ src: image, width: 64, height: 64 }]
-        }
+          image: [{ src: image, width: 32, height: 32 }]
+        },
+        scalar: 6
       }
     })
   }
