@@ -7,7 +7,7 @@ import { getAdminAtprotoSession } from '../../utils/atproto/getAdminAtprotoSessi
 
 async function getAtProtoSession(userInput?: User, force?: boolean): Promise<AtpAgent> {
   let user = userInput ? ((await User.scope('full').findByPk(userInput.id)) as User) : undefined
-  if (force && user) {
+  if (true && force && user) {
     await redisCache.del('bskySession:' + user.id)
   }
   if (!force && user && user.url == completeEnvironment.adminUser) {
