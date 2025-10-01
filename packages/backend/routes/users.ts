@@ -62,6 +62,10 @@ import { getFollowedHashtags } from '../utils/getFollowedHashtags.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
 import { sendUpdateProfile } from '../utils/activitypub/sendUpdateProfile.js'
 import axios from 'axios'
+import { getAtprotoUser } from '../atproto/utils/getAtprotoUser.js'
+import { getAllLocalUserIds } from '../utils/cacheGetters/getAllLocalUserIds.js'
+import { syncBskyFollowersAndFollowing } from '../utils/atproto/syncBskyFollowersAndFollowing.js'
+import { getAdminUser } from '../utils/getAdminAndDeletedUser.js'
 
 const markdownConverter = new showdown.Converter({
   simplifiedAutoLink: true,
@@ -85,6 +89,12 @@ const generateUserKeyPairQueue = new Queue('generateUserKeyPair', {
     removeOnFail: true
   }
 })
+
+const serviceUrl = completeEnvironment.bskyPds
+  ? completeEnvironment.bskyPds.startsWith('http')
+    ? completeEnvironment.bskyPds
+    : 'https://' + completeEnvironment.bskyPds
+  : ''
 
 const deletePostQueue = new Queue('deletePostQueue', {
   connection: completeEnvironment.bullmqConnection,
@@ -162,7 +172,7 @@ function userRoutes(app: Application) {
             }
 
             const userWithEmail = User.create(user)
-            
+
             const instanceUrl = completeEnvironment.instanceUrl.startsWith('http')
               ? completeEnvironment.instanceUrl
               : `https://${completeEnvironment.instanceUrl}`
@@ -172,7 +182,7 @@ function userRoutes(app: Application) {
             } catch (err) {
               console.error('cannot use `completeEnvironment.instanceUrl` in `new URL` constructor')
             }
-            
+
             const email = req.body.email.toLowerCase()
             const activationLink = `${instanceUrl}/activate/${encodeURIComponent(email)}/${activationCode}`
             const mailHeader = `Welcome to ${instanceHost}, please verify your email!`
@@ -482,10 +492,6 @@ function userRoutes(app: Application) {
           // also update the bluesky password
           if (user.enableBsky && user.bskyDid) {
             await updateBskyPassword(user, req.body.password)
-            const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
-              ? completeEnvironment.bskyPds
-              : 'https://' + completeEnvironment.bskyPds
-
             const agent = new AtpAgent({
               service: serviceUrl
             })
@@ -1082,11 +1088,6 @@ function userRoutes(app: Application) {
           message: `Contact the administrator: no master invite code available`
         })
       }
-
-      const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
-        ? completeEnvironment.bskyPds
-        : 'https://' + completeEnvironment.bskyPds
-
       const agent = new AtpAgent({
         service: serviceUrl
       })
@@ -1137,6 +1138,141 @@ function userRoutes(app: Application) {
         message: `Error activating bluesky for user ${user.url}`,
         error: error
       })
+    }
+  })
+
+  app.get('/api/get-bsky-invite-code', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
+    if (!completeEnvironment.enableBsky) {
+      return res.status(500).send({
+        error: true,
+        message: `This instance does not have bluesky enabled at this moment`
+      })
+    }
+
+    const userId = req.jwtData?.userId as string
+
+    let user: User | null = null
+    try {
+      user = await User.scope('full').findByPk(userId)
+    } catch (error) {
+      logger.error({
+        message: `Error finding current user`,
+        error: error
+      })
+      return res.status(500).send({
+        error: true,
+        message: `Error finding current user`
+      })
+    }
+
+    if (!user) {
+      return res.status(404).send({
+        error: true,
+        message: `Current user not found in database`
+      })
+    }
+
+    if (user.bskyInviteCode) {
+      return res.send({ code: user.bskyInviteCode })
+    } else {
+      const authString = Buffer.from('admin:' + completeEnvironment.bskyPdsAdminPassword).toString('base64')
+      if (user.bskyDid) {
+        const deleteAccountReply = await axios.post(
+          serviceUrl + '/xrpc/com.atproto.admin.deleteAccount',
+          { did: user.bskyDid },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Basic ' + authString
+            }
+          }
+        )
+        user.bskyDid = ''
+        user.enableBsky = false
+        await user.save()
+      }
+      try {
+        const inviteCodesReply: { data: { code: string } } = await axios.post(
+          serviceUrl + '/xrpc/com.atproto.server.createInviteCode',
+          { useCount: 1 },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Basic ' + authString
+            }
+          }
+        )
+        user.bskyInviteCode = inviteCodesReply.data.code
+        await user.save()
+        return res.send({ code: inviteCodesReply.data.code })
+      } catch (error) {
+        logger.error(error)
+        return res.sendStatus(500)
+      }
+    }
+  })
+
+  app.post('/api/connect-bsky-account', authenticateToken, async (req: AuthorizedRequest, res: Response) => {
+    if (!completeEnvironment.enableBsky) {
+      return res.status(500).send({
+        error: true,
+        message: `This instance does not have bluesky enabled at this moment`
+      })
+    }
+
+    const userId = req.jwtData?.userId as string
+    const user = await User.scope('full').findByPk(userId)
+    const bskyUrl = req.body.url
+    const pasword = req.body.password
+    if (user && bskyUrl && pasword) {
+      const localIds = await getAllLocalUserIds()
+      const bskyUser = await getAtprotoUser(bskyUrl, await getAdminUser())
+      if (bskyUser && bskyUser.bskyDid && !localIds.includes(bskyUser.id)) {
+        const serviceUrl = completeEnvironment.bskyPds.startsWith('http')
+          ? completeEnvironment.bskyPds
+          : 'https://' + completeEnvironment.bskyPds
+        const agent = new AtpAgent({
+          service: serviceUrl
+        })
+        try {
+          await agent.sessionManager.login({
+            identifier: bskyUser.bskyDid as string,
+            password: pasword
+          })
+        } catch (error) {
+          res.status(500)
+          return res.send({
+            success: false,
+            error: error
+          })
+        }
+
+        if (agent.did) {
+          // ok now time to update stuff
+          const newDid = bskyUser.bskyDid
+          bskyUser.bskyDid = `INVALID_${bskyUser.bskyDid}`
+          await bskyUser.save()
+          user.bskyDid = newDid
+          user.enableBsky = true
+          user.bskyAppPassword = pasword
+          await user.save()
+          await Post.update(
+            {
+              userId: user.id
+            },
+            {
+              where: {
+                userId: bskyUser.id
+              }
+            }
+          )
+          await syncBskyFollowersAndFollowing(user.id)
+          await forceUpdateCacheDidsAtThread()
+          return res.send({ success: true })
+        }
+      } else {
+        return res.sendStatus(404)
+      }
     }
   })
 
@@ -1664,7 +1800,7 @@ async function createBskyAccount({
   try {
     // the createAccount method will also login as the newly created user.
     const accountCreation = await agent.createAccount({
-      email: `${user.url}@${completeEnvironment.instanceUrl}`,
+      email: user.email as string,
       handle: `${sanitizedUrl}.${pdsHandleUrl}`,
       password,
       inviteCode
@@ -1709,7 +1845,7 @@ async function createBskyPassword(user: User, agent: AtpAgent) {
 async function updateBskyPassword(user: User, password: string) {
   const authString = Buffer.from('admin:' + completeEnvironment.bskyPdsAdminPassword).toString('base64')
   return await axios.post(
-    'https://' + completeEnvironment.bskyPdsUrl + '/xrpc/com.atproto.admin.updateAccountPassword',
+    serviceUrl + '/xrpc/com.atproto.admin.updateAccountPassword',
     { did: user.bskyDid, password: password },
     {
       headers: {
