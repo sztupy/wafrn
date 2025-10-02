@@ -16,7 +16,10 @@ export class ParticleService {
     if (this.settings.values.disableConfetti === true) return
 
     // Attempt to place the confetti on the clicked location
-    if (opts?.location?.event !== undefined && opts?.location?.scroll !== undefined) {
+    if (opts?.location?.event !== undefined) {
+      // If we don't get scroll data then use the current scroll (no modifier)
+      opts.location.scroll = opts.location.scroll ?? { x: window.scrollX, y: window.scrollY }
+
       // Locational confetti
       const updatedX = opts.location.scroll.x - window.scrollX + opts.location.event.x
       const updatedY = opts.location.scroll.y - window.scrollY + opts.location.event.y
@@ -28,13 +31,14 @@ export class ParticleService {
       if (updatedX >= 0 && updatedY >= 0) {
         const confettiConfig = Object.assign(
           {
-            particleCount: 10,
+            particleCount: Math.floor(10 * Number(this.settings.values.confettiMultiplier ?? 1)),
             spread: 360,
             startVelocity: 20,
             origin: {
               x: normalizedX,
               y: normalizedY
             },
+            flat: this.settings.values.flatConfetti ?? false,
             scalar: 8
           },
           opts.config
@@ -47,9 +51,10 @@ export class ParticleService {
     // No location = generic confetti
     const conf = Object.assign(
       {
-        particleCount: 10,
+        particleCount: Math.floor(10 * Number(this.settings.values.confettiMultiplier ?? 1)),
         spread: 60,
         startVelocity: 60,
+        flat: this.settings.values.flatConfetti ?? false,
         scalar: 8
       },
       opts.config

@@ -1,0 +1,34 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>{{ 'settings.confettiOptions' | translate }}</mat-panel-title>
+  </mat-expansion-panel-header>
+  <div class="mb-3">
+    <mat-form-field class="w-full mat-form-field-no-padding">
+      <mat-label>{{ data.confettiMultiplier.translationKey | translate }}</mat-label>
+      <input
+        matNativeControl
+        placeholder="1"
+        type="number"
+        min="0"
+        [value]="values.confettiMultiplier"
+        (input)="updateMultiplider($event)"
+        spellcheck="false"
+      />
+    </mat-form-field>
+    <div class="setting-description">{{ data.confettiMultiplier.translationDescriptionKey ?? '' | translate }}</div>
+  </div>
+  <app-setting-entry [setting]="data.flatConfetti"></app-setting-entry>
+  <p>{{ 'settings.confettiTestAreaDescription' | translate }}</p>
+  <div class="flex gap-2 align-items-center">
+    <mat-form-field class="block mat-form-field-no-padding">
+      <mat-label>{{ 'settings.confettiType' | translate }}</mat-label>
+      <mat-select [(value)]="confettiType" (selectionChange)="updateTypeSelect($event)">
+        @for (variant of confettiTypeData | KeyValue; track $index) {
+          <mat-option [value]="variant.key">{{ variant.value | translate }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button mat-flat-button (click)="showConfetti($event)">{{ 'settings.confettiTestLocational' | translate }}</button>
+    <button mat-flat-button (click)="showConfetti()">{{ 'settings.confettiTestGeneric' | translate }}</button>
+  </div>
+</mat-expansion-panel>

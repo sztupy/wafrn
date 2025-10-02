@@ -394,12 +394,21 @@
       "delete": "Delete"
     },
     "postActionsButtonBarOrder": "Post actions menu button icon order",
-    "postActionsButtonBarOrderDescription": "Items show in the post actions menu. Some items are shown depending on you are the poster."
+    "postActionsButtonBarOrderDescription": "Items show in the post actions menu. Some items are shown depending on you are the poster.",
+    "confettiOptions": "Confetti Options",
+    "confettiMultiplier": "Confetti multiplier",
+    "confettiMultiplierDescription": "Multiplies confetti amount. High amounts can freeze your browser!",
+    "flatConfetti": "Flat confetti",
+    "flatConfettiDescription": "Disables the 3d effect of confetti",
+    "confettiTestAreaDescription": "Test confetti of various interactions",
+    "confettiType": "Interaction type",
+    "confettiTestLocational": "Mouse",
+    "confettiTestGeneric": "Sides"
   },
   "dialog": {
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "bluesky":  {
+    "bluesky": {
       "generateInviteCodeWarningTitle": "Attention",
       "generateInviteCodeWarning": "Generating an invite code will delete IRREVERSIBLY any associated bsky account"
     },
