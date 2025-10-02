@@ -2,6 +2,9 @@
   <mat-expansion-panel-header>
     <mat-panel-title>{{ 'settings.confettiOptions' | translate }}</mat-panel-title>
   </mat-expansion-panel-header>
+  <app-setting-entry [setting]="data.disableConfetti"></app-setting-entry>
+  <app-setting-entry [setting]="data.enableConfettiReceivingLike"></app-setting-entry>
+  <hr />
   <div class="mb-3">
     <mat-form-field class="w-full mat-form-field-no-padding">
       <mat-label>{{ data.confettiMultiplier.translationKey | translate }}</mat-label>
@@ -18,6 +21,7 @@
     <div class="setting-description">{{ data.confettiMultiplier.translationDescriptionKey ?? '' | translate }}</div>
   </div>
   <app-setting-entry [setting]="data.flatConfetti"></app-setting-entry>
+  <hr />
   <p>{{ 'settings.confettiTestAreaDescription' | translate }}</p>
   <div class="flex gap-2 align-items-center">
     <mat-form-field class="block mat-form-field-no-padding">

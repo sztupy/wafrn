@@ -632,8 +632,6 @@ export class SettingsService {
         { type: 'key', value: 'forceClassicMediaView' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.animationsAndSounds' },
-        { type: 'key', value: 'disableConfetti' },
-        { type: 'key', value: 'enableConfettiReceivingLike' },
         {
           type: 'component',
           value: new ComponentPortal(SettingConfettiComponent)
