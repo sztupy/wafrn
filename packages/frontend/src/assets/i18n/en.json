@@ -399,7 +399,7 @@
     "confettiMultiplier": "Confetti multiplier",
     "confettiMultiplierDescription": "Multiplies confetti amount. High amounts can freeze your browser!",
     "flatConfetti": "Flat confetti",
-    "flatConfettiDescription": "Disables the 3d effect of confetti",
+    "flatConfettiDescription": "Disables the 3D effect of confetti",
     "confettiTestAreaDescription": "Test confetti of various interactions",
     "confettiType": "Interaction type",
     "confettiTestLocational": "Mouse",
