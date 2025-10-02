@@ -15,7 +15,7 @@ ARG FRONTEND_DESCRIPTION
 ARG CACHE_HOST
 ARG BACKEND_HOST
 
-RUN apk add --no-cache perl curl tini bash
+RUN apk add --no-cache perl curl tini bash git
 
 WORKDIR /app/packages/frontend
 
