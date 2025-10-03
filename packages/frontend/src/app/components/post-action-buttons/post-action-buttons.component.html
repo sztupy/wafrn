@@ -33,12 +33,24 @@
                 aria-label="Rewoot"
                 [disabled]="!fragment.canReblog"
                 mat-button
-                (click)="quickReblog()"
-                class="cursor-pointer mat-circle-button rewoot-icon"
+                (mousedown)="startReblog()"
+                (mouseup)="endReblog()"
+                class="relative mat-circle-button rewoot-icon"
                 [disabled]="loadingAction"
               >
                 <fa-icon size="lg" [icon]="quickReblogIcon" matTooltip="Rewoot"></fa-icon>
+                <button #reblogMenuOpener [mat-menu-trigger-for]="reblogMenu" class="menu-toggle-hidden"></button>
               </button>
+              <mat-menu #reblogMenu="matMenu">
+                @for (account of accountList(); track $index) {
+                  <button mat-menu-item (click)="quickReblog($index)">
+                    <div class="user-info"
+                      ><img [src]="toAvatarUrl(account.blog)" class="user-avatar" />
+                      <span [innerHTML]="account.blog.url" class="user-name"></span
+                    ></div>
+                  </button>
+                }
+              </mat-menu>
             }
           }
           @case ('reply') {

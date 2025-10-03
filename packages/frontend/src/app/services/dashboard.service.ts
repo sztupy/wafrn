@@ -204,7 +204,8 @@ export class DashboardService {
     })
   }
 
-  public getAvatarUrl(blog: BlogDetails) {
+  public getAvatarUrl(blog?: BlogDetails) {
+    if (!blog) return ''
     return blog.url.startsWith('@')
       ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.avatar)
       : EnvironmentService.environment.externalCacheurl +
