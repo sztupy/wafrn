@@ -402,8 +402,8 @@
     "flatConfettiDescription": "Disables the 3D effect of confetti.",
     "confettiTestAreaDescription": "Test confetti of various interactions:",
     "confettiType": "Interaction type",
-    "confettiTestLocational": "Where clicked",
-    "confettiTestGeneric": "Screen edges"
+    "confettiTestLocational": "Under Mouse",
+    "confettiTestGeneric": "Screen sides"
   },
   "dialog": {
     "confirm": "Confirm",
