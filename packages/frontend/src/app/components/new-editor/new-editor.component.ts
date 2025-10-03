@@ -75,6 +75,7 @@ import { Router } from '@angular/router'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import Fuse from 'fuse.js'
+import { ParticleService } from 'src/app/services/particle.service'
 
 type EmojiSuggestion = {
   img: string
@@ -226,7 +227,8 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     public postService: PostsService,
     private jwtService: JwtService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private particle: ParticleService
   ) {
     // Current account is assumed to be the logged in user
     console.log('will post as', loginService.accountList().at(this.posterAccount()))
@@ -571,9 +573,9 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.messages.add({
         severity: 'success',
         summary: 'Your woot has been published!',
-        confettiEmojis: disableConfetti ? [] : ['✏️', '🖍️', '✒️', '🖊️'],
         soundName: 'sendWoot'
       })
+      this.particle.emojiReact(['✏️', '🖍️', '✒️', '🖊️'])
       this.postCreatorForm.value.content = ''
       this.uploadedMedias = []
       this.tags = ''

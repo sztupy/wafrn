@@ -11,6 +11,7 @@ import { MessageService } from 'src/app/services/message.service'
 import { InfoCardComponent } from '../info-card/info-card.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatCheckboxModule } from '@angular/material/checkbox'
+import { ParticleService } from 'src/app/services/particle.service'
 
 @Component({
   selector: 'app-ask-dialog-content',
@@ -36,7 +37,8 @@ export class AskDialogContentComponent implements OnInit {
       details: BlogDetails
     },
     private blogService: BlogService,
-    protected loginService: LoginService
+    protected loginService: LoginService,
+    private particle: ParticleService
   ) {
     this.askForm.controls['anonymous'].patchValue(!this.loginService.loggedIn.value)
   }
@@ -55,12 +57,11 @@ export class AskDialogContentComponent implements OnInit {
   async onSubmit() {
     const res: any = await this.blogService.askuser(this.data.details.url, this.askForm.value)
     if (res.success) {
-      const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
       this.messages.add({
         severity: 'success',
-        summary: 'You asked the user!',
-        confettiEmojis: disableConfetti ? [] : ['❓', '⁉️']
+        summary: 'You asked the user!'
       })
+      this.particle.emojiReact('❓')
       this.dialogRef.close()
     } else {
       this.messages.add({ severity: 'error', summary: 'Something went wrong' })

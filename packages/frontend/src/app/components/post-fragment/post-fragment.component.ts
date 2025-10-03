@@ -25,6 +25,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { Subscription } from 'rxjs'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
 import Viewer from 'viewerjs'
+import { ParticleService } from 'src/app/services/particle.service'
 
 type FragmentType = 'post' | 'quote'
 
@@ -156,7 +157,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     private loginService: LoginService,
     private jwtService: JwtService,
     private readonly messages: MessageService,
-    private router: Router
+    private particle: ParticleService
   ) {
     this.userId = this.loginService.getLoggedUserUUID()
   }
@@ -344,7 +345,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
     return ['♥️', '❤', '♥'].includes(emojiReaction)
   }
 
-  async toggleEmojiReact(emojiReaction: EmojiReaction) {
+  async toggleEmojiReact(emojiReaction: EmojiReaction, event: MouseEvent) {
     if (this.fragment().userId === this.userId) {
       this.messages.add({
         severity: 'error',
@@ -357,6 +358,7 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
       return
     }
 
+    const scrollPos = { x: window.scrollX, y: window.scrollY }
     this.reactionLoading.set(true)
     const reactionIsToggled = emojiReaction.users.some((usr) => usr.id === this.userId)
     if (this.isLike(emojiReaction.content)) {
@@ -364,13 +366,12 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
         await this.postService.unlikePost(postId)
       } else {
         await this.postService.likePost(postId)
-        const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
         this.messages.add({
           severity: 'success',
           summary: 'You successfully liked this woot',
-          confettiEmojis: disableConfetti ? [] : ['❤️', '💚', '💙'],
           soundName: 'like'
         })
+        this.particle.like(event, scrollPos)
       }
     } else {
       let response = false
@@ -390,6 +391,12 @@ export class PostFragmentComponent implements OnChanges, OnDestroy {
             summary: `Reacted with ${emojiReaction.name} successfully`,
             soundName: 'like'
           })
+
+          if (emojiReaction.img) {
+            this.particle.imageReact(emojiReaction.img, event, scrollPos)
+          } else {
+            this.particle.emojiReact(emojiReaction.content)
+          }
         }
       }
 

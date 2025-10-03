@@ -35,6 +35,7 @@ import { SettingChangePasswordComponent } from '../components/setting-change-pas
 import { SettingDropListComponent } from '../components/setting-drop-list/setting-drop-list.component'
 import { SETTINGS_TOKEN } from '../pages/settings/settings.component'
 import { replyBarItems } from '../components/post-action-buttons/post-action-buttons.component'
+import { SettingConfettiComponent } from '../components/setting-confetti/setting-confetti.component'
 
 // All setting keys for use throughout the app
 const settingKeyVariants = [
@@ -78,7 +79,9 @@ const settingKeyVariants = [
   'replaceAIWord',
   'postReplyBarOrder',
   'postActionsButtonBarOrder',
-  'atprotoLinkDestination'
+  'atprotoLinkDestination',
+  'confettiMultiplier',
+  'flatConfetti'
 ] as const
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
@@ -538,6 +541,23 @@ export class SettingsService {
       default: 'bsky.app',
       convertFromStorage: this.convertStringFrom,
       convertToStorage: this.convertStringTo
+    },
+    confettiMultiplier: {
+      key: 'confettiMultiplier',
+      translationKey: 'settings.confettiMultiplier',
+      translationDescriptionKey: 'settings.confettiMultiplierDescription',
+      serverKey: 'confettiMultiplier',
+      type: 'input',
+      default: '1'
+    },
+    flatConfetti: {
+      key: 'flatConfetti',
+      translationKey: 'settings.flatConfetti',
+      translationDescriptionKey: 'settings.flatConfettiDescription',
+      serverKey: 'wafrn.flatConfetti',
+      localStorageKey: 'flatConfetti',
+      type: 'checkbox',
+      default: false
     }
   }
   // Generates settings sidebar links and gives the settings-loader pages their data through values
@@ -612,8 +632,10 @@ export class SettingsService {
         { type: 'key', value: 'forceClassicMediaView' },
         { type: 'separator' },
         { type: 'header', value: 'settings.header.animationsAndSounds' },
-        { type: 'key', value: 'disableConfetti' },
-        { type: 'key', value: 'enableConfettiReceivingLike' },
+        {
+          type: 'component',
+          value: new ComponentPortal(SettingConfettiComponent)
+        },
         { type: 'key', value: 'disableSounds' }
       ]
     },
