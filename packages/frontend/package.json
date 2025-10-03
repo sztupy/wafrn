@@ -5,11 +5,12 @@
     "ng": "ng",
     "start": "ng serve",
     "dev": "ng serve --configuration=development",
-    "build": "ng build",
+    "build": "npm run prebuild && ng build",
     "watch": "ng build --watch --configuration=development",
     "test": "ng test",
     "vercel-build": "ng build  --configuration=vercel",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "prebuild": "tsx utils/prebuild.ts"
   },
   "private": true,
   "dependencies": {
@@ -49,6 +50,7 @@
     "qr": "^0.4.0",
     "rxjs": "~7.8.0",
     "sanitize-html": "^2.13.1",
+    "tsx": "^4.20.6",
     "viewerjs": "^1.11.7",
     "zone.js": "~0.15.0"
   },

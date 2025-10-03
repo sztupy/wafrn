@@ -36,7 +36,9 @@ import {
   faCircleInfo,
   faPlus,
   faPencil,
-  faQuestion
+  faQuestion,
+  faCaretDown,
+  faAngleDown
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
 import { PostHeaderComponent } from '../post/post-header/post-header.component'
@@ -162,8 +164,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   postBeingSubmitted = false
   draggingOverTextarea = false
 
-  currentUser: Signal<BlogDetails | undefined>
-  currentUserAvatar: Signal<string>
+  // Multi user posting index of current user
+  currentUser: Signal<BlogDetails | undefined> = computed(() => this.accountList().at(this.posterAccount())?.blog)
+  posterAccount = signal(0)
+  accountList
+  toAvatarUrl // mirrored function
 
   closeIcon = faClose
   quoteIcon = faQuoteLeft
@@ -177,6 +182,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   addIcon = faPlus
   editingIcon = faPencil
   replyAskIcon = faQuestion
+  dropdownIcon = faAngleDown
 
   emojiSubscription: Subscription
   editorUpdatedSubscription: Subscription | undefined
@@ -224,6 +230,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     private location: Location,
     private particle: ParticleService
   ) {
+    // Current account is assumed to be the logged in user
+    console.log('will post as', loginService.accountList().at(this.posterAccount()))
+    this.accountList = loginService.accountList
+    this.toAvatarUrl = dashboardService.getAvatarUrl
+
     this.data = EditorService.editorData
     this.editing = this.data?.edit == true
     this.privacy = this.loginService.getUserDefaultPostPrivacyLevel()
@@ -261,11 +272,6 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       this.uploadedMedias = this.data.post.medias ? this.data.post.medias.filter((elem) => elem.mediaOrder < 9999) : []
       this.privacy = this.data.post.privacy
     }
-
-    this.currentUser = loginService.currentAccount
-    this.currentUserAvatar = computed(
-      () => (this.currentUser() && dashboardService.getAvatarUrl(<BlogDetails>this.currentUser())) || ''
-    )
   }
 
   ngOnInit() {
@@ -557,12 +563,13 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       contentWarning: this.contentWarning,
       idPostToEdit: this.editing ? this.idPostToReblog : undefined,
       idPosToQuote: this.data?.quote?.id,
-      ask: this.data?.ask
+      ask: this.data?.ask,
+      withToken: this.loginService.accountList().at(this.posterAccount())?.token
     })
     // its a great time to check notifications isnt it?
     this.dashboardService.scrollEventEmitter.emit('post')
-    if (res) {
-      const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
+    const disableConfetti = localStorage.getItem('disableConfetti') == 'true'
+    if (res.success) {
       this.messages.add({
         severity: 'success',
         summary: 'Your woot has been published!',
@@ -578,6 +585,11 @@ export class NewEditorComponent implements OnInit, OnDestroy {
       } else {
         this.closeEditor()
       }
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'messages.genericError'
+      })
     }
     this.postBeingSubmitted = false
   }
@@ -822,5 +834,9 @@ export class NewEditorComponent implements OnInit, OnDestroy {
     } else {
       this.draggingOverTextarea = false
     }
+  }
+
+  setPoster(index: number) {
+    this.posterAccount.set(index)
   }
 }
