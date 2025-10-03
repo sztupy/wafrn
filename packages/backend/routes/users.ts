@@ -1187,7 +1187,7 @@ function userRoutes(app: Application) {
             }
           }
         )
-        user.bskyDid = ''
+        user.bskyDid = null
         user.enableBsky = false
         await user.save()
       }
