@@ -36,7 +36,9 @@ import {
   faCircleInfo,
   faPlus,
   faPencil,
-  faQuestion
+  faQuestion,
+  faCaretDown,
+  faAngleDown
 } from '@fortawesome/free-solid-svg-icons'
 import { EditorData } from 'src/app/interfaces/editor-data'
 import { PostHeaderComponent } from '../post/post-header/post-header.component'
@@ -179,6 +181,7 @@ export class NewEditorComponent implements OnInit, OnDestroy {
   addIcon = faPlus
   editingIcon = faPencil
   replyAskIcon = faQuestion
+  dropdownIcon = faAngleDown
 
   emojiSubscription: Subscription
   editorUpdatedSubscription: Subscription | undefined

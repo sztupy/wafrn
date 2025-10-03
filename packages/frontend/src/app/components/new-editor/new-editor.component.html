@@ -340,12 +340,20 @@
     <div class="px-3 pt-3 bottom-information-bar">
       <div class="min-w-0">
         <div class="posting-label">{{ 'editor.usernameLabel' | translate }}</div>
-        <button mat-button [mat-menu-trigger-for]="accountMenu" class="user-info-button">
-          <div class="user-info"
-            ><img [src]="toAvatarUrl(currentUser())" class="user-avatar" />
-            <span [innerHTML]="currentUser()?.url ?? 'No one?!'" class="user-name"></span
-          ></div>
-        </button>
+        @if (accountList().length > 1) {
+          <button mat-button [mat-menu-trigger-for]="accountMenu" class="user-info-button">
+            <div class="user-info">
+              <img [src]="toAvatarUrl(currentUser())" class="user-avatar" />
+              <span [innerHTML]="currentUser()?.url ?? 'No one?!'" class="user-name"></span>
+              <fa-icon [icon]="dropdownIcon" class="icon-dropdown"></fa-icon>
+            </div>
+          </button>
+        } @else {
+          <div class="user-info">
+            <img [src]="toAvatarUrl(currentUser())" class="user-avatar" />
+            <span [innerHTML]="currentUser()?.url ?? 'No one?!'" class="user-name"></span>
+          </div>
+        }
       </div>
       @if (showBlueskyOptions) {
         <div
