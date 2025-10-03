@@ -18,7 +18,7 @@
             }
           }
           @case ('rewoot') {
-            @if (myRewootsIncludePost) {
+            @if (myRewootsIncludePost()) {
               <button
                 aria-label="Delete rewoot"
                 mat-button
@@ -28,7 +28,7 @@
               >
                 <fa-icon size="lg" [icon]="closeIcon" matTooltip="Delete rewoot"></fa-icon>
               </button>
-            } @else if (!myRewootsIncludePost && fragment.privacy !== 10 && fragment.privacy !== 1) {
+            } @else if (fragment.privacy !== 10 && fragment.privacy !== 1) {
               <button
                 aria-label="Rewoot"
                 [disabled]="!fragment.canReblog"

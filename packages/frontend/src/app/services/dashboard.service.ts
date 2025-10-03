@@ -46,7 +46,9 @@ export class DashboardService {
     )
     result = this.postService.processPostNew(dashboardPetition)
     result = result.filter((post) => !this.postService.postContainsBlockedOrMuted(post, true))
-    this.postService.rewootedPosts = this.postService.rewootedPosts.concat(dashboardPetition.rewootIds)
+    dashboardPetition.rewootIds.forEach((id) => {
+      this.postService.rewootedPosts().add(id)
+    })
     // Remove in the future because we got the websocket!
     this.scrollEventEmitter.emit('scrollingtime')
     return result
