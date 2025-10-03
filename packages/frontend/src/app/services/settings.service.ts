@@ -499,13 +499,13 @@ export class SettingsService {
       type: 'list',
       default: this.convertToOrderListDefault([...replyBarItems]),
       dropListData: {
-        quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
-        rewoot: { icon: faRepeat, translationKey: 'settings.postReplyBarOrderOptions.rewoot' },
-        reply: { icon: faReply, translationKey: 'settings.postReplyBarOrderOptions.reply' },
-        bookmark: { icon: faBookmark, translationKey: 'settings.postReplyBarOrderOptions.bookmark' },
-        like: { icon: faHeart, translationKey: 'settings.postReplyBarOrderOptions.like' },
-        edit: { icon: faPen, translationKey: 'settings.postReplyBarOrderOptions.edit' },
-        delete: { icon: faTrash, translationKey: 'settings.postReplyBarOrderOptions.delete' }
+        quote: { icon: faQuoteLeft, translationKey: 'post-actions.quotePost' },
+        rewoot: { icon: faRepeat, translationKey: 'post-actions.rewootPost' },
+        reply: { icon: faReply, translationKey: 'post-actions.replyPost' },
+        bookmark: { icon: faBookmark, translationKey: 'post-actions.bookmarkPost' },
+        like: { icon: faHeart, translationKey: 'post-actions.likePost' },
+        edit: { icon: faPen, translationKey: 'post-actions.editPost' },
+        delete: { icon: faTrash, translationKey: 'post-actions.deletePost' }
       },
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo
@@ -520,13 +520,13 @@ export class SettingsService {
       default: this.convertToOrderListDefault([...replyBarItems]),
       dropListData: {
         // Duplicate from above
-        quote: { icon: faQuoteLeft, translationKey: 'settings.postReplyBarOrderOptions.quote' },
-        rewoot: { icon: faRepeat, translationKey: 'settings.postReplyBarOrderOptions.rewoot' },
-        reply: { icon: faReply, translationKey: 'settings.postReplyBarOrderOptions.reply' },
-        bookmark: { icon: faBookmark, translationKey: 'settings.postReplyBarOrderOptions.bookmark' },
-        like: { icon: faHeart, translationKey: 'settings.postReplyBarOrderOptions.like' },
-        edit: { icon: faPen, translationKey: 'settings.postReplyBarOrderOptions.edit' },
-        delete: { icon: faTrash, translationKey: 'settings.postReplyBarOrderOptions.delete' }
+        quote: { icon: faQuoteLeft, translationKey: 'post-actions.quotePost' },
+        rewoot: { icon: faRepeat, translationKey: 'post-actions.rewootPost' },
+        reply: { icon: faReply, translationKey: 'post-actions.replyPost' },
+        bookmark: { icon: faBookmark, translationKey: 'post-actions.bookmarkPost' },
+        like: { icon: faHeart, translationKey: 'post-actions.likePost' },
+        edit: { icon: faPen, translationKey: 'post-actions.editPost' },
+        delete: { icon: faTrash, translationKey: 'post-actions.deletePost' }
       },
       convertFromStorage: this.convertListFrom,
       convertToStorage: this.convertListTo

@@ -25,6 +25,7 @@ import {
   faBookmark,
   faBookBookmark
 } from '@fortawesome/free-solid-svg-icons'
+import { TranslatePipe } from '@ngx-translate/core'
 import { delay, firstValueFrom, of, Subject, switchMap, takeUntil } from 'rxjs'
 import { PostLinkModule } from 'src/app/directives/post-link/post-link.module'
 import { ProcessedPost } from 'src/app/interfaces/processed-post'
@@ -43,7 +44,15 @@ export type ReplyBarItem = replyBarItemsVariants[number]
 
 @Component({
   selector: 'app-post-action-buttons',
-  imports: [RouterModule, FontAwesomeModule, MatButtonModule, MatTooltipModule, PostLinkModule, MatMenuModule],
+  imports: [
+    RouterModule,
+    FontAwesomeModule,
+    MatButtonModule,
+    MatTooltipModule,
+    PostLinkModule,
+    MatMenuModule,
+    TranslatePipe
+  ],
   templateUrl: './post-action-buttons.component.html',
   styleUrl: './post-action-buttons.component.scss'
 })
