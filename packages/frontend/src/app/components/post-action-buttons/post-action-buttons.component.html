@@ -8,29 +8,29 @@
             @if (fragment.privacy !== 10 && fragment.privacy !== 1 && fragment.privacy !== 2) {
               <button
                 [disabled]="!fragment.canQuote"
-                aria-label="Quote woot"
+                [matTooltip]="'post-actions.quotePost' | translate"
                 mat-button
                 (click)="quotePost()"
                 class="mat-circle-button quote-icon"
               >
-                <fa-icon size="lg" [icon]="quoteIcon" matTooltip="Quote woot"></fa-icon>
+                <fa-icon size="lg" [icon]="quoteIcon"></fa-icon>
               </button>
             }
           }
           @case ('rewoot') {
             @if (myRewootsIncludePost) {
               <button
-                aria-label="Delete rewoot"
+                [matTooltip]="'post-actions.deleteRewootPost' | translate"
                 mat-button
                 (click)="deleteRewoots()"
                 class="mat-circle-button delete-rewoot-icon"
                 [disabled]="loadingAction"
               >
-                <fa-icon size="lg" [icon]="closeIcon" matTooltip="Delete rewoot"></fa-icon>
+                <fa-icon size="lg" [icon]="closeIcon"></fa-icon>
               </button>
             } @else if (!myRewootsIncludePost && fragment.privacy !== 10 && fragment.privacy !== 1) {
               <button
-                aria-label="Rewoot"
+                [matTooltip]="'post-actions.rewootPost' | translate"
                 [disabled]="!fragment.canReblog"
                 mat-button
                 (mousedown)="startReblog()"
@@ -38,7 +38,7 @@
                 class="relative mat-circle-button rewoot-icon"
                 [disabled]="loadingAction"
               >
-                <fa-icon size="lg" [icon]="quickReblogIcon" matTooltip="Rewoot"></fa-icon>
+                <fa-icon size="lg" [icon]="quickReblogIcon"></fa-icon>
                 <button #reblogMenuOpener [mat-menu-trigger-for]="reblogMenu" class="menu-toggle-hidden"></button>
               </button>
               <mat-menu #reblogMenu="matMenu">
@@ -55,35 +55,35 @@
           }
           @case ('reply') {
             <button
-              aria-label="Reply woot"
+              [matTooltip]="'post-actions.replyPost' | translate"
               [disabled]="!fragment.canReply"
               mat-button
               (click)="replyPost()"
               class="mat-circle-button reply-icon"
             >
-              <fa-icon size="lg" [icon]="reblogIcon" matTooltip="Reply woot"></fa-icon>
+              <fa-icon size="lg" [icon]="reblogIcon"></fa-icon>
             </button>
           }
           @case ('bookmark') {
             @if (bookmarked()) {
               <button
-                aria-label="Unbookmark woot"
+                [matTooltip]="'post-actions.unbookmarkPost' | translate"
                 mat-button
                 (click)="unbookmarkPost()"
                 class="mat-circle-button unlike-icon"
                 [disabled]="loadingAction"
               >
-                <fa-icon size="lg" [icon]="unbookmarkIcon" matTooltip="Unbookmark woot"></fa-icon>
+                <fa-icon size="lg" [icon]="unbookmarkIcon"></fa-icon>
               </button>
             } @else {
               <button
-                aria-label="Bookmark woot"
+                [matTooltip]="'post-actions.bookmarkPost' | translate"
                 mat-button
                 (click)="bookmarkPost($event)"
                 class="mat-circle-button unlike-icon"
                 [disabled]="loadingAction"
               >
-                <fa-icon size="lg" [icon]="bookmarkIcon" matTooltip="Bookmark woot"></fa-icon>
+                <fa-icon size="lg" [icon]="bookmarkIcon"></fa-icon>
               </button>
             }
           }
@@ -91,24 +91,24 @@
             @if (fragment.userId !== myId) {
               @if (fragment.userLikesPostRelations.includes(myId)) {
                 <button
-                  aria-label="Remove like"
+                  [matTooltip]="'post-actions.dislikePost' | translate"
                   mat-button
                   (click)="unlikePost()"
                   class="mat-circle-button unlike-icon"
                   [disabled]="loadingAction"
                 >
-                  <fa-icon size="lg" [icon]="clearHeartIcon" matTooltip="Remove like"></fa-icon>
+                  <fa-icon size="lg" [icon]="clearHeartIcon"></fa-icon>
                 </button>
               } @else {
                 <button
-                  aria-label="Like woot"
+                  [matTooltip]="'post-actions.likePost' | translate"
                   [disabled]="!fragment.canLike"
                   mat-button
                   (click)="likePost($event)"
                   class="mat-circle-button like-icon"
                   [disabled]="loadingAction"
                 >
-                  <fa-icon size="lg" [icon]="solidHeartIcon" matTooltip="Like woot"></fa-icon>
+                  <fa-icon size="lg" [icon]="solidHeartIcon"></fa-icon>
                 </button>
               }
             }
@@ -116,24 +116,25 @@
           @case ('edit') {
             @if (fragment.userId === myId) {
               <button
-                aria-label="Edit woot"
+                [matTooltip]="'post-actions.editPost' | translate"
                 mat-button
                 (click)="editPost(fragment)"
                 class="mat-circle-button edit-woot-icon"
               >
-                <fa-icon size="lg" [icon]="editedIcon" matTooltip="Edit woot"></fa-icon>
+                <fa-icon size="lg" [icon]="editedIcon"></fa-icon>
               </button>
             }
           }
           @case ('delete') {
             @if (fragment.userId === myId) {
               <button
-                aria-label="Delete woot"
+                matTooltip="Delete woot"
+                [matTooltip]="'post-actions.deletePost' | translate"
                 mat-button
                 (click)="deletePost(fragment.id)"
                 class="mat-circle-button delete-woot-icon"
               >
-                <fa-icon size="lg" [icon]="deleteIcon" matTooltip="Delete woot"></fa-icon>
+                <fa-icon size="lg" [icon]="deleteIcon"></fa-icon>
               </button>
             }
           }

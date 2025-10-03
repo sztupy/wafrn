@@ -33,10 +33,10 @@ export class SettingConfettiComponent {
   confettiType: ConfettiType = 'like'
   confettiTypeData: Record<ConfettiType, string> = {
     // Not sure if this is bad translation practice but it reduces duplication??
-    like: 'settings.postReplyBarOrderOptions.like',
-    rewoot: 'settings.postReplyBarOrderOptions.rewoot',
-    edit: 'settings.postReplyBarOrderOptions.edit',
-    bookmark: 'settings.postReplyBarOrderOptions.bookmark'
+    like: 'post-actions.likePost',
+    rewoot: 'post-actions.rewootPost',
+    edit: 'post-actions.editPost',
+    bookmark: 'post-actions.bookmarkPost'
   }
 
   constructor(
