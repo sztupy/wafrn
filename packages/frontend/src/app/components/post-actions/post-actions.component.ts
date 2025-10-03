@@ -108,7 +108,7 @@ export class PostActionsComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.myRewootsIncludePost = this.postService.rewootedPosts.includes(this.post().id)
+    this.myRewootsIncludePost = this.postService.rewootedPosts().has(this.post().id)
     this.checkPostSilenced()
   }
 

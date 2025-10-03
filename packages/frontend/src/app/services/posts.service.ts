@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, signal } from '@angular/core'
 import { ProcessedPost } from '../interfaces/processed-post'
 import { RawPost } from '../interfaces/raw-post'
 import { MediaService } from './media.service'
@@ -47,7 +47,7 @@ export class PostsService {
     type: 'react'
   })
 
-  public rewootedPosts: string[] = []
+  public rewootedPosts = signal(new Set<string>(), { equal: () => false })
 
   keyboardEmojis: Emoji[] = emojis.map((emoji) => {
     return {
@@ -349,7 +349,9 @@ export class PostsService {
       nameMarkdown: 'ERROR',
       id: '42'
     }
-    this.rewootedPosts = this.rewootedPosts.concat(unlinked.rewootIds)
+    unlinked.rewootIds.forEach((id) => {
+      this.rewootedPosts().add(id)
+    })
     const user = elem ? { ...unlinked.users.find((usr) => usr.id === elem.userId) } : nonExistentUser
     const userEmojis = elem ? unlinked.emojiRelations.userEmojiRelation.filter((elem) => elem.userId === user?.id) : []
     const polls = elem ? unlinked.polls.filter((poll) => poll.postId === elem.id) : []

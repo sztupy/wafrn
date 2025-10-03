@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, OnChanges, signal, viewChild } from '@angular/core'
+import { Component, computed, ElementRef, input, OnChanges, signal, viewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
@@ -54,7 +54,7 @@ export class PostActionButtonsComponent implements OnChanges {
   isEmptyReblog = false
   myId = ''
   loadingAction = false
-  myRewootsIncludePost = false
+  myRewootsIncludePost = computed(() => this.postService.rewootedPosts().has(this.fragment().id))
   bookmarked = signal<boolean>(false)
 
   // icons
@@ -121,8 +121,6 @@ export class PostActionButtonsComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.myRewootsIncludePost = this.postService.rewootedPosts.includes(this.fragment().id)
-
     const finalOne = this.fragment()
     this.isEmptyReblog =
       finalOne &&
@@ -153,7 +151,10 @@ export class PostActionButtonsComponent implements OnChanges {
     this.loadingAction = true
     const success = await firstValueFrom(this.deletePostService.deleteRewoots(this.fragment().id))
     if (success) {
-      this.myRewootsIncludePost = false
+      this.postService.rewootedPosts.update((set) => {
+        set.delete(this.fragment().id)
+        return set
+      })
       this.messages.add({
         severity: 'success',
         summary: 'messages.deleteRewootSuccess',
@@ -308,8 +309,8 @@ export class PostActionButtonsComponent implements OnChanges {
         // HACK: Only set as rewooted if we reblog as the current user
         // We can't easily check if other logged in accounts so we just allow you to do as many on other accounts
         // Does not work well on sites like Mastodon but it's probably fine...
-        if (this.accountList === undefined || accountIndex === 0) {
-          this.myRewootsIncludePost = true
+        if (this.accountList === undefined || (accountIndex ?? 0) === 0) {
+          this.postService.rewootedPosts.update((set) => set.add(this.fragment().id))
         }
         this.messages.add({
           severity: 'success',
