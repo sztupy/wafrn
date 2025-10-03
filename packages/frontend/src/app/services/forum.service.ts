@@ -18,7 +18,7 @@ export class ForumService {
     const response: unlinkedPosts = await firstValueFrom(
       this.http.get<unlinkedPosts>(EnvironmentService.environment.baseUrl + '/forum/' + id)
     )
-    response.rewootIds.forEach((id) => {
+    response.rewootIds?.forEach((id) => {
       this.postService.rewootedPosts().add(id)
     })
 
