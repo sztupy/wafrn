@@ -349,7 +349,7 @@ export class PostsService {
       nameMarkdown: 'ERROR',
       id: '42'
     }
-    unlinked.rewootIds.forEach((id) => {
+    unlinked.rewootIds?.forEach((id) => {
       this.rewootedPosts().add(id)
     })
     const user = elem ? { ...unlinked.users.find((usr) => usr.id === elem.userId) } : nonExistentUser

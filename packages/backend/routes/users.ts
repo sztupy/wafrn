@@ -1187,7 +1187,7 @@ function userRoutes(app: Application) {
             }
           }
         )
-        user.bskyDid = ''
+        user.bskyDid = null
         user.enableBsky = false
         await user.save()
       }
@@ -1268,6 +1268,7 @@ function userRoutes(app: Application) {
           )
           await syncBskyFollowersAndFollowing(user.id)
           await forceUpdateCacheDidsAtThread()
+          await redisCache.del('bskySession:' + user.id)
           return res.send({ success: true })
         }
       } else {
