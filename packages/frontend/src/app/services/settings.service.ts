@@ -546,7 +546,7 @@ export class SettingsService {
       key: 'confettiMultiplier',
       translationKey: 'settings.confettiMultiplier',
       translationDescriptionKey: 'settings.confettiMultiplierDescription',
-      serverKey: 'confettiMultiplier',
+      serverKey: 'wafrn.confettiMultiplier',
       type: 'input',
       default: '1'
     },
