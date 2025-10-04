@@ -75,12 +75,14 @@
           } @else {
             <span>v{{ buildData.version }}</span>
           }
-          <a
-            class="subtle-link"
-            [href]="'https://codeberg.org/wafrn/wafrn/commit/' + buildData.git.fullHash"
-            target="_blank"
-            >{{ 'common.commit' | translate }} {{ buildData.git.hash }}</a
-          >
+          @if (buildData.git.fullHash) {
+            <a
+              class="subtle-link"
+              [href]="'https://codeberg.org/wafrn/wafrn/commit/' + buildData.git.fullHash"
+              target="_blank"
+              >{{ 'common.commit' | translate }} {{ buildData.git.hash }}</a
+            >
+          }
         </div>
       </div>
     </div>
