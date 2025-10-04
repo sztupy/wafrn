@@ -291,19 +291,21 @@ export class PostActionButtonsComponent implements OnChanges {
     }
   }
 
-  startReblog() {
+  startReblog(event: MouseEvent) {
+    event.stopPropagation()
     this.reblockClickTime = Date.now()
     this.reblogMenuSubject.next()
   }
-  endReblog() {
+  endReblog(event: MouseEvent) {
     const holdDuration = Date.now() - this.reblockClickTime
     if (holdDuration > this.reblogHoldLength) return
     this.stopReblogMenuSubject.next()
 
-    this.quickReblog()
+    this.quickReblog(undefined, event)
   }
 
-  async quickReblog(accountIndex?: number) {
+  async quickReblog(accountIndex?: number, event?: MouseEvent) {
+    const scrollPos = { x: window.scrollX, y: window.scrollY }
     this.loadingAction = true
     if (this.fragment().privacy !== 10) {
       const response = await this.editor.createPost({
@@ -327,7 +329,7 @@ export class PostActionButtonsComponent implements OnChanges {
           translate: true,
           soundName: 'sendWoot'
         })
-        this.particle.emojiReact('🔁')
+        this.particle.emojiReact('🔁', event, scrollPos)
       }
     } else {
       this.messages.add({

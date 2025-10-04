@@ -33,8 +33,9 @@
                 [matTooltip]="'post-actions.rewootPost' | translate"
                 [disabled]="!fragment.canReblog"
                 mat-button
-                (mousedown)="startReblog()"
-                (mouseup)="endReblog()"
+                (click)="$event.stopPropagation()"
+                (mousedown)="startReblog($event)"
+                (mouseup)="endReblog($event)"
                 class="relative mat-circle-button rewoot-icon"
                 [disabled]="loadingAction"
               >
@@ -43,7 +44,7 @@
               </button>
               <mat-menu #reblogMenu="matMenu">
                 @for (account of accountList(); track $index) {
-                  <button mat-menu-item (click)="quickReblog($index)">
+                  <button mat-menu-item (click)="quickReblog($index, $event)">
                     <div class="user-info"
                       ><img [src]="toAvatarUrl(account.blog)" class="user-avatar" />
                       <span [innerHTML]="account.blog.url" class="user-name"></span

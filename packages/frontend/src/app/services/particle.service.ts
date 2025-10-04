@@ -15,6 +15,12 @@ export class ParticleService {
   }) {
     if (this.settings.values.disableConfetti === true) return
 
+    const defaultConfig: ConfettiOptions = {
+      zIndex: 1000,
+      scalar: 8,
+      flat: (this.settings.values.flatConfetti as boolean | undefined) ?? false
+    }
+
     // Attempt to place the confetti on the clicked location
     if (opts?.location?.event !== undefined) {
       // If we don't get scroll data then use the current scroll (no modifier)
@@ -30,6 +36,7 @@ export class ParticleService {
       // Ensure we're on screen and play locational OR just do the generic
       if (updatedX >= 0 && updatedY >= 0) {
         const confettiConfig = Object.assign(
+          defaultConfig,
           {
             particleCount: Math.floor(10 * Number(this.settings.values.confettiMultiplier ?? 1)),
             spread: 360,
@@ -37,9 +44,7 @@ export class ParticleService {
             origin: {
               x: normalizedX,
               y: normalizedY
-            },
-            flat: this.settings.values.flatConfetti ?? false,
-            scalar: 8
+            }
           },
           opts.config
         )
@@ -50,12 +55,11 @@ export class ParticleService {
 
     // No location = generic confetti
     const conf = Object.assign(
+      defaultConfig,
       {
         particleCount: Math.floor(10 * Number(this.settings.values.confettiMultiplier ?? 1)),
         spread: 60,
-        startVelocity: 60,
-        flat: this.settings.values.flatConfetti ?? false,
-        scalar: 8
+        startVelocity: 60
       },
       opts.config
     )
