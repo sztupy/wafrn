@@ -158,8 +158,16 @@ export class LoginService {
   }
 
   logOutAccount(token: string) {
+    const loggingCurrentUser = token === this.accountList().at(0)?.token
+    if (this.accountList().length === 1) {
+      return this.logOut()
+    }
     this.accountList.update((accounts) => accounts.filter((elem) => elem.token !== token))
     localStorage.setItem('accountList', JSON.stringify(this.accountList()))
+
+    if (loggingCurrentUser) {
+      this.switchAccount(this.accountList()[0].token)
+    }
   }
 
   async register(registerForm: UntypedFormGroup, img: File | null): Promise<boolean> {
@@ -434,22 +442,20 @@ export class LoginService {
 
   async deleteAccount(password: string): Promise<boolean> {
     let res = false
-    let message = 'Something went wrong! Is the password the correct one?'
-    let body = {
-      password: password
-    }
     try {
       let petition = await firstValueFrom(
-        this.http.post<{ success: boolean }>(`${EnvironmentService.environment.baseUrl}/user/selfDeactivate`, body)
+        this.http.post<{ success: boolean }>(`${EnvironmentService.environment.baseUrl}/user/selfDeactivate`, {
+          password: password
+        })
       )
       if (petition.success) {
         res = true
       }
     } catch (error) {
-      message = 'Something went wrong. Please try again or contact an administrator'
+      console.error(error)
     }
     if (!res) {
-      this.messagesService.add({ severity: 'error', summary: message })
+      this.messagesService.add({ severity: 'error', summary: 'messages.genericError', translate: true })
     }
     return res
   }
