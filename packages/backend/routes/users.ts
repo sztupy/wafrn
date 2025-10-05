@@ -1566,11 +1566,12 @@ function userRoutes(app: Application) {
     user.updatedAt = new Date()
     user.banned = true
     await user.save()
-    await sendActivationEmail(
-      user.email as string,
-      '',
-      `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
-      `
+    try {
+      await sendActivationEmail(
+        user.email as string,
+        '',
+        `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
+        `
         <h1>We are sad to see you go</h1>
         <p>
           We have recived your request to delete your account.
@@ -1589,7 +1590,10 @@ function userRoutes(app: Application) {
           If within 2 days your account is not deleted, please contact your server admin.
         </p>
       `
-    )
+      )
+    } catch (error) {
+      logger.info(error)
+    }
 
     res.send({ success: true })
   })
