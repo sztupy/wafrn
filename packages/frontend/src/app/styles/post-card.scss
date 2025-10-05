@@ -10,15 +10,14 @@
   padding: 1rem;
   padding-bottom: 0.75rem;
   scroll-margin: 1rem;
+  content-visibility: auto;
   & hr {
     margin: 0.75rem -1rem;
   }
-  content-visibility: auto;
-  transition-behavior: allow-discrete;
 }
 
 :root .post-card-ios {
-  content-visibility: visible !important; // Removed due flickering on ios
+  // content-visibility: visible !important; // Removed due flickering on ios
 }
 
 @media screen and (min-width: 992px) {
