@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { Media, Post, PostTag, sequelize, User } from '../../models/index.js'
+import { Media, Post, PostTag, Quotes, sequelize, User } from '../../models/index.js'
 import { completeEnvironment } from '../backendOptions.js'
 import { fediverseTag } from '../../interfaces/fediverse/tags.js'
 import { activityPubObject } from '../../interfaces/fediverse/activityPubObject.js'
@@ -30,6 +30,7 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
   }
   let parentPostString = null
   let quotedPostString = null
+  let quoteAuthorization = null
   const conversationString = `${completeEnvironment.frontendUrl}/fediverse/conversation/${post.id}`
 
   if (post.parentId) {
@@ -107,6 +108,13 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
   const quotedPosts = post.quoted
   if (quotedPosts && quotedPosts.length > 0) {
     const mainQuotedPost = quotedPosts[0]
+    quoteAuthorization = (
+      await Quotes.findOne({
+        where: {
+          quoterPostId: post.id
+        }
+      })
+    )?.authorizationUrl
     quotedPostString = getPostUrlForQuote(mainQuotedPost)
     quotedPosts.forEach((quotedPost: any) => {
       const postUrl = getPostUrlForQuote(quotedPost)
@@ -199,7 +207,9 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       inReplyTo: parentPostString,
       published: new Date(post.createdAt).toISOString(),
       updated: new Date(post.updatedAt).toISOString(),
-      url: `${completeEnvironment.frontendUrl}/fediverse/post/${post.id}`,
+      url: post.bskyUri
+        ? [`${completeEnvironment.frontendUrl}/fediverse/post/${post.id}`, post.bskyUri]
+        : `${completeEnvironment.frontendUrl}/fediverse/post/${post.id}`,
       attributedTo: `${completeEnvironment.frontendUrl}/fediverse/blog/${localUser.url.toLowerCase()}`,
       to: usersToSend.to,
       cc: usersToSend.cc,
@@ -208,7 +218,7 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
       inReplyToAtomUri: parentPostString,
       quote: misskeyQuoteURL,
       quoteUrl: misskeyQuoteURL,
-      _misksey_quote: misskeyQuoteURL,
+      _missksey_quote: misskeyQuoteURL,
       quoteUri: misskeyQuoteURL,
       // conversation: conversationString,
       content: (processedContent + tagsAndQuotes).replace(lineBreaksAtEndRegex, ''),
@@ -236,10 +246,10 @@ async function postToJSONLD(postId: string): Promise<activityPubObject | undefin
         }
       },
       interactionPolicy: {
-        canQuote: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
-        canLike: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
-        canReply: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
-        canAnnounce: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] }
+        canQuote: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] }
+        // canLike: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
+        // canReply: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] },
+        // canAnnounce: { automaticApproval: ['https://www.w3.org/ns/activitystreams#Public'] }
       }
     }
   }
