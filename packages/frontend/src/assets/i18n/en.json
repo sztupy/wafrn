@@ -537,7 +537,8 @@
   },
   "post-header": {
     "follow": "Follow",
-    "awaitingApproval": "Awaiting approval"
+    "awaitingApproval": "Awaiting approval",
+    "viewPost": "View post"
   },
   "post-fragment": {
     "mutedWords": "Post contains muted words:",
