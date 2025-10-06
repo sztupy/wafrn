@@ -2,7 +2,7 @@ import { Op } from 'sequelize'
 import { User } from '../../models/index.js'
 import { wait } from '../wait.js'
 import { completeEnvironment } from '../backendOptions.js'
-import sendActivationEmail from '../sendActivationEmail.js'
+import sendEmail from '../sendActivationEmail.js'
 
 // lets delete old users that are not activated
 
@@ -29,6 +29,7 @@ const usersNotVerified = await User.scope('full').findAll({
 })
 
 console.log(`Not verified users: ${usersNotVerified.length}`)
+let emailCount = 0
 await wait(1500)
 for await (const user of usersNotVerified.filter((elem) => !!elem)) {
   console.log(`Sending email to user ${user.url} with email ${user.email}`)
@@ -40,9 +41,13 @@ for await (const user of usersNotVerified.filter((elem) => !!elem)) {
     user.email as string
   )}/${user.activationCode}">click here!</a>. If you can not see the link correctly please copy this link:
               ${completeEnvironment.instanceUrl}/activate/${encodeURIComponent((user.email as string).toLowerCase())}/${
-    user.activationCode
-  }
-             </p> 
+                user.activationCode
+              }
+             </p>
              <p>Please do reply to this email if you did and we dont get back to you after 24 hours</p>`
-  const emailSent = await sendActivationEmail(user.email as string, user.activationCode, mailHeader, mailBody)
+  const emailSent = await sendEmail({ email: user.email as string, subject: mailHeader, body: mailBody })
+  if (emailSent) {
+    emailCount += 1
+  }
 }
+console.log(`Sent a total of ${emailCount} emails`)

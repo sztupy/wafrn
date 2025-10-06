@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 import { Notification, User } from '../../models/index.js'
 import { wait } from '../wait.js'
-import sendActivationEmail from '../sendActivationEmail.js'
+import sendEmail from '../sendActivationEmail.js'
 import getBlockedIds from '../cacheGetters/getBlockedIds.js'
 import { getMutedPosts } from '../cacheGetters/getMutedPosts.js'
 import { getNotificationOptions } from '../../routes/notifications.js'
@@ -92,7 +92,7 @@ And finaly, the part of the email where I say "give me money". Well, first, give
     `
     console.log(`mailing ${user.url}`)
     try {
-      await sendActivationEmail(user.email, '', subject, body)
+      await sendEmail({ email: user.email, subject, body })
     } catch (error) {
       console.log(error)
       console.log('Extra waiting time')

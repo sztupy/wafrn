@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 import { Notification, User } from '../../models/index.js'
 import { wait } from '../wait.js'
-import sendActivationEmail from '../sendActivationEmail.js'
+import sendEmail from '../sendActivationEmail.js'
 import getBlockedIds from '../cacheGetters/getBlockedIds.js'
 import { getMutedPosts } from '../cacheGetters/getMutedPosts.js'
 import { getNotificationOptions } from '../../routes/notifications.js'
@@ -43,7 +43,7 @@ async function sendMail() {
     `
     console.log(`mailing ${user.url}`)
     try {
-      await sendActivationEmail(user.email, '', subject, body)
+      await sendEmail({ email: user.email, subject: subject, body: body })
     } catch (error) {
       console.error(error)
     }

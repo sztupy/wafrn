@@ -20,7 +20,7 @@ import { authenticateToken } from '../utils/authenticateToken.js'
 
 import generateRandomString from '../utils/generateRandomString.js'
 import getIp from '../utils/getIP.js'
-import sendActivationEmail from '../utils/sendActivationEmail.js'
+import sendEmail from '../utils/sendActivationEmail.js'
 import validateEmail from '../utils/validateEmail.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -185,11 +185,13 @@ function userRoutes(app: Application) {
 
             const email = req.body.email.toLowerCase()
             const activationLink = `${instanceUrl}/activate/${encodeURIComponent(email)}/${activationCode}`
-            const mailHeader = `Welcome to ${instanceHost}, please verify your email!`
-            const mailBody = `<h1>Welcome to ${instanceUrl}</h1> To verify your email <a href="${activationLink}">click here!</a>.<br /><br /> If you can not see the link correctly please copy this link: ${activationLink}`
             const emailSent = completeEnvironment.disableRequireSendEmail
               ? true
-              : sendActivationEmail(req.body.email.toLowerCase(), activationCode, mailHeader, mailBody)
+              : sendEmail({
+                  email,
+                  subject: `Welcome to ${instanceHost}, please verify your email!`,
+                  body: `<h1>Welcome to ${instanceUrl}</h1> To verify your email <a href="${activationLink}">click here!</a>.<br /><br /> If you can not see the link correctly please copy this link: ${activationLink}`
+                })
             await Promise.all([userWithEmail, emailSent])
             await generateUserKeyPairQueue.add('generateUserKeyPair', { userId: (await userWithEmail).id })
             success = true
@@ -382,11 +384,10 @@ function userRoutes(app: Application) {
           const link = `${completeEnvironment.instanceUrl}/resetPassword/${encodeURIComponent(email)}/${resetCode}`
           const appLink = `wafrn://complete-password-reset?email=${encodeURIComponent(email)}&code=${resetCode}`
 
-          await sendActivationEmail(
-            req.body.email.toLowerCase(),
-            '',
-            `So you forgot your ${completeEnvironment.instanceUrl} password`,
-            `
+          await sendEmail({
+            email: req.body.email.toLowerCase(),
+            subject: `So you forgot your ${completeEnvironment.instanceUrl} password`,
+            body: `
             <h1>Use this link to reset your password</h1>
             <p>
               Click <a href="${link}">here</a> to reset your password.
@@ -402,7 +403,7 @@ function userRoutes(app: Application) {
               If you didn't request this, please ignore this email.
             </p>
             `
-          )
+          })
         }
       }
     } catch (error) {
@@ -437,7 +438,7 @@ function userRoutes(app: Application) {
         try {
           await Promise.all([
             user.save(),
-            sendActivationEmail(req.body.email.toLowerCase(), '', emailSubject, emailBody)
+            sendEmail({ email: req.body.email.toLowerCase(), subject: emailSubject, body: emailBody })
           ])
           success = true
         } catch (error) {
@@ -1567,11 +1568,10 @@ function userRoutes(app: Application) {
     user.banned = true
     await user.save()
     try {
-      await sendActivationEmail(
-        user.email as string,
-        '',
-        `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
-        `
+      await sendEmail({
+        email: user.email as string,
+        subject: `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
+        body: `
         <h1>We are sad to see you go</h1>
         <p>
           We have recived your request to delete your account.
@@ -1590,7 +1590,7 @@ function userRoutes(app: Application) {
           If within 2 days your account is not deleted, please contact your server admin.
         </p>
       `
-      )
+      })
     } catch (error) {
       logger.info(error)
     }
