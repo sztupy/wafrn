@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 import { Notification, User } from '../../models/index.js'
 import { wait } from '../wait.js'
-import sendEmail from '../sendActivationEmail.js'
+import sendEmail from '../sendEmail.js'
 import getBlockedIds from '../cacheGetters/getBlockedIds.js'
 import { getMutedPosts } from '../cacheGetters/getMutedPosts.js'
 import { getNotificationOptions } from '../../routes/notifications.js'

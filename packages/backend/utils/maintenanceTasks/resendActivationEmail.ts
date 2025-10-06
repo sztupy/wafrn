@@ -2,7 +2,7 @@ import { Op } from 'sequelize'
 import { User } from '../../models/index.js'
 import { wait } from '../wait.js'
 import { completeEnvironment } from '../backendOptions.js'
-import sendEmail from '../sendActivationEmail.js'
+import sendEmail from '../sendEmail.js'
 
 // lets delete old users that are not activated
 

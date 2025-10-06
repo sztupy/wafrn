@@ -4,7 +4,7 @@ import { isArray } from 'underscore'
 import sequelize from 'sequelize/lib/sequelize'
 import { Post, PostReport, User } from '../../../models/index.js'
 import { logger } from '../../logger.js'
-import sendEmail from '../../sendActivationEmail.js'
+import sendEmail from '../../sendEmail.js'
 import { completeEnvironment } from '../../backendOptions.js'
 
 async function flagActivity(body: activityPubObject, remoteUser: User, user: User) {

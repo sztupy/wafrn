@@ -20,7 +20,7 @@ import { authenticateToken } from '../utils/authenticateToken.js'
 
 import generateRandomString from '../utils/generateRandomString.js'
 import getIp from '../utils/getIP.js'
-import sendEmail from '../utils/sendActivationEmail.js'
+import sendEmail from '../utils/sendEmail.js'
 import validateEmail from '../utils/validateEmail.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
