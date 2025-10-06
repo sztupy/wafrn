@@ -32,6 +32,13 @@ import { MoveActivity } from '../activitypub/processors/move.js'
 import { RejectActivity } from '../activitypub/processors/reject.js'
 import { wait } from '../wait.js'
 import { flagActivity } from '../activitypub/processors/flag.js'
+import { getPetitionSigned } from '../activitypub/getPetitionSigned.js'
+import { completeEnvironment } from '../backendOptions.js'
+import { activityPubObject } from '../../interfaces/fediverse/activityPubObject.js'
+import { getPostUrlForQuote } from '../activitypub/postToJSONLD.js'
+import { getPostThreadRecursive } from '../activitypub/getPostThreadRecursive.js'
+import { getAdminUser } from '../getAdminAndDeletedUser.js'
+import { postPetitionSigned } from '../activitypub/postPetitionSigned.js'
 
 async function inboxWorker(job: Job) {
   try {
@@ -145,6 +152,42 @@ async function inboxWorker(job: Job) {
             break
           }
 
+          case 'QuoteRequest':
+            {
+              // TODO in case of rejecting quotes on fedi we do here
+              if (req.body.object && req.body.object.startsWith(`${completeEnvironment.frontendUrl}/fediverse/post/`)) {
+                const postId = req.body.object.split(`${completeEnvironment.frontendUrl}/fediverse/post/`)[1]
+                const post: any = await Post.findByPk(postId, {
+                  include: [
+                    {
+                      model: User,
+                      as: 'user'
+                    }
+                  ]
+                })
+                const quoterPost = await getPostThreadRecursive(await getAdminUser(), req.body.instrument.id)
+                if (post && quoterPost) {
+                  const acceptToSend: activityPubObject = {
+                    '@context': [
+                      'https://www.w3.org/ns/activitystreams',
+                      `${completeEnvironment.frontendUrl}/contexts/litepub-0.1.jsonld`
+                    ],
+                    actor: `${completeEnvironment.frontendUrl}/fediverse/blog/${post?.dataValues.user.url.toLowerCase()}`,
+                    id: `${completeEnvironment.frontendUrl}/fediverse/quote_request/${quoterPost.id}`,
+                    type: 'Accept',
+                    object: req.body.object,
+                    instrument: req.body.instrument
+                  }
+
+                  await postPetitionSigned(
+                    acceptToSend,
+                    (await User.scope('full').findByPk(post.userId)) as User,
+                    remoteUser.remoteInbox
+                  )
+                }
+              }
+            }
+            break
           default: {
             logger.info(`NOT IMPLEMENTED: ${req.body.type}`)
             logger.info(req.body)

@@ -20,7 +20,7 @@ import { authenticateToken } from '../utils/authenticateToken.js'
 
 import generateRandomString from '../utils/generateRandomString.js'
 import getIp from '../utils/getIP.js'
-import sendActivationEmail from '../utils/sendActivationEmail.js'
+import sendEmail from '../utils/sendEmail.js'
 import validateEmail from '../utils/validateEmail.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -185,11 +185,18 @@ function userRoutes(app: Application) {
 
             const email = req.body.email.toLowerCase()
             const activationLink = `${instanceUrl}/activate/${encodeURIComponent(email)}/${activationCode}`
-            const mailHeader = `Welcome to ${instanceHost}, please verify your email!`
-            const mailBody = `<h1>Welcome to ${instanceUrl}</h1> To verify your email <a href="${activationLink}">click here!</a>.<br /><br /> If you can not see the link correctly please copy this link: ${activationLink}`
             const emailSent = completeEnvironment.disableRequireSendEmail
               ? true
-              : sendActivationEmail(req.body.email.toLowerCase(), activationCode, mailHeader, mailBody)
+              : sendEmail({
+                  email,
+                  subject: `Welcome to ${instanceHost}, please verify your email!`,
+                  body: `\
+<h1>Welcome to ${instanceUrl}</h1>
+<p>To activate your account, <a href="${activationLink}">verify your email</a>.</p>
+<br />
+<p>If you can't see the link above, copy this link: ${activationLink}</p>
+`
+                })
             await Promise.all([userWithEmail, emailSent])
             await generateUserKeyPairQueue.add('generateUserKeyPair', { userId: (await userWithEmail).id })
             success = true
@@ -382,27 +389,16 @@ function userRoutes(app: Application) {
           const link = `${completeEnvironment.instanceUrl}/resetPassword/${encodeURIComponent(email)}/${resetCode}`
           const appLink = `wafrn://complete-password-reset?email=${encodeURIComponent(email)}&code=${resetCode}`
 
-          await sendActivationEmail(
-            req.body.email.toLowerCase(),
-            '',
-            `So you forgot your ${completeEnvironment.instanceUrl} password`,
-            `
-            <h1>Use this link to reset your password</h1>
-            <p>
-              Click <a href="${link}">here</a> to reset your password.
-            </p>
-            <p>
-              Or copy this link: ${link}
-            </p>
-            <p>
-              Or use this link for the wafrn mobile app
-              <a href="${appLink}">${appLink}</a>
-            </p>
-            <p>
-              If you didn't request this, please ignore this email.
-            </p>
-            `
-          )
+          await sendEmail({
+            email: req.body.email.toLowerCase(),
+            subject: `Reset ${completeEnvironment.instanceUrl} password`,
+            body: `\
+<h1>So you forgot your ${completeEnvironment.instanceUrl} password</h1>
+<p>If you requested this you may <a href="${link}">reset your password on the web</a> or <a href="${appLink}">reset your password on the app</a></p>
+<p>If you can't see the web link above, copy this link: ${link}</p>
+<p>If you didn't request this, ignore this email.</p>
+`
+          })
         }
       }
     } catch (error) {
@@ -423,22 +419,20 @@ function userRoutes(app: Application) {
       })
       if (user) {
         user.emailVerified = true
-        let emailBody = ''
-        let emailSubject = ''
+        let body = ''
+        let subject = ''
         if (!completeEnvironment.reviewRegistrations) {
           user.activated = true
-          emailSubject = 'Your wafrn account has been activated!'
-          emailBody = ';D'
+          subject = `Your ${completeEnvironment.instanceUrl} account ${user.url} has been activated`
+          body = '<p>;D</p>'
         } else {
-          emailBody =
-            'Hello, thanks for confirming your email address. The admin team will review your registration and will be aproved shortly'
-          emailSubject = 'Thanks for verifying your email, Our admin team will review your registration request soon!'
+          subject = `The email account for your ${completeEnvironment.instanceUrl} account ${user.url} has been verified`
+          body = `\
+<p>Thanks for verifying your email, Our admin team will review your registration request soon!</p>
+`
         }
         try {
-          await Promise.all([
-            user.save(),
-            sendActivationEmail(req.body.email.toLowerCase(), '', emailSubject, emailBody)
-          ])
+          await Promise.all([user.save(), sendEmail({ email: req.body.email.toLowerCase(), subject, body })])
           success = true
         } catch (error) {
           logger.info({
@@ -1567,30 +1561,19 @@ function userRoutes(app: Application) {
     user.banned = true
     await user.save()
     try {
-      await sendActivationEmail(
-        user.email as string,
-        '',
-        `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
-        `
-        <h1>We are sad to see you go</h1>
-        <p>
-          We have recived your request to delete your account.
-          It will still ve visible for a few moments.
-          In 24 hours or less we will complete the destruction process and at that point there will be no going back
-        </p>
-        <p>
-          This is a slow process on our side and thats why its not done imediately.
-        </p>
-        <p>
-          The deletion task is run every day at night (02:00 UTC).
-          It is slow because we have to send every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW" message.
-          And we send those one by one so this task takes time and slows down the server.
-        </p>
-        <p>
-          If within 2 days your account is not deleted, please contact your server admin.
-        </p>
-      `
-      )
+      await sendEmail({
+        email: user.email as string,
+        subject: `We have marked your ${completeEnvironment.instanceUrl} account for deletion`,
+        body: `\
+<h1>We are sad to see you go</h1>
+<p>We have received your request to delete your account. It will still be visible for a few moments. \
+In 24 hours or less we will complete the destruction process and at that point there will be no going back.</p>
+<p>This is a slow process on our side and thats why its not done immediately.</p>
+<p>The deletion task is run every day at night (02:00 UTC). \
+It is slow because we have to send every fedi server that has ever seen a post of yours a "PLEASE DELETE. NOW" message and we send those one by one so this task takes time and slows down the server.</p>
+<p>If within 2 days your account is not deleted, please contact your server admin.</p>
+`
+      })
     } catch (error) {
       logger.info(error)
     }
