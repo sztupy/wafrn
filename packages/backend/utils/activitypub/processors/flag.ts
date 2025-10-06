@@ -30,7 +30,7 @@ async function flagActivity(body: activityPubObject, remoteUser: User, user: Use
     await sendEmail({
       email: completeEnvironment.adminEmail,
       subject: `There has been a report that is directed towards an user but does not includes post`,
-      body: `Here you go: ${reportedPostsIds.join(', ')}, ${JSON.stringify(apObject)}`
+      body: `<p>Here you go: ${reportedPostsIds.join(', ')}, ${JSON.stringify(apObject)}</p>\n`
     })
   } else {
     const reportedPosts = await Post.findAll({

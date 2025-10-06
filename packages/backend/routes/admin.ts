@@ -214,20 +214,17 @@ export default function adminRoutes(app: Application) {
   app.post('/api/admin/banUser', authenticateToken, adminToken, async (req: AuthorizedRequest, res: Response) => {
     const userToBeBanned = await User.scope('full').findByPk(req.body.id)
     if (userToBeBanned && userToBeBanned.role != 10) {
+      let emailSent
       if (userToBeBanned.email && req.body.message) {
-        try {
-          await sendEmail({
-            email: userToBeBanned.email,
-            subject: 'You have been banned from wafrn',
-            body: `Hello, you have been banned from wafrn. Reason: ${req.body.message}`
-          })
-        } catch (error) {
-          logger.info(error)
-        }
+        emailSent = sendEmail({
+          email: userToBeBanned.email,
+          subject: `Your account ${userToBeBanned.url} have been banned from ${completeEnvironment.instanceUrl}`,
+          body: `<p>Hello, you have been banned from ${completeEnvironment.instanceUrl}. Reason: ${req.body.message}</p>\n`
+        })
       }
       userToBeBanned.banned = true
-      await userToBeBanned.save()
-      await PostReport.update(
+      const userSaved = userToBeBanned.save()
+      const reportUpdated = PostReport.update(
         {
           resolved: true
         },
@@ -237,6 +234,7 @@ export default function adminRoutes(app: Application) {
           }
         }
       )
+      await Promise.all([userSaved, reportUpdated, emailSent])
     }
 
     res.send({
@@ -351,8 +349,10 @@ export default function adminRoutes(app: Application) {
         userToActivate.activated = true
         const emailPromise = sendEmail({
           email: userToActivate.email,
-          subject: `your account at ${completeEnvironment.frontendUrl} has been activated`,
-          body: `Hello ${userToActivate.url}, your account has been reviewed by our team and is now activated! Congratulations`
+          subject: `Your account at ${completeEnvironment.frontendUrl} has been activated`,
+          body: `\
+<p>Hello ${userToActivate.url}, your account has been reviewed by our team and is now activated!</p>
+`
         })
         Promise.allSettled([emailPromise, userToActivate.save()])
       }
@@ -366,15 +366,16 @@ export default function adminRoutes(app: Application) {
       if (userToDelete && userToDelete.email) {
         const emailPromise = sendEmail({
           email: userToDelete.email,
-          subject: `Registrations at ${completeEnvironment.frontendUrl} with vpn are not allowed`,
-          body: `<h1>Hello ${userToDelete.url}, we have got a lot of spammers registering with vpns.</h1>
-          <p>Please do <a href="${completeEnvironment.frontendUrl}/register">try registering again without a vpn</a> or <b>on a different internet connection</b>. Corporate work networks usualy get flagged as VPN</p>
-          <p>This is one of the many ways we avoid spam.</p>
-          <p>There is also only so much gore you can see before you say “fuck this shit”.</p>
-          <p>I am sorry. I promise that I won't do evil shit with your data, nor will i sell it or anything.</p>
-          <p>I have freed up your email if you want to join again without a vpn.</p>
-          <p>Thanks for your understanding and we're sorry</p>
-          `
+          subject: `Registrations at ${completeEnvironment.frontendUrl} through a vpn are not allowed`,
+          body: `\
+<h1>Hello ${userToDelete.url}, we have got a lot of spammers registering with vpns.</h1>
+<p>Please do <a href="${completeEnvironment.frontendUrl}/register">try registering again without a vpn</a> or <b>on a different internet connection</b>. Corporate work networks usually get flagged as VPN</p>
+<p>This is one of the many ways we avoid spam.</p>
+<p>There is also only so much gore you can see before you say “fuck this shit”.</p>
+<p>I am sorry. I promise that I won't do evil shit with your data, nor will I sell it or anything.</p>
+<p>Your email has been cleared if you want to join again without a vpn.</p>
+<p>Thanks for your understanding.</p>
+`
         })
         await userToDelete.destroy()
         Promise.allSettled([emailPromise])
@@ -395,8 +396,12 @@ export default function adminRoutes(app: Application) {
           userToActivate.banned = null
           const emailPromise = sendEmail({
             email: userToActivate.email,
-            subject: `Hello ${userToActivate.url}, before we can activate your account at ${completeEnvironment.frontendUrl} we need you to reply to this email`,
-            body: `Hello ${userToActivate.url}, you recived this email because something might be off in your account. Usually is something like the email being in a strange provider or 'wow that email looks weird'. We just need a confirmation. Sorry for this and thanks.`
+            subject: `${userToActivate.url} before we can activate your account at ${completeEnvironment.frontendUrl} we need you to reply to this email`,
+            body: `\
+<p>Hello ${userToActivate.url}, you received this email because something might be off in your account. \
+Usually is something like the email being in a strange provider or 'wow that email looks weird'. \
+We just need a confirmation. Sorry for this and thanks.</p>
+`
           })
           Promise.allSettled([userToActivate.save(), emailPromise])
         }

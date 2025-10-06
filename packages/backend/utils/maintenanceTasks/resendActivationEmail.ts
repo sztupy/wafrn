@@ -32,22 +32,26 @@ console.log(`Not verified users: ${usersNotVerified.length}`)
 let emailCount = 0
 await wait(1500)
 for await (const user of usersNotVerified.filter((elem) => !!elem)) {
+  if (user.email === null) continue
+
   console.log(`Sending email to user ${user.url} with email ${user.email}`)
-  const mailHeader = `Helo ${user.url}, your email is still not verified!`
-  const mailBody = `<h1>Hello ${user.url} you registred on ${
-    completeEnvironment.instanceUrl
-  } but never activated your account</h1>
-  <p>Please click here to verify your email <a href="${completeEnvironment.instanceUrl}/activate/${encodeURIComponent(
-    user.email as string
-  )}/${user.activationCode}">click here!</a>. If you can not see the link correctly please copy this link:
-              ${completeEnvironment.instanceUrl}/activate/${encodeURIComponent((user.email as string).toLowerCase())}/${
-                user.activationCode
-              }
-             </p>
-             <p>Please do reply to this email if you did and we dont get back to you after 24 hours</p>`
-  const emailSent = await sendEmail({ email: user.email as string, subject: mailHeader, body: mailBody })
+
+  const activationLink = `${completeEnvironment.instanceUrl}/activate/${encodeURIComponent(user.email)}/${user.activationCode}`
+  const emailInfo = await sendEmail({
+    email: user.email as string,
+    subject: `${user.url} your email is still not verified!`,
+    body: `\
+<p>Hello ${user.url}, you registered on ${completeEnvironment.instanceUrl} but never verified your email!</p>
+<p>If you would like to activate your account, you can <a href="${activationLink}">verify your email</a>.</p>
+<br />
+<p>If you can't see the link above, copy this link: ${activationLink}</p>
+<p>If you encounter any problems or we haven't gotten back to you after 24 hours, reply to this email.</p>
+`
+  })
+
+  const emailSent = emailInfo !== undefined
   if (emailSent) {
     emailCount += 1
   }
 }
-console.log(`Sent a total of ${emailCount} emails`)
+console.log(`Sent a total of ${emailCount} emails.`)
