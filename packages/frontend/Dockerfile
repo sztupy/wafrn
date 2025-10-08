@@ -31,7 +31,7 @@ RUN npm run build
 RUN mv dist/wafrn/browser /app/frontend
 
 COPY packages/frontend/Caddyfile.example /app/Caddyfile
-COPY /app/packages/frontend/src/assets/pds-homepage.txt /app/pds-homepage.txt
+RUN cp /app/packages/frontend/src/assets/pds-homepage.txt /app/pds-homepage.txt
 
 FROM caddy:2
 
