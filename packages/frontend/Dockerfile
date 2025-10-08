@@ -31,12 +31,14 @@ RUN npm run build
 RUN mv dist/wafrn/browser /app/frontend
 
 COPY packages/frontend/Caddyfile.example /app/Caddyfile
+COPY packages/frontend/src/assets/pds-homepage.txt /app/pds-homepage.txt
 
 FROM caddy:2
 
 RUN apk add perl
 
 COPY --from=builder /app/Caddyfile /etc/caddy/Caddyfile
+COPY --from=builder /app/pds-homepage.txt /pds-homepage/pds.txt
 COPY --from=builder /app/frontend/ /app/frontend
 COPY --from=builder /app/packages/frontend/docker-entrypoint.sh /docker-entrypoint.sh
 
