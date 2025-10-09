@@ -370,6 +370,7 @@
       "instanceOnly": "Instance Only",
       "unlisted": "Unlisted"
     },
+    "disableRewootsExploreLocal": "Disable rewoots in Explore local feed",
     "mutedWords": "Muted words",
     "mutedWordsDescription": "One word per line. Posts with these phrases will be placed behind a CW.",
     "superMutedWords": "Blocked words",

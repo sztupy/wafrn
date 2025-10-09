@@ -81,7 +81,8 @@ const settingKeyVariants = [
   'postActionsButtonBarOrder',
   'atprotoLinkDestination',
   'confettiMultiplier',
-  'flatConfetti'
+  'flatConfetti',
+  'disableRewootsExploreLocal'
 ] as const
 type SettingKeyTuple = typeof settingKeyVariants
 export type SettingKey = SettingKeyTuple[number]
@@ -389,6 +390,14 @@ export class SettingsService {
         true: 'settings.defaultDashboardOptions.exploreLocal'
       }
     },
+    disableRewootsExploreLocal: {
+      key: 'disableRewootsExploreLocal',
+      translationKey: 'settings.disableRewootsExploreLocal',
+      serverKey: 'wafrn.disableRewootsExploreLocal',
+      localStorageKey: 'disableRewootsExploreLocal',
+      type: 'checkbox',
+      default: false
+    },
     automaticallyExpandPosts: {
       key: 'automaticallyExpandPosts',
       translationKey: 'settings.automaticallyExpandPosts',
@@ -647,6 +656,7 @@ export class SettingsService {
       values: [
         { type: 'header', value: 'settings.header.dashboardBehavior' },
         { type: 'key', value: 'defaultDashboard' },
+        { type: 'key', value: 'disableRewootsExploreLocal' },
         { type: 'key', value: 'automaticallyExpandPosts' },
         { type: 'key', value: 'expandQuotes' },
         { type: 'key', value: 'atprotoLinkDestination' },
