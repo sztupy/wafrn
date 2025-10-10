@@ -37,6 +37,9 @@ export default function biteRoutes(app: Application) {
       if (!post)
         return res.status(404).send({ message: "Post not found" })
 
+      if (post.userId === userId)
+        return res.status(400).send({ message: "You can't bite your own post" })
+
       const bittenPost = await UserBitesPostRelation.create({
         userId: userId,
         postId: postId,
@@ -93,6 +96,9 @@ export default function biteRoutes(app: Application) {
 
       if (!bitten)
         return res.status(404).send({ message: "User to be bitten not found" })
+
+      if (bittenId === biterId)
+        return res.status(400).send({ message: "You can't bite yourself" })
 
       await Bites.create({
         biterId: biterId,
