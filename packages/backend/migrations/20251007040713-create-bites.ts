@@ -10,6 +10,10 @@ export const up: Migration = async params => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4
     },
+    remoteId: {
+      type: DataTypes.STRING(768),
+      allowNull: true
+    },
     biterId: {
       type: DataTypes.UUID,
       allowNull: false,

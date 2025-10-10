@@ -7,6 +7,7 @@ export interface BitesAttributes {
   id?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  remoteId?: string;
   biterId: string;
   bittenId: string;
 }
@@ -23,6 +24,12 @@ export class Bites extends Model<BitesAttributes, BitesAttributes> implements Bi
     defaultValue: DataType.UUIDV4
   })
   declare id: string
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(768)
+  })
+  declare remoteId: string;
 
   @ForeignKey(() => User)
   @Column({
