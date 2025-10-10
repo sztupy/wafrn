@@ -205,6 +205,23 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     }
   }
 
+  async biteAccount(id: string) {
+    const response = await this.blogService.biteUser(id)
+    if (response) {
+      this.messages.add({
+        severity: 'success',
+        summary: 'messages.biteUserSuccess',
+        translate: true,
+      })
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'messages.genericError',
+        translate: true
+      })
+    }
+  }
+
   async getAskDialogComponent(): Promise<typeof AskDialogContentComponent> {
     const { AskDialogContentComponent } = await import('../ask-dialog-content/ask-dialog-content.component')
     return AskDialogContentComponent

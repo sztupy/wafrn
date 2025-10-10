@@ -115,7 +115,7 @@
             </span>
           </button>
           @if (!blog.isBlueskyUser) {
-            <button (click)="blogService.biteUser(blog.id)" mat-menu-item>
+            <button (click)="biteAccount(blog.id)" mat-menu-item>
               <span class="flex gap-2">
                 <fa-icon [fixedWidth]="true" [icon]="biteUserIcon"></fa-icon>
                 {{ 'post-actions.biteUser' | translate }}
