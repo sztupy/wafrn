@@ -39,6 +39,7 @@ import { getPostUrlForQuote } from '../activitypub/postToJSONLD.js'
 import { getPostThreadRecursive } from '../activitypub/getPostThreadRecursive.js'
 import { getAdminUser } from '../getAdminAndDeletedUser.js'
 import { postPetitionSigned } from '../activitypub/postPetitionSigned.js'
+import { biteActivity } from '../activitypub/processors/bite.js'
 
 async function inboxWorker(job: Job) {
   try {
@@ -138,8 +139,14 @@ async function inboxWorker(job: Job) {
             await MoveActivity(body, remoteUser, user)
             break
           }
+
           case 'Flag': {
             await flagActivity(body, remoteUser, user)
+            break
+          }
+
+          case 'Bite': {
+            await biteActivity(body, remoteUser, user)
             break
           }
 

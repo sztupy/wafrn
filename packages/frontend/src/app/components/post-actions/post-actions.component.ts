@@ -24,7 +24,8 @@ import {
   faLink,
   faPaperPlane,
   faUserSlash,
-  faVolumeMute
+  faVolumeMute,
+  faCookieBite
 } from '@fortawesome/free-solid-svg-icons'
 import { MatButtonModule } from '@angular/material/button'
 import { MatMenuModule } from '@angular/material/menu'
@@ -91,6 +92,7 @@ export class PostActionsComponent implements OnChanges {
   refederateIcon = faPaperPlane
   muteIcon = faVolumeMute
   blockIcon = faUserSlash
+  biteIcon = faCookieBite
 
   constructor(
     private messages: MessageService,
@@ -184,6 +186,22 @@ export class PostActionsComponent implements OnChanges {
 
   async forceRefederate() {
     await this.postService.forceRefederate(this.post().id)
+  }
+
+  async bitePost() {
+    if (await this.postService.bitePost(this.post().id)) {
+      this.messages.add({
+        severity: 'success',
+        summary: 'messages.bitePostSuccess',
+        translate: true
+      })
+    } else {
+      this.messages.add({
+        severity: 'error',
+        summary: 'messages.genericError',
+        translate: true
+      })
+    }
   }
 
   // Dangerous options

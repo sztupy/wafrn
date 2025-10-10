@@ -16,7 +16,8 @@ import {
   faUsers,
   faTriangleExclamation,
   faRepeat,
-  faQuoteRight
+  faQuoteRight,
+  faCookieBite
 } from '@fortawesome/free-solid-svg-icons'
 import { BlogDetails } from 'src/app/interfaces/blogDetails'
 import { BlocksService } from 'src/app/services/blocks.service'
@@ -30,6 +31,7 @@ import { faBluesky } from '@fortawesome/free-brands-svg-icons'
 import { ReportService } from 'src/app/services/report.service'
 import { TranslatePipe } from '@ngx-translate/core'
 import { SimpleDialogService } from 'src/app/services/simple-dialog.service'
+import { BlogService } from 'src/app/services/blog.service'
 
 @Component({
   selector: 'app-blog-header',
@@ -56,7 +58,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     return blog.url.startsWith('@')
       ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.avatar)
       : EnvironmentService.environment.externalCacheurl +
-          encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
+      encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.avatar)
   })
   headerUrl = ''
   isMe = false
@@ -72,6 +74,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
   usersIcon = faUsers
   blockUserIcon = faUserSlash
   unblockServerIcon = faServer
+  biteUserIcon = faCookieBite
   allowAsk = false
   allowRemoteAsk = false
   isBlueskyUser = false
@@ -96,15 +99,16 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     public activatedRoute: ActivatedRoute,
     public environmentService: EnvironmentService,
     public reportService: ReportService,
-    public simpleDialog: SimpleDialogService
-  ) {}
+    public simpleDialog: SimpleDialogService,
+    public blogService: BlogService
+  ) { }
   ngOnChanges(changes: SimpleChanges): void {
     const blog = this.blogDetails()
     if (blog === undefined) return
     this.headerUrl = blog.url.startsWith('@')
       ? EnvironmentService.environment.externalCacheurl + encodeURIComponent(blog.headerImage)
       : EnvironmentService.environment.externalCacheurl +
-        encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.headerImage)
+      encodeURIComponent(EnvironmentService.environment.baseMediaUrl + blog.headerImage)
     const askLevelOption = blog.publicOptions.find((elem) => elem.optionName == 'wafrn.public.asks')
     let askLevel = askLevelOption ? parseInt(askLevelOption.optionValue) : 2
     if (blog.url.startsWith('@')) {
@@ -128,7 +132,7 @@ export class BlogHeaderComponent implements OnChanges, OnDestroy {
     this.headerHTML = parsedAsHTML.documentElement.innerHTML
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   async unfollowUser(id: string) {
     const response = await this.postService.unfollowUser(id)
