@@ -105,7 +105,7 @@
     "themeGuideName": "Guia de tema",
     "updateButton": "Atualizar o tema"
   },
-   "editor": {
+  "editor": {
     "editingLabel": "Editar woot",
     "askReplyLabel": "Responder a pergunta",
     "inReplyTo": "Em resposta à:",
