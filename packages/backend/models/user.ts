@@ -18,6 +18,7 @@ import { FederatedHost } from './federatedHost.js'
 import { Post } from './post.js'
 import { Media } from './media.js'
 import { PostMentionsUserRelation } from './postMentionsUserRelation.js'
+import { UserBitesPostRelation } from './userBitesPostRelation.js'
 import { UserLikesPostRelations } from './userLikesPostRelations.js'
 import { UserBookmarkedPosts } from './userBookmarkedPosts.js'
 import { RemoteUserPostView } from './remoteUserPostView.js'
@@ -34,6 +35,7 @@ import {
 import { Col } from 'sequelize/lib/utils'
 import { UserFollowHashtags } from './userFollowHashtag.js'
 import { completeEnvironment } from '../utils/backendOptions.js'
+import { Bites } from './bites.js'
 
 export interface UserAttributes {
   id?: string
@@ -393,6 +395,16 @@ export class User extends Model<UserAttributes, UserAttributes> implements UserA
   })
   declare userAsked: Ask[]
 
+  @HasMany(() => Bites, {
+    foreignKey: 'biterId'
+  })
+  declare hasBitten: Bites[]
+
+  @HasMany(() => Bites, {
+    foreignKey: 'bittenId'
+  })
+  declare bittenBy: Bites[]
+
   @HasMany(() => QuestionPollAnswer, {
     sourceKey: 'id'
   })
@@ -516,6 +528,12 @@ export class User extends Model<UserAttributes, UserAttributes> implements UserA
 
   @BelongsToMany(() => Post, () => PostMentionsUserRelation)
   declare mentionPost: Post[]
+
+  @HasMany(() => UserBitesPostRelation, {
+    sourceKey: 'id'
+  })
+  declare userBitesPostRelation: UserBitesPostRelation[]
+  declare getUserBitesPostRelation: HasManyGetAssociationsMixin<UserBitesPostRelation>
 
   @HasMany(() => UserLikesPostRelations, {
     sourceKey: 'id'

@@ -487,7 +487,9 @@
     "reportUserSuccess": "The user was successfully reported.",
     "reportPostSuccess": "The woot was successfully reported.",
     "genericError": "Something went wrong! Check your internet connectivity and try again.",
-    "notRewootableError": "The woot was not rewootable as requested by the user."
+    "notRewootableError": "The woot was not rewootable as requested by the user.",
+    "bitePostSuccess": "You successfully bit this woot.",
+    "biteUserSuccess": "You successfully bit this user!"
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Keyboard Shortcuts",
@@ -534,7 +536,9 @@
     "unmuteUser": "Unmute user",
     "blockUser": "Block user",
     "unblockUser": "Unblock user",
-    "reportUser": "Report user"
+    "reportUser": "Report user",
+    "bitePost": "Bite post",
+    "biteUser": "Bite user"
   },
   "post-header": {
     "follow": "Follow",

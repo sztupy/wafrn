@@ -486,7 +486,9 @@
     "reportUserSuccess": "O usuário foi denunciado com sucesso.",
     "reportPostSuccess": "O post foi denunciado com sucesso.",
     "genericError": "Ah... Barbaridade, algo deu errado. Cheque tua conexão com a internet e tente novamente.",
-    "notRewootableError": "O woot não é rewootavel porque o usuário não permite."
+    "notRewootableError": "O woot não é rewootavel porque o usuário não permite.",
+    "bitePostSuccess": "Tu mordeu este woot com sucesso.",
+    "biteUserSuccess": "Tu mordeu este usuário com sucesso!"
   },
   "keyboard-shortcuts": {
     "keyboardShortcuts": "Atalhos do teclado",
@@ -533,7 +535,9 @@
     "unmuteUser": "Dessilenciar usuário",
     "blockUser": "Bloquear usuário",
     "unblockUser": "Desbloquear usuário",
-    "reportUser": "Reportar usuário"
+    "reportUser": "Reportar usuário",
+    "bitePost": "Morder post",
+    "biteUser": "Morder usuário"
   },
   "post-header": {
     "follow": "Seguir",

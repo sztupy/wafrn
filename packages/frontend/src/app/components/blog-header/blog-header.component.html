@@ -114,6 +114,14 @@
               {{ 'post-actions.reportUser' | translate }}
             </span>
           </button>
+          @if (!blog.isBlueskyUser) {
+            <button (click)="biteAccount(blog.id)" mat-menu-item>
+              <span class="flex gap-2">
+                <fa-icon [fixedWidth]="true" [icon]="biteUserIcon"></fa-icon>
+                {{ 'post-actions.biteUser' | translate }}
+              </span>
+            </button>
+          }
         </mat-menu>
       }
     </div>
