@@ -56,7 +56,7 @@
     @if (notification.type !== 'FOLLOW' && notification.type !== 'USERBITE') {
       <hr />
       <div class="notification-content-shortened">
-        <div [routerLink]="notification.url">
+        <div>
           @if (notification.fragment) {
             <app-post-header [fragment]="notification.fragment"></app-post-header>
             <app-post-fragment [fragment]="notification.fragment"></app-post-fragment>
