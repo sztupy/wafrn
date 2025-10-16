@@ -10,6 +10,16 @@
       @if (loggedIn && !isMe && blog) {
         @if (loggedIn) {
           <div class="flex">
+            @if (!blog.isBlueskyUser) {
+              <button 
+                matButton="outlined" 
+                style="width: 40px ; padding: 0; margin-right: 4px;" 
+                (click)="biteAccount(blog.id)"
+                matTooltip="{{ 'post-actions.biteUser' | translate }}"
+                >
+                  <fa-icon [fixedWidth]="true" [icon]="biteUserIcon"></fa-icon>
+              </button>
+            }
             @if (!postService.notYetAcceptedFollowedUsersIds.includes(blog.id)) {
               <button
                 mat-stroked-button
@@ -114,14 +124,6 @@
               {{ 'post-actions.reportUser' | translate }}
             </span>
           </button>
-          @if (!blog.isBlueskyUser) {
-            <button (click)="biteAccount(blog.id)" mat-menu-item>
-              <span class="flex gap-2">
-                <fa-icon [fixedWidth]="true" [icon]="biteUserIcon"></fa-icon>
-                {{ 'post-actions.biteUser' | translate }}
-              </span>
-            </button>
-          }
         </mat-menu>
       }
     </div>
